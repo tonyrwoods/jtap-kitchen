@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { label: "Reserve", href: "#reserve" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ onBookTable }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -57,12 +57,12 @@ export default function Navbar() {
           </div>
 
           {/* CTA */}
-          <a
-            href="#reserve"
+          <button
+            onClick={onBookTable}
             className="hidden md:inline-flex items-center px-6 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full hover:opacity-90 transition-opacity duration-300"
           >
             Book a Table
-          </a>
+          </button>
 
           {/* Mobile Toggle */}
           <button
@@ -94,13 +94,12 @@ export default function Navbar() {
                   {link.label}
                 </a>
               ))}
-              <a
-                href="#reserve"
-                onClick={() => setMobileOpen(false)}
+              <button
+                onClick={() => { setMobileOpen(false); onBookTable(); }}
                 className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full"
               >
                 Book a Table
-              </a>
+              </button>
             </div>
           </motion.div>
         )}
