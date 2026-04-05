@@ -1,5 +1,6 @@
 import HeroSection from "../components/HeroSection";
 import GallerySection from "../components/GallerySection";
+import InstagramSection from "../components/InstagramSection";
 import MenuHighlights from "../components/MenuHighlights";
 import AboutSection from "../components/AboutSection";
 import TestimonialsSection from "../components/TestimonialsSection";
@@ -12,6 +13,7 @@ export default function Home() {
       <MenuHighlights />
       <AboutSection />
       <GallerySection />
+      <InstagramSection />
       <TestimonialsSection />
       <ReservationSection />
     </>
