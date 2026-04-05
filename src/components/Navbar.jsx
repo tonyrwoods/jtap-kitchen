@@ -36,7 +36,7 @@ export default function Navbar({ onBookTable }) {
             <img
               src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png"
               alt="JTAP Kitchen Logo"
-              className="h-14 w-14 rounded-full object-cover border border-primary/30"
+              className="h-20 w-20 rounded-full object-cover border border-primary/30"
             />
             <span className="font-heading text-xl md:text-2xl font-semibold tracking-tight text-foreground">
               JTAP Kitchen
