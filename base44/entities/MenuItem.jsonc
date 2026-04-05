@@ -1,0 +1,55 @@
+{
+  "name": "MenuItem",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Dish Name"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "Starters",
+        "Mains",
+        "Desserts",
+        "Drinks"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "price": {
+      "type": "number",
+      "title": "Price (USD)"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Image URL"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "title": "Featured Dish"
+    },
+    "dietary_tags": {
+      "type": "array",
+      "title": "Dietary Tags",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Vegetarian",
+          "Vegan",
+          "Gluten-Free",
+          "Contains Nuts",
+          "Spicy"
+        ]
+      }
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "price"
+  ]
+}
