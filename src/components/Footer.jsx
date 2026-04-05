@@ -7,9 +7,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <h3 className="font-heading text-3xl font-semibold mb-4">Aurelian</h3>
+            <h3 className="font-heading text-3xl font-semibold mb-4">JTAP Kitchen</h3>
             <p className="font-body text-sm text-background/60 leading-relaxed max-w-xs">
-              An intimate fine dining experience where culinary artistry meets
+              JTAP Kitchen — an intimate fine dining experience where culinary artistry meets
               timeless hospitality.
             </p>
           </div>
@@ -80,7 +80,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-background/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="font-body text-xs text-background/40">
-            © {new Date().getFullYear()} Aurelian. All rights reserved.
+            © {new Date().getFullYear()} JTAP Kitchen. All rights reserved.
           </p>
           <div className="flex gap-6">
             {["Privacy Policy", "Terms of Service"].map((link) => (

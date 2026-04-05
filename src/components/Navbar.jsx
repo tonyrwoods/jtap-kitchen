@@ -32,7 +32,7 @@ export default function Navbar() {
           {/* Logo */}
           <a href="#" className="flex items-center gap-2">
             <span className="font-heading text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-              Aurelian
+              JTAP Kitchen
             </span>
           </a>
 

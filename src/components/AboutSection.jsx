@@ -51,7 +51,7 @@ export default function AboutSection() {
               <span className="italic font-normal">Culinary Artistry</span>
             </h2>
             <p className="font-body text-muted-foreground text-base leading-relaxed mb-6">
-              Founded in 2010, Aurelian was born from a simple belief: that dining should
+              Founded in 2010, JTAP Kitchen was born from a simple belief: that dining should
               be an experience that touches all the senses. Our chef, trained in the finest
               kitchens of Lyon and Tokyo, brings a unique fusion of classical technique
               and modern creativity to every plate.
