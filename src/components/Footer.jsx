@@ -1,6 +1,21 @@
+import { useState } from "react";
 import { MapPin, Phone, Mail, Instagram, Clock } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setLoading(true);
+    await base44.entities.Newsletter.create({ email: email.trim() });
+    toast.success("You're subscribed! Welcome to the JTAP Kitchen family.");
+    setEmail("");
+    setLoading(false);
+  };
   return (
     <footer className="bg-foreground text-background py-16 md:py-20 px-6 lg:px-10">
       <div className="max-w-7xl mx-auto">
@@ -74,6 +89,32 @@ export default function Footer() {
             <p className="font-body text-sm text-background/50 mt-5">
               @aurelian.dining
             </p>
+          </div>
+        </div>
+
+        {/* Newsletter */}
+        <div className="border-t border-background/10 pt-12 pb-10">
+          <div className="max-w-xl mx-auto text-center">
+            <p className="font-body text-xs uppercase tracking-[0.25em] font-semibold text-primary mb-3">Stay in the Know</p>
+            <h4 className="font-heading text-2xl font-semibold text-background mb-2">Join Our Inner Circle</h4>
+            <p className="font-body text-sm text-background/50 mb-6">Be the first to hear about seasonal menus, exclusive events, and chef's specials.</p>
+            <form onSubmit={handleSubscribe} className="flex gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                required
+                className="flex-1 px-4 py-3 rounded-full bg-background/10 border border-background/20 text-background placeholder:text-background/30 font-body text-sm focus:outline-none focus:border-primary transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-semibold rounded-full hover:opacity-90 disabled:opacity-50 transition-all"
+              >
+                {loading ? "..." : "Subscribe"}
+              </button>
+            </form>
           </div>
         </div>
 
