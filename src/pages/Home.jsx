@@ -1,4 +1,5 @@
 import HeroSection from "../components/HeroSection";
+import SmartKitchenSection from "../components/SmartKitchenSection";
 import GallerySection from "../components/GallerySection";
 import InstagramSection from "../components/InstagramSection";
 import TeamSection from "../components/TeamSection";
@@ -12,6 +13,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <SmartKitchenSection />
       <MenuSection />
       <AboutSection />
       <TeamSection />
