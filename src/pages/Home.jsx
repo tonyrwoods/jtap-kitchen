@@ -1,4 +1,5 @@
 import HeroSection from "../components/HeroSection";
+import GallerySection from "../components/GallerySection";
 import MenuHighlights from "../components/MenuHighlights";
 import AboutSection from "../components/AboutSection";
 import TestimonialsSection from "../components/TestimonialsSection";
@@ -10,6 +11,7 @@ export default function Home() {
       <HeroSection />
       <MenuHighlights />
       <AboutSection />
+      <GallerySection />
       <TestimonialsSection />
       <ReservationSection />
     </>
