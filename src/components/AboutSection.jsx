@@ -1,0 +1,88 @@
+import { motion } from "framer-motion";
+
+export default function AboutSection() {
+  return (
+    <section id="about" className="py-24 md:py-32 bg-secondary/50">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Image */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative"
+          >
+            <div className="relative overflow-hidden rounded-3xl">
+              <img
+                src="/__generating__/img_49251eb75515.png"
+                alt="Luxurious restaurant interior with warm lighting"
+                className="w-full h-[400px] md:h-[550px] object-cover"
+              />
+            </div>
+            {/* Floating Stats Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="absolute -bottom-6 -right-4 md:right-8 bg-card shadow-2xl rounded-2xl px-8 py-6 border border-border"
+            >
+              <div className="text-center">
+                <span className="font-heading text-4xl font-bold text-primary">15+</span>
+                <p className="font-body text-sm text-muted-foreground mt-1">Years of Excellence</p>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">
+              Our Story
+            </span>
+            <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mt-4 mb-6 leading-tight">
+              A Legacy of
+              <br />
+              <span className="italic font-normal">Culinary Artistry</span>
+            </h2>
+            <p className="font-body text-muted-foreground text-base leading-relaxed mb-6">
+              Founded in 2010, Aurelian was born from a simple belief: that dining should
+              be an experience that touches all the senses. Our chef, trained in the finest
+              kitchens of Lyon and Tokyo, brings a unique fusion of classical technique
+              and modern creativity to every plate.
+            </p>
+            <p className="font-body text-muted-foreground text-base leading-relaxed mb-10">
+              We source exclusively from local farms and artisanal producers, ensuring
+              that each ingredient tells a story of the land it came from. Every evening
+              at Aurelian is a celebration of flavor, craft, and the joy of sharing a
+              memorable meal.
+            </p>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-3 gap-6 border-t border-border pt-8">
+              {[
+                { number: "50K+", label: "Guests Served" },
+                { number: "4.9", label: "Average Rating" },
+                { number: "120+", label: "Wine Selections" },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <span className="font-heading text-2xl md:text-3xl font-bold text-foreground">
+                    {stat.number}
+                  </span>
+                  <p className="font-body text-xs text-muted-foreground mt-1 uppercase tracking-wider">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
