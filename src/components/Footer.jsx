@@ -38,7 +38,7 @@ export default function Footer() {
               {[
                 { icon: MapPin, text: "Memphis, TN" },
                 { icon: Phone, text: "901-233-4060" },
-                { icon: Mail, text: "hello@jtapkitchen.com" },
+                { icon: Mail, text: "info@jtapkitchen.com" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-start gap-3">
                   <Icon className="w-4 h-4 text-primary shrink-0 mt-0.5" />
