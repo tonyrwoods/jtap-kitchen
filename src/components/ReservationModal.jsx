@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
 
@@ -91,7 +92,19 @@ export default function ReservationModal({ open, onClose }) {
   const canNext1 = date && time;
   const canNext2 = name.trim() && email.trim();
 
-  const handleSubmit = () => setSubmitted(true);
+  const handleSubmit = async () => {
+    await base44.entities.Reservation.create({
+      guest_name: name,
+      email,
+      phone,
+      date: date?.toISOString().split("T")[0],
+      time,
+      party_size: party,
+      special_requests: special,
+      status: "Pending",
+    });
+    setSubmitted(true);
+  };
 
   const handleClose = () => {
     onClose();

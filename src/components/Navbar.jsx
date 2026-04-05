@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useI18n } from "@/lib/i18n";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
-  { label: "Menu", href: "#menu" },
-  { label: "Our Story", href: "#about" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Our Team", href: "#team" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "Reserve", href: "#reserve" },
+  { labelKey: "nav.menu", href: "#menu" },
+  { labelKey: "nav.story", href: "#about" },
+  { labelKey: "nav.gallery", href: "#gallery" },
+  { labelKey: "nav.team", href: "#team" },
+  { labelKey: "nav.reviews", href: "#reviews" },
+  { labelKey: "nav.reserve", href: "#reserve" },
 ];
 
 export default function Navbar({ onBookTable }) {
+  const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -47,13 +50,14 @@ export default function Navbar({ onBookTable }) {
           <div className="hidden md:flex items-center gap-10">
             {NAV_LINKS.map((link) => (
               <a
-                key={link.label}
+                key={link.labelKey}
                 href={link.href}
                 className="font-body text-sm font-medium tracking-wide text-muted-foreground hover:text-primary transition-colors duration-300 uppercase"
               >
-                {link.label}
+                {t(link.labelKey)}
               </a>
             ))}
+            <LanguageSwitcher />
           </div>
 
           {/* CTA */}
@@ -61,7 +65,7 @@ export default function Navbar({ onBookTable }) {
             onClick={onBookTable}
             className="hidden md:inline-flex items-center px-6 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full hover:opacity-90 transition-opacity duration-300"
           >
-            Book a Table
+            {t("nav.book")}
           </button>
 
           {/* Mobile Toggle */}
@@ -86,19 +90,19 @@ export default function Navbar({ onBookTable }) {
             <div className="px-6 py-8 flex flex-col gap-6">
               {NAV_LINKS.map((link) => (
                 <a
-                  key={link.label}
+                  key={link.labelKey}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className="font-body text-lg font-medium text-foreground hover:text-primary transition-colors"
                 >
-                  {link.label}
+                  {t(link.labelKey)}
                 </a>
               ))}
               <button
                 onClick={() => { setMobileOpen(false); onBookTable(); }}
                 className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full"
               >
-                Book a Table
+                {t("nav.book")}
               </button>
             </div>
           </motion.div>

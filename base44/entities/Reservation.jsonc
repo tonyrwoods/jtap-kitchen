@@ -1,0 +1,52 @@
+{
+  "name": "Reservation",
+  "type": "object",
+  "properties": {
+    "guest_name": {
+      "type": "string",
+      "title": "Guest Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "date": {
+      "type": "string",
+      "title": "Date"
+    },
+    "time": {
+      "type": "string",
+      "title": "Time"
+    },
+    "party_size": {
+      "type": "number",
+      "title": "Party Size"
+    },
+    "special_requests": {
+      "type": "string",
+      "title": "Special Requests"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending",
+        "Confirmed",
+        "Cancelled",
+        "Completed"
+      ],
+      "default": "Pending"
+    }
+  },
+  "required": [
+    "guest_name",
+    "email",
+    "date",
+    "time",
+    "party_size"
+  ]
+}
