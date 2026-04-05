@@ -37,7 +37,7 @@ export default function Footer() {
             <div className="space-y-4">
               {[
                 { icon: MapPin, text: "Memphis, TN" },
-                { icon: Phone, text: "+1 (212) 555-0198" },
+                { icon: Phone, text: "901-233-4060" },
                 { icon: Mail, text: "hello@jtapkitchen.com" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-start gap-3">
