@@ -70,6 +70,26 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-background/40 mb-5">
+              Quick Links
+            </h4>
+            <div className="space-y-3">
+              {[
+                { label: "Our Menu", href: "#menu" },
+                { label: "Reserve a Table", href: "#reserve" },
+                { label: "Gift Cards", href: "/gift-cards" },
+                { label: "Our Story", href: "#about" },
+                { label: "The Team", href: "#team" },
+              ].map(({ label, href }) => (
+                <a key={label} href={href} className="block font-body text-sm text-background/60 hover:text-primary transition-colors duration-200">
+                  {label}
+                </a>
+              ))}
+            </div>
+          </div>
+
           {/* Social */}
           <div>
             <h4 className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-background/40 mb-5">
