@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { labelKey: "nav.team", href: "#team" },
   { labelKey: "nav.reviews", href: "#reviews" },
   { labelKey: "nav.reserve", href: "#reserve" },
+  { labelKey: "nav.events", href: "/events", isLink: true },
 ];
 
 export default function Navbar({ onBookTable }) {

@@ -1,0 +1,67 @@
+{
+  "name": "Event",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Event Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "date": {
+      "type": "string",
+      "title": "Date (YYYY-MM-DD)"
+    },
+    "time": {
+      "type": "string",
+      "title": "Time"
+    },
+    "end_time": {
+      "type": "string",
+      "title": "End Time"
+    },
+    "price_per_person": {
+      "type": "number",
+      "title": "Price Per Person (USD)"
+    },
+    "capacity": {
+      "type": "number",
+      "title": "Max Capacity"
+    },
+    "spots_booked": {
+      "type": "number",
+      "title": "Spots Booked",
+      "default": 0
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Image URL"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "Wine Tasting",
+        "Chef's Table",
+        "Cooking Class",
+        "Seasonal Menu",
+        "Live Music Dinner",
+        "Other"
+      ]
+    },
+    "is_published": {
+      "type": "boolean",
+      "title": "Published",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "date",
+    "time",
+    "price_per_person",
+    "capacity"
+  ]
+}
