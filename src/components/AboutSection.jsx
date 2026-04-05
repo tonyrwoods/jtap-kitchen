@@ -15,7 +15,7 @@ export default function AboutSection() {
           >
             <div className="relative overflow-hidden rounded-3xl">
               <img
-                src="/__generating__/img_49251eb75515.png"
+                src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/69593e5e6_generated_103ea6e4.png"
                 alt="Luxurious restaurant interior with warm lighting"
                 className="w-full h-[400px] md:h-[550px] object-cover"
               />

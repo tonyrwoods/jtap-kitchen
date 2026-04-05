@@ -7,7 +7,7 @@ export default function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="/__generating__/img_34d3fbaa3b12.png"
+          src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/dbe7ca72f_generated_6964c032.png"
           alt="Fine dining dish beautifully plated"
           className="w-full h-full object-cover"
         />
