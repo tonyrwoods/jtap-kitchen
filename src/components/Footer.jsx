@@ -55,7 +55,7 @@ export default function Footer() {
             </h4>
             <div className="space-y-3">
               {[
-                { day: "Tue – Thu", time: "5:30 PM – 10:00 PM" },
+                { day: "Tue – Thu", time: "9:30 PM – 10:00 PM" },
                 { day: "Fri – Sat", time: "5:30 PM – 11:00 PM" },
                 { day: "Sunday", time: "5:00 PM – 9:30 PM" },
                 { day: "Monday", time: "Closed" },
