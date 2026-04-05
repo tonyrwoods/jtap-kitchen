@@ -1,0 +1,58 @@
+{
+  "name": "GiftCard",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "title": "Voucher Code"
+    },
+    "amount": {
+      "type": "number",
+      "title": "Amount (USD)"
+    },
+    "purchaser_name": {
+      "type": "string",
+      "title": "Purchaser Name"
+    },
+    "purchaser_email": {
+      "type": "string",
+      "title": "Purchaser Email"
+    },
+    "recipient_name": {
+      "type": "string",
+      "title": "Recipient Name"
+    },
+    "recipient_email": {
+      "type": "string",
+      "title": "Recipient Email"
+    },
+    "message": {
+      "type": "string",
+      "title": "Personal Message"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending Payment",
+        "Active",
+        "Redeemed",
+        "Expired"
+      ],
+      "default": "Pending Payment"
+    },
+    "redeemed_at": {
+      "type": "string",
+      "title": "Redeemed At"
+    },
+    "redeemed_by": {
+      "type": "string",
+      "title": "Redeemed By (Guest Name)"
+    }
+  },
+  "required": [
+    "amount",
+    "purchaser_name",
+    "purchaser_email"
+  ]
+}

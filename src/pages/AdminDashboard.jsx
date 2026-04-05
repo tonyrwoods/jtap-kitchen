@@ -4,10 +4,10 @@ import { useAuth } from "@/lib/AuthContext";
 import { motion } from "framer-motion";
 import {
   UtensilsCrossed, CalendarDays, Users, TrendingUp,
-  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, ChevronDown
+  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, ChevronDown, Gift
 } from "lucide-react";
 
-const TABS = ["Overview", "Menu Items", "Reservations"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Gift Cards"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -98,6 +98,7 @@ export default function AdminDashboard() {
   const [tab, setTab] = useState("Overview");
   const [menuItems, setMenuItems] = useState([]);
   const [reservations, setReservations] = useState([]);
+  const [giftCards, setGiftCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -106,9 +107,11 @@ export default function AdminDashboard() {
     Promise.all([
       base44.entities.MenuItem.list("-created_date", 100),
       base44.entities.Reservation.list("-created_date", 100),
-    ]).then(([m, r]) => {
+      base44.entities.GiftCard.list("-created_date", 100),
+    ]).then(([m, r, g]) => {
       setMenuItems(m);
       setReservations(r);
+      setGiftCards(g);
       setLoading(false);
     });
   }, []);
@@ -142,8 +145,20 @@ export default function AdminDashboard() {
     );
   }
 
+  const updateGiftCardStatus = async (id, status) => {
+    const updates = { status };
+    if (status === "Redeemed") {
+      updates.redeemed_at = new Date().toISOString();
+    }
+    await base44.entities.GiftCard.update(id, updates);
+    setGiftCards(prev => prev.map(g => g.id === id ? { ...g, ...updates } : g));
+  };
+
+  const GIFT_STATUSES = ["Pending Payment", "Active", "Redeemed", "Expired"];
+
   const stats = [
     { icon: UtensilsCrossed, label: "Menu Items", value: menuItems.length, color: "bg-primary" },
+    { icon: Gift, label: "Gift Cards", value: giftCards.length, color: "bg-purple-500" },
     { icon: CalendarDays, label: "Total Reservations", value: reservations.length, color: "bg-blue-500" },
     { icon: Clock, label: "Pending", value: reservations.filter(r => r.status === "Pending").length, color: "bg-yellow-500" },
     { icon: CheckCircle, label: "Confirmed Today", value: reservations.filter(r => r.status === "Confirmed").length, color: "bg-green-500" },
@@ -295,6 +310,51 @@ export default function AdminDashboard() {
                   <div className="text-center py-20">
                     <CalendarDays className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                     <p className="font-body text-muted-foreground">No reservations yet.</p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Gift Cards */}
+            {tab === "Gift Cards" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                  {[
+                    { label: "Total Issued", value: giftCards.length, color: "bg-purple-500" },
+                    { label: "Active", value: giftCards.filter(g => g.status === "Active").length, color: "bg-green-500" },
+                    { label: "Redeemed", value: giftCards.filter(g => g.status === "Redeemed").length, color: "bg-blue-500" },
+                  ].map(s => <StatCard key={s.label} icon={Gift} {...s} />)}
+                </div>
+                {giftCards.map(g => (
+                  <div key={g.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className="font-heading text-lg font-bold text-primary tracking-widest">{g.code}</span>
+                        <span className="font-heading text-base font-semibold">${Number(g.amount).toFixed(2)}</span>
+                      </div>
+                      <p className="font-body text-sm text-muted-foreground">From: {g.purchaser_name} ({g.purchaser_email})</p>
+                      {g.recipient_name && <p className="font-body text-sm text-muted-foreground">To: {g.recipient_name} ({g.recipient_email})</p>}
+                      {g.status === "Redeemed" && g.redeemed_at && (
+                        <p className="font-body text-xs text-muted-foreground mt-1">Redeemed: {new Date(g.redeemed_at).toLocaleDateString()}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <StatusBadge status={g.status || "Pending Payment"} />
+                      <select
+                        value={g.status || "Pending Payment"}
+                        onChange={e => updateGiftCardStatus(g.id, e.target.value)}
+                        className="border border-border rounded-lg px-3 py-1.5 text-sm bg-background font-body"
+                      >
+                        {GIFT_STATUSES.map(s => <option key={s}>{s}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                ))}
+                {giftCards.length === 0 && (
+                  <div className="text-center py-20">
+                    <Gift className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                    <p className="font-body text-muted-foreground">No gift cards yet.</p>
+                    <a href="/gift-cards" className="font-body text-sm text-primary hover:underline mt-2 block">View public gift card page →</a>
                   </div>
                 )}
               </motion.div>

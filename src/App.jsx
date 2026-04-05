@@ -6,6 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { I18nProvider } from '@/lib/i18n';
 import AdminDashboard from './pages/AdminDashboard';
+import GiftCards from './pages/GiftCards';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -39,6 +40,7 @@ const AuthenticatedApp = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/gift-cards" element={<GiftCards />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
