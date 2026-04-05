@@ -36,9 +36,9 @@ export default function Footer() {
             </h4>
             <div className="space-y-4">
               {[
-                { icon: MapPin, text: "248 West Broadway, New York, NY 10013" },
+                { icon: MapPin, text: "Memphis, TN" },
                 { icon: Phone, text: "+1 (212) 555-0198" },
-                { icon: Mail, text: "hello@aurelian.com" },
+                { icon: Mail, text: "hello@jtapkitchen.com" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-start gap-3">
                   <Icon className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -107,7 +107,7 @@ export default function Footer() {
               ))}
             </div>
             <p className="font-body text-sm text-background/50 mt-5">
-              @aurelian.dining
+              @jtapkitchen
             </p>
           </div>
         </div>
