@@ -13,6 +13,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import ReservationsCalendar from './pages/ReservationsCalendar';
 import EmailMarketing from './pages/EmailMarketing';
+import SubmitReview from './pages/SubmitReview';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,6 +48,7 @@ const AuthenticatedApp = () => {
         <Route path="/events" element={<Events />} />
         <Route path="/reservations-calendar" element={<ReservationsCalendar />} />
         <Route path="/email-marketing" element={<EmailMarketing />} />
+        <Route path="/submit-review" element={<SubmitReview />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>

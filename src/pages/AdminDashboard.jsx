@@ -7,7 +7,7 @@ import {
   Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, ChevronDown, Gift
 } from "lucide-react";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Gift Cards"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Gift Cards", "Reviews"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -99,6 +99,7 @@ export default function AdminDashboard() {
   const [menuItems, setMenuItems] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [giftCards, setGiftCards] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -108,10 +109,12 @@ export default function AdminDashboard() {
       base44.entities.MenuItem.list("-created_date", 100),
       base44.entities.Reservation.list("-created_date", 100),
       base44.entities.GiftCard.list("-created_date", 100),
-    ]).then(([m, r, g]) => {
+      base44.entities.Review.list("-created_date", 100),
+    ]).then(([m, r, g, rv]) => {
       setMenuItems(m);
       setReservations(r);
       setGiftCards(g);
+      setReviews(rv);
       setLoading(false);
     });
   }, []);
@@ -355,6 +358,66 @@ export default function AdminDashboard() {
                     <Gift className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                     <p className="font-body text-muted-foreground">No gift cards yet.</p>
                     <a href="/gift-cards" className="font-body text-sm text-primary hover:underline mt-2 block">View public gift card page →</a>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Reviews */}
+            {tab === "Reviews" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                  {[
+                    { label: "Total Reviews", value: reviews.length, color: "bg-primary" },
+                    { label: "Pending", value: reviews.filter(r => r.status === "Pending").length, color: "bg-yellow-500" },
+                    { label: "Featured", value: reviews.filter(r => r.is_featured).length, color: "bg-green-500" },
+                  ].map(s => <StatCard key={s.label} icon={CheckCircle} {...s} />)}
+                </div>
+                {reviews.map(rv => (
+                  <div key={rv.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="font-body font-semibold">{rv.guest_name}</span>
+                        <span className="font-body text-xs text-yellow-500">{"★".repeat(rv.rating)}{"☆".repeat(5 - rv.rating)}</span>
+                        <StatusBadge status={rv.status || "Pending"} />
+                        {rv.is_featured && <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">Featured</span>}
+                      </div>
+                      <p className="font-body text-sm text-muted-foreground italic mb-1">"{rv.comment}"</p>
+                      {rv.visit_date && <p className="font-body text-xs text-muted-foreground">Visited: {rv.visit_date}</p>}
+                    </div>
+                    <div className="flex flex-col gap-2 shrink-0">
+                      <select
+                        value={rv.status || "Pending"}
+                        onChange={async e => {
+                          const status = e.target.value;
+                          await base44.entities.Review.update(rv.id, { status });
+                          setReviews(prev => prev.map(r => r.id === rv.id ? { ...r, status } : r));
+                        }}
+                        className="border border-border rounded-lg px-3 py-1.5 text-sm bg-background font-body"
+                      >
+                        {["Pending", "Approved", "Rejected"].map(s => <option key={s}>{s}</option>)}
+                      </select>
+                      {rv.status === "Approved" && (
+                        <button
+                          onClick={async () => {
+                            const updated = { is_featured: !rv.is_featured };
+                            await base44.entities.Review.update(rv.id, updated);
+                            setReviews(prev => prev.map(r => r.id === rv.id ? { ...r, ...updated } : r));
+                          }}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-body font-medium border transition-colors ${
+                            rv.is_featured ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"
+                          }`}
+                        >
+                          {rv.is_featured ? "★ Featured" : "Feature"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {reviews.length === 0 && (
+                  <div className="text-center py-20">
+                    <p className="font-body text-muted-foreground">No reviews yet.</p>
+                    <a href="/submit-review" className="font-body text-sm text-primary hover:underline mt-2 block">View review submission page →</a>
                   </div>
                 )}
               </motion.div>
