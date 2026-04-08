@@ -15,6 +15,7 @@ import ReservationsCalendar from './pages/ReservationsCalendar';
 import EmailMarketing from './pages/EmailMarketing';
 import SubmitReview from './pages/SubmitReview';
 import LoyaltyProgram from './pages/LoyaltyProgram';
+import StaffScheduler from './pages/StaffScheduler';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -51,6 +52,7 @@ const AuthenticatedApp = () => {
         <Route path="/email-marketing" element={<EmailMarketing />} />
         <Route path="/submit-review" element={<SubmitReview />} />
         <Route path="/loyalty" element={<LoyaltyProgram />} />
+        <Route path="/staff-scheduler" element={<StaffScheduler />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>

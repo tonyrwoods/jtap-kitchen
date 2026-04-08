@@ -1,0 +1,47 @@
+{
+  "name": "Shift",
+  "type": "object",
+  "properties": {
+    "staff_id": {
+      "type": "string",
+      "title": "Staff Member ID"
+    },
+    "staff_name": {
+      "type": "string",
+      "title": "Staff Member Name"
+    },
+    "staff_color": {
+      "type": "string",
+      "title": "Staff Color"
+    },
+    "date": {
+      "type": "string",
+      "title": "Date (YYYY-MM-DD)"
+    },
+    "time_block": {
+      "type": "string",
+      "title": "Time Block",
+      "enum": [
+        "Breakfast (8am\u201311am)",
+        "Lunch (11am\u20133pm)",
+        "Dinner (5pm\u20139pm)",
+        "Late Night (9pm\u201312am)",
+        "Full Day"
+      ],
+      "default": "Dinner (5pm\u20139pm)"
+    },
+    "role": {
+      "type": "string",
+      "title": "Role for Shift"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "staff_id",
+    "date",
+    "time_block"
+  ]
+}
