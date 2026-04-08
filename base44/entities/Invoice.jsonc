@@ -1,0 +1,119 @@
+{
+  "name": "Invoice",
+  "type": "object",
+  "properties": {
+    "receipt_number": {
+      "type": "string",
+      "title": "Receipt Number"
+    },
+    "order_id": {
+      "type": "string",
+      "title": "Linked Order ID"
+    },
+    "table_number": {
+      "type": "number",
+      "title": "Table Number"
+    },
+    "server_name": {
+      "type": "string",
+      "title": "Server Name"
+    },
+    "items": {
+      "type": "array",
+      "title": "Line Items",
+      "items": {
+        "type": "object",
+        "properties": {
+          "menu_item_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "unit_price": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "line_total": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "subtotal": {
+      "type": "number",
+      "title": "Subtotal ($)",
+      "default": 0
+    },
+    "discount_type": {
+      "type": "string",
+      "title": "Discount Type",
+      "enum": [
+        "None",
+        "Percent",
+        "Fixed"
+      ],
+      "default": "None"
+    },
+    "discount_value": {
+      "type": "number",
+      "title": "Discount Value",
+      "default": 0
+    },
+    "discount_amount": {
+      "type": "number",
+      "title": "Discount Amount ($)",
+      "default": 0
+    },
+    "tax_rate": {
+      "type": "number",
+      "title": "Tax Rate (%)",
+      "default": 9.25
+    },
+    "tax_amount": {
+      "type": "number",
+      "title": "Tax Amount ($)",
+      "default": 0
+    },
+    "total": {
+      "type": "number",
+      "title": "Total ($)",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Unpaid",
+        "Paid",
+        "Voided"
+      ],
+      "default": "Unpaid"
+    },
+    "payment_method": {
+      "type": "string",
+      "title": "Payment Method",
+      "enum": [
+        "Cash",
+        "Card",
+        "Other"
+      ],
+      "default": "Card"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "table_number",
+    "items",
+    "total",
+    "status"
+  ]
+}

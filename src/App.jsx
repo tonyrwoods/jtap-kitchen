@@ -18,6 +18,8 @@ import LoyaltyProgram from './pages/LoyaltyProgram';
 import StaffScheduler from './pages/StaffScheduler';
 import DigitalMenu from './pages/DigitalMenu';
 import TableQRCodes from './pages/TableQRCodes';
+import KitchenDashboard from './pages/KitchenDashboard';
+import Checkout from './pages/Checkout';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -57,6 +59,8 @@ const AuthenticatedApp = () => {
         <Route path="/staff-scheduler" element={<StaffScheduler />} />
         <Route path="/menu" element={<DigitalMenu />} />
         <Route path="/table-qr-codes" element={<TableQRCodes />} />
+        <Route path="/kitchen" element={<KitchenDashboard />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
