@@ -1,0 +1,57 @@
+{
+  "name": "NewsletterCampaign",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Campaign Title"
+    },
+    "subject": {
+      "type": "string",
+      "title": "Email Subject"
+    },
+    "body": {
+      "type": "string",
+      "title": "Email Body (HTML)"
+    },
+    "segment": {
+      "type": "string",
+      "title": "Audience Segment",
+      "enum": [
+        "All Subscribers",
+        "Completed Guests",
+        "Upcoming Reservations",
+        "VIP Guests (4+ people)"
+      ],
+      "default": "All Subscribers"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Draft",
+        "Scheduled",
+        "Sent"
+      ],
+      "default": "Draft"
+    },
+    "scheduled_at": {
+      "type": "string",
+      "title": "Scheduled Date & Time"
+    },
+    "sent_at": {
+      "type": "string",
+      "title": "Sent At"
+    },
+    "recipient_count": {
+      "type": "number",
+      "title": "Recipients Sent To"
+    }
+  },
+  "required": [
+    "title",
+    "subject",
+    "body",
+    "segment"
+  ]
+}
