@@ -11,6 +11,7 @@ import Events from './pages/Events';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import Home from './pages/Home';
+import ReservationsCalendar from './pages/ReservationsCalendar';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -43,6 +44,7 @@ const AuthenticatedApp = () => {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/gift-cards" element={<GiftCards />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/reservations-calendar" element={<ReservationsCalendar />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
