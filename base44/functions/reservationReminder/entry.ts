@@ -1,0 +1,65 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+
+Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
+  const payload = await req.json();
+
+  const reservationId = payload?.event?.entity_id;
+  if (!reservationId) return Response.json({ error: 'No entity_id' }, { status: 400 });
+
+  const reservation = await base44.asServiceRole.entities.Reservation.get(reservationId);
+  if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
+
+  // Only send for Confirmed reservations with a future date
+  if (reservation.status !== 'Confirmed') {
+    return Response.json({ skipped: 'Not a confirmed reservation' });
+  }
+
+  const resDate = new Date(`${reservation.date}T${reservation.time || '12:00'}`);
+  const now = new Date();
+  const hoursUntil = (resDate - now) / (1000 * 60 * 60);
+
+  // Only schedule reminder if the reservation is between 20–28 hours away
+  if (hoursUntil < 20 || hoursUntil > 28) {
+    return Response.json({ skipped: `${Math.round(hoursUntil)}h until reservation — outside reminder window` });
+  }
+
+  const formattedDate = resDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const formattedTime = resDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  const body = `
+    <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
+      <div style="background:#1a1a1a;padding:28px 32px;text-align:center;">
+        <h1 style="color:#c89b4f;font-size:22px;margin:0;letter-spacing:2px;">JTAP Kitchen</h1>
+        <p style="color:#888;font-size:12px;margin:8px 0 0;">Reservation Reminder</p>
+      </div>
+      <div style="padding:36px 32px;background:#faf9f7;">
+        <h2 style="font-size:20px;margin:0 0 8px;">We'll see you tomorrow, ${reservation.guest_name}!</h2>
+        <p style="color:#666;font-size:14px;margin:0 0 28px;">Your reservation at JTAP Kitchen is confirmed for tomorrow.</p>
+        <div style="background:#fff;border:1px solid #e8e0d4;border-radius:12px;padding:24px;">
+          <table style="width:100%;font-size:14px;border-collapse:collapse;">
+            <tr><td style="padding:8px 0;color:#888;width:120px;">Date</td><td style="padding:8px 0;font-weight:600;">${formattedDate}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Time</td><td style="padding:8px 0;font-weight:600;">${formattedTime}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Party size</td><td style="padding:8px 0;font-weight:600;">${reservation.party_size} guest${reservation.party_size !== 1 ? 's' : ''}</td></tr>
+            ${reservation.special_requests ? `<tr><td style="padding:8px 0;color:#888;vertical-align:top;">Requests</td><td style="padding:8px 0;color:#555;font-style:italic;">${reservation.special_requests}</td></tr>` : ''}
+          </table>
+        </div>
+        <p style="margin:24px 0 0;font-size:13px;color:#888;">
+          Need to make changes? Please contact us at <a href="mailto:info@jtapkitchen.com" style="color:#c89b4f;">info@jtapkitchen.com</a> or call <strong>901-233-4060</strong>.
+        </p>
+      </div>
+      <div style="padding:20px 32px;background:#1a1a1a;text-align:center;">
+        <p style="color:#555;font-size:12px;margin:0 0 4px;">JTAP Kitchen · Memphis, TN</p>
+        <p style="color:#444;font-size:11px;margin:0;">© ${new Date().getFullYear()} JTAP Kitchen. All rights reserved.</p>
+      </div>
+    </div>`;
+
+  await base44.asServiceRole.integrations.Core.SendEmail({
+    to: reservation.email,
+    from_name: 'JTAP Kitchen',
+    subject: `Reminder: Your reservation tomorrow at ${formattedTime}`,
+    body,
+  });
+
+  return Response.json({ sent: true, to: reservation.email });
+});
