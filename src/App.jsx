@@ -19,6 +19,7 @@ import StaffScheduler from './pages/StaffScheduler';
 import DigitalMenu from './pages/DigitalMenu';
 import TableQRCodes from './pages/TableQRCodes';
 import KitchenDashboard from './pages/KitchenDashboard';
+import StaffPerformance from './pages/StaffPerformance';
 import Checkout from './pages/Checkout';
 
 const AuthenticatedApp = () => {
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
         <Route path="/menu" element={<DigitalMenu />} />
         <Route path="/table-qr-codes" element={<TableQRCodes />} />
         <Route path="/kitchen" element={<KitchenDashboard />} />
+        <Route path="/staff-performance" element={<StaffPerformance />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
