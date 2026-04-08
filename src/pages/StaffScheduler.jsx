@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import SwapRequestModal from "../components/SwapRequestModal";
 import { base44 } from "@/api/base44Client";
 import { ChevronLeft, ChevronRight, Plus, X, Users, Clock } from "lucide-react";
 import { toast } from "sonner";
@@ -21,7 +22,7 @@ function fmt(date) {
   return date.toISOString().slice(0, 10);
 }
 
-function ShiftChip({ shift, onRemove, onDragStart }) {
+function ShiftChip({ shift, onRemove, onDragStart, onSwapRequest }) {
   return (
     <div
       draggable
@@ -30,14 +31,23 @@ function ShiftChip({ shift, onRemove, onDragStart }) {
       style={{ backgroundColor: shift.staff_color || "#C89B4F" }}
     >
       <span className="truncate">{shift.staff_name}</span>
-      <button onClick={() => onRemove(shift)} className="opacity-0 group-hover:opacity-100 shrink-0 transition-opacity">
-        <X className="w-3 h-3" />
-      </button>
+      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={e => { e.stopPropagation(); onSwapRequest(shift); }}
+          title="Request swap"
+          className="hover:bg-white/20 rounded p-0.5"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+        </button>
+        <button onClick={() => onRemove(shift)} className="hover:bg-white/20 rounded p-0.5">
+          <X className="w-3 h-3" />
+        </button>
+      </div>
     </div>
   );
 }
 
-function Cell({ date, block, shifts, staff, onDrop, onRemove, onAdd, dragging }) {
+function Cell({ date, block, shifts, staff, onDrop, onRemove, onAdd, dragging, onSwapRequest }) {
   const [over, setOver] = useState(false);
   const cellShifts = shifts.filter(s => s.date === fmt(date) && s.time_block === block);
 
@@ -51,10 +61,11 @@ function Cell({ date, block, shifts, staff, onDrop, onRemove, onAdd, dragging })
       <div className="space-y-1">
         {cellShifts.map(s => (
           <ShiftChip
-            key={s.id}
-            shift={s}
-            onRemove={onRemove}
-            onDragStart={() => dragging.current = s}
+          key={s.id}
+          shift={s}
+          onRemove={onRemove}
+          onDragStart={() => dragging.current = s}
+          onSwapRequest={onSwapRequest}
           />
         ))}
         <button
@@ -185,6 +196,7 @@ export default function StaffScheduler() {
   const [shifts, setShifts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null); // { date, block }
+  const [swapModal, setSwapModal] = useState(null); // shift to swap
   const dragging = useRef(null);
 
   const weekDates = getWeekDates(anchor);
@@ -294,6 +306,7 @@ export default function StaffScheduler() {
                         onDrop={handleDrop}
                         onRemove={handleRemove}
                         onAdd={(date, block) => setModal({ date, block })}
+                        onSwapRequest={shift => setSwapModal(shift)}
                       />
                     ))}
                   </tr>
@@ -325,6 +338,14 @@ export default function StaffScheduler() {
           staff={staff}
           onClose={() => setModal(null)}
           onSave={() => { setModal(null); load(); }}
+        />
+      )}
+
+      {swapModal && (
+        <SwapRequestModal
+          shift={swapModal}
+          allShifts={shifts}
+          onClose={() => setSwapModal(null)}
         />
       )}
     </div>

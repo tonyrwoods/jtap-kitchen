@@ -1,0 +1,69 @@
+{
+  "name": "ShiftSwapRequest",
+  "type": "object",
+  "properties": {
+    "requester_staff_id": {
+      "type": "string",
+      "title": "Requester Staff ID"
+    },
+    "requester_staff_name": {
+      "type": "string",
+      "title": "Requester Name"
+    },
+    "requester_shift_id": {
+      "type": "string",
+      "title": "Requester Shift ID"
+    },
+    "requester_shift_date": {
+      "type": "string",
+      "title": "Requester Shift Date"
+    },
+    "requester_shift_block": {
+      "type": "string",
+      "title": "Requester Shift Block"
+    },
+    "target_staff_id": {
+      "type": "string",
+      "title": "Target Staff ID"
+    },
+    "target_staff_name": {
+      "type": "string",
+      "title": "Target Staff Name"
+    },
+    "target_shift_id": {
+      "type": "string",
+      "title": "Target Shift ID"
+    },
+    "target_shift_date": {
+      "type": "string",
+      "title": "Target Shift Date"
+    },
+    "target_shift_block": {
+      "type": "string",
+      "title": "Target Shift Block"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending",
+        "Approved",
+        "Denied"
+      ],
+      "default": "Pending"
+    },
+    "manager_note": {
+      "type": "string",
+      "title": "Manager Note"
+    }
+  },
+  "required": [
+    "requester_staff_id",
+    "requester_shift_id",
+    "target_shift_id"
+  ]
+}
