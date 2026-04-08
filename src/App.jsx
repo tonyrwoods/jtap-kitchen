@@ -16,6 +16,8 @@ import EmailMarketing from './pages/EmailMarketing';
 import SubmitReview from './pages/SubmitReview';
 import LoyaltyProgram from './pages/LoyaltyProgram';
 import StaffScheduler from './pages/StaffScheduler';
+import DigitalMenu from './pages/DigitalMenu';
+import TableQRCodes from './pages/TableQRCodes';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -53,6 +55,8 @@ const AuthenticatedApp = () => {
         <Route path="/submit-review" element={<SubmitReview />} />
         <Route path="/loyalty" element={<LoyaltyProgram />} />
         <Route path="/staff-scheduler" element={<StaffScheduler />} />
+        <Route path="/menu" element={<DigitalMenu />} />
+        <Route path="/table-qr-codes" element={<TableQRCodes />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
