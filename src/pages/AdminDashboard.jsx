@@ -4,10 +4,11 @@ import { useAuth } from "@/lib/AuthContext";
 import { motion } from "framer-motion";
 import {
   UtensilsCrossed, CalendarDays, Users, TrendingUp,
-  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, ChevronDown, Gift
+  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, ChevronDown, Gift, Crown
 } from "lucide-react";
+import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Gift Cards", "Reviews"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Gift Cards", "Reviews", "Loyalty"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -420,6 +421,13 @@ export default function AdminDashboard() {
                     <a href="/submit-review" className="font-body text-sm text-primary hover:underline mt-2 block">View review submission page →</a>
                   </div>
                 )}
+              </motion.div>
+            )}
+
+            {/* Loyalty */}
+            {tab === "Loyalty" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <LoyaltyAdminTab />
               </motion.div>
             )}
           </>

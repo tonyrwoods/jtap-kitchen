@@ -1,0 +1,47 @@
+{
+  "name": "LoyaltyTier",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Tier Name"
+    },
+    "color": {
+      "type": "string",
+      "title": "Color (hex)",
+      "default": "#C89B4F"
+    },
+    "min_visits": {
+      "type": "number",
+      "title": "Min Visits to Qualify",
+      "default": 0
+    },
+    "min_spending": {
+      "type": "number",
+      "title": "Min Total Spending ($) to Qualify",
+      "default": 0
+    },
+    "discount_percent": {
+      "type": "number",
+      "title": "Discount (%)",
+      "default": 0
+    },
+    "perks": {
+      "type": "string",
+      "title": "Perks Description"
+    },
+    "badge_emoji": {
+      "type": "string",
+      "title": "Badge Emoji",
+      "default": "\u2b50"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
