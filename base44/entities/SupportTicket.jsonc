@@ -1,0 +1,52 @@
+{
+  "name": "SupportTicket",
+  "type": "object",
+  "properties": {
+    "subject": {
+      "type": "string",
+      "title": "Subject"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "requester_name": {
+      "type": "string",
+      "title": "Requester Name"
+    },
+    "requester_email": {
+      "type": "string",
+      "title": "Requester Email"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Open",
+        "In Progress",
+        "Resolved",
+        "Closed"
+      ],
+      "default": "Open"
+    },
+    "resolution_notes": {
+      "type": "string",
+      "title": "Resolution Notes"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "Low",
+        "Medium",
+        "High"
+      ],
+      "default": "Medium"
+    }
+  },
+  "required": [
+    "subject",
+    "requester_name",
+    "requester_email"
+  ]
+}
