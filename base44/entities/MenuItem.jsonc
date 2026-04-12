@@ -24,6 +24,10 @@
       "type": "number",
       "title": "Price (USD)"
     },
+    "cost": {
+      "type": "number",
+      "title": "Food Cost (USD)"
+    },
     "image_url": {
       "type": "string",
       "title": "Image URL"
