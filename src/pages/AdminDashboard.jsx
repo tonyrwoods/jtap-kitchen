@@ -12,8 +12,9 @@ import ReservationsCalendarView from "../components/admin/ReservationsCalendarVi
 import StaffRosterTab from "../components/admin/StaffRosterTab";
 import InventoryAdminTab from "../components/admin/InventoryAdminTab";
 import FeedbackManagementTab from "../components/admin/FeedbackManagementTab";
+import VendorPaymentsTab from "../components/admin/VendorPaymentsTab";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Loyalty", "SEO"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "SEO"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -394,6 +395,13 @@ export default function AdminDashboard() {
             {tab === "Feedback" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                 <FeedbackManagementTab />
+              </motion.div>
+            )}
+
+            {/* Vendor Payments */}
+            {tab === "Vendor Payments" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <VendorPaymentsTab />
               </motion.div>
             )}
 

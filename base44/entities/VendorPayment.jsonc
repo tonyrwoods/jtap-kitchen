@@ -1,0 +1,49 @@
+{
+  "name": "VendorPayment",
+  "type": "object",
+  "properties": {
+    "invoice_id": {
+      "type": "string",
+      "title": "Invoice ID"
+    },
+    "vendor_name": {
+      "type": "string",
+      "title": "Vendor Name"
+    },
+    "payment_number": {
+      "type": "number",
+      "title": "Payment #",
+      "description": "1, 2, or 3"
+    },
+    "amount": {
+      "type": "number",
+      "title": "Payment Amount ($)"
+    },
+    "due_date": {
+      "type": "string",
+      "title": "Due Date (YYYY-MM-DD)"
+    },
+    "paid_date": {
+      "type": "string",
+      "title": "Paid Date (YYYY-MM-DD)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending",
+        "Paid On Time",
+        "Paid Late",
+        "Overdue"
+      ],
+      "default": "Pending"
+    }
+  },
+  "required": [
+    "invoice_id",
+    "vendor_name",
+    "payment_number",
+    "amount",
+    "due_date"
+  ]
+}

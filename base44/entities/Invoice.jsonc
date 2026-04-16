@@ -108,6 +108,29 @@
     "notes": {
       "type": "string",
       "title": "Notes"
+    },
+    "is_vendor_invoice": {
+      "type": "boolean",
+      "title": "Vendor Invoice",
+      "default": false
+    },
+    "vendor_name": {
+      "type": "string",
+      "title": "Vendor Name"
+    },
+    "installment_plan": {
+      "type": "string",
+      "title": "Installment Plan Type",
+      "enum": [
+        "None",
+        "Specific Dates",
+        "30 Days Apart"
+      ],
+      "default": "None"
+    },
+    "first_payment_due": {
+      "type": "string",
+      "title": "First Payment Due Date (YYYY-MM-DD)"
     }
   },
   "required": [
