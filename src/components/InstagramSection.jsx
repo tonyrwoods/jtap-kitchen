@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Heart, MessageCircle, Bookmark, Instagram, ExternalLink } from "lucide-react";
 
 const POSTS = [
@@ -57,18 +56,12 @@ function formatNumber(n) {
   return n >= 1000 ? (n / 1000).toFixed(1) + "k" : n;
 }
 
-function PostCard({ post, index }) {
+function PostCard({ post }) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="bg-card border border-border rounded-2xl overflow-hidden group"
-    >
+    <div className="bg-card border border-border rounded-2xl overflow-hidden group">
       {/* Post Header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 via-primary to-orange-500 flex items-center justify-center shrink-0">
@@ -92,20 +85,13 @@ function PostCard({ post, index }) {
 
       {/* Actions */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-3">
-        <button
-          onClick={() => setLiked(!liked)}
-          className="flex items-center gap-1.5 group/like"
-        >
-          <Heart
-            className={`w-5 h-5 transition-all duration-200 ${liked ? "fill-red-500 text-red-500 scale-110" : "text-foreground group-hover/like:text-red-400"}`}
-          />
+        <button onClick={() => setLiked(!liked)} className="flex items-center gap-1.5 group/like">
+          <Heart className={`w-5 h-5 transition-all duration-200 ${liked ? "fill-red-500 text-red-500 scale-110" : "text-foreground group-hover/like:text-red-400"}`} />
         </button>
         <MessageCircle className="w-5 h-5 text-foreground hover:text-primary cursor-pointer transition-colors" />
         <div className="flex-1" />
         <button onClick={() => setSaved(!saved)}>
-          <Bookmark
-            className={`w-5 h-5 transition-colors duration-200 ${saved ? "fill-foreground text-foreground" : "text-foreground hover:text-primary"}`}
-          />
+          <Bookmark className={`w-5 h-5 transition-colors duration-200 ${saved ? "fill-foreground text-foreground" : "text-foreground hover:text-primary"}`} />
         </button>
       </div>
 
@@ -127,7 +113,7 @@ function PostCard({ post, index }) {
           View all {post.comments} comments
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -136,13 +122,7 @@ export default function InstagramSection() {
     <section id="instagram" className="py-24 md:py-32 px-6 lg:px-10">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12"
-        >
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
           <div>
             <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">
               Follow Along
@@ -165,25 +145,19 @@ export default function InstagramSection() {
             Follow Us
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
-        </motion.div>
+        </div>
 
         {/* Posts Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-          {POSTS.map((post, i) => (
-            <PostCard key={post.url} post={post} index={i} />
+          {POSTS.map((post) => (
+            <PostCard key={post.url} post={post} />
           ))}
         </div>
 
         {/* Bottom CTA */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center font-body text-sm text-muted-foreground mt-10"
-        >
+        <p className="text-center font-body text-sm text-muted-foreground mt-10">
           Tag us in your photos with <span className="text-primary font-semibold">#JTAPKitchen</span> for a chance to be featured.
-        </motion.p>
+        </p>
       </div>
     </section>
   );

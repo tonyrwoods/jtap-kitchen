@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const GALLERY = [
@@ -49,15 +48,10 @@ function Lightbox({ images, index, onClose, onPrev, onNext }) {
   const img = images[index];
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+    <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm px-4"
       onClick={onClose}
     >
-      {/* Close */}
       <button
         onClick={onClose}
         className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-10"
@@ -65,7 +59,6 @@ function Lightbox({ images, index, onClose, onPrev, onNext }) {
         <X className="w-5 h-5 text-white" />
       </button>
 
-      {/* Prev */}
       <button
         onClick={(e) => { e.stopPropagation(); onPrev(); }}
         className="absolute left-4 md:left-8 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-10"
@@ -73,15 +66,7 @@ function Lightbox({ images, index, onClose, onPrev, onNext }) {
         <ChevronLeft className="w-6 h-6 text-white" />
       </button>
 
-      {/* Image */}
-      <motion.div
-        key={index}
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="max-w-5xl w-full"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
         <img
           src={img.url}
           alt={img.label}
@@ -91,9 +76,8 @@ function Lightbox({ images, index, onClose, onPrev, onNext }) {
           <span className="font-body text-xs uppercase tracking-[0.2em] text-white/40">{img.category}</span>
           <p className="font-heading text-xl text-white mt-1">{img.label}</p>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Next */}
       <button
         onClick={(e) => { e.stopPropagation(); onNext(); }}
         className="absolute right-4 md:right-8 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-10"
@@ -101,7 +85,6 @@ function Lightbox({ images, index, onClose, onPrev, onNext }) {
         <ChevronRight className="w-6 h-6 text-white" />
       </button>
 
-      {/* Dots */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
         {images.map((_, i) => (
           <button
@@ -111,7 +94,7 @@ function Lightbox({ images, index, onClose, onPrev, onNext }) {
           />
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -128,13 +111,7 @@ export default function GallerySection() {
       <section id="gallery" className="py-24 md:py-32 bg-foreground overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="text-center mb-14"
-          >
+          <div className="text-center mb-14">
             <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">
               Our World
             </span>
@@ -145,17 +122,13 @@ export default function GallerySection() {
               From the warmth of our dining room to the precision of our kitchen — every
               corner of JTAP Kitchen tells a story.
             </p>
-          </motion.div>
+          </div>
 
           {/* Masonry-style Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             {GALLERY.map((item, i) => (
-              <motion.div
+              <div
                 key={item.url}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-30px" }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
                 onClick={() => open(i)}
                 className={`group relative overflow-hidden rounded-2xl cursor-pointer ${
                   i === 0 ? "md:row-span-2 col-span-2 md:col-span-1" : ""
@@ -168,29 +141,25 @@ export default function GallerySection() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-5">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
                   <span className="font-body text-xs uppercase tracking-widest text-primary">{item.category}</span>
                   <p className="font-heading text-lg text-white mt-1">{item.label}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Lightbox */}
-      <AnimatePresence>
-        {lightboxIndex !== null && (
-          <Lightbox
-            images={GALLERY}
-            index={lightboxIndex}
-            onClose={close}
-            onPrev={prev}
-            onNext={next}
-          />
-        )}
-      </AnimatePresence>
+      {lightboxIndex !== null && (
+        <Lightbox
+          images={GALLERY}
+          index={lightboxIndex}
+          onClose={close}
+          onPrev={prev}
+          onNext={next}
+        />
+      )}
     </>
   );
 }

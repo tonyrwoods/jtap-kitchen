@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, MapPin, Award } from "lucide-react";
 
 const TEAM = [
@@ -59,15 +58,9 @@ const TEAM = [
   },
 ];
 
-function TimelineItem({ item, index, isLast }) {
+function TimelineItem({ item, isLast }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      className="flex gap-4 relative"
-    >
-      {/* Line */}
+    <div className="flex gap-4 relative">
       <div className="flex flex-col items-center">
         <div className="w-3 h-3 rounded-full bg-primary mt-0.5 shrink-0 ring-4 ring-primary/20" />
         {!isLast && <div className="w-px flex-1 bg-border mt-1" />}
@@ -82,21 +75,15 @@ function TimelineItem({ item, index, isLast }) {
         </div>
         <p className="font-body text-sm text-foreground leading-relaxed">{item.event}</p>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-function TeamCard({ member, index }) {
+function TeamCard({ member }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay: index * 0.12 }}
-      className="bg-card border border-border rounded-3xl overflow-hidden"
-    >
+    <div className="bg-card border border-border rounded-3xl overflow-hidden">
       {/* Image */}
       <div className="relative overflow-hidden aspect-[4/3]">
         <img
@@ -121,45 +108,32 @@ function TeamCard({ member, index }) {
       <div className="p-6">
         <p className="font-body text-sm text-muted-foreground leading-relaxed">{member.bio}</p>
 
-        {/* Expand Toggle */}
         <button
           onClick={() => setExpanded(!expanded)}
           className="flex items-center gap-2 mt-5 font-body text-sm font-semibold text-primary hover:opacity-80 transition-opacity"
         >
           {expanded ? "Hide journey" : "View culinary journey"}
-          <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
-            <ChevronDown className="w-4 h-4" />
-          </motion.div>
+          <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`} />
         </button>
 
-        {/* Timeline */}
-        <AnimatePresence>
-          {expanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mt-5 overflow-hidden"
-            >
-              <div className="border-t border-border pt-5">
-                <p className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground mb-4">
-                  Culinary Journey
-                </p>
-                {member.timeline.map((item, i) => (
-                  <TimelineItem
-                    key={item.year}
-                    item={item}
-                    index={i}
-                    isLast={i === member.timeline.length - 1}
-                  />
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {expanded && (
+          <div className="mt-5 overflow-hidden">
+            <div className="border-t border-border pt-5">
+              <p className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground mb-4">
+                Culinary Journey
+              </p>
+              {member.timeline.map((item, i) => (
+                <TimelineItem
+                  key={item.year}
+                  item={item}
+                  isLast={i === member.timeline.length - 1}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -168,13 +142,7 @@ export default function TeamSection() {
     <section id="team" className="py-24 md:py-32 px-6 lg:px-10 bg-secondary/40">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">
             The People Behind the Plate
           </span>
@@ -185,12 +153,12 @@ export default function TeamSection() {
             World-class talent united by a shared obsession: crafting moments that
             stay with you long after the last bite.
           </p>
-        </motion.div>
+        </div>
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-7">
-          {TEAM.map((member, i) => (
-            <TeamCard key={member.name} member={member} index={i} />
+          {TEAM.map((member) => (
+            <TeamCard key={member.name} member={member} />
           ))}
         </div>
       </div>
