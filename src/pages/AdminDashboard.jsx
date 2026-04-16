@@ -11,8 +11,9 @@ import SeoTab from "../components/admin/SeoTab";
 import ReservationsCalendarView from "../components/admin/ReservationsCalendarView";
 import StaffRosterTab from "../components/admin/StaffRosterTab";
 import InventoryAdminTab from "../components/admin/InventoryAdminTab";
+import FeedbackManagementTab from "../components/admin/FeedbackManagementTab";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Loyalty", "SEO"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Loyalty", "SEO"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -386,6 +387,13 @@ export default function AdminDashboard() {
                     <a href="/gift-cards" className="font-body text-sm text-primary hover:underline mt-2 block">View public gift card page →</a>
                   </div>
                 )}
+              </motion.div>
+            )}
+
+            {/* Feedback */}
+            {tab === "Feedback" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <FeedbackManagementTab />
               </motion.div>
             )}
 

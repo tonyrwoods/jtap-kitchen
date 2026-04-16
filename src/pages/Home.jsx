@@ -8,6 +8,7 @@ import ChefsSpotlight from "../components/ChefsSpotlight";
 import MenuSection from "../components/MenuSection";
 import AboutSection from "../components/AboutSection";
 import TestimonialsSection from "../components/TestimonialsSection";
+import FeedbackSection from "../components/FeedbackSection";
 import ReservationSection from "../components/ReservationSection";
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
       <GallerySection />
       <InstagramSection />
       <TestimonialsSection />
+      <FeedbackSection />
       <ReservationSection />
     </>
   );
