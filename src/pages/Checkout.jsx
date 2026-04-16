@@ -1,9 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Plus, Minus, Trash2, Tag, Printer, CheckCircle, ArrowLeft, Receipt, Search } from "lucide-react";
 import { toast } from "sonner";
+import CustomerLoyaltyPanel from "../components/checkout/CustomerLoyaltyPanel";
 
 const TAX_RATE = 9.25; // %
+
+function calcCustomerTier(totalSpend) {
+  if (totalSpend >= 5000) return "Platinum";
+  if (totalSpend >= 1500) return "Gold";
+  if (totalSpend >= 500)  return "Silver";
+  return "Bronze";
+}
 
 function genReceiptNumber() {
   return "RCP-" + Date.now().toString(36).toUpperCase();
@@ -129,6 +137,9 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("Card");
   const [notes, setNotes] = useState("");
 
+  // Customer
+  const [linkedCustomer, setLinkedCustomer] = useState(null);
+
   // Receipt
   const [receipt, setReceipt] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -194,6 +205,33 @@ export default function Checkout() {
     };
 
     const saved = await base44.entities.Invoice.create(invoiceData);
+
+    // Update customer profile if linked
+    if (linkedCustomer) {
+      const pointsEarned = Math.floor(total);
+      const newHistory = [
+        ...(linkedCustomer.order_history || []),
+        {
+          invoice_id: saved.id,
+          receipt_number: saved.receipt_number,
+          date: new Date().toISOString(),
+          total,
+          items_count: selectedItems.length,
+        },
+      ];
+      const newSpend = (linkedCustomer.total_spend || 0) + total;
+      const newVisits = (linkedCustomer.total_visits || 0) + 1;
+      const newPoints = (linkedCustomer.loyalty_points || 0) + pointsEarned;
+      const newTier = calcCustomerTier(newSpend);
+      await base44.entities.CustomerProfile.update(linkedCustomer.id, {
+        total_spend: newSpend,
+        total_visits: newVisits,
+        loyalty_points: newPoints,
+        loyalty_tier: newTier,
+        order_history: newHistory,
+      });
+    }
+
     setReceipt(saved);
     setSaving(false);
     toast.success("Invoice created!");
@@ -211,6 +249,7 @@ export default function Checkout() {
   const resetAll = () => {
     setQuantities({}); setTableNumber(""); setServerName(""); setLinkedOrderId("");
     setDiscountType("None"); setDiscountValue(""); setNotes(""); setReceipt(null);
+    setLinkedCustomer(null);
   };
 
   if (loading) return (
@@ -285,6 +324,12 @@ export default function Checkout() {
         {/* ── Right: Order Summary ── */}
         <div className="w-80 shrink-0 flex flex-col bg-card overflow-y-auto">
           <div className="p-5 space-y-5 flex-1">
+            {/* Customer Loyalty */}
+            <CustomerLoyaltyPanel
+              onCustomerLinked={setLinkedCustomer}
+              orderTotal={total}
+            />
+
             {/* Table / Server */}
             <div>
               <h3 className="font-heading text-sm font-semibold mb-3">Order Info</h3>
