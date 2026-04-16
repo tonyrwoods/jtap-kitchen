@@ -80,9 +80,10 @@ export default function MenuSection() {
     });
   }, []);
 
-  const filtered = activeCategory === "All"
+  const filtered = (activeCategory === "All"
     ? items
-    : items.filter((item) => item.category === activeCategory);
+    : items.filter((item) => item.category === activeCategory)
+  ).filter(Boolean);
 
   return (
     <section id="menu" className="py-24 md:py-32 px-6 lg:px-10">
