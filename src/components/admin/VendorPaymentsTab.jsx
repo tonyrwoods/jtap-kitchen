@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip, Download } from "lucide-react";
+import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip, Download, X } from "lucide-react";
 import { toast } from "sonner";
 import DocumentUploadModal from "./DocumentUploadModal";
 
@@ -274,6 +274,8 @@ export default function VendorPaymentsTab() {
   const [importing, setImporting] = useState(false);
   const [reconcilePayment, setReconcilePayment] = useState(null);
   const [documentInvoice, setDocumentInvoice] = useState(null);
+  const [rejectingInvoice, setRejectingInvoice] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -324,6 +326,29 @@ export default function VendorPaymentsTab() {
     } catch (error) {
       toast.error(`Failed to generate PDF: ${error.message}`);
     }
+  };
+
+  const approveInvoice = async (invoiceId) => {
+    const user = await base44.auth.me();
+    await base44.entities.Invoice.update(invoiceId, {
+      approval_status: "Approved",
+      approved_by: user.email,
+      approval_date: new Date().toISOString().split("T")[0],
+    });
+    setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, approval_status: "Approved", approved_by: user.email, approval_date: new Date().toISOString().split("T")[0] } : inv));
+    toast.success("Invoice approved");
+  };
+
+  const rejectInvoice = async () => {
+    if (!rejectingInvoice) return;
+    await base44.entities.Invoice.update(rejectingInvoice.id, {
+      approval_status: "Rejected",
+      rejection_reason: rejectReason,
+    });
+    setInvoices(prev => prev.map(inv => inv.id === rejectingInvoice.id ? { ...inv, approval_status: "Rejected", rejection_reason: rejectReason } : inv));
+    setRejectingInvoice(null);
+    setRejectReason("");
+    toast.success("Invoice rejected");
   };
 
   if (loading) {
@@ -446,6 +471,8 @@ export default function VendorPaymentsTab() {
               <div
                 key={inv.id}
                 className={`bg-card border-l-4 rounded-2xl p-5 ${
+                  inv.approval_status === "Rejected" ? "border-red-500 bg-red-50/30" :
+                  inv.approval_status === "Pending Review" ? "border-blue-500 bg-blue-50/30" :
                   allPaid && allOnTime
                     ? "border-green-500 bg-green-50/30"
                     : anyLate
@@ -456,7 +483,11 @@ export default function VendorPaymentsTab() {
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      {allPaid && allOnTime ? (
+                      {inv.approval_status === "Rejected" ? (
+                        <X className="w-5 h-5 text-red-600" />
+                      ) : inv.approval_status === "Pending Review" ? (
+                        <AlertCircle className="w-5 h-5 text-blue-600" />
+                      ) : allPaid && allOnTime ? (
                         <Check className="w-5 h-5 text-green-600" />
                       ) : anyLate ? (
                         <AlertCircle className="w-5 h-5 text-yellow-600" />
@@ -464,6 +495,21 @@ export default function VendorPaymentsTab() {
                         <Calendar className="w-5 h-5 text-muted-foreground" />
                       )}
                       <p className="font-heading font-semibold">{inv.vendor_name}</p>
+                      {inv.approval_status === "Pending Review" && (
+                        <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full font-semibold">
+                          Pending Approval
+                        </span>
+                      )}
+                      {inv.approval_status === "Rejected" && (
+                        <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full font-semibold">
+                          Rejected
+                        </span>
+                      )}
+                      {inv.approval_status === "Approved" && (
+                        <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded-full font-semibold">
+                          ✓ Approved
+                        </span>
+                      )}
                     </div>
                     <p className="font-body text-sm text-muted-foreground">
                       Invoice Total: ${Number(inv.total).toFixed(2)}
@@ -474,8 +520,27 @@ export default function VendorPaymentsTab() {
                         {inv.documents.length} document{inv.documents.length !== 1 ? "s" : ""}
                       </div>
                     )}
+                    {inv.approval_status === "Rejected" && inv.rejection_reason && (
+                      <p className="text-xs text-red-700 mt-2 italic">Reason: {inv.rejection_reason}</p>
+                    )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap justify-end">
+                    {inv.approval_status === "Pending Review" && (
+                      <>
+                        <button
+                          onClick={() => approveInvoice(inv.id)}
+                          className="px-3 py-2 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg font-body text-xs font-semibold transition-colors"
+                        >
+                          <Check className="w-3 h-3 inline mr-1" /> Approve
+                        </button>
+                        <button
+                          onClick={() => setRejectingInvoice(inv)}
+                          className="px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg font-body text-xs font-semibold transition-colors"
+                        >
+                          <X className="w-3 h-3 inline mr-1" /> Reject
+                        </button>
+                      </>
+                    )}
                     <button
                       onClick={() => downloadPDF(inv)}
                       className="px-3 py-2 border border-border text-muted-foreground hover:text-foreground rounded-lg font-body text-xs font-semibold transition-colors"
@@ -488,7 +553,7 @@ export default function VendorPaymentsTab() {
                     >
                       <Paperclip className="w-3 h-3 inline mr-1" /> Docs
                     </button>
-                    {!invPayments.length && (
+                    {!invPayments.length && inv.approval_status === "Approved" && (
                       <button
                         onClick={() => {
                           setEditingInvoice(inv);
@@ -611,6 +676,40 @@ export default function VendorPaymentsTab() {
             });
           }}
         />
+      )}
+
+      {rejectingInvoice && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full space-y-4">
+            <h3 className="font-heading text-lg font-semibold">Reject Invoice</h3>
+            <p className="font-body text-sm text-muted-foreground">{rejectingInvoice.vendor_name}</p>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Reason for rejection..."
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+              rows={3}
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setRejectingInvoice(null);
+                  setRejectReason("");
+                }}
+                className="flex-1 px-4 py-2 border border-border rounded-full font-body text-sm font-medium hover:bg-muted transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={rejectInvoice}
+                disabled={!rejectReason.trim()}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-full font-body text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

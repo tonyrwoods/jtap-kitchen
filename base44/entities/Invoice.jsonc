@@ -118,6 +118,28 @@
       "type": "string",
       "title": "Vendor Name"
     },
+    "approval_status": {
+      "type": "string",
+      "title": "Approval Status",
+      "enum": [
+        "Pending Review",
+        "Approved",
+        "Rejected"
+      ],
+      "default": "Pending Review"
+    },
+    "approved_by": {
+      "type": "string",
+      "title": "Approved By (Admin Email)"
+    },
+    "approval_date": {
+      "type": "string",
+      "title": "Approval Date (YYYY-MM-DD)"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "title": "Rejection Reason"
+    },
     "installment_plan": {
       "type": "string",
       "title": "Installment Plan Type",
