@@ -1,0 +1,78 @@
+{
+  "name": "InventoryItem",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Item Name"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "Produce",
+        "Meat",
+        "Seafood",
+        "Dairy",
+        "Dry Goods",
+        "Beverages",
+        "Packaging",
+        "Other"
+      ],
+      "default": "Other"
+    },
+    "unit": {
+      "type": "string",
+      "title": "Unit of Measure (e.g., kg, each, liter)"
+    },
+    "current_stock": {
+      "type": "number",
+      "title": "Current Stock Quantity",
+      "minimum": 0,
+      "default": 0
+    },
+    "min_stock_level": {
+      "type": "number",
+      "title": "Minimum Stock Level (Reorder Point)",
+      "minimum": 0,
+      "default": 0
+    },
+    "reorder_quantity": {
+      "type": "number",
+      "title": "Standard Reorder Quantity",
+      "minimum": 0,
+      "default": 0
+    },
+    "supplier": {
+      "type": "string",
+      "title": "Preferred Supplier"
+    },
+    "cost_per_unit": {
+      "type": "number",
+      "title": "Cost Per Unit ($)",
+      "minimum": 0,
+      "default": 0
+    },
+    "last_restock_date": {
+      "type": "string",
+      "title": "Last Restock Date (YYYY-MM-DD)"
+    },
+    "expiry_date": {
+      "type": "string",
+      "title": "Expiry Date (YYYY-MM-DD)"
+    },
+    "linked_menu_items": {
+      "type": "array",
+      "title": "Linked Menu Item IDs",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "unit",
+    "current_stock",
+    "min_stock_level"
+  ]
+}
