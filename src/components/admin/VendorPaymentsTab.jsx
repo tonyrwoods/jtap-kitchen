@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Check, AlertCircle, Calendar } from "lucide-react";
+import { Plus, Check, AlertCircle, Calendar, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 function PaymentStatusBadge({ status }) {
@@ -154,6 +154,8 @@ export default function VendorPaymentsTab() {
   const [loading, setLoading] = useState(true);
   const [editingInvoice, setEditingInvoice] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     Promise.all([
@@ -195,10 +197,76 @@ export default function VendorPaymentsTab() {
   const invoicePayments = (invoiceId) =>
     payments.filter((p) => p.invoice_id === invoiceId);
 
+  const handleFileImport = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImporting(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await base44.functions.invoke('importVendorInvoices', formData);
+      
+      if (response.data.status === 'complete') {
+        toast.success(response.data.message);
+        
+        // Refresh data
+        Promise.all([
+          base44.entities.Invoice.filter({ is_vendor_invoice: true }),
+          base44.entities.VendorPayment.list("-created_date", 500),
+        ]).then(([invs, pmts]) => {
+          setInvoices(invs);
+          setPayments(pmts);
+        });
+
+        // Show any errors
+        if (response.data.errors?.length > 0) {
+          toast.error(`${response.data.errors.length} rows failed to import`);
+        }
+      }
+    } catch (error) {
+      toast.error(`Import failed: ${error.message}`);
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-heading text-lg font-semibold">Vendor Invoices & Payments</h3>
+        <div className="flex gap-2">
+          <label className="px-4 py-2 bg-secondary text-secondary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 cursor-pointer transition-opacity flex items-center gap-2">
+            <Upload className="w-4 h-4" />
+            {importing ? "Importing..." : "Import CSV"}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              onChange={handleFileImport}
+              disabled={importing}
+              className="hidden"
+            />
+          </label>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              const template = "vendor_name,amount,invoice_date,description\nSupplier Co,1500.00,2026-04-16,Produce order\n";
+              const blob = new Blob([template], { type: 'text/csv' });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'vendor_invoices_template.csv';
+              a.click();
+            }}
+            className="px-4 py-2 border border-border rounded-full font-body text-sm font-medium hover:bg-muted transition-colors"
+          >
+            Download Template
+          </a>
+        </div>
       </div>
 
       {showForm && editingInvoice && (
