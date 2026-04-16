@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Leaf, Flame, Wheat, Nut } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { base44 } from "@/api/base44Client";
 
 const CATEGORIES = ["All", "Starters", "Mains", "Desserts", "Drinks"];
@@ -84,13 +82,7 @@ export default function MenuSection() {
     <section id="menu" className="py-24 md:py-32 px-6 lg:px-10">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-14"
-        >
+        <div className="text-center mb-14">
           <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">
             Culinary Excellence
           </span>
@@ -100,7 +92,7 @@ export default function MenuSection() {
           <p className="font-body text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
             Thoughtfully crafted dishes using the finest seasonal ingredients, designed to surprise and delight.
           </p>
-        </motion.div>
+        </div>
 
         {/* Category Tabs */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
