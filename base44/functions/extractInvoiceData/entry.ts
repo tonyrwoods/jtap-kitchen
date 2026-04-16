@@ -1,5 +1,20 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+const EXPENSE_CATEGORIES = [
+  "Food & Beverage",
+  "Software Subscriptions",
+  "Office Supplies",
+  "Utilities",
+  "Equipment & Maintenance",
+  "Marketing & Advertising",
+  "Professional Services",
+  "Staffing & Labor",
+  "Rent & Facilities",
+  "Insurance",
+  "Logistics & Shipping",
+  "Other"
+];
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
@@ -17,7 +32,7 @@ Deno.serve(async (req) => {
   }
 
   const extracted = await base44.integrations.Core.InvokeLLM({
-    prompt: `You are a data extraction assistant. Analyze this vendor invoice PDF and extract all key financial and payment information.
+    prompt: `You are a data extraction assistant for a restaurant business. Analyze this vendor invoice PDF and extract all key financial and payment information.
 
 Extract the following fields if present:
 - vendor_name: The vendor/supplier company name
@@ -33,8 +48,11 @@ Extract the following fields if present:
 - payment_terms: Payment terms if mentioned (e.g., "Net 30", "Due on receipt", "3 installments")
 - installment_plan: If the invoice mentions installments or split payments, one of: "None", "Specific Dates", "30 Days Apart"
 - first_payment_due: If installment plan detected, the first payment due date (YYYY-MM-DD)
+- expense_category: Based on the vendor name, line items, and description, assign the most appropriate expense category. Choose EXACTLY one from this list: ${EXPENSE_CATEGORIES.join(', ')}. Use "Food & Beverage" for produce, meat, seafood, dairy, or any food/drink suppliers. Use "Software Subscriptions" for SaaS, software, digital tools. Use "Utilities" for electricity, gas, water, internet, phone. Use "Equipment & Maintenance" for kitchen equipment, repairs, hardware. Use "Staffing & Labor" for staffing agencies, payroll services. Use "Professional Services" for accounting, legal, consulting. Use "Marketing & Advertising" for ads, design, printing. Use "Rent & Facilities" for rent, lease, cleaning services. Default to "Other" if unclear.
+- category_confidence: Your confidence in the category assignment: "high", "medium", or "low"
+- category_reasoning: A brief one-sentence explanation of why you chose this category
 
-Return ONLY valid JSON. If a field cannot be determined from the document, set it to null. Do not guess values.`,
+Return ONLY valid JSON. If a field cannot be determined from the document, set it to null. Do not guess monetary values.`,
     file_urls: [file_url],
     response_json_schema: {
       type: 'object',
@@ -63,6 +81,9 @@ Return ONLY valid JSON. If a field cannot be determined from the document, set i
         payment_terms: { type: 'string' },
         installment_plan: { type: 'string' },
         first_payment_due: { type: 'string' },
+        expense_category: { type: 'string' },
+        category_confidence: { type: 'string' },
+        category_reasoning: { type: 'string' },
       },
     },
   });

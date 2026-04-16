@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { I18nProvider } from '@/lib/i18n';
-import AdminDashboard from './pages/AdminDashboard';
+import AdminDashboard from './pages/AdminDashboard.jsx';
 import GiftCards from './pages/GiftCards';
 import Events from './pages/Events';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';

@@ -118,6 +118,24 @@
       "type": "string",
       "title": "Vendor Name"
     },
+    "expense_category": {
+      "type": "string",
+      "title": "Expense Category",
+      "enum": [
+        "Food & Beverage",
+        "Software Subscriptions",
+        "Office Supplies",
+        "Utilities",
+        "Equipment & Maintenance",
+        "Marketing & Advertising",
+        "Professional Services",
+        "Staffing & Labor",
+        "Rent & Facilities",
+        "Insurance",
+        "Logistics & Shipping",
+        "Other"
+      ]
+    },
     "approval_status": {
       "type": "string",
       "title": "Approval Status",
