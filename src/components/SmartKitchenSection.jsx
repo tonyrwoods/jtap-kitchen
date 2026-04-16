@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Zap, TrendingUp, Clock, ShieldCheck, BarChart2, Layers } from "lucide-react";
 
 const FEATURES = [
@@ -47,13 +46,7 @@ export default function SmartKitchenSection() {
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
 
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-20"
-        >
+        <div className="text-center mb-20">
           <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">
             Built for Food Businesses
           </span>
@@ -63,35 +56,25 @@ export default function SmartKitchenSection() {
           <p className="font-body text-background/60 text-lg max-w-2xl mx-auto leading-relaxed">
             In a competitive market, the difference between a thriving restaurant and a struggling one often comes down to systems. We give food businesses the edge they need — from the first booking to the final bill.
           </p>
-        </motion.div>
+        </div>
 
         {/* Stats Strip */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-background/10 rounded-2xl overflow-hidden mb-20"
-        >
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-background/10 rounded-2xl overflow-hidden mb-20">
           {STATS.map((s) => (
             <div key={s.label} className="bg-background/5 px-8 py-8 text-center">
               <p className="font-heading text-4xl font-bold text-primary mb-1">{s.value}</p>
               <p className="font-body text-sm text-background/50">{s.label}</p>
             </div>
           ))}
-        </motion.div>
+        </div>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((f, i) => {
+          {FEATURES.map((f) => {
             const Icon = f.icon;
             return (
-              <motion.div
+              <div
                 key={f.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
                 className="group bg-background/5 border border-background/10 hover:border-primary/40 rounded-2xl p-7 transition-all duration-300"
               >
                 <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center mb-5 group-hover:bg-primary/25 transition-colors">
@@ -99,19 +82,13 @@ export default function SmartKitchenSection() {
                 </div>
                 <h3 className="font-heading text-lg font-semibold text-background mb-2">{f.title}</h3>
                 <p className="font-body text-sm text-background/55 leading-relaxed">{f.desc}</p>
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
         {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-16 text-center"
-        >
+        <div className="mt-16 text-center">
           <p className="font-body text-background/50 text-sm mb-6">
             Join hundreds of food businesses already running smarter operations.
           </p>
@@ -129,7 +106,7 @@ export default function SmartKitchenSection() {
               Explore Our Menu
             </a>
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </section>
