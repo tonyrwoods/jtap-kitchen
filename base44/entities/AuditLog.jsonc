@@ -1,0 +1,55 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "invoice_id": {
+      "type": "string",
+      "title": "Invoice ID"
+    },
+    "vendor_name": {
+      "type": "string",
+      "title": "Vendor Name"
+    },
+    "action": {
+      "type": "string",
+      "title": "Action",
+      "enum": [
+        "Invoice Created",
+        "Approval Request",
+        "Invoice Approved",
+        "Invoice Rejected",
+        "Payment Plan Created",
+        "Payment Recorded",
+        "Payment Status Updated",
+        "Reconciliation Flagged",
+        "Discrepancy Noted",
+        "Document Attached",
+        "Document Removed",
+        "Invoice Voided"
+      ]
+    },
+    "details": {
+      "type": "string",
+      "title": "Action Details"
+    },
+    "admin_email": {
+      "type": "string",
+      "title": "Admin Email"
+    },
+    "timestamp": {
+      "type": "string",
+      "title": "Timestamp (ISO 8601)"
+    },
+    "changes": {
+      "type": "object",
+      "title": "Changes Made",
+      "description": "JSON object containing before/after values if applicable"
+    }
+  },
+  "required": [
+    "invoice_id",
+    "action",
+    "admin_email",
+    "timestamp"
+  ]
+}

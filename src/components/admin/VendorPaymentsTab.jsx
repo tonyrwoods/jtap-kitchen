@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip, Download, X } from "lucide-react";
 import { toast } from "sonner";
 import DocumentUploadModal from "./DocumentUploadModal";
+import { logInvoiceAction } from "@/lib/auditLogHelper";
 
 function PaymentStatusBadge({ status }) {
   const colors = {
@@ -293,11 +294,19 @@ export default function VendorPaymentsTab() {
     const payment = payments.find((p) => p.id === paymentId);
     const status =
       new Date(paidDate) <= new Date(payment.due_date) ? "Paid On Time" : "Paid Late";
+    const invoice = invoices.find(inv => inv.id === payment.invoice_id);
 
     await base44.entities.VendorPayment.update(paymentId, {
       paid_date: paidDate,
       status,
     });
+
+    await logInvoiceAction(
+      payment.invoice_id,
+      invoice?.vendor_name || "Unknown",
+      "Payment Recorded",
+      `Payment #${payment.payment_number} marked as ${status} on ${paidDate}`
+    );
 
     setPayments((prev) =>
       prev.map((p) =>
@@ -330,21 +339,40 @@ export default function VendorPaymentsTab() {
 
   const approveInvoice = async (invoiceId) => {
     const user = await base44.auth.me();
+    const invoice = invoices.find(inv => inv.id === invoiceId);
+    
     await base44.entities.Invoice.update(invoiceId, {
       approval_status: "Approved",
       approved_by: user.email,
       approval_date: new Date().toISOString().split("T")[0],
     });
+    
+    await logInvoiceAction(
+      invoiceId,
+      invoice.vendor_name,
+      "Invoice Approved",
+      `Approved by ${user.email}`
+    );
+    
     setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, approval_status: "Approved", approved_by: user.email, approval_date: new Date().toISOString().split("T")[0] } : inv));
     toast.success("Invoice approved");
   };
 
   const rejectInvoice = async () => {
     if (!rejectingInvoice) return;
+    
     await base44.entities.Invoice.update(rejectingInvoice.id, {
       approval_status: "Rejected",
       rejection_reason: rejectReason,
     });
+    
+    await logInvoiceAction(
+      rejectingInvoice.id,
+      rejectingInvoice.vendor_name,
+      "Invoice Rejected",
+      rejectReason
+    );
+    
     setInvoices(prev => prev.map(inv => inv.id === rejectingInvoice.id ? { ...inv, approval_status: "Rejected", rejection_reason: rejectReason } : inv));
     setRejectingInvoice(null);
     setRejectReason("");
