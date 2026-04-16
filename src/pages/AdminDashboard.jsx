@@ -12,7 +12,7 @@ import ReservationsCalendarView from "../components/admin/ReservationsCalendarVi
 import StaffRosterTab from "../components/admin/StaffRosterTab";
 import InventoryAdminTab from "../components/admin/InventoryAdminTab";
 import FeedbackManagementTab from "../components/admin/FeedbackManagementTab";
-import VendorPaymentsTab from "../components/admin/VendorPaymentsTab";
+import VendorPaymentsTab from "../components/admin/VendorPaymentsTab.jsx";
 import AuditReportTab from "../components/admin/AuditReportTab";
 
 const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "SEO", "Audit Report"];
