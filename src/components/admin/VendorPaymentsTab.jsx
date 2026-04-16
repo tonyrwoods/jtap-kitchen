@@ -17,6 +17,122 @@ function PaymentStatusBadge({ status }) {
   );
 }
 
+function ReconciliationModal({ payment, onClose, onSave }) {
+  const [form, setForm] = useState({
+    is_reconciled: payment.is_reconciled || false,
+    has_discrepancy: payment.has_discrepancy || false,
+    discrepancy_amount: payment.discrepancy_amount || "",
+    discrepancy_notes: payment.discrepancy_notes || "",
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const updates = {
+      is_reconciled: form.is_reconciled,
+      has_discrepancy: form.has_discrepancy,
+      discrepancy_amount: form.discrepancy_amount ? parseFloat(form.discrepancy_amount) : undefined,
+      discrepancy_notes: form.discrepancy_notes,
+    };
+
+    if (form.is_reconciled && !payment.reconciled_date) {
+      updates.reconciled_date = new Date().toISOString().split("T")[0];
+    }
+
+    await base44.entities.VendorPayment.update(payment.id, updates);
+    toast.success("Payment reconciliation updated");
+    onSave();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-card border border-border rounded-2xl p-6 max-w-md w-full space-y-4"
+      >
+        <div>
+          <h3 className="font-heading text-lg font-semibold">Reconcile Payment</h3>
+          <p className="font-body text-sm text-muted-foreground mt-1">
+            {payment.vendor_name} - Payment {payment.payment_number} (${Number(payment.amount).toFixed(2)})
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="reconciled"
+            checked={form.is_reconciled}
+            onChange={(e) => setForm({ ...form, is_reconciled: e.target.checked })}
+            className="rounded"
+          />
+          <label htmlFor="reconciled" className="font-body text-sm font-medium">
+            Mark as Reconciled
+          </label>
+        </div>
+
+        <div className="border-t border-border pt-4">
+          <div className="flex items-center gap-3 mb-3">
+            <input
+              type="checkbox"
+              id="discrepancy"
+              checked={form.has_discrepancy}
+              onChange={(e) => setForm({ ...form, has_discrepancy: e.target.checked })}
+              className="rounded"
+            />
+            <label htmlFor="discrepancy" className="font-body text-sm font-medium">
+              Flag Discrepancy
+            </label>
+          </div>
+
+          {form.has_discrepancy && (
+            <div className="space-y-3 ml-6">
+              <div>
+                <label className="font-body text-xs text-muted-foreground mb-1 block">
+                  Discrepancy Amount ($)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+                  value={form.discrepancy_amount}
+                  onChange={(e) => setForm({ ...form, discrepancy_amount: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="font-body text-xs text-muted-foreground mb-1 block">
+                  Notes
+                </label>
+                <textarea
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+                  rows="3"
+                  value={form.discrepancy_notes}
+                  onChange={(e) => setForm({ ...form, discrepancy_notes: e.target.value })}
+                  placeholder="Describe the discrepancy..."
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <button
+            type="submit"
+            className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 px-4 py-2 border border-border rounded-full font-body text-sm"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 function VendorInvoiceForm({ invoice, onSave, onCancel }) {
   const [form, setForm] = useState({
     vendor_name: invoice?.vendor_name || "",
@@ -155,6 +271,7 @@ export default function VendorPaymentsTab() {
   const [editingInvoice, setEditingInvoice] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [reconcilePayment, setReconcilePayment] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -349,31 +466,67 @@ export default function VendorPaymentsTab() {
                       .map((pmt) => (
                         <div
                           key={pmt.id}
-                          className="bg-background border border-border rounded-lg p-3 flex items-center justify-between gap-3"
+                          className={`bg-background border rounded-lg p-3 space-y-2 ${
+                            pmt.is_reconciled ? "border-green-300 bg-green-50" :
+                            pmt.has_discrepancy ? "border-yellow-300 bg-yellow-50" : "border-border"
+                          }`}
                         >
-                          <div className="flex-1">
-                            <p className="font-body text-sm font-semibold">
-                              Payment {pmt.payment_number}: ${Number(pmt.amount).toFixed(2)}
-                            </p>
-                            <p className="font-body text-xs text-muted-foreground">
-                              Due: {new Date(pmt.due_date).toLocaleDateString()}
-                            </p>
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-body text-sm font-semibold">
+                                  Payment {pmt.payment_number}: ${Number(pmt.amount).toFixed(2)}
+                                </p>
+                                {pmt.is_reconciled && (
+                                  <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded-full font-semibold">
+                                    ✓ Reconciled
+                                  </span>
+                                )}
+                                {pmt.has_discrepancy && (
+                                  <span className="text-xs bg-yellow-600 text-white px-2 py-0.5 rounded-full font-semibold">
+                                    ⚠ Discrepancy
+                                  </span>
+                                )}
+                              </div>
+                              <p className="font-body text-xs text-muted-foreground">
+                                Due: {new Date(pmt.due_date).toLocaleDateString()}
+                              </p>
+                            </div>
+
+                            {!pmt.paid_date ? (
+                              <input
+                                type="date"
+                                onChange={(e) =>
+                                  recordPayment(pmt.id, e.target.value)
+                                }
+                                className="border border-border rounded-lg px-2 py-1.5 text-xs bg-white font-body"
+                                placeholder="Mark as paid"
+                              />
+                            ) : (
+                              <div className="text-right flex items-center gap-2">
+                                <div>
+                                  <PaymentStatusBadge status={pmt.status} />
+                                  <p className="font-body text-xs text-muted-foreground mt-1">
+                                    Paid: {new Date(pmt.paid_date).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => setReconcilePayment(pmt)}
+                                  className="px-3 py-1.5 border border-border rounded-lg text-xs font-body font-semibold hover:bg-muted transition-colors"
+                                >
+                                  {pmt.is_reconciled ? "Edit" : "Reconcile"}
+                                </button>
+                              </div>
+                            )}
                           </div>
 
-                          {!pmt.paid_date ? (
-                            <input
-                              type="date"
-                              onChange={(e) =>
-                                recordPayment(pmt.id, e.target.value)
-                              }
-                              className="border border-border rounded-lg px-2 py-1.5 text-xs bg-white font-body"
-                              placeholder="Mark as paid"
-                            />
-                          ) : (
-                            <div className="text-right">
-                              <PaymentStatusBadge status={pmt.status} />
-                              <p className="font-body text-xs text-muted-foreground mt-1">
-                                Paid: {new Date(pmt.paid_date).toLocaleDateString()}
+                          {pmt.has_discrepancy && pmt.discrepancy_notes && (
+                            <div className="bg-white rounded px-2 py-1.5 border-l-2 border-yellow-500">
+                              <p className="font-body text-xs font-semibold text-yellow-900">
+                                Discrepancy: ${Number(pmt.discrepancy_amount || 0).toFixed(2)}
+                              </p>
+                              <p className="font-body text-xs text-yellow-800 mt-0.5">
+                                {pmt.discrepancy_notes}
                               </p>
                             </div>
                           )}
@@ -385,6 +538,23 @@ export default function VendorPaymentsTab() {
             );
           })}
         </div>
+      )}
+
+      {reconcilePayment && (
+        <ReconciliationModal
+          payment={reconcilePayment}
+          onClose={() => setReconcilePayment(null)}
+          onSave={() => {
+            setReconcilePayment(null);
+            Promise.all([
+              base44.entities.Invoice.filter({ is_vendor_invoice: true }),
+              base44.entities.VendorPayment.list("-created_date", 500),
+            ]).then(([invs, pmts]) => {
+              setInvoices(invs);
+              setPayments(pmts);
+            });
+          }}
+        />
       )}
     </div>
   );

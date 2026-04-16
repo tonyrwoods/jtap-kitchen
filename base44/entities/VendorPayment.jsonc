@@ -37,6 +37,28 @@
         "Overdue"
       ],
       "default": "Pending"
+    },
+    "is_reconciled": {
+      "type": "boolean",
+      "title": "Reconciled",
+      "default": false
+    },
+    "reconciled_date": {
+      "type": "string",
+      "title": "Reconciled Date (YYYY-MM-DD)"
+    },
+    "has_discrepancy": {
+      "type": "boolean",
+      "title": "Has Discrepancy",
+      "default": false
+    },
+    "discrepancy_amount": {
+      "type": "number",
+      "title": "Discrepancy Amount ($)"
+    },
+    "discrepancy_notes": {
+      "type": "string",
+      "title": "Discrepancy Notes"
     }
   },
   "required": [
