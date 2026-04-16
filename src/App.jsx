@@ -23,6 +23,7 @@ import MenuPerformance from './pages/MenuPerformance';
 import LoyaltyPortal from './pages/LoyaltyPortal';
 import StaffPerformance from './pages/StaffPerformance';
 import Checkout from './pages/Checkout';
+import InventoryManagement from './pages/InventoryManagement';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -67,6 +68,7 @@ const AuthenticatedApp = () => {
         <Route path="/loyalty-portal" element={<LoyaltyPortal />} />
         <Route path="/staff-performance" element={<StaffPerformance />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/inventory" element={<InventoryManagement />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
