@@ -131,6 +131,33 @@
     "first_payment_due": {
       "type": "string",
       "title": "First Payment Due Date (YYYY-MM-DD)"
+    },
+    "documents": {
+      "type": "array",
+      "title": "Attached Documents",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Contract",
+              "W-9",
+              "Receipt",
+              "Other"
+            ]
+          },
+          "url": {
+            "type": "string"
+          },
+          "uploaded_date": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   "required": [

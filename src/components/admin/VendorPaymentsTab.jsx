@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Check, AlertCircle, Calendar, Upload } from "lucide-react";
+import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip } from "lucide-react";
 import { toast } from "sonner";
+import DocumentUploadModal from "./DocumentUploadModal";
 
 function PaymentStatusBadge({ status }) {
   const colors = {
@@ -272,6 +273,7 @@ export default function VendorPaymentsTab() {
   const [showForm, setShowForm] = useState(false);
   const [importing, setImporting] = useState(false);
   const [reconcilePayment, setReconcilePayment] = useState(null);
+  const [documentInvoice, setDocumentInvoice] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -445,18 +447,32 @@ export default function VendorPaymentsTab() {
                     <p className="font-body text-sm text-muted-foreground">
                       Invoice Total: ${Number(inv.total).toFixed(2)}
                     </p>
+                    {inv.documents?.length > 0 && (
+                      <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
+                        <Paperclip className="w-3 h-3" />
+                        {inv.documents.length} document{inv.documents.length !== 1 ? "s" : ""}
+                      </div>
+                    )}
                   </div>
-                  {!invPayments.length && (
+                  <div className="flex gap-2">
                     <button
-                      onClick={() => {
-                        setEditingInvoice(inv);
-                        setShowForm(true);
-                      }}
-                      className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-body text-xs font-semibold"
+                      onClick={() => setDocumentInvoice(inv)}
+                      className="px-3 py-2 border border-border text-muted-foreground hover:text-foreground rounded-lg font-body text-xs font-semibold transition-colors"
                     >
-                      <Plus className="w-3 h-3 inline mr-1" /> Set Up Plan
+                      <Paperclip className="w-3 h-3 inline mr-1" /> Docs
                     </button>
-                  )}
+                    {!invPayments.length && (
+                      <button
+                        onClick={() => {
+                          setEditingInvoice(inv);
+                          setShowForm(true);
+                        }}
+                        className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-body text-xs font-semibold"
+                      >
+                        <Plus className="w-3 h-3 inline mr-1" /> Set Up Plan
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {invPayments.length > 0 && (
@@ -552,6 +568,19 @@ export default function VendorPaymentsTab() {
             ]).then(([invs, pmts]) => {
               setInvoices(invs);
               setPayments(pmts);
+            });
+          }}
+        />
+      )}
+
+      {documentInvoice && (
+        <DocumentUploadModal
+          invoice={documentInvoice}
+          onClose={() => setDocumentInvoice(null)}
+          onSave={() => {
+            setDocumentInvoice(null);
+            base44.entities.Invoice.filter({ is_vendor_invoice: true }).then((invs) => {
+              setInvoices(invs);
             });
           }}
         />
