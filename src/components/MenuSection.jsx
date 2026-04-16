@@ -30,7 +30,6 @@ function MenuCard({ item, index }) {
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 24 }}
       transition={{ duration: 0.4, delay: index * 0.06 }}
       className="bg-card border border-border rounded-2xl overflow-hidden group flex flex-col"
     >
