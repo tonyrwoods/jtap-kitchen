@@ -9,8 +9,9 @@ import {
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
 import ReservationsCalendarView from "../components/admin/ReservationsCalendarView";
+import StaffRosterTab from "../components/admin/StaffRosterTab";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Gift Cards", "Reviews", "Loyalty", "SEO"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Gift Cards", "Reviews", "Loyalty", "SEO"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -325,6 +326,13 @@ export default function AdminDashboard() {
             {tab === "Calendar" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ minHeight: 600 }} className="flex flex-col">
                 <ReservationsCalendarView reservations={reservations} loading={loading} />
+              </motion.div>
+            )}
+
+            {/* Staff Roster */}
+            {tab === "Staff Roster" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ minHeight: 600 }} className="flex flex-col">
+                <StaffRosterTab />
               </motion.div>
             )}
 
