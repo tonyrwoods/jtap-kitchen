@@ -73,10 +73,9 @@ export default function MenuSection() {
     });
   }, []);
 
-  const filtered = (activeCategory === "All"
-    ? items
-    : items.filter((item) => item.category === activeCategory)
-  ).filter(Boolean);
+  const filtered = items
+    .filter(item => item && item.id && item.name && item.price)
+    .filter(activeCategory === "All" ? () => true : (item) => item.category === activeCategory);
 
   return (
     <section id="menu" className="py-24 md:py-32 px-6 lg:px-10">
