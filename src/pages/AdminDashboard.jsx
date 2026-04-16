@@ -10,8 +10,9 @@ import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
 import ReservationsCalendarView from "../components/admin/ReservationsCalendarView";
 import StaffRosterTab from "../components/admin/StaffRosterTab";
+import InventoryAdminTab from "../components/admin/InventoryAdminTab";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Gift Cards", "Reviews", "Loyalty", "SEO"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Loyalty", "SEO"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -333,6 +334,13 @@ export default function AdminDashboard() {
             {tab === "Staff Roster" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ minHeight: 600 }} className="flex flex-col">
                 <StaffRosterTab />
+              </motion.div>
+            )}
+
+            {/* Inventory */}
+            {tab === "Inventory" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <InventoryAdminTab />
               </motion.div>
             )}
 
