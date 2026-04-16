@@ -75,7 +75,7 @@ function SwapRequestModal({ shift, staff, allShifts, onSubmit, onClose }) {
             </select>
           </div>
 
-          {targetStaffs.length > 0 && (
+          {targetShifts.length > 0 && (
             <div>
               <label className="font-body text-xs text-muted-foreground mb-1.5 block uppercase font-semibold">
                 Their Shift
