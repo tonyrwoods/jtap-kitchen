@@ -1,0 +1,38 @@
+{
+  "name": "SeoSettings",
+  "type": "object",
+  "properties": {
+    "page_key": {
+      "type": "string",
+      "title": "Page Key (unique identifier)"
+    },
+    "page_label": {
+      "type": "string",
+      "title": "Page Label (display name)"
+    },
+    "meta_title": {
+      "type": "string",
+      "title": "Meta Title"
+    },
+    "meta_description": {
+      "type": "string",
+      "title": "Meta Description"
+    },
+    "meta_keywords": {
+      "type": "string",
+      "title": "Meta Keywords (comma-separated)"
+    },
+    "og_title": {
+      "type": "string",
+      "title": "OG Title (Social Share)"
+    },
+    "og_description": {
+      "type": "string",
+      "title": "OG Description (Social Share)"
+    }
+  },
+  "required": [
+    "page_key",
+    "page_label"
+  ]
+}

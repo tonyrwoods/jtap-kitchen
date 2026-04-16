@@ -7,8 +7,9 @@ import {
   Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, ChevronDown, Gift, Crown
 } from "lucide-react";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
+import SeoTab from "../components/admin/SeoTab";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Gift Cards", "Reviews", "Loyalty"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Gift Cards", "Reviews", "Loyalty", "SEO"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -428,6 +429,13 @@ export default function AdminDashboard() {
             {tab === "Loyalty" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <LoyaltyAdminTab />
+              </motion.div>
+            )}
+
+            {/* SEO */}
+            {tab === "SEO" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <SeoTab />
               </motion.div>
             )}
           </>

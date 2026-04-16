@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import useSeoMeta from "../hooks/useSeoMeta";
 import { motion } from "framer-motion";
 import { Crown, Star } from "lucide-react";
 
 export default function LoyaltyProgram() {
+  useSeoMeta("loyalty");
   const [tiers, setTiers] = useState([]);
   const [loading, setLoading] = useState(true);
 

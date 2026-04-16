@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import useSeoMeta from "../hooks/useSeoMeta";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarDays, Clock, Users, Ticket, ChevronRight, X, Send } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -192,6 +193,7 @@ function EventCard({ event, onBook, index }) {
 }
 
 export default function Events() {
+  useSeoMeta("events");
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");

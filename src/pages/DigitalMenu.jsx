@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
+import useSeoMeta from "../hooks/useSeoMeta";
 
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -50,6 +51,7 @@ function MenuCard({ item }) {
 }
 
 export default function DigitalMenu() {
+  useSeoMeta("menu");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");

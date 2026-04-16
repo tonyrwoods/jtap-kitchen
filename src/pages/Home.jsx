@@ -1,3 +1,4 @@
+import useSeoMeta from "../hooks/useSeoMeta";
 import HeroSection from "../components/HeroSection";
 import SmartKitchenSection from "../components/SmartKitchenSection";
 import GallerySection from "../components/GallerySection";
@@ -10,6 +11,7 @@ import TestimonialsSection from "../components/TestimonialsSection";
 import ReservationSection from "../components/ReservationSection";
 
 export default function Home() {
+  useSeoMeta("home");
   return (
     <>
       <HeroSection />
