@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip, Download, X } from "lucide-react";
 import { toast } from "sonner";
-import DocumentUploadModal from "./DocumentUploadModal";
+import DocumentUploadModal from "./DocumentUploadModal.jsx";
 import { logInvoiceAction } from "@/lib/auditLogHelper";
 
 function PaymentStatusBadge({ status }) {
