@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Leaf, Flame, Wheat, Nut } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { base44 } from "@/api/base44Client";
 
 const CATEGORIES = ["All", "Starters", "Mains", "Desserts", "Drinks"];
@@ -25,14 +26,9 @@ function DietaryBadge({ tag }) {
   );
 }
 
-function MenuCard({ item, index }) {
+function MenuCard({ item }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.06 }}
-      className="bg-card border border-border rounded-2xl overflow-hidden group flex flex-col"
-    >
+    <div className="bg-card border border-border rounded-2xl overflow-hidden group flex flex-col">
       {item.image_url && (
         <div className="relative overflow-hidden aspect-[4/3]">
           <img
@@ -63,7 +59,7 @@ function MenuCard({ item, index }) {
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -144,8 +140,8 @@ export default function MenuSection() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
-            {filtered.map((item, i) => (
-              <MenuCard key={item.id} item={item} index={i} />
+            {filtered.map((item) => (
+              <MenuCard key={item.id} item={item} />
             ))}
           </div>
         )}
