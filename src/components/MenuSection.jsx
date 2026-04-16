@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Leaf, Flame, Wheat, Nut } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
@@ -144,16 +144,11 @@ export default function MenuSection() {
             <p className="font-body text-sm text-muted-foreground mt-2">Add menu items from the dashboard to get started.</p>
           </div>
         ) : (
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7"
-          >
-            <AnimatePresence>
-              {filtered.map((item, i) => (
-                <MenuCard key={item.id} item={item} index={i} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
+            {filtered.map((item, i) => (
+              <MenuCard key={item.id} item={item} index={i} />
+            ))}
+          </div>
         )}
       </div>
     </section>
