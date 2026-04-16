@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { ChevronLeft, ChevronRight, Plus, Trash2, Edit2, Check, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Trash2, Edit2, Check, X, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const TIME_BLOCKS = ["Breakfast (8am–11am)", "Lunch (11am–3pm)", "Dinner (5pm–9pm)", "Late Night (9pm–12am)", "Full Day"];
@@ -289,10 +289,62 @@ function WeeklyRoster({ week, shifts, staffMap, onAddShift, onDeleteShift }) {
   );
 }
 
+// ── Swap Request Panel ────────────────────────────────────────────────────
+function SwapRequestsPanel({ requests, onApprove, onDeny }) {
+  const pending = requests.filter(r => r.status === "Pending");
+
+  if (pending.length === 0) return null;
+
+  return (
+    <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-6">
+      <div className="flex items-start gap-3">
+        <AlertCircle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
+        <div className="flex-1">
+          <p className="font-body font-semibold text-yellow-900 mb-3">{pending.length} pending shift swap request(s)</p>
+          <div className="space-y-2">
+            {pending.map(req => (
+              <div key={req.id} className="bg-white rounded-lg p-3 flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="font-body text-sm font-semibold text-foreground">
+                    {req.requester_staff_name} ↔ {req.target_staff_name}
+                  </p>
+                  <p className="font-body text-xs text-muted-foreground mt-1">
+                    {req.requester_shift_block} ({req.requester_shift_date}) ↔ {req.target_shift_block} ({req.target_shift_date})
+                  </p>
+                  {req.reason && (
+                    <p className="font-body text-xs text-muted-foreground mt-1 italic">Reason: "{req.reason}"</p>
+                  )}
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={() => onApprove(req.id)}
+                    className="p-1.5 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 transition-colors"
+                    title="Approve"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => onDeny(req.id)}
+                    className="p-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 transition-colors"
+                    title="Deny"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────────────────
 export default function StaffRosterTab() {
   const [staff, setStaff] = useState([]);
   const [shifts, setShifts] = useState([]);
+  const [swapRequests, setSwapRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
   const [shiftModal, setShiftModal] = useState(null);
@@ -301,9 +353,11 @@ export default function StaffRosterTab() {
     Promise.all([
       base44.entities.Staff.list("-created_date", 100),
       base44.entities.Shift.list("-date", 500),
-    ]).then(([s, sh]) => {
+      base44.entities.ShiftSwapRequest.list("-created_date", 100),
+    ]).then(([s, sh, sr]) => {
       setStaff(s);
       setShifts(sh);
+      setSwapRequests(sr);
       setLoading(false);
     });
   }, []);
@@ -340,6 +394,41 @@ export default function StaffRosterTab() {
     toast.success("Shift removed");
   };
 
+  const approveSwap = async (requestId) => {
+    const request = swapRequests.find(r => r.id === requestId);
+    if (!request) return;
+
+    // Swap the shifts
+    await Promise.all([
+      base44.entities.Shift.update(request.requester_shift_id, {
+        staff_id: request.target_staff_id,
+        staff_name: request.target_staff_name,
+        staff_color: staff.find(s => s.id === request.target_staff_id)?.color,
+      }),
+      base44.entities.Shift.update(request.target_shift_id, {
+        staff_id: request.requester_staff_id,
+        staff_name: request.requester_staff_name,
+        staff_color: staff.find(s => s.id === request.requester_staff_id)?.color,
+      }),
+    ]);
+
+    // Update request status
+    await base44.entities.ShiftSwapRequest.update(requestId, { status: "Approved" });
+    setSwapRequests(prev => prev.map(r => r.id === requestId ? { ...r, status: "Approved" } : r));
+
+    // Refresh shifts
+    const sh = await base44.entities.Shift.list("-date", 500);
+    setShifts(sh);
+    
+    toast.success("Swap approved and shifts updated");
+  };
+
+  const denySwap = async (requestId) => {
+    await base44.entities.ShiftSwapRequest.update(requestId, { status: "Denied" });
+    setSwapRequests(prev => prev.map(r => r.id === requestId ? { ...r, status: "Denied" } : r));
+    toast.success("Swap request denied");
+  };
+
   const navigate = (dir) => {
     const d = new Date(weekStart);
     d.setDate(d.getDate() + dir * 7);
@@ -351,6 +440,15 @@ export default function StaffRosterTab() {
 
   return (
     <div className="flex flex-col h-full gap-4">
+      {/* Swap Requests Alert */}
+      {!loading && (
+        <SwapRequestsPanel
+          requests={swapRequests}
+          onApprove={approveSwap}
+          onDeny={denySwap}
+        />
+      )}
+
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">

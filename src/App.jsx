@@ -25,6 +25,7 @@ import StaffPerformance from './pages/StaffPerformance';
 import Checkout from './pages/Checkout';
 import InventoryManagement from './pages/InventoryManagement';
 import KDS from './pages/KDS';
+import StaffShifts from './pages/StaffShifts';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -71,6 +72,7 @@ const AuthenticatedApp = () => {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/inventory" element={<InventoryManagement />} />
         <Route path="/kds" element={<KDS />} />
+        <Route path="/my-shifts" element={<StaffShifts />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
