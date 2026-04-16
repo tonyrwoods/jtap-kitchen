@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip } from "lucide-react";
+import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip, Download } from "lucide-react";
 import { toast } from "sonner";
 import DocumentUploadModal from "./DocumentUploadModal";
 
@@ -305,6 +305,27 @@ export default function VendorPaymentsTab() {
     toast.success(`Payment recorded as ${status}`);
   };
 
+  const downloadPDF = async (invoice) => {
+    try {
+      const response = await base44.functions.invoke('generateInvoicePDF', {
+        invoice_id: invoice.id,
+      });
+
+      if (response.data) {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${invoice.vendor_name.replace(/\s+/g, '_')}_invoice.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        toast.success('PDF downloaded');
+      }
+    } catch (error) {
+      toast.error(`Failed to generate PDF: ${error.message}`);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -455,6 +476,12 @@ export default function VendorPaymentsTab() {
                     )}
                   </div>
                   <div className="flex gap-2">
+                    <button
+                      onClick={() => downloadPDF(inv)}
+                      className="px-3 py-2 border border-border text-muted-foreground hover:text-foreground rounded-lg font-body text-xs font-semibold transition-colors"
+                    >
+                      <Download className="w-3 h-3 inline mr-1" /> PDF
+                    </button>
                     <button
                       onClick={() => setDocumentInvoice(inv)}
                       className="px-3 py-2 border border-border text-muted-foreground hover:text-foreground rounded-lg font-body text-xs font-semibold transition-colors"
