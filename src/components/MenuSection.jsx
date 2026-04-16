@@ -49,7 +49,7 @@ function MenuCard({ item }) {
         {item.description && (
           <p className="font-body text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{item.description}</p>
         )}
-        {item.dietary_tags?.length > 0 && (
+        {Array.isArray(item.dietary_tags) && item.dietary_tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
             {item.dietary_tags.map((tag) => (
               <DietaryBadge key={tag} tag={tag} />
