@@ -15,7 +15,7 @@ import FeedbackManagementTab from "../components/admin/FeedbackManagementTab";
 import VendorPaymentsTab from "../components/admin/VendorPaymentsTab";
 import AuditReportTab from "../components/admin/AuditReportTab";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "SEO", "Audit Report"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "SEO", "Audit Report", "Reconciliation"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
 
@@ -455,6 +455,15 @@ export default function AdminDashboard() {
             {tab === "Audit Report" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <AuditReportTab />
+              </motion.div>
+            )}
+
+            {tab === "Reconciliation" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-8 text-center space-y-4">
+                <p className="font-body text-muted-foreground">The Reconciliation Center is a dedicated workspace for matching bank transactions to invoices and vendor payments.</p>
+                <a href="/reconciliation" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">
+                  Open Reconciliation Center →
+                </a>
               </motion.div>
             )}
           </>

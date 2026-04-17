@@ -26,6 +26,7 @@ import Checkout from './pages/Checkout';
 import InventoryManagement from './pages/InventoryManagement';
 import KDS from './pages/KDS';
 import StaffShifts from './pages/StaffShifts';
+import ReconciliationCenter from './pages/ReconciliationCenter';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -73,6 +74,7 @@ const AuthenticatedApp = () => {
         <Route path="/inventory" element={<InventoryManagement />} />
         <Route path="/kds" element={<KDS />} />
         <Route path="/my-shifts" element={<StaffShifts />} />
+        <Route path="/reconciliation" element={<ReconciliationCenter />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>

@@ -1,0 +1,89 @@
+{
+  "name": "BankTransaction",
+  "type": "object",
+  "properties": {
+    "payment_method_id": {
+      "type": "string",
+      "title": "Payment Method ID"
+    },
+    "payment_method_label": {
+      "type": "string",
+      "title": "Account Label"
+    },
+    "transaction_date": {
+      "type": "string",
+      "title": "Transaction Date (YYYY-MM-DD)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description / Memo"
+    },
+    "amount": {
+      "type": "number",
+      "title": "Amount ($)"
+    },
+    "transaction_type": {
+      "type": "string",
+      "title": "Type",
+      "enum": [
+        "Debit",
+        "Credit"
+      ],
+      "default": "Debit"
+    },
+    "reference_number": {
+      "type": "string",
+      "title": "Reference / Check #"
+    },
+    "matched_to": {
+      "type": "string",
+      "title": "Matched Record Type",
+      "enum": [
+        "vendor_payment",
+        "invoice",
+        "unmatched"
+      ],
+      "default": "unmatched"
+    },
+    "matched_id": {
+      "type": "string",
+      "title": "Matched Record ID"
+    },
+    "matched_label": {
+      "type": "string",
+      "title": "Matched Record Label"
+    },
+    "match_confidence": {
+      "type": "string",
+      "title": "Match Confidence",
+      "enum": [
+        "High",
+        "Medium",
+        "Low",
+        "Manual"
+      ],
+      "default": "Low"
+    },
+    "reconciliation_status": {
+      "type": "string",
+      "title": "Reconciliation Status",
+      "enum": [
+        "Unmatched",
+        "Auto-Matched",
+        "Confirmed",
+        "Dismissed"
+      ],
+      "default": "Unmatched"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "payment_method_id",
+    "transaction_date",
+    "amount",
+    "transaction_type"
+  ]
+}
