@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
@@ -78,16 +78,25 @@ function MiniCalendar({ selectedDate, onSelect }) {
   );
 }
 
-export default function ReservationModal({ open, onClose }) {
+export default function ReservationModal({ open, onClose, prefill }) {
   const [step, setStep] = useState(1);
-  const [date, setDate] = useState(null);
-  const [time, setTime] = useState(null);
-  const [party, setParty] = useState(2);
+  const [date, setDate] = useState(prefill?.date ? new Date(prefill.date + "T12:00:00") : null);
+  const [time, setTime] = useState(prefill?.time || null);
+  const [party, setParty] = useState(prefill?.party_size || 2);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [special, setSpecial] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (open && prefill) {
+      setDate(prefill.date ? new Date(prefill.date + "T12:00:00") : null);
+      setTime(prefill.time || null);
+      setParty(prefill.party_size || 2);
+      setStep(1);
+    }
+  }, [open, prefill]);
 
   const canNext1 = date && time;
   const canNext2 = name.trim() && email.trim();
