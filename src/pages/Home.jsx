@@ -6,7 +6,7 @@ import TeamSection from "../components/TeamSection";
 import MenuSection from "../components/MenuSection";
 import AboutSection from "../components/AboutSection";
 import TestimonialsSection from "../components/TestimonialsSection";
-import ChefHighlights from "../components/ChefHighlights";
+import ChefHighlights from "../components/ChefHighlights.jsx";
 
 export default function Home() {
   useSeoMeta("home");
