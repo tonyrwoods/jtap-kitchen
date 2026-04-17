@@ -8,9 +8,7 @@ const NAV_LINKS = [
   { labelKey: "nav.menu", href: "#menu" },
   { labelKey: "nav.story", href: "#about" },
   { labelKey: "nav.gallery", href: "#gallery" },
-  { labelKey: "nav.team", href: "#team" },
   { labelKey: "nav.reviews", href: "#reviews" },
-  { labelKey: "nav.reserve", href: "#reserve" },
   { labelKey: "nav.events", href: "/events", isLink: true },
 ];
 
@@ -48,7 +46,7 @@ export default function Navbar({ onBookTable }) {
           </a>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.labelKey}
@@ -58,16 +56,18 @@ export default function Navbar({ onBookTable }) {
                 {t(link.labelKey)}
               </a>
             ))}
-            <LanguageSwitcher />
           </div>
 
-          {/* CTA */}
-          <button
-            onClick={onBookTable}
-            className="hidden md:inline-flex items-center px-6 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full hover:opacity-90 transition-opacity duration-300"
-          >
-            {t("nav.book")}
-          </button>
+          {/* Right side: language + CTA */}
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitcher />
+            <button
+              onClick={onBookTable}
+              className="inline-flex items-center px-5 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full hover:opacity-90 transition-opacity duration-300"
+            >
+              {t("nav.book")}
+            </button>
+          </div>
 
           {/* Mobile Toggle */}
           <button
