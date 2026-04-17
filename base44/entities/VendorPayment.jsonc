@@ -38,6 +38,14 @@
       ],
       "default": "Pending"
     },
+    "payment_method_id": {
+      "type": "string",
+      "title": "Payment Method ID"
+    },
+    "payment_method_label": {
+      "type": "string",
+      "title": "Payment Method Label"
+    },
     "is_reconciled": {
       "type": "boolean",
       "title": "Reconciled",

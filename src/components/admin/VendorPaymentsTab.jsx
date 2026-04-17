@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip, Download, X, Tag } from "lucide-react";
+import { Plus, Check, AlertCircle, Calendar, Upload, Paperclip, Download, X, Tag, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import DocumentUploadModal from "./DocumentUploadModal.jsx";
 import { logInvoiceAction } from "@/lib/auditLogHelper";
+import PaymentMethodsPanel from "./PaymentMethodsPanel.jsx";
 
 const EXPENSE_CATEGORIES = [
   "Food & Beverage",
@@ -248,6 +249,8 @@ export default function VendorPaymentsTab() {
   const [rejectingInvoice, setRejectingInvoice] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [recordingPayment, setRecordingPayment] = useState(null); // { paymentId, paidDate, method_id }
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -273,15 +276,20 @@ export default function VendorPaymentsTab() {
     toast.success(`Category updated to "${category}"`);
   };
 
-  const recordPayment = async (paymentId, paidDate) => {
+  const recordPayment = async ({ paymentId, paidDate, method_id }) => {
     const payment = payments.find((p) => p.id === paymentId);
     const status = new Date(paidDate) <= new Date(payment.due_date) ? "Paid On Time" : "Paid Late";
     const invoice = invoices.find(inv => inv.id === payment.invoice_id);
-    await base44.entities.VendorPayment.update(paymentId, { paid_date: paidDate, status });
+    const method = paymentMethods.find(m => m.id === method_id);
+    const updates = { paid_date: paidDate, status };
+    if (method_id) updates.payment_method_id = method_id;
+    if (method) updates.payment_method_label = `${method.nickname} (${method.bank_name} ···· ${method.account_last4})`;
+    await base44.entities.VendorPayment.update(paymentId, updates);
     await logInvoiceAction(payment.invoice_id, invoice?.vendor_name || "Unknown", "Payment Recorded",
-      `Payment #${payment.payment_number} marked as ${status} on ${paidDate}`);
-    setPayments((prev) => prev.map((p) => p.id === paymentId ? { ...p, paid_date: paidDate, status } : p));
-    toast.success(`Payment recorded as ${status}`);
+      `Payment #${payment.payment_number} marked as ${status} on ${paidDate}${method ? ` via ${method.nickname}` : ""}`);
+    setPayments((prev) => prev.map((p) => p.id === paymentId ? { ...p, ...updates } : p));
+    setRecordingPayment(null);
+    toast.success(`Payment recorded as ${status}${method ? ` via ${method.nickname}` : ""}`);
   };
 
   const downloadPDF = async (invoice) => {
@@ -372,6 +380,55 @@ export default function VendorPaymentsTab() {
 
   return (
     <div className="space-y-6">
+      {/* Payment Methods Panel */}
+      <PaymentMethodsPanel onMethodsChange={setPaymentMethods} />
+
+      {/* Record Payment Modal */}
+      {recordingPayment && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full space-y-4">
+            <h3 className="font-heading text-lg font-semibold">Record Payment</h3>
+            <div>
+              <label className="font-body text-sm text-muted-foreground mb-1 block">Payment Date *</label>
+              <input type="date" required
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+                value={recordingPayment.paidDate}
+                onChange={e => setRecordingPayment(prev => ({ ...prev, paidDate: e.target.value }))} />
+            </div>
+            {paymentMethods.length > 0 && (
+              <div>
+                <label className="font-body text-sm text-muted-foreground mb-1 block">Pay Via</label>
+                <select
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+                  value={recordingPayment.method_id || ""}
+                  onChange={e => setRecordingPayment(prev => ({ ...prev, method_id: e.target.value }))}
+                >
+                  <option value="">— Select payment method —</option>
+                  {paymentMethods.map(m => (
+                    <option key={m.id} value={m.id}>
+                      {m.is_default ? "★ " : ""}{m.nickname} · {m.bank_name} ···· {m.account_last4}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => { if (recordingPayment.paidDate) recordPayment(recordingPayment); }}
+                disabled={!recordingPayment.paidDate}
+                className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium disabled:opacity-50"
+              >
+                Confirm Payment
+              </button>
+              <button onClick={() => setRecordingPayment(null)}
+                className="flex-1 px-4 py-2 border border-border rounded-full font-body text-sm">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-heading text-lg font-semibold">Vendor Invoices & Payments</h3>
         <div className="flex gap-2">
@@ -556,8 +613,16 @@ export default function VendorPaymentsTab() {
                             </p>
                           </div>
                           {!pmt.paid_date ? (
-                            <input type="date" onChange={(e) => recordPayment(pmt.id, e.target.value)}
-                              className="border border-border rounded-lg px-2 py-1.5 text-xs bg-white font-body" />
+                            <button
+                              onClick={() => setRecordingPayment({
+                                paymentId: pmt.id,
+                                paidDate: new Date().toISOString().split("T")[0],
+                                method_id: paymentMethods.find(m => m.is_default)?.id || "",
+                              })}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-body font-semibold hover:opacity-90 transition-opacity"
+                            >
+                              <CreditCard className="w-3 h-3" /> Record Payment
+                            </button>
                           ) : (
                             <div className="text-right flex items-center gap-2">
                               <div>
@@ -565,6 +630,11 @@ export default function VendorPaymentsTab() {
                                 <p className="font-body text-xs text-muted-foreground mt-1">
                                   Paid: {new Date(pmt.paid_date).toLocaleDateString()}
                                 </p>
+                                {pmt.payment_method_label && (
+                                  <p className="font-body text-xs text-primary mt-0.5 flex items-center gap-1">
+                                    <CreditCard className="w-3 h-3" /> {pmt.payment_method_label}
+                                  </p>
+                                )}
                               </div>
                               <button onClick={() => setReconcilePayment(pmt)}
                                 className="px-3 py-1.5 border border-border rounded-lg text-xs font-body font-semibold hover:bg-muted transition-colors">
