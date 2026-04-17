@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, AlertTriangle, TrendingDown, CheckCircle, Plus, RefreshCw, Bot } from "lucide-react";
+import { Package, AlertTriangle, TrendingDown, CheckCircle, Plus, RefreshCw, Bot, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import InventoryTable from "../components/inventory/InventoryTable";
 import InventoryItemModal from "../components/inventory/InventoryItemModal";
 import AIWasteAdvisor from "../components/inventory/AIWasteAdvisor";
+import AIForecastingPanel from "../components/inventory/AIForecastingPanel";
 
 const STATUS_CONFIG = {
   "Out of Stock": { color: "bg-red-100 text-red-800", icon: AlertTriangle, dot: "bg-red-500" },
@@ -18,11 +19,13 @@ export { STATUS_CONFIG };
 
 export default function InventoryManagement() {
   const [forecast, setForecast] = useState([]);
+  const [reorderAlerts, setReorderAlerts] = useState([]);
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [showAI, setShowAI] = useState(false);
+  const [activeTab, setActiveTab] = useState("forecast");
   const [menuItems, setMenuItems] = useState([]);
 
   const loadData = async () => {
@@ -32,6 +35,7 @@ export default function InventoryManagement() {
       base44.entities.MenuItem.list("name", 200),
     ]);
     setForecast(forecastRes.data.forecast || []);
+    setReorderAlerts(forecastRes.data.reorder_alerts || []);
     setSummary(forecastRes.data.summary || null);
     setMenuItems(menuRes);
     setLoading(false);
@@ -76,6 +80,11 @@ export default function InventoryManagement() {
           >
             <Bot className="w-4 h-4" /> AI Advisor
           </button>
+          {reorderAlerts.length > 0 && (
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 border border-amber-300 rounded-full font-body text-xs font-semibold">
+              <AlertTriangle className="w-3 h-3" /> {reorderAlerts.length} Reorder Alert{reorderAlerts.length !== 1 ? "s" : ""}
+            </span>
+          )}
           <button
             onClick={loadData}
             disabled={loading}
@@ -133,13 +142,43 @@ export default function InventoryManagement() {
           )}
         </AnimatePresence>
 
+        {/* Tab switcher */}
+        <div className="flex gap-1 bg-muted p-1 rounded-xl w-fit">
+          {[
+            { key: "forecast", label: "AI Forecast", icon: Sparkles },
+            { key: "inventory", label: "Inventory Table", icon: Package },
+          ].map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-body text-sm font-medium transition-all ${
+                activeTab === key ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon className="w-4 h-4" /> {label}
+            </button>
+          ))}
+        </div>
+
+        {/* AI Forecasting Panel */}
+        {activeTab === "forecast" && (
+          <AIForecastingPanel
+            forecast={forecast}
+            reorderAlerts={reorderAlerts}
+            summary={summary}
+            loading={loading}
+          />
+        )}
+
         {/* Inventory Table */}
-        <InventoryTable
-          forecast={forecast}
-          loading={loading}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        {activeTab === "inventory" && (
+          <InventoryTable
+            forecast={forecast}
+            loading={loading}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )}
       </div>
 
       {showModal && (
