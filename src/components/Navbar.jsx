@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { label: "Menu", href: "/menu" },
   { label: "Events", href: "/events" },
   { label: "Gift Cards", href: "/gift-cards" },
-  { label: "Our Story", href: "#about" },
+  { label: "Our Story", href: "/#about" },
   { label: "Reviews", href: "/submit-review" },
 ];
 
