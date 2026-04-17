@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { MapPin, Phone, Mail, Instagram, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Instagram, Clock, Send, CheckCircle2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // false | true | "done"
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
     await base44.entities.Newsletter.create({ email: email.trim() });
-    toast.success("You're subscribed! Welcome to the JTAP Kitchen family.");
     setEmail("");
-    setLoading(false);
+    setLoading("done");
   };
   return (
     <footer className="bg-foreground text-background py-16 md:py-20 px-6 lg:px-10">
@@ -114,27 +114,67 @@ export default function Footer() {
 
         {/* Newsletter */}
         <div className="border-t border-background/10 pt-12 pb-10">
-          <div className="max-w-xl mx-auto text-center">
-            <p className="font-body text-xs uppercase tracking-[0.25em] font-semibold text-primary mb-3">Stay in the Know</p>
-            <h4 className="font-heading text-2xl font-semibold text-background mb-2">Join Our Inner Circle</h4>
-            <p className="font-body text-sm text-background/50 mb-6">Be the first to hear about seasonal menus, exclusive events, and chef's specials.</p>
-            <form onSubmit={handleSubscribe} className="flex gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                className="flex-1 px-4 py-3 rounded-full bg-background/10 border border-background/20 text-background placeholder:text-background/30 font-body text-sm focus:outline-none focus:border-primary transition-colors"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-semibold rounded-full hover:opacity-90 disabled:opacity-50 transition-all"
-              >
-                {loading ? "..." : "Subscribe"}
-              </button>
-            </form>
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-background/5 border border-background/10 rounded-3xl px-8 py-10 md:px-12 md:py-12 text-center">
+              <p className="font-body text-xs uppercase tracking-[0.3em] font-semibold text-primary mb-3">Stay in the Know</p>
+              <h4 className="font-heading text-3xl md:text-4xl font-semibold text-background mb-3 leading-tight">
+                Join Our Inner Circle
+              </h4>
+              <p className="font-body text-sm text-background/50 mb-8 max-w-md mx-auto leading-relaxed">
+                Be the first to hear about seasonal menus, exclusive chef's table events, and special announcements — delivered straight to your inbox.
+              </p>
+
+              <AnimatePresence mode="wait">
+                {loading === "done" ? (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex flex-col items-center gap-3 py-2"
+                  >
+                    <CheckCircle2 className="w-10 h-10 text-primary" />
+                    <p className="font-body text-sm font-semibold text-background">You're on the list — welcome to the family!</p>
+                    <p className="font-body text-xs text-background/40">Expect seasonal news, exclusive events & chef's specials.</p>
+                  </motion.div>
+                ) : (
+                  <motion.form
+                    key="form"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    onSubmit={handleSubscribe}
+                    className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+                  >
+                    <div className="relative flex-1">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-background/30 pointer-events-none" />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        required
+                        className="w-full pl-11 pr-4 py-3.5 rounded-full bg-background/10 border border-background/20 text-background placeholder:text-background/30 font-body text-sm focus:outline-none focus:border-primary focus:bg-background/15 transition-all"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={loading === true}
+                      className="flex items-center justify-center gap-2 px-7 py-3.5 bg-primary text-primary-foreground font-body text-sm font-semibold rounded-full hover:opacity-90 disabled:opacity-50 transition-all shrink-0 shadow-lg shadow-primary/20"
+                    >
+                      {loading === true ? (
+                        <span className="w-4 h-4 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          Subscribe
+                        </>
+                      )}
+                    </button>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+
+              <p className="font-body text-xs text-background/30 mt-5">No spam, ever. Unsubscribe anytime.</p>
+            </div>
           </div>
         </div>
 
