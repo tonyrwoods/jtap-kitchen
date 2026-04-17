@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useI18n } from "@/lib/i18n";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
-  { labelKey: "nav.menu", href: "#menu" },
-  { labelKey: "nav.story", href: "#about" },
-  { labelKey: "nav.gallery", href: "#gallery" },
-  { labelKey: "nav.reviews", href: "#reviews" },
-  { labelKey: "nav.events", href: "/events", isLink: true },
+  { label: "Menu", href: "/menu" },
+  { label: "Events", href: "/events" },
+  { label: "Gift Cards", href: "/gift-cards" },
+  { label: "Our Story", href: "#about" },
+  { label: "Reviews", href: "/submit-review" },
 ];
 
 export default function Navbar({ onBookTable }) {
   const { t } = useI18n();
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -47,15 +49,27 @@ export default function Navbar({ onBookTable }) {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.labelKey}
-                href={link.href}
-                className="font-body text-sm font-medium tracking-wide text-muted-foreground hover:text-primary transition-colors duration-300 uppercase"
-              >
-                {t(link.labelKey)}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) =>
+              link.href.startsWith("/") ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className={`font-body text-sm font-medium tracking-wide transition-colors duration-300 uppercase ${
+                    location.pathname === link.href ? "text-primary" : "text-muted-foreground hover:text-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="font-body text-sm font-medium tracking-wide text-muted-foreground hover:text-primary transition-colors duration-300 uppercase"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </div>
 
           {/* Right side: language + CTA */}
@@ -89,16 +103,27 @@ export default function Navbar({ onBookTable }) {
             className="md:hidden bg-background/98 backdrop-blur-lg border-b border-border"
           >
             <div className="px-6 py-8 flex flex-col gap-6">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.labelKey}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="font-body text-lg font-medium text-foreground hover:text-primary transition-colors"
-                >
-                  {t(link.labelKey)}
-                </a>
-              ))}
+              {NAV_LINKS.map((link) =>
+                link.href.startsWith("/") ? (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="font-body text-lg font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="font-body text-lg font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
               <button
                 onClick={() => { setMobileOpen(false); onBookTable(); }}
                 className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full"
