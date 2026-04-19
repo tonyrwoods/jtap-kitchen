@@ -27,6 +27,7 @@ import InventoryManagement from './pages/InventoryManagement';
 import KDS from './pages/KDS';
 import StaffShifts from './pages/StaffShifts';
 import ReconciliationCenter from './pages/ReconciliationCenter';
+import Menu from './pages/Menu';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -65,6 +66,7 @@ const AuthenticatedApp = () => {
         <Route path="/loyalty" element={<LoyaltyProgram />} />
         <Route path="/staff-scheduler" element={<StaffScheduler />} />
         <Route path="/menu" element={<DigitalMenu />} />
+        <Route path="/full-menu" element={<Menu />} />
         <Route path="/table-qr-codes" element={<TableQRCodes />} />
         <Route path="/kitchen" element={<KitchenDashboard />} />
         <Route path="/menu-performance" element={<MenuPerformance />} />
