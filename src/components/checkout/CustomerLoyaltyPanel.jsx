@@ -93,7 +93,11 @@ export default function CustomerLoyaltyPanel({ onCustomerLinked, orderTotal }) {
               <p className="font-body text-xs text-muted-foreground">{customer.email}</p>
             </div>
           </div>
-          <button onClick={handleClear} className="text-muted-foreground hover:text-foreground">
+          <button
+            onClick={handleClear}
+            aria-label="Clear customer selection"
+            className="text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -165,7 +169,8 @@ export default function CustomerLoyaltyPanel({ onCustomerLinked, orderTotal }) {
           <button
             onClick={handleSearch}
             disabled={searching || !email.trim()}
-            className="px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-body disabled:opacity-50"
+            aria-label="Search customer by email"
+            className="px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-body disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
           >
             {searching ? "…" : <Search className="w-4 h-4" />}
           </button>

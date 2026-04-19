@@ -125,9 +125,25 @@ function MenuItemForm({ item, onSave, onCancel }) {
   );
 }
 
+// Lazy-loaded tab components for better initial load
+const lazyTabs = {
+  "Admin Calendar": () => import("../components/admin/AdminCalendarTab").then(m => m.default),
+  "Waitlist": () => import("../components/admin/WaitlistAdminTab").then(m => m.default),
+  "Staff Roster": () => import("../components/admin/StaffRosterTab").then(m => m.default),
+  "Inventory": () => import("../components/admin/InventoryAdminTab").then(m => m.default),
+  "Feedback": () => import("../components/admin/FeedbackManagementTab").then(m => m.default),
+  "Vendor Payments": () => import("../components/admin/VendorPaymentsTab").then(m => m.default),
+  "Loyalty": () => import("../components/admin/LoyaltyAdminTab").then(m => m.default),
+  "Chef Highlights": () => import("../components/admin/FeaturedDishesTab").then(m => m.default),
+  "Team Members": () => import("../components/admin/TeamMembersTab").then(m => m.default),
+  "SEO": () => import("../components/admin/SeoTab").then(m => m.default),
+  "Audit Report": () => import("../components/admin/AuditReportTab").then(m => m.default),
+};
+
 export default function AdminDashboard() {
   const { user } = useAuth();
   const [tab, setTab] = useState("Overview");
+  const [loadedTabs, setLoadedTabs] = useState({});
   const [menuItems, setMenuItems] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [giftCards, setGiftCards] = useState([]);
@@ -166,6 +182,19 @@ export default function AdminDashboard() {
   const updateResStatus = async (id, status) => {
     await base44.entities.Reservation.update(id, { status });
     setReservations(prev => prev.map(r => r.id === id ? { ...r, status } : r));
+  };
+
+  // Load tab component lazily when tab is clicked
+  const handleTabChange = async (newTab) => {
+    setTab(newTab);
+    if (lazyTabs[newTab] && !loadedTabs[newTab]) {
+      try {
+        const Component = await lazyTabs[newTab]();
+        setLoadedTabs(prev => ({ ...prev, [newTab]: Component }));
+      } catch (err) {
+        console.error(`Failed to load tab: ${newTab}`, err);
+      }
+    }
   };
 
   if (user?.role !== "admin") {
@@ -216,8 +245,10 @@ export default function AdminDashboard() {
           {TABS.map(t => (
             <button
               key={t}
-              onClick={() => setTab(t)}
-              className={`px-5 py-3 font-body text-sm font-medium transition-all border-b-2 -mb-px whitespace-nowrap ${
+              onClick={() => handleTabChange(t)}
+              aria-selected={tab === t}
+              role="tab"
+              className={`px-5 py-3 font-body text-sm font-medium transition-all border-b-2 -mb-px whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
                 tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -257,13 +288,13 @@ export default function AdminDashboard() {
 
             {tab === "Admin Calendar" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <AdminCalendarTab />
+                {loadedTabs["Admin Calendar"] ? <loadedTabs["Admin Calendar"] /> : <AdminCalendarTab />}
               </motion.div>
             )}
 
             {tab === "Waitlist" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <WaitlistAdminTab />
+                {loadedTabs["Waitlist"] ? <loadedTabs["Waitlist"] /> : <WaitlistAdminTab />}
               </motion.div>
             )}
 
@@ -356,13 +387,13 @@ export default function AdminDashboard() {
 
             {tab === "Staff Roster" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ minHeight: 600 }} className="flex flex-col">
-                <StaffRosterTab />
+                {loadedTabs["Staff Roster"] ? <loadedTabs["Staff Roster"] /> : <StaffRosterTab />}
               </motion.div>
             )}
 
             {tab === "Inventory" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                <InventoryAdminTab />
+                {loadedTabs["Inventory"] ? <loadedTabs["Inventory"] /> : <InventoryAdminTab />}
               </motion.div>
             )}
 
@@ -409,13 +440,13 @@ export default function AdminDashboard() {
 
             {tab === "Feedback" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                <FeedbackManagementTab />
+                {loadedTabs["Feedback"] ? <loadedTabs["Feedback"] /> : <FeedbackManagementTab />}
               </motion.div>
             )}
 
             {tab === "Vendor Payments" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                <VendorPaymentsTab />
+                {loadedTabs["Vendor Payments"] ? <loadedTabs["Vendor Payments"] /> : <VendorPaymentsTab />}
               </motion.div>
             )}
 
@@ -478,31 +509,31 @@ export default function AdminDashboard() {
 
             {tab === "Loyalty" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <LoyaltyAdminTab />
+                {loadedTabs["Loyalty"] ? <loadedTabs["Loyalty"] /> : <LoyaltyAdminTab />}
               </motion.div>
             )}
 
             {tab === "Chef Highlights" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <FeaturedDishesTab />
+                {loadedTabs["Chef Highlights"] ? <loadedTabs["Chef Highlights"] /> : <FeaturedDishesTab />}
               </motion.div>
             )}
 
             {tab === "Team Members" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <TeamMembersTab />
+                {loadedTabs["Team Members"] ? <loadedTabs["Team Members"] /> : <TeamMembersTab />}
               </motion.div>
             )}
 
             {tab === "SEO" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <SeoTab />
+                {loadedTabs["SEO"] ? <loadedTabs["SEO"] /> : <SeoTab />}
               </motion.div>
             )}
 
             {tab === "Audit Report" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <AuditReportTab />
+                {loadedTabs["Audit Report"] ? <loadedTabs["Audit Report"] /> : <AuditReportTab />}
               </motion.div>
             )}
 

@@ -85,6 +85,18 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Visible focus rings for accessibility */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="button"]:focus-visible,
+  [role="tab"]:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
   html {
     scroll-behavior: smooth;
     position: fixed;
@@ -171,5 +183,15 @@
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
+    /* Minimum 44px touch target for mobile accessibility */
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Disable pinch-to-zoom on mobile */
+@layer base {
+  html {
+    touch-action: manipulation;
   }
 }
