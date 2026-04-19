@@ -16,22 +16,39 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, skipped: true });
     }
 
+    // Sanitize vendor email - must be valid email format
+    const vendorEmail = data.vendor_name?.trim().toLowerCase();
+    if (!vendorEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vendorEmail)) {
+      throw new Error('Invalid vendor email format');
+    }
+
     // Get Gmail access token
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+
+    // HTML escape utility
+    const escapeHtml = (text) => {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
 
     // Format invoice summary for email
     const invoiceHTML = `
       <h2>Invoice Summary</h2>
-      <p><strong>Invoice ID:</strong> ${data.receipt_number}</p>
-      <p><strong>Vendor:</strong> ${data.vendor_name}</p>
+      <p><strong>Invoice ID:</strong> ${escapeHtml(data.receipt_number)}</p>
+      <p><strong>Vendor:</strong> ${escapeHtml(data.vendor_name)}</p>
       <p><strong>Amount:</strong> $${Number(data.total).toFixed(2)}</p>
-      <p><strong>Status:</strong> ${data.approval_status}</p>
+      <p><strong>Status:</strong> ${escapeHtml(data.approval_status)}</p>
       <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-      ${data.first_payment_due ? `<p><strong>First Payment Due:</strong> ${data.first_payment_due}</p>` : ''}
+      ${data.first_payment_due ? `<p><strong>First Payment Due:</strong> ${escapeHtml(data.first_payment_due)}</p>` : ''}
       <hr />
       <h3>Line Items</h3>
       <ul>
-        ${data.items?.map(item => `<li>${item.name || 'Item'} - $${Number(item.line_total || 0).toFixed(2)}</li>`).join('') || '<li>No items</li>'}
+        ${data.items?.map(item => `<li>${escapeHtml(item.name || 'Item')} - $${Number(item.line_total || 0).toFixed(2)}</li>`).join('') || '<li>No items</li>'}
       </ul>
     `;
 
@@ -43,7 +60,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        raw: btoa(`To: ${data.vendor_name}\nSubject: Invoice Summary - ${data.receipt_number}\nContent-Type: text/html\n\n${invoiceHTML}`),
+        raw: btoa(`To: ${vendorEmail}\nSubject: Invoice Summary - ${escapeHtml(data.receipt_number)}\nContent-Type: text/html\n\n${invoiceHTML}`),
       }),
     });
 
@@ -62,17 +79,6 @@ Deno.serve(async (req) => {
       message: `Invoice emailed to ${data.vendor_name}`,
     });
   } catch (error) {
-    // Log failure but don't throw - update delivery status
-    try {
-      const base44 = createClientFromRequest(req);
-      const { data } = await req.json();
-      await base44.entities.Invoice.update(data.id, {
-        delivery_status: 'failed',
-        delivery_error: error.message,
-      });
-    } catch (e) {
-      // Silent fail on update error
-    }
     return Response.json({ error: error.message, delivery_status: 'failed' }, { status: 500 });
   }
 });
