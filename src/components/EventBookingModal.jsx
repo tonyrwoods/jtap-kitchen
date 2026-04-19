@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import EventWaitlistSignup from "./EventWaitlistSignup";
 
-export default function EventBookingModal({ event, onClose, onBookingComplete }) {
+export default function EventBookingModal({ event, onClose, onWaitlist, onBookingComplete }) {
   const [step, setStep] = useState(1);
   const [guestCount, setGuestCount] = useState(1);
   const [form, setForm] = useState({
@@ -241,7 +241,15 @@ export default function EventBookingModal({ event, onClose, onBookingComplete })
             </div>
 
             {showWaitlist && (
-              <EventWaitlistSignup event={event} onClose={() => setShowWaitlist(false)} />
+              <EventWaitlistSignup 
+                event={event} 
+                onClose={() => setShowWaitlist(false)}
+                onSuccess={() => {
+                  setShowWaitlist(false);
+                  onWaitlist?.(event);
+                  onClose();
+                }}
+              />
             )}
           </motion.div>
         </motion.div>

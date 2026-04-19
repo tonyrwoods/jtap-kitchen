@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import { toast } from "sonner";
 
-export default function EventWaitlistSignup({ event, onClose }) {
+export default function EventWaitlistSignup({ event, onClose, onSuccess }) {
   const [step, setStep] = useState("form");
   const [form, setForm] = useState({
     guest_name: "",
@@ -36,6 +36,11 @@ export default function EventWaitlistSignup({ event, onClose }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSuccessClose = () => {
+    onSuccess?.();
+    onClose();
   };
 
   return (
@@ -175,7 +180,7 @@ export default function EventWaitlistSignup({ event, onClose }) {
             </div>
 
             <button
-              onClick={onClose}
+              onClick={handleSuccessClose}
               className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-xl font-body text-sm font-semibold hover:opacity-90 transition-all"
             >
               Got It
