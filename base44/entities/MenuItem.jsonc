@@ -10,8 +10,10 @@
       "type": "string",
       "title": "Category",
       "enum": [
-        "Starters",
-        "Mains",
+        "Appetizers",
+        "Salads & Sandwiches",
+        "Entrees",
+        "Sides",
         "Desserts",
         "Drinks"
       ]
@@ -53,7 +55,6 @@
   },
   "required": [
     "name",
-    "category",
-    "price"
+    "category"
   ]
 }

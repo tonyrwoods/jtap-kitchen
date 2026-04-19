@@ -18,7 +18,7 @@ import FeaturedDishesTab from "../components/admin/FeaturedDishesTab";
 
 const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "SEO", "Audit Report", "Reconciliation"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
-const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
+const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
 function StatCard({ icon: Icon, label, value, color }) {
   return (

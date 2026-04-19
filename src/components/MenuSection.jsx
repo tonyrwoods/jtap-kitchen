@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Leaf, Flame, Wheat, Nut } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
-const CATEGORIES = ["All", "Starters", "Mains", "Desserts", "Drinks"];
+const CATEGORIES = ["All", "Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts"];
 
 const DIETARY_ICONS = {
   Vegetarian: { icon: Leaf, color: "text-green-600", bg: "bg-green-50" },
@@ -44,7 +44,7 @@ function MenuCard({ item }) {
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-3 mb-2">
           <h3 className="font-heading text-lg font-semibold text-foreground leading-tight">{item.name}</h3>
-          <span className="font-heading text-lg font-bold text-primary shrink-0">${Number(item.price).toFixed(2)}</span>
+          {item.price ? <span className="font-heading text-lg font-bold text-primary shrink-0">${Number(item.price).toFixed(2)}</span> : null}
         </div>
         {item.description && (
           <p className="font-body text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{item.description}</p>
@@ -74,7 +74,7 @@ export default function MenuSection() {
   }, []);
 
   const filtered = items
-    .filter(item => item && item.id && item.name && item.price)
+    .filter(item => item && item.id && item.name)
     .filter(activeCategory === "All" ? () => true : (item) => item.category === activeCategory);
 
   return (
