@@ -19,8 +19,9 @@ import FeaturedDishesTab from "../components/admin/FeaturedDishesTab";
 import TeamMembersTab from "../components/admin/TeamMembersTab";
 import AdminCalendarTab from "../components/admin/AdminCalendarTab";
 import WaitlistAdminTab from "../components/admin/WaitlistAdminTab";
+import PricingStrategyTab from "../components/admin/PricingStrategyTab";
 
-const TABS = ["Overview", "Menu Items", "Admin Calendar", "Waitlist", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "SEO", "Audit Report", "Reconciliation", "Profile"];
+const TABS = ["Overview", "Menu Items", "Pricing Strategy", "Admin Calendar", "Waitlist", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "SEO", "Audit Report", "Reconciliation", "Profile"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
@@ -256,6 +257,12 @@ export default function AdminDashboard() {
                     {reservations.length === 0 && <p className="font-body text-sm text-muted-foreground">No reservations yet.</p>}
                   </div>
                 </div>
+              </motion.div>
+            )}
+
+            {tab === "Pricing Strategy" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <PricingStrategyTab />
               </motion.div>
             )}
 
