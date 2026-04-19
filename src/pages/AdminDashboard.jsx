@@ -17,8 +17,9 @@ import AuditReportTab from "../components/admin/AuditReportTab";
 import FeaturedDishesTab from "../components/admin/FeaturedDishesTab";
 import TeamMembersTab from "../components/admin/TeamMembersTab";
 import AdminCalendarTab from "../components/admin/AdminCalendarTab";
+import WaitlistAdminTab from "../components/admin/WaitlistAdminTab";
 
-const TABS = ["Overview", "Menu Items", "Admin Calendar", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "SEO", "Audit Report", "Reconciliation"];
+const TABS = ["Overview", "Menu Items", "Admin Calendar", "Waitlist", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "SEO", "Audit Report", "Reconciliation"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
@@ -256,6 +257,12 @@ export default function AdminDashboard() {
             {tab === "Admin Calendar" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <AdminCalendarTab />
+              </motion.div>
+            )}
+
+            {tab === "Waitlist" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <WaitlistAdminTab />
               </motion.div>
             )}
 

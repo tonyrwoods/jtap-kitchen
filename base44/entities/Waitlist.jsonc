@@ -1,0 +1,67 @@
+{
+  "name": "Waitlist",
+  "type": "object",
+  "properties": {
+    "guest_name": {
+      "type": "string",
+      "title": "Guest Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "party_size": {
+      "type": "number",
+      "title": "Party Size"
+    },
+    "preferred_table_type": {
+      "type": "string",
+      "title": "Table Preference",
+      "enum": [
+        "Window",
+        "Quiet Corner",
+        "Bar",
+        "Any"
+      ]
+    },
+    "special_requests": {
+      "type": "string",
+      "title": "Special Requests"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Waiting",
+        "Table Ready",
+        "Seated",
+        "No-show",
+        "Cancelled"
+      ],
+      "default": "Waiting"
+    },
+    "added_at": {
+      "type": "string",
+      "title": "Added Timestamp (ISO)"
+    },
+    "estimated_wait_minutes": {
+      "type": "number",
+      "title": "Estimated Wait (minutes)",
+      "default": 15
+    },
+    "notification_sent": {
+      "type": "boolean",
+      "title": "Ready Email Sent",
+      "default": false
+    }
+  },
+  "required": [
+    "guest_name",
+    "email",
+    "party_size"
+  ]
+}
