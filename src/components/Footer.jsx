@@ -80,13 +80,23 @@ export default function Footer() {
             </h4>
             <div className="space-y-3">
               {[
-                { label: "Our Menu", href: "#menu" },
-                { label: "Reserve a Table", href: "/#reserve" },
+                { label: "Our Menu", href: "/menu" },
+                { label: "Reserve a Table", href: "/" },
                 { label: "Gift Cards", href: "/gift-cards" },
-                { label: "Our Story", href: "#about" },
-                { label: "The Team", href: "#team" },
+                { label: "Our Story", href: "/" },
+                { label: "The Team", href: "/" },
               ].map(({ label, href }) => (
-                <a key={label} href={href} className="block font-body text-sm text-background/60 hover:text-primary transition-colors duration-200">
+                <a 
+                  key={label} 
+                  href={href}
+                  onClick={(e) => {
+                    if (label === "Reserve a Table" || label === "Our Story" || label === "The Team") {
+                      e.preventDefault();
+                      window.location.href = "/";
+                    }
+                  }}
+                  className="block font-body text-sm text-background/60 hover:text-primary transition-colors duration-200"
+                >
                   {label}
                 </a>
               ))}
