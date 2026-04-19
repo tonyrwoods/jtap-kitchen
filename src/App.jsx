@@ -31,6 +31,7 @@ import Menu from './pages/Menu';
 import ContactUs from './pages/ContactUs';
 import Support from './pages/Support';
 import InformationSecurityPolicy from './pages/InformationSecurityPolicy';
+import DataRetentionPolicy from './pages/DataRetentionPolicy';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -83,6 +84,7 @@ const AuthenticatedApp = () => {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/support" element={<Support />} />
         <Route path="/security-policy" element={<InformationSecurityPolicy />} />
+        <Route path="/data-retention-policy" element={<DataRetentionPolicy />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>

@@ -245,6 +245,7 @@ export default function InformationSecurityPolicy() {
               { label: "Privacy Policy", href: "/support" },
               { label: "Terms of Service", href: "/support" },
               { label: "Cookie Policy", href: "/support" },
+              { label: "Data Retention Policy", href: "/data-retention-policy" },
               { label: "Contact Security Team", href: "mailto:security@jtapkitchen.com" },
             ].map(link => (
               <a

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HelpCircle, ChevronDown, Mail, Phone, MessageSquare } from "lucide-react";
+import { HelpCircle, ChevronDown, Mail, Phone, MessageSquare, Database } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const FAQS = [
@@ -201,6 +201,22 @@ export default function Support() {
                 <p className="font-body text-sm text-muted-foreground">Send us a message</p>
                 <p className="font-body text-xs text-muted-foreground mt-2">
                   Available anytime
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <a
+            href="/data-retention-policy"
+            className="bg-card border border-border rounded-2xl p-6 hover:shadow-lg transition-all"
+          >
+            <div className="flex items-start gap-4">
+              <Database className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="font-heading font-semibold text-foreground mb-1">Data Policy</h3>
+                <p className="font-body text-sm text-muted-foreground">Deletion & retention</p>
+                <p className="font-body text-xs text-muted-foreground mt-2">
+                  Legal compliance
                 </p>
               </div>
             </div>
