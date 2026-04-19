@@ -1,0 +1,69 @@
+{
+  "name": "VendorPriceHistory",
+  "type": "object",
+  "properties": {
+    "vendor_name": {
+      "type": "string",
+      "title": "Vendor Name"
+    },
+    "item_name": {
+      "type": "string",
+      "title": "Item Name"
+    },
+    "item_category": {
+      "type": "string",
+      "title": "Item Category",
+      "enum": [
+        "Food & Beverage",
+        "Office Supplies",
+        "Utilities",
+        "Equipment & Maintenance",
+        "Marketing & Advertising",
+        "Professional Services",
+        "Staffing & Labor",
+        "Rent & Facilities",
+        "Insurance",
+        "Logistics & Shipping",
+        "Other"
+      ]
+    },
+    "unit_price": {
+      "type": "number",
+      "title": "Unit Price ($)"
+    },
+    "unit_of_measure": {
+      "type": "string",
+      "title": "Unit of Measure (e.g., kg, each, case)"
+    },
+    "invoice_id": {
+      "type": "string",
+      "title": "Source Invoice ID"
+    },
+    "purchase_date": {
+      "type": "string",
+      "title": "Purchase Date (YYYY-MM-DD)"
+    },
+    "quantity": {
+      "type": "number",
+      "title": "Quantity Purchased"
+    },
+    "total_amount": {
+      "type": "number",
+      "title": "Total Amount ($)"
+    },
+    "market_price_reference": {
+      "type": "number",
+      "title": "Market Price Reference ($)"
+    },
+    "price_variance_percent": {
+      "type": "number",
+      "title": "Price Variance (%)"
+    }
+  },
+  "required": [
+    "vendor_name",
+    "item_name",
+    "unit_price",
+    "purchase_date"
+  ]
+}

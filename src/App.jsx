@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { I18nProvider } from '@/lib/i18n';
 import AdminDashboard from './pages/AdminDashboard';
 import GiftCards from './pages/GiftCards';
+import VendorOverchargeAnalysis from './pages/VendorOverchargeAnalysis';
 import Events from './pages/Events';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
@@ -64,6 +65,7 @@ const AuthenticatedApp = () => {
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/gift-cards" element={<GiftCards />} />
+        <Route path="/vendor-overcharge-analysis" element={<VendorOverchargeAnalysis />} />
         <Route path="/events" element={<Events />} />
         <Route path="/reservations-calendar" element={<ReservationsCalendar />} />
         <Route path="/email-marketing" element={<EmailMarketing />} />
