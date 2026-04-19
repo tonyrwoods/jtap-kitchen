@@ -40,6 +40,10 @@
         "Completed"
       ],
       "default": "Pending"
+    },
+    "admin_notes": {
+      "type": "string",
+      "title": "Internal Admin Notes"
     }
   },
   "required": [
