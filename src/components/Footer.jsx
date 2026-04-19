@@ -158,14 +158,14 @@ export default function Footer() {
                 { label: "Our Menu", href: "/menu" },
                 { label: "Reserve a Table", href: "/" },
                 { label: "Gift Cards", href: "/gift-cards" },
-                { label: "Our Story", href: "/" },
-                { label: "The Team", href: "/" },
+                { label: "Contact Us", href: "/contact" },
+                { label: "Support", href: "/support" },
               ].map(({ label, href }) => (
                 <a 
                   key={label} 
                   href={href}
                   onClick={(e) => {
-                    if (label === "Reserve a Table" || label === "Our Story" || label === "The Team") {
+                    if (label === "Reserve a Table") {
                       e.preventDefault();
                       window.location.href = "/";
                     }
