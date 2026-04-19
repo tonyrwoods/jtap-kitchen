@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, AlertTriangle, TrendingDown, CheckCircle, Plus, RefreshCw, Bot, Sparkles } from "lucide-react";
+import { Package, AlertTriangle, TrendingDown, CheckCircle, Plus, RefreshCw, Bot, Sparkles, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import InventoryTable from "../components/inventory/InventoryTable";
 import InventoryItemModal from "../components/inventory/InventoryItemModal";
@@ -27,6 +27,30 @@ export default function InventoryManagement() {
   const [showAI, setShowAI] = useState(false);
   const [activeTab, setActiveTab] = useState("forecast");
   const [menuItems, setMenuItems] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const containerRef = useRef(null);
+  const startY = useRef(0);
+
+  const handleTouchStart = (e) => {
+    startY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!containerRef.current) return;
+    const currentY = e.touches[0].clientY;
+    const scrollTop = containerRef.current.scrollTop;
+
+    if (scrollTop === 0 && currentY > startY.current && currentY - startY.current > 50) {
+      setIsRefreshing(true);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await loadData();
+    setIsRefreshing(false);
+    toast.success("Refreshed!");
+  };
 
   const loadData = async () => {
     setLoading(true);
@@ -86,11 +110,12 @@ export default function InventoryManagement() {
             </span>
           )}
           <button
-            onClick={loadData}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2.5 border border-border rounded-full font-body text-sm hover:bg-muted transition-colors disabled:opacity-50"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="p-2 hover:bg-muted rounded-lg transition-colors disabled:opacity-50"
+            title="Refresh"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /> Refresh
+            <RotateCcw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
           </button>
           <button
             onClick={() => { setEditingItem(null); setShowModal(true); }}
@@ -102,7 +127,12 @@ export default function InventoryManagement() {
         </div>
       </div>
 
-      <div className="flex-1 p-6 space-y-6">
+      <div 
+        ref={containerRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        className="flex-1 p-6 space-y-6 overflow-y-auto"
+      >
         {/* Summary Cards */}
         {summary && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

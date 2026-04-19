@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useI18n } from "@/lib/i18n";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
@@ -13,9 +13,10 @@ const NAV_LINKS = [
   { label: "Reviews", href: "/submit-review" },
 ];
 
-export default function Navbar({ onBookTable }) {
+export default function Navbar({ onBookTable, showBackButton = false }) {
   const { t } = useI18n();
   const location = useLocation();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -36,8 +37,16 @@ export default function Navbar({ onBookTable }) {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <a href="/" className="flex items-center gap-2.5">
+          {/* Back Button or Logo */}
+          {showBackButton ? (
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 p-2 md:hidden text-foreground hover:text-primary transition-colors"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+          ) : (
+            <a href="/" className="flex items-center gap-2.5">
             <img
               src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png"
               alt="JTAP Kitchen Logo"
@@ -47,6 +56,19 @@ export default function Navbar({ onBookTable }) {
               JTAP Kitchen
             </span>
           </a>
+          )}
+          {showBackButton && (
+            <a href="/" className="hidden md:flex items-center gap-2.5">
+              <img
+                src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png"
+                alt="JTAP Kitchen Logo"
+                className="h-20 w-20 rounded-full object-cover border border-primary/30"
+              />
+              <span className="font-heading text-xl md:text-2xl font-semibold tracking-tight text-foreground">
+                JTAP Kitchen
+              </span>
+            </a>
+          )}
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6">

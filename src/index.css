@@ -98,6 +98,7 @@
   body {
     @apply bg-background text-foreground;
     overflow-y: auto;
+    overscroll-behavior: none;
     -webkit-user-select: none;
     user-select: none;
   }

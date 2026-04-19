@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import MobileTabBar from "./MobileTabBar";
 import ReservationModal from "./ReservationModal";
+
+const TAB_ROUTES = ["/", "/menu", "/#book"];
 
 export default function Layout() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -26,12 +29,22 @@ export default function Layout() {
 
   // Hide footer on child routes (mobile optimization)
   const isChildRoute = location.pathname !== "/" && !location.pathname.startsWith("/gift-cards") && !location.pathname.startsWith("/events");
+  const isTabRoute = TAB_ROUTES.includes(location.pathname);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-      <Navbar onBookTable={() => setModalOpen(true)} />
-      <main className="flex-1 pt-20 pb-20 md:pb-0">
-        <Outlet />
+      <Navbar onBookTable={() => setModalOpen(true)} showBackButton={!isTabRoute} />
+      <main className="flex-1 pt-20 pb-20 md:pb-0 overflow-hidden">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.3 }}
+          className="h-full"
+        >
+          <Outlet />
+        </motion.div>
       </main>
       {!isChildRoute && <Footer />}
       <MobileTabBar />
