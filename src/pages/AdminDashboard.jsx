@@ -15,8 +15,9 @@ import FeedbackManagementTab from "../components/admin/FeedbackManagementTab";
 import VendorPaymentsTab from "../components/admin/VendorPaymentsTab";
 import AuditReportTab from "../components/admin/AuditReportTab";
 import FeaturedDishesTab from "../components/admin/FeaturedDishesTab";
+import TeamMembersTab from "../components/admin/TeamMembersTab";
 
-const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "SEO", "Audit Report", "Reconciliation"];
+const TABS = ["Overview", "Menu Items", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "SEO", "Audit Report", "Reconciliation"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
@@ -469,6 +470,12 @@ export default function AdminDashboard() {
             {tab === "Chef Highlights" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <FeaturedDishesTab />
+              </motion.div>
+            )}
+
+            {tab === "Team Members" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <TeamMembersTab />
               </motion.div>
             )}
 
