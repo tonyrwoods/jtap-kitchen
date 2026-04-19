@@ -240,12 +240,13 @@ export default function InformationSecurityPolicy() {
           className="bg-card border border-border rounded-2xl p-6 md:p-8"
         >
           <h3 className="font-heading text-lg font-semibold mb-4">Related Policies</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
               { label: "Privacy Policy", href: "/support" },
               { label: "Terms of Service", href: "/support" },
               { label: "Cookie Policy", href: "/support" },
               { label: "Data Retention Policy", href: "/data-retention-policy" },
+              { label: "RLS Policy", href: "/rls-policy" },
               { label: "Contact Security Team", href: "mailto:security@jtapkitchen.com" },
             ].map(link => (
               <a
