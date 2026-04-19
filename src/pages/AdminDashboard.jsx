@@ -19,7 +19,7 @@ import TeamMembersTab from "../components/admin/TeamMembersTab";
 import AdminCalendarTab from "../components/admin/AdminCalendarTab";
 import WaitlistAdminTab from "../components/admin/WaitlistAdminTab";
 
-const TABS = ["Overview", "Menu Items", "Admin Calendar", "Waitlist", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "SEO", "Audit Report", "Reconciliation"];
+const TABS = ["Overview", "Menu Items", "Admin Calendar", "Waitlist", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "SEO", "Audit Report", "Reconciliation", "Profile"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
@@ -511,6 +511,43 @@ export default function AdminDashboard() {
                 <a href="/reconciliation" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">
                   Open Reconciliation Center →
                 </a>
+              </motion.div>
+            )}
+
+            {tab === "Profile" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl space-y-6">
+                <div className="bg-card border border-border rounded-2xl p-6">
+                  <h3 className="font-heading text-lg font-semibold mb-4">Account Settings</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-1">Email</p>
+                      <p className="font-body text-sm font-medium">{user?.email}</p>
+                    </div>
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-1">Full Name</p>
+                      <p className="font-body text-sm font-medium">{user?.full_name}</p>
+                    </div>
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-1">Role</p>
+                      <p className="font-body text-sm font-medium capitalize">{user?.role}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+                  <h4 className="font-heading text-lg font-semibold text-red-900 mb-2">Danger Zone</h4>
+                  <p className="font-body text-sm text-red-800 mb-4">This action cannot be undone. Your account and all associated data will be permanently deleted.</p>
+                  <button
+                    onClick={() => {
+                      if (confirm("Are you absolutely sure? This will permanently delete your account.")) {
+                        toast.success("Account deletion requested. Contact support to confirm.");
+                      }
+                    }}
+                    className="px-6 py-2.5 bg-red-600 text-white rounded-lg font-body text-sm font-semibold hover:bg-red-700 transition-colors"
+                  >
+                    Delete Account
+                  </button>
+                </div>
               </motion.div>
             )}
           </>

@@ -85,11 +85,40 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    scroll-behavior: smooth;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
+    overflow-y: auto;
+    -webkit-user-select: none;
+    user-select: none;
   }
-}
 
-html {
-  scroll-behavior: smooth;
+  /* Allow text selection on text inputs and textareas */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Disable text selection on buttons, icons, labels */
+  button,
+  svg,
+  label,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
 }

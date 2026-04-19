@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Clock, ChefHat, CheckCircle, Utensils, AlertTriangle, X, ArrowLeftRight } from "lucide-react";
+import { Plus, Clock, ChefHat, CheckCircle, Utensils, AlertTriangle, X, ArrowLeftRight, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import SwapRequestsPanel from "../components/SwapRequestsPanel";
 
@@ -193,11 +193,36 @@ export default function KitchenDashboard() {
   const [showServed, setShowServed] = useState(false);
   const [showSwaps, setShowSwaps] = useState(false);
   const [pendingSwaps, setPendingSwaps] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const containerRef = useRef(null);
+  const startY = useRef(0);
 
   const load = async () => {
     const data = await base44.entities.Order.list("-created_date", 200);
     setOrders(data);
     setLoading(false);
+  };
+
+  // Pull-to-refresh handler
+  const handleTouchStart = (e) => {
+    startY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!containerRef.current) return;
+    const currentY = e.touches[0].clientY;
+    const scrollTop = containerRef.current.scrollTop;
+
+    if (scrollTop === 0 && currentY > startY.current && currentY - startY.current > 50) {
+      setIsRefreshing(true);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await load();
+    setIsRefreshing(false);
+    toast.success("Refreshed!");
   };
 
   useEffect(() => {
@@ -246,6 +271,14 @@ export default function KitchenDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="p-2 hover:bg-muted rounded-lg transition-colors disabled:opacity-50"
+            title="Refresh"
+          >
+            <RotateCcw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+          </button>
           <label className="flex items-center gap-2 font-body text-sm text-muted-foreground cursor-pointer">
             <input type="checkbox" className="rounded" checked={showServed} onChange={e => setShowServed(e.target.checked)} />
             Show Served
@@ -273,7 +306,12 @@ export default function KitchenDashboard() {
       </div>
 
       {/* Board */}
-      <div className="flex-1 overflow-x-auto p-5">
+      <div 
+        ref={containerRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        className="flex-1 overflow-x-auto p-5"
+      >
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" />

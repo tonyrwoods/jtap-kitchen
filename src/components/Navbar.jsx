@@ -32,6 +32,7 @@ export default function Navbar({ onBookTable }) {
           ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border/50"
           : "bg-transparent"
       }`}
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-20">

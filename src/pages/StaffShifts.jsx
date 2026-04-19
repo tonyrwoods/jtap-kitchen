@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
-import { Calendar, Clock, User, Send, AlertCircle } from "lucide-react";
+import { Calendar, Clock, User, Send, AlertCircle, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 function SwapRequestModal({ shift, staff, allShifts, onSubmit, onClose }) {
@@ -137,6 +137,41 @@ export default function StaffShifts() {
   const [loading, setLoading] = useState(true);
   const [swapModal, setSwapModal] = useState(null);
   const [requests, setRequests] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const containerRef = useRef(null);
+  const startY = useRef(0);
+
+  const handleTouchStart = (e) => {
+    startY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!containerRef.current) return;
+    const currentY = e.touches[0].clientY;
+    const scrollTop = containerRef.current.scrollTop;
+
+    if (scrollTop === 0 && currentY > startY.current && currentY - startY.current > 50) {
+      setIsRefreshing(true);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    if (user?.email) {
+      const [shifts, staffList, swapRequests] = await Promise.all([
+        base44.entities.Shift.list("-date", 500),
+        base44.entities.Staff.list("-created_date", 100),
+        base44.entities.ShiftSwapRequest.list("-created_date", 100),
+      ]);
+      const currentStaff = staffList.find(s => s.email === user.email);
+      if (currentStaff) {
+        setMyShifts(shifts.filter(s => s.staff_id === currentStaff.id).sort((a, b) => new Date(a.date) - new Date(b.date)));
+      }
+      setRequests(swapRequests.filter(r => r.requester_staff_id === currentStaff?.id || r.target_staff_id === currentStaff?.id));
+    }
+    setIsRefreshing(false);
+    toast.success("Refreshed!");
+  };
 
   useEffect(() => {
     if (!user?.email) return;
@@ -182,13 +217,28 @@ export default function StaffShifts() {
   const currentStaff = staff.find(s => s.email === user.email);
 
   return (
-    <div className="min-h-screen bg-background py-20 px-6">
+    <div 
+      ref={containerRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      className="min-h-screen bg-background py-20 px-6"
+    >
       <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="font-heading text-4xl font-bold mb-2">My Shifts</h1>
-          <p className="font-body text-muted-foreground">
-            {currentStaff ? `Welcome, ${currentStaff.name}` : "View your scheduled shifts"}
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="font-heading text-4xl font-bold mb-2">My Shifts</h1>
+            <p className="font-body text-muted-foreground">
+              {currentStaff ? `Welcome, ${currentStaff.name}` : "View your scheduled shifts"}
+            </p>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="p-2 hover:bg-muted rounded-lg transition-colors disabled:opacity-50"
+            title="Refresh"
+          >
+            <RotateCcw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+          </button>
         </div>
 
         {loading ? (
