@@ -7,7 +7,7 @@ import MobileTabBar from "./MobileTabBar";
 import ReservationModal from "./ReservationModal";
 import PullToRefresh from "./PullToRefresh";
 
-const TAB_ROUTES = ["/", "/menu", "/#book"];
+const TAB_ROUTES = ["/", "/menu", "/gift-cards", "/events"];
 
 export default function Layout() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -29,8 +29,15 @@ export default function Layout() {
   }, []);
 
   // Hide footer on child routes (mobile optimization)
-  const isChildRoute = location.pathname !== "/" && !location.pathname.startsWith("/gift-cards") && !location.pathname.startsWith("/events");
-  const isTabRoute = TAB_ROUTES.includes(location.pathname);
+  const isChildRoute = location.pathname !== "/" && 
+    !location.pathname.startsWith("/gift-cards") && 
+    !location.pathname.startsWith("/events") &&
+    location.pathname !== "/menu";
+  
+  const isTabRoute = TAB_ROUTES.some(route => 
+    route === location.pathname || 
+    (route !== "/#book" && location.pathname.startsWith(route.split("#")[0]))
+  );
 
   const shouldShowPullToRefresh = isTabRoute;
 

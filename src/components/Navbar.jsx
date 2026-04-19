@@ -22,7 +22,16 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
 
   // Auto-show back button on mobile for nested routes (more than one path segment)
   const pathSegments = location.pathname.split("/").filter(Boolean);
-  const shouldShowBackButton = typeof window !== "undefined" && window.innerWidth < 768 && pathSegments.length > 1;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const shouldShowBackButton = isMobile && pathSegments.length > 1;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);

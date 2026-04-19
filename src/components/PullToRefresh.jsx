@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RotateCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function PullToRefresh({ children, onRefresh }) {
   const [pulling, setPulling] = useState(false);
@@ -45,6 +45,8 @@ export default function PullToRefresh({ children, onRefresh }) {
     setPullDistance(0);
   };
 
+  const progress = Math.min(pullDistance / 80, 1);
+
   return (
     <div
       ref={containerRef}
@@ -52,6 +54,7 @@ export default function PullToRefresh({ children, onRefresh }) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       className="relative overflow-y-auto scrollbar-hide"
+      style={{ WebkitOverflowScrolling: "touch" }}
     >
       {/* Pull-to-Refresh Indicator */}
       <AnimatePresence>
@@ -60,23 +63,31 @@ export default function PullToRefresh({ children, onRefresh }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute top-0 left-0 right-0 flex items-center justify-center pointer-events-none"
+            className="absolute top-0 left-0 right-0 flex items-center justify-center pointer-events-none z-50"
             style={{
-              height: `${Math.min(pullDistance, 80)}px`,
+              height: "60px",
               paddingTop: "env(safe-area-inset-top)",
             }}
           >
-            <motion.div
-              animate={{ rotate: isRefreshing ? 360 : pullDistance * 3 }}
-              transition={{ duration: isRefreshing ? 1 : 0, repeat: isRefreshing ? Infinity : 0 }}
-              className="flex items-center justify-center"
-            >
-              <RotateCw
-                className={`w-5 h-5 ${
-                  pullDistance > 80 ? "text-primary" : "text-muted-foreground"
-                }`}
-              />
-            </motion.div>
+            {isRefreshing ? (
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="flex items-center justify-center"
+              >
+                <Loader2 className="w-6 h-6 text-primary animate-spin" />
+              </motion.div>
+            ) : (
+              <motion.div
+                style={{
+                  transform: `rotate(${progress * 360}deg)`,
+                  scale: 0.8 + progress * 0.2,
+                }}
+                className="flex items-center justify-center"
+              >
+                <div className="w-6 h-6 rounded-full border-2 border-muted border-t-primary" />
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -84,9 +95,9 @@ export default function PullToRefresh({ children, onRefresh }) {
       {/* Content with pull-down transform */}
       <motion.div
         animate={{
-          marginTop: pulling || isRefreshing ? Math.min(pullDistance, 80) : 0,
+          y: pulling || isRefreshing ? Math.min(pullDistance * 0.5, 40) : 0,
         }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        transition={{ type: "spring", stiffness: 400, damping: 35 }}
       >
         {children}
       </motion.div>

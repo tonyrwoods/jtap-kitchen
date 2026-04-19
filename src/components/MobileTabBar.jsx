@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Home, Utensils, Calendar } from "lucide-react";
 import { useEffect } from "react";
 import { saveTabState, loadTabState } from "@/lib/TabStateManager";
@@ -13,7 +13,7 @@ export default function MobileTabBar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Save scroll position when navigating away
+  // Save scroll position and pathname when navigating away
   useEffect(() => {
     const currentTab = TABS.find(tab => {
       const baseHref = tab.href.split("#")[0];
@@ -21,22 +21,32 @@ export default function MobileTabBar() {
     });
 
     if (currentTab) {
-      saveTabState(currentTab.id, window.scrollY);
+      saveTabState(currentTab.id, window.scrollY, location.pathname);
     }
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   const handleTabClick = (href, tabId) => {
-    const isActive = href === "/" ? location.pathname === "/" : location.pathname.startsWith(href.split("#")[0]);
+    const baseHref = href.split("#")[0];
+    const isActive = baseHref === "/" ? location.pathname === "/" : location.pathname.startsWith(baseHref);
     
-    if (isActive) {
-      // Reset to root of tab and restore scroll position
+    if (isActive && location.pathname === href) {
+      // Same tab clicked twice - scroll to top
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      saveTabState(tabId, 0, location.pathname);
+    } else if (isActive) {
+      // Same tab but different path/hash - navigate and restore
       navigate(href);
       setTimeout(() => {
         const state = loadTabState(tabId);
         window.scrollTo({ top: state.scrollPosition || 0, behavior: "smooth" });
-      }, 0);
+      }, 100);
     } else {
+      // Different tab - navigate and restore saved position
       navigate(href);
+      setTimeout(() => {
+        const state = loadTabState(tabId);
+        window.scrollTo({ top: state.scrollPosition || 0, behavior: "auto" });
+      }, 100);
     }
   };
 
