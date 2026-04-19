@@ -80,7 +80,7 @@ export default function Footer() {
             <div className="space-y-3">
               {[
                 { label: "Our Menu", href: "#menu" },
-                { label: "Reserve a Table", href: "#reserve" },
+                { label: "Reserve a Table", href: "/#reserve" },
                 { label: "Gift Cards", href: "/gift-cards" },
                 { label: "Our Story", href: "#about" },
                 { label: "The Team", href: "#team" },

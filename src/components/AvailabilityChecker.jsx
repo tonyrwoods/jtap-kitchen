@@ -32,7 +32,7 @@ export default function AvailabilityChecker({ onBook }) {
   const availableSlots = TIME_SLOTS.filter(isAvailable);
 
   return (
-    <section className="bg-card border-y border-border py-12 px-6">
+    <section id="reserve" className="bg-card border-y border-border py-12 px-6">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-body font-medium mb-3">
