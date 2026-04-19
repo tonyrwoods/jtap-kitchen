@@ -297,7 +297,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
                     {/* Email */}
                     <div>
                       <label className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground block mb-2">Email Address *</label>
-                      <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                      <input type="email" inputMode="email" value={email} onChange={e => setEmail(e.target.value)}
                         placeholder="you@email.com"
                         className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground font-body text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" />
                     </div>
@@ -305,7 +305,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
                     {/* Phone */}
                     <div>
                       <label className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground block mb-2">Phone Number</label>
-                      <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                      <input type="tel" inputMode="tel" value={phone} onChange={e => setPhone(e.target.value)}
                         placeholder="+1 (555) 000-0000"
                         className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground font-body text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" />
                     </div>

@@ -337,18 +337,18 @@ export default function Checkout() {
                 <div className="flex gap-2">
                   <div className="flex-1">
                     <label className="font-body text-xs text-muted-foreground mb-1 block">Table # *</label>
-                    <input type="number" className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={tableNumber} onChange={e => setTableNumber(e.target.value)} placeholder="e.g. 5" />
+                    <input type="number" inputMode="numeric" className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={tableNumber} onChange={e => setTableNumber(e.target.value)} placeholder="e.g. 5" />
                   </div>
                   <div className="flex-1">
                     <label className="font-body text-xs text-muted-foreground mb-1 block">Server</label>
-                    <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={serverName} onChange={e => setServerName(e.target.value)} placeholder="Name" />
+                    <input type="text" inputMode="text" className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={serverName} onChange={e => setServerName(e.target.value)} placeholder="Name" />
                   </div>
                 </div>
                 <div>
                   <label className="font-body text-xs text-muted-foreground mb-1 block">Link to Order (optional)</label>
                   <select className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body" value={linkedOrderId} onChange={e => setLinkedOrderId(e.target.value)}>
                     <option value="">— None —</option>
-                    {orders.filter(o => o.status !== "Served").map(o => (
+                    {orders.filter(o => ["New", "Preparing", "Ready"].includes(o.status)).map(o => (
                       <option key={o.id} value={o.id}>Table {o.table_number} · {o.status}</option>
                     ))}
                   </select>

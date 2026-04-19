@@ -67,10 +67,10 @@ export default function InventoryManagement() {
 
   useEffect(() => { loadData(); }, []);
 
-  const handleSaved = () => {
+  const handleSaved = async () => {
     setShowModal(false);
     setEditingItem(null);
-    loadData();
+    await loadData();
   };
 
   const handleEdit = (item) => {
@@ -79,9 +79,29 @@ export default function InventoryManagement() {
   };
 
   const handleDelete = async (id) => {
-    await base44.entities.InventoryItem.delete(id);
-    toast.success("Item removed.");
-    loadData();
+    // Optimistic delete
+    const currentItems = [...menuItems];
+    const originalForecast = [...forecast];
+    const originalSummary = { ...summary };
+    
+    setForecast(prev => prev.filter(f => f.id !== id));
+    if (summary) {
+      setSummary({
+        ...summary,
+        ok: Math.max(0, summary.ok - 1)
+      });
+    }
+    
+    try {
+      await base44.entities.InventoryItem.delete(id);
+      toast.success("Item removed.");
+    } catch (error) {
+      // Revert on error
+      setMenuItems(currentItems);
+      setForecast(originalForecast);
+      setSummary(originalSummary);
+      toast.error("Failed to delete item");
+    }
   };
 
   return (

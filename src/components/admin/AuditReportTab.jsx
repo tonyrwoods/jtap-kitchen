@@ -196,57 +196,94 @@ export default function AuditReportTab() {
           <p className="font-body text-muted-foreground">No audit logs found.</p>
         </div>
       ) : (
-        <div className="bg-card border border-border rounded-2xl overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-b border-border bg-muted/40">
-              <tr>
-                <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Timestamp
-                </th>
-                <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Vendor
-                </th>
-                <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Action
-                </th>
-                <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Details
-                </th>
-                <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Admin
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((log) => (
-                <tr key={log.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
-                  <td className="px-5 py-3">
-                    <p className="font-body text-sm text-foreground">
-                      {new Date(log.timestamp).toLocaleDateString()}
-                    </p>
-                    <p className="font-body text-xs text-muted-foreground">
-                      {new Date(log.timestamp).toLocaleTimeString()}
-                    </p>
-                  </td>
-                  <td className="px-5 py-3">
-                    <p className="font-body text-sm font-medium">{log.vendor_name}</p>
-                  </td>
-                  <td className="px-5 py-3">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary">
-                      {log.action}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3">
-                    <p className="font-body text-sm text-muted-foreground">{log.details || "—"}</p>
-                  </td>
-                  <td className="px-5 py-3">
-                    <p className="font-body text-xs text-muted-foreground">{log.admin_email}</p>
-                  </td>
+        <>
+          {/* Desktop table */}
+          <div className="hidden md:block bg-card border border-border rounded-2xl overflow-x-auto">
+            <table className="w-full">
+              <thead className="border-b border-border bg-muted/40">
+                <tr>
+                  <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Timestamp
+                  </th>
+                  <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Vendor
+                  </th>
+                  <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Action
+                  </th>
+                  <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Details
+                  </th>
+                  <th className="text-left px-5 py-3 font-body text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Admin
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map((log) => (
+                  <tr key={log.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                    <td className="px-5 py-3">
+                      <p className="font-body text-sm text-foreground">
+                        {new Date(log.timestamp).toLocaleDateString()}
+                      </p>
+                      <p className="font-body text-xs text-muted-foreground">
+                        {new Date(log.timestamp).toLocaleTimeString()}
+                      </p>
+                    </td>
+                    <td className="px-5 py-3">
+                      <p className="font-body text-sm font-medium">{log.vendor_name}</p>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary">
+                        {log.action}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <p className="font-body text-sm text-muted-foreground">{log.details || "—"}</p>
+                    </td>
+                    <td className="px-5 py-3">
+                      <p className="font-body text-xs text-muted-foreground">{log.admin_email}</p>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {filtered.map((log) => (
+              <div key={log.id} className="bg-card border border-border rounded-2xl p-4 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1">
+                    <p className="font-body text-xs text-muted-foreground mb-1">Timestamp</p>
+                    <p className="font-body text-sm font-medium">{new Date(log.timestamp).toLocaleDateString()}</p>
+                    <p className="font-body text-xs text-muted-foreground">{new Date(log.timestamp).toLocaleTimeString()}</p>
+                  </div>
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary whitespace-nowrap">
+                    {log.action}
+                  </span>
+                </div>
+                <div className="border-t border-border pt-2 space-y-2">
+                  <div>
+                    <p className="font-body text-xs text-muted-foreground mb-1">Vendor</p>
+                    <p className="font-body text-sm font-medium">{log.vendor_name}</p>
+                  </div>
+                  {log.details && (
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-1">Details</p>
+                      <p className="font-body text-sm text-muted-foreground">{log.details}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-body text-xs text-muted-foreground mb-1">Admin</p>
+                    <p className="font-body text-xs text-muted-foreground">{log.admin_email}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       <p className="font-body text-xs text-muted-foreground text-right">

@@ -246,9 +246,18 @@ export default function KitchenDashboard() {
   }, []);
 
   const handleStatusChange = async (id, status) => {
-    await base44.entities.Order.update(id, { status });
-    if (status === "Served") toast.success("Order marked as served!");
-    else if (status === "Ready") toast.success("Order ready! Notify the server.");
+    // Optimistic update
+    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+    try {
+      await base44.entities.Order.update(id, { status });
+      if (status === "Served") toast.success("Order marked as served!");
+      else if (status === "Ready") toast.success("Order ready! Notify the server.");
+    } catch (error) {
+      // Revert on error
+      const data = await base44.entities.Order.list("-created_date", 200);
+      setOrders(data);
+      toast.error("Failed to update order");
+    }
   };
 
   const activeStatuses = showServed ? STATUSES : STATUSES.filter(s => s !== "Served");

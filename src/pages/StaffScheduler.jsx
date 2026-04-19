@@ -112,7 +112,7 @@ function AddShiftModal({ date, block, staff, onClose, onSave }) {
           <label className="font-body text-xs text-muted-foreground mb-1.5 block">Staff Member *</label>
           <select className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body" value={selectedStaff} onChange={e => setSelectedStaff(e.target.value)}>
             <option value="">— Select —</option>
-            {staff.map(s => <option key={s.id} value={s.id}>{s.name} ({s.role})</option>)}
+            {staff.filter(s => s.is_active).map(s => <option key={s.id} value={s.id}>{s.name} ({s.role})</option>)}
           </select>
         </div>
         <div>
@@ -159,8 +159,8 @@ function StaffPanel({ staff, onAdd, onRefresh }) {
         </div>
         {showForm && (
           <form onSubmit={handleSave} className="space-y-2">
-            <input className="w-full border border-border rounded-lg px-2 py-1.5 text-xs bg-background" placeholder="Name *" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
-            <select className="w-full border border-border rounded-lg px-2 py-1.5 text-xs bg-background" value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}>
+            <input className="w-full border border-border rounded-lg px-2 py-1.5 text-xs bg-background font-body" placeholder="Name *" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
+            <select className="w-full border border-border rounded-lg px-2 py-1.5 text-xs bg-background font-body" value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}>
               {ROLES.map(r => <option key={r}>{r}</option>)}
             </select>
             <div className="flex items-center gap-2">
