@@ -29,6 +29,7 @@ import StaffShifts from './pages/StaffShifts';
 import ReconciliationCenter from './pages/ReconciliationCenter';
 import Menu from './pages/Menu';
 import ContactUs from './pages/ContactUs';
+import Support from './pages/Support';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -79,6 +80,7 @@ const AuthenticatedApp = () => {
         <Route path="/my-shifts" element={<StaffShifts />} />
         <Route path="/reconciliation" element={<ReconciliationCenter />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/support" element={<Support />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
