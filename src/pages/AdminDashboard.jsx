@@ -288,13 +288,19 @@ export default function AdminDashboard() {
 
             {tab === "Admin Calendar" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {loadedTabs["Admin Calendar"] ? <loadedTabs["Admin Calendar"] /> : <AdminCalendarTab />}
+                {(() => {
+                  const Comp = loadedTabs["Admin Calendar"];
+                  return Comp ? <Comp /> : <AdminCalendarTab />;
+                })()}
               </motion.div>
             )}
 
             {tab === "Waitlist" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {loadedTabs["Waitlist"] ? <loadedTabs["Waitlist"] /> : <WaitlistAdminTab />}
+                {(() => {
+                  const Comp = loadedTabs["Waitlist"];
+                  return Comp ? <Comp /> : <WaitlistAdminTab />;
+                })()}
               </motion.div>
             )}
 
@@ -387,13 +393,19 @@ export default function AdminDashboard() {
 
             {tab === "Staff Roster" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ minHeight: 600 }} className="flex flex-col">
-                {loadedTabs["Staff Roster"] ? <loadedTabs["Staff Roster"] /> : <StaffRosterTab />}
+                {(() => {
+                  const Comp = loadedTabs["Staff Roster"];
+                  return Comp ? <Comp /> : <StaffRosterTab />;
+                })()}
               </motion.div>
             )}
 
             {tab === "Inventory" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                {loadedTabs["Inventory"] ? <loadedTabs["Inventory"] /> : <InventoryAdminTab />}
+                {(() => {
+                  const Comp = loadedTabs["Inventory"];
+                  return Comp ? <Comp /> : <InventoryAdminTab />;
+                })()}
               </motion.div>
             )}
 
@@ -440,13 +452,19 @@ export default function AdminDashboard() {
 
             {tab === "Feedback" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                {loadedTabs["Feedback"] ? <loadedTabs["Feedback"] /> : <FeedbackManagementTab />}
+                {(() => {
+                  const Comp = loadedTabs["Feedback"];
+                  return Comp ? <Comp /> : <FeedbackManagementTab />;
+                })()}
               </motion.div>
             )}
 
             {tab === "Vendor Payments" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                {loadedTabs["Vendor Payments"] ? <loadedTabs["Vendor Payments"] /> : <VendorPaymentsTab />}
+                {(() => {
+                  const Comp = loadedTabs["Vendor Payments"];
+                  return Comp ? <Comp /> : <VendorPaymentsTab />;
+                })()}
               </motion.div>
             )}
 
@@ -509,31 +527,46 @@ export default function AdminDashboard() {
 
             {tab === "Loyalty" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {loadedTabs["Loyalty"] ? <loadedTabs["Loyalty"] /> : <LoyaltyAdminTab />}
+                {(() => {
+                  const Comp = loadedTabs["Loyalty"];
+                  return Comp ? <Comp /> : <LoyaltyAdminTab />;
+                })()}
               </motion.div>
             )}
 
             {tab === "Chef Highlights" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {loadedTabs["Chef Highlights"] ? <loadedTabs["Chef Highlights"] /> : <FeaturedDishesTab />}
+                {(() => {
+                  const Comp = loadedTabs["Chef Highlights"];
+                  return Comp ? <Comp /> : <FeaturedDishesTab />;
+                })()}
               </motion.div>
             )}
 
             {tab === "Team Members" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {loadedTabs["Team Members"] ? <loadedTabs["Team Members"] /> : <TeamMembersTab />}
+                {(() => {
+                  const Comp = loadedTabs["Team Members"];
+                  return Comp ? <Comp /> : <TeamMembersTab />;
+                })()}
               </motion.div>
             )}
 
             {tab === "SEO" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {loadedTabs["SEO"] ? <loadedTabs["SEO"] /> : <SeoTab />}
+                {(() => {
+                  const Comp = loadedTabs["SEO"];
+                  return Comp ? <Comp /> : <SeoTab />;
+                })()}
               </motion.div>
             )}
 
             {tab === "Audit Report" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {loadedTabs["Audit Report"] ? <loadedTabs["Audit Report"] /> : <AuditReportTab />}
+                {(() => {
+                  const Comp = loadedTabs["Audit Report"];
+                  return Comp ? <Comp /> : <AuditReportTab />;
+                })()}
               </motion.div>
             )}
 
