@@ -1,0 +1,45 @@
+{
+  "name": "GalleryImage",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Image Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "Food",
+        "Venue",
+        "Events",
+        "Team",
+        "Moments"
+      ],
+      "default": "Food"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Image URL"
+    },
+    "sort_order": {
+      "type": "number",
+      "title": "Display Order",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Display on Homepage",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "image_url",
+    "category"
+  ]
+}

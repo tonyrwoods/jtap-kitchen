@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useSeoMeta from "../hooks/useSeoMeta";
 import HeroSection from "../components/HeroSection";
-import GallerySection from "../components/GallerySection";
+import GallerySectionCMS from "../components/GallerySectionCMS";
 import InstagramSection from "../components/InstagramSection";
 import TeamSection from "../components/TeamSection";
 import MenuSection from "../components/MenuSection";
@@ -29,7 +29,7 @@ export default function Home() {
       <MenuSection />
       <AboutSection />
       <TeamSection />
-      <GallerySection />
+      <GallerySectionCMS />
       <InstagramSection />
       <TestimonialsSection />
       <ReservationModal open={modalOpen} onClose={() => { setModalOpen(false); setPrefill(null); }} prefill={prefill} />
