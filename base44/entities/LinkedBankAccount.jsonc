@@ -1,0 +1,49 @@
+{
+  "name": "LinkedBankAccount",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "plaid_item_id": {
+      "type": "string",
+      "title": "Plaid Item ID"
+    },
+    "plaid_access_token": {
+      "type": "string",
+      "title": "Plaid Access Token"
+    },
+    "bank_name": {
+      "type": "string",
+      "title": "Bank Name"
+    },
+    "account_name": {
+      "type": "string",
+      "title": "Account Name"
+    },
+    "account_number": {
+      "type": "string",
+      "title": "Account Last 4 Digits"
+    },
+    "account_type": {
+      "type": "string",
+      "title": "Account Type (checking, savings, etc.)"
+    },
+    "subtype": {
+      "type": "string",
+      "title": "Account Subtype"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    }
+  },
+  "required": [
+    "user_email",
+    "plaid_item_id",
+    "bank_name",
+    "account_name"
+  ]
+}
