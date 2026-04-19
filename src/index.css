@@ -28,11 +28,11 @@
     --border: 30 15% 88%;
     --input: 30 15% 88%;
     --ring: 36 60% 48%;
-    --chart-1: 36 60% 48%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --chart-1: 36 70% 55%;
+    --chart-2: 173 65% 45%;
+    --chart-3: 197 45% 35%;
+    --chart-4: 43 80% 70%;
+    --chart-5: 27 90% 72%;
     --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -121,5 +121,17 @@
     -webkit-user-select: none;
     user-select: none;
     -webkit-user-drag: none;
+  }
+}
+
+/* Hide scrollbars while keeping scroll functionality */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

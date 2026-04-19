@@ -319,7 +319,7 @@ export default function KitchenDashboard() {
         ref={containerRef}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        className="flex-1 overflow-x-auto p-5"
+        className="flex-1 overflow-x-auto p-5 scrollbar-hide"
       >
         {loading ? (
           <div className="flex items-center justify-center h-64">

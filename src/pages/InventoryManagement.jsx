@@ -151,7 +151,7 @@ export default function InventoryManagement() {
         ref={containerRef}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        className="flex-1 p-6 space-y-6 overflow-y-auto"
+        className="flex-1 p-6 space-y-6 overflow-y-auto scrollbar-hide"
       >
         {/* Summary Cards */}
         {summary && (

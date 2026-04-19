@@ -221,7 +221,7 @@ export default function StaffShifts() {
       ref={containerRef}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      className="min-h-screen bg-background py-20 px-6"
+      className="min-h-screen bg-background py-20 px-6 scrollbar-hide"
     >
       <div className="max-w-4xl mx-auto">
         <div className="mb-8 flex items-center justify-between">
