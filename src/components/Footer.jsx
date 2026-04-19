@@ -57,10 +57,10 @@ export default function Footer() {
             </h4>
             <div className="space-y-3">
               {[
-                { day: "Tue – Thu", time: "9:30 PM – 10:00 PM" },
+                { day: "Wed – Thu", time: "5:30 PM – 10:00 PM" },
                 { day: "Fri – Sat", time: "5:30 PM – 11:00 PM" },
                 { day: "Sunday", time: "5:00 PM – 9:30 PM" },
-                { day: "Monday", time: "Closed" },
+                { day: "Mon – Tue", time: "Closed" },
               ].map(({ day, time }) => (
                 <div key={day} className="flex items-center gap-3">
                   <Clock className="w-4 h-4 text-primary shrink-0" />
