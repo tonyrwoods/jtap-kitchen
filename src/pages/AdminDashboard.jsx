@@ -21,8 +21,9 @@ import AdminCalendarTab from "../components/admin/AdminCalendarTab";
 import WaitlistAdminTab from "../components/admin/WaitlistAdminTab";
 import PricingStrategyTab from "../components/admin/PricingStrategyTab";
 import GalleryAdminTab from "../components/admin/GalleryAdminTab";
+import EventWaitlistTab from "../components/admin/EventWaitlistTab";
 
-const TABS = ["Overview", "Menu Items", "Pricing Strategy", "Admin Calendar", "Waitlist", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "Gallery", "SEO", "Audit Report", "Reconciliation", "Profile"];
+const TABS = ["Overview", "Menu Items", "Pricing Strategy", "Admin Calendar", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "Gallery", "Event Waitlist", "SEO", "Audit Report", "Reconciliation", "Profile"];
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
@@ -273,9 +274,9 @@ export default function AdminDashboard() {
               </motion.div>
             )}
 
-            {tab === "Waitlist" && (
+            {tab === "Event Waitlist" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <WaitlistAdminTab />
+                <EventWaitlistTab />
               </motion.div>
             )}
 

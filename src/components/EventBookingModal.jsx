@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { X, Users, Clock, DollarSign } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import EventWaitlistSignup from "./EventWaitlistSignup";
 
 export default function EventBookingModal({ event, onClose, onBookingComplete }) {
   const [step, setStep] = useState(1);
@@ -14,6 +15,8 @@ export default function EventBookingModal({ event, onClose, onBookingComplete })
     special_requests: ""
   });
   const [submitting, setSubmitting] = useState(false);
+  const [showWaitlist, setShowWaitlist] = useState(false);
+  const soldOut = event.spots_available <= 0;
 
   const totalPrice = (event.price_per_guest || 0) * guestCount;
 
@@ -115,7 +118,26 @@ export default function EventBookingModal({ event, onClose, onBookingComplete })
                 </div>
               )}
 
-              {/* Booking Form */}
+              {/* Sold Out Notice */}
+              {soldOut && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+                  <div className="text-amber-600 text-lg mt-0.5">⚠</div>
+                  <div>
+                    <p className="font-body font-semibold text-amber-900 mb-1">This event is sold out</p>
+                    <p className="font-body text-sm text-amber-800 mb-2">Join the waitlist to be notified if a spot opens up.</p>
+                    <button
+                      type="button"
+                      onClick={() => setShowWaitlist(true)}
+                      className="text-sm font-semibold text-amber-700 hover:text-amber-800 underline"
+                    >
+                      Join Waitlist →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+            {/* Booking Form */}
+              {!soldOut && (
               <form onSubmit={handleBooking} className="space-y-4 border-t border-border pt-6">
                 <div>
                   <label className="font-body text-xs font-semibold text-muted-foreground mb-2 block">
@@ -215,7 +237,12 @@ export default function EventBookingModal({ event, onClose, onBookingComplete })
                   </button>
                 </div>
               </form>
+              )}
             </div>
+
+            {showWaitlist && (
+              <EventWaitlistSignup event={event} onClose={() => setShowWaitlist(false)} />
+            )}
           </motion.div>
         </motion.div>
       )}

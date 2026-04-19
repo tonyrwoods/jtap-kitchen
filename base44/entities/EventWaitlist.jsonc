@@ -1,0 +1,56 @@
+{
+  "name": "EventWaitlist",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "title": "Event ID"
+    },
+    "event_title": {
+      "type": "string",
+      "title": "Event Title"
+    },
+    "guest_name": {
+      "type": "string",
+      "title": "Guest Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "party_size": {
+      "type": "number",
+      "title": "Party Size",
+      "default": 1
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Waiting",
+        "Notified",
+        "Booked",
+        "Cancelled"
+      ],
+      "default": "Waiting"
+    },
+    "notification_sent_date": {
+      "type": "string",
+      "title": "Notification Sent Date"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Special Requests"
+    }
+  },
+  "required": [
+    "event_id",
+    "guest_name",
+    "email",
+    "party_size"
+  ]
+}
