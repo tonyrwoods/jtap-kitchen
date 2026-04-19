@@ -20,6 +20,10 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Auto-show back button on mobile for nested routes (more than one path segment)
+  const pathSegments = location.pathname.split("/").filter(Boolean);
+  const shouldShowBackButton = typeof window !== "undefined" && window.innerWidth < 768 && pathSegments.length > 1;
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
@@ -38,7 +42,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-20">
           {/* Back Button or Logo */}
-          {showBackButton ? (
+          {showBackButton || shouldShowBackButton ? (
             <button
               onClick={() => navigate(-1)}
               className="flex items-center gap-2 p-2 md:hidden text-foreground hover:text-primary transition-colors"
@@ -57,7 +61,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
             </span>
           </a>
           )}
-          {showBackButton && (
+          {(showBackButton || shouldShowBackButton) && (
             <a href="/" className="hidden md:flex items-center gap-2.5">
               <img
                 src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png"
