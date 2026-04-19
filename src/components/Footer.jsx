@@ -59,7 +59,8 @@ export default function Footer() {
               {[
                 { day: "Wed – Thu", time: "5:30 PM – 10:00 PM" },
                 { day: "Fri – Sat", time: "5:30 PM – 11:00 PM" },
-                { day: "Sunday", time: "5:00 PM – 9:30 PM" },
+                { day: "Sunday Lunch", time: "10:00 AM – 3:00 PM" },
+                { day: "Sunday Dinner", time: "5:00 PM – 10:00 PM" },
                 { day: "Mon – Tue", time: "Closed" },
               ].map(({ day, time }) => (
                 <div key={day} className="flex items-center gap-3">
