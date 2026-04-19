@@ -29,15 +29,39 @@ export default function GiftCards() {
       toast.error("Minimum gift card amount is $10.");
       return;
     }
+    if (!form.purchaser_name || !form.purchaser_email) {
+      toast.error("Please fill in your details.");
+      return;
+    }
     setLoading(true);
-    const code = generateCode();
-    const card = await base44.entities.GiftCard.create({
-      ...form,
-      amount: finalAmount,
-      code,
-      status: "Pending Payment",
-    });
-    setSuccess({ code, amount: finalAmount });
+    try {
+      const code = generateCode();
+      const card = await base44.entities.GiftCard.create({
+        ...form,
+        amount: finalAmount,
+        code,
+        status: "Pending Payment",
+      });
+
+      // Send email with gift card code
+      await base44.functions.invoke('sendGiftCardEmail', {
+        giftCard: {
+          id: card.id,
+          code,
+          amount: finalAmount,
+          purchaser_name: form.purchaser_name,
+          purchaser_email: form.purchaser_email,
+          recipient_name: form.recipient_name,
+          recipient_email: form.recipient_email,
+          message: form.message,
+        }
+      });
+
+      toast.success("Gift card created! Email sent to recipient.");
+      setSuccess({ code, amount: finalAmount });
+    } catch (error) {
+      toast.error("Failed to create gift card. Please try again.");
+    }
     setLoading(false);
   };
 
