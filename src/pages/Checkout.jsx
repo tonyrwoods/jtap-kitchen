@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Plus, Minus, Trash2, Tag, Printer, CheckCircle, ArrowLeft, Receipt, Search } from "lucide-react";
 import { toast } from "sonner";
 import CustomerLoyaltyPanel from "../components/checkout/CustomerLoyaltyPanel";
+import SelectDropdown from "../components/SelectDropdown";
 
 const TAX_RATE = 9.25; // %
 
@@ -345,14 +346,19 @@ export default function Checkout() {
                   </div>
                 </div>
                 <div>
-                  <label className="font-body text-xs text-muted-foreground mb-1 block">Link to Order (optional)</label>
-                  <select className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body" value={linkedOrderId} onChange={e => setLinkedOrderId(e.target.value)}>
-                    <option value="">— None —</option>
-                    {orders.filter(o => ["New", "Preparing", "Ready"].includes(o.status)).map(o => (
-                      <option key={o.id} value={o.id}>Table {o.table_number} · {o.status}</option>
-                    ))}
-                  </select>
-                </div>
+                   <label className="font-body text-xs text-muted-foreground mb-1 block">Link to Order (optional)</label>
+                   <SelectDropdown
+                     value={linkedOrderId}
+                     onChange={setLinkedOrderId}
+                     options={[
+                       { value: "", label: "— None —" },
+                       ...orders.filter(o => ["New", "Preparing", "Ready"].includes(o.status)).map(o => ({
+                         value: o.id,
+                         label: `Table ${o.table_number} · ${o.status}`
+                       }))
+                     ]}
+                   />
+                 </div>
               </div>
             </div>
 

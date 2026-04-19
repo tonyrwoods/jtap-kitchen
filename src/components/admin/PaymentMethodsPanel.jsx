@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Plus, Trash2, Star, CreditCard, Building2, X } from "lucide-react";
 import { toast } from "sonner";
+import SelectDropdown from "../SelectDropdown";
 
 const TYPE_ICONS = {
   "Bank Account": Building2,
@@ -55,12 +56,15 @@ function AddMethodModal({ onClose, onSave }) {
         <div className="grid grid-cols-1 gap-4">
           <div>
             <label className="font-body text-sm text-muted-foreground mb-1 block">Type *</label>
-            <select className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
-              value={form.type} onChange={e => set("type", e.target.value)}>
-              <option>Bank Account</option>
-              <option>Credit Card</option>
-              <option>Debit Card</option>
-            </select>
+            <SelectDropdown
+              value={form.type}
+              onChange={(value) => set("type", value)}
+              options={[
+                { value: "Bank Account", label: "Bank Account" },
+                { value: "Credit Card", label: "Credit Card" },
+                { value: "Debit Card", label: "Debit Card" }
+              ]}
+            />
           </div>
 
           <div>

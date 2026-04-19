@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { Upload, X, FileText, Sparkles, Tag, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { logInvoiceAction } from "@/lib/auditLogHelper";
+import SelectDropdown from "../SelectDropdown";
 
 const EXPENSE_CATEGORIES = [
   "Food & Beverage",
@@ -187,13 +188,11 @@ export default function DocumentUploadModal({ invoice, onClose, onSave }) {
             <div className="space-y-3">
               <div>
                 <label className="font-body text-xs text-muted-foreground mb-1 block">Document Type</label>
-                <select
+                <SelectDropdown
                   value={docType}
-                  onChange={(e) => setDocType(e.target.value)}
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
-                >
-                  {DOC_TYPES.map((t) => <option key={t}>{t}</option>)}
-                </select>
+                  onChange={setDocType}
+                  options={DOC_TYPES.map(t => ({ value: t, label: t }))}
+                />
               </div>
 
               <div
@@ -268,16 +267,14 @@ export default function DocumentUploadModal({ invoice, onClose, onSave }) {
                   <p className="font-body text-xs text-muted-foreground italic">{extracted.category_reasoning}</p>
                 )}
 
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full border border-primary/40 rounded-lg px-3 py-2 text-sm bg-background font-body font-medium text-primary"
-                >
-                  <option value="">— Select a category —</option>
-                  {EXPENSE_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
+                <SelectDropdown
+                   value={selectedCategory}
+                   onChange={setSelectedCategory}
+                   options={[
+                     { value: "", label: "— Select a category —" },
+                     ...EXPENSE_CATEGORIES.map(c => ({ value: c, label: c }))
+                   ]}
+                 />
               </div>
             </div>
           )}
@@ -288,16 +285,14 @@ export default function DocumentUploadModal({ invoice, onClose, onSave }) {
               <label className="font-body text-xs text-muted-foreground uppercase font-semibold mb-2 block">
                 Expense Category
               </label>
-              <select
+              <SelectDropdown
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
-              >
-                <option value="">— Select a category —</option>
-                {EXPENSE_CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
+                onChange={setSelectedCategory}
+                options={[
+                  { value: "", label: "— Select a category —" },
+                  ...EXPENSE_CATEGORIES.map(c => ({ value: c, label: c }))
+                ]}
+              />
             </div>
           )}
         </div>

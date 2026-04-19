@@ -135,3 +135,41 @@
     display: none;
   }
 }
+
+/* Disable mobile long-press menus and context menus */
+@layer base {
+  body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  textarea,
+  select {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  a {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  button,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
