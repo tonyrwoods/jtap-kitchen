@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Footer() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false); // false | true | "done"
 
@@ -12,7 +13,8 @@ export default function Footer() {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
-    await base44.entities.Newsletter.create({ email: email.trim() });
+    await base44.entities.Subscriber.create({ name: name.trim(), email: email.trim(), source: "footer", is_active: true });
+    setName("");
     setEmail("");
     setLoading("done");
   };
@@ -142,33 +144,42 @@ export default function Footer() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     onSubmit={handleSubscribe}
-                    className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+                    className="flex flex-col gap-3 max-w-md mx-auto"
                   >
-                    <div className="relative flex-1">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-background/30 pointer-events-none" />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        placeholder="your@email.com"
-                        required
-                        className="w-full pl-11 pr-4 py-3.5 rounded-full bg-background/10 border border-background/20 text-background placeholder:text-background/30 font-body text-sm focus:outline-none focus:border-primary focus:bg-background/15 transition-all"
-                      />
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      placeholder="Your name"
+                      className="w-full px-5 py-3.5 rounded-full bg-background/10 border border-background/20 text-background placeholder:text-background/30 font-body text-sm focus:outline-none focus:border-primary focus:bg-background/15 transition-all"
+                    />
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="relative flex-1">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-background/30 pointer-events-none" />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={e => setEmail(e.target.value)}
+                          placeholder="your@email.com"
+                          required
+                          className="w-full pl-11 pr-4 py-3.5 rounded-full bg-background/10 border border-background/20 text-background placeholder:text-background/30 font-body text-sm focus:outline-none focus:border-primary focus:bg-background/15 transition-all"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={loading === true}
+                        className="flex items-center justify-center gap-2 px-7 py-3.5 bg-primary text-primary-foreground font-body text-sm font-semibold rounded-full hover:opacity-90 disabled:opacity-50 transition-all shrink-0 shadow-lg shadow-primary/20"
+                      >
+                        {loading === true ? (
+                          <span className="w-4 h-4 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" />
+                            Subscribe
+                          </>
+                        )}
+                      </button>
                     </div>
-                    <button
-                      type="submit"
-                      disabled={loading === true}
-                      className="flex items-center justify-center gap-2 px-7 py-3.5 bg-primary text-primary-foreground font-body text-sm font-semibold rounded-full hover:opacity-90 disabled:opacity-50 transition-all shrink-0 shadow-lg shadow-primary/20"
-                    >
-                      {loading === true ? (
-                        <span className="w-4 h-4 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          Subscribe
-                        </>
-                      )}
-                    </button>
                   </motion.form>
                 )}
               </AnimatePresence>

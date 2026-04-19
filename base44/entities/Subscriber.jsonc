@@ -1,0 +1,27 @@
+{
+  "name": "Subscriber",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email Address"
+    },
+    "source": {
+      "type": "string",
+      "title": "Signup Source",
+      "default": "footer"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active Subscriber",
+      "default": true
+    }
+  },
+  "required": [
+    "email"
+  ]
+}
