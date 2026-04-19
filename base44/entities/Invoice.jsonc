@@ -198,6 +198,24 @@
           }
         }
       }
+    },
+    "delivery_status": {
+      "type": "string",
+      "title": "Vendor Email Delivery Status",
+      "enum": [
+        "pending",
+        "sent",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "delivered_at": {
+      "type": "string",
+      "title": "Delivery Timestamp (ISO 8601)"
+    },
+    "delivery_error": {
+      "type": "string",
+      "title": "Delivery Error Message"
     }
   },
   "required": [
