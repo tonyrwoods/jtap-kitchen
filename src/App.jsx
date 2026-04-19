@@ -28,6 +28,7 @@ import KDS from './pages/KDS';
 import StaffShifts from './pages/StaffShifts';
 import ReconciliationCenter from './pages/ReconciliationCenter';
 import Menu from './pages/Menu';
+import ContactUs from './pages/ContactUs';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -77,6 +78,7 @@ const AuthenticatedApp = () => {
         <Route path="/kds" element={<KDS />} />
         <Route path="/my-shifts" element={<StaffShifts />} />
         <Route path="/reconciliation" element={<ReconciliationCenter />} />
+        <Route path="/contact" element={<ContactUs />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
