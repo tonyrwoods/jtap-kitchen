@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   UtensilsCrossed, CalendarDays,
   Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload
