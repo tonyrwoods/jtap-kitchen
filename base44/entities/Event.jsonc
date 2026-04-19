@@ -10,58 +10,69 @@
       "type": "string",
       "title": "Description"
     },
+    "event_type": {
+      "type": "string",
+      "title": "Event Type",
+      "enum": [
+        "Wine Tasting",
+        "Tasting Menu",
+        "Holiday Dinner",
+        "Chef's Table",
+        "Cooking Class",
+        "Special Occasion",
+        "Other"
+      ]
+    },
     "date": {
       "type": "string",
       "title": "Date (YYYY-MM-DD)"
     },
     "time": {
       "type": "string",
-      "title": "Time"
+      "title": "Time (HH:MM)"
     },
-    "end_time": {
-      "type": "string",
-      "title": "End Time"
-    },
-    "price_per_person": {
+    "duration_minutes": {
       "type": "number",
-      "title": "Price Per Person (USD)"
-    },
-    "capacity": {
-      "type": "number",
-      "title": "Max Capacity"
-    },
-    "spots_booked": {
-      "type": "number",
-      "title": "Spots Booked",
-      "default": 0
+      "title": "Duration (minutes)",
+      "default": 120
     },
     "image_url": {
       "type": "string",
-      "title": "Image URL"
+      "title": "Event Image URL"
     },
-    "category": {
+    "price_per_guest": {
+      "type": "number",
+      "title": "Price per Guest (USD)"
+    },
+    "max_capacity": {
+      "type": "number",
+      "title": "Max Capacity"
+    },
+    "spots_available": {
+      "type": "number",
+      "title": "Spots Available"
+    },
+    "menu_details": {
       "type": "string",
-      "title": "Category",
-      "enum": [
-        "Wine Tasting",
-        "Chef's Table",
-        "Cooking Class",
-        "Seasonal Menu",
-        "Live Music Dinner",
-        "Other"
-      ]
+      "title": "Menu Details / Itinerary"
+    },
+    "featured": {
+      "type": "boolean",
+      "title": "Featured Event",
+      "default": false
     },
     "is_published": {
       "type": "boolean",
-      "title": "Published",
-      "default": false
+      "title": "Publish on Website",
+      "default": true
     }
   },
   "required": [
     "title",
+    "event_type",
     "date",
     "time",
-    "price_per_person",
-    "capacity"
+    "price_per_guest",
+    "max_capacity"
   ]
 }
