@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { motion } from "framer-motion";
 import {
   UtensilsCrossed, CalendarDays,
-  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift
+  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload
 } from "lucide-react";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
@@ -50,7 +50,17 @@ function StatusBadge({ status }) {
 
 function MenuItemForm({ item, onSave, onCancel }) {
   const [form, setForm] = useState(item || { name: "", category: "Starters", description: "", price: "", image_url: "", is_featured: false, dietary_tags: [] });
+  const [uploading, setUploading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    set("image_url", file_url);
+    setUploading(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,9 +91,18 @@ function MenuItemForm({ item, onSave, onCancel }) {
           <label className="font-body text-sm text-muted-foreground mb-1 block">Price (USD) *</label>
           <input type="number" step="0.01" className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={form.price} onChange={e => set("price", e.target.value)} required />
         </div>
-        <div>
-          <label className="font-body text-sm text-muted-foreground mb-1 block">Image URL</label>
-          <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={form.image_url} onChange={e => set("image_url", e.target.value)} />
+        <div className="sm:col-span-2">
+          <label className="font-body text-sm text-muted-foreground mb-2 block">Image</label>
+          <div className="flex items-center gap-3">
+            <label className="flex-1 flex items-center justify-center gap-2 border-2 border-dashed border-border rounded-lg px-4 py-3 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all">
+              <Upload className="w-4 h-4 text-muted-foreground" />
+              <span className="font-body text-sm text-muted-foreground">{uploading ? "Uploading..." : "Choose image"}</span>
+              <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} className="hidden" />
+            </label>
+            {form.image_url && (
+              <img src={form.image_url} alt="preview" className="w-12 h-12 rounded-lg object-cover border border-border" />
+            )}
+          </div>
         </div>
         <div className="sm:col-span-2">
           <label className="font-body text-sm text-muted-foreground mb-1 block">Description</label>
