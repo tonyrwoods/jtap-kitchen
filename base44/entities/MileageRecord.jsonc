@@ -1,0 +1,81 @@
+{
+  "name": "MileageRecord",
+  "type": "object",
+  "properties": {
+    "staff_name": {
+      "type": "string",
+      "title": "Staff Name"
+    },
+    "staff_email": {
+      "type": "string",
+      "title": "Staff Email"
+    },
+    "trip_date": {
+      "type": "string",
+      "title": "Trip Date (YYYY-MM-DD)"
+    },
+    "purpose": {
+      "type": "string",
+      "title": "Trip Purpose",
+      "enum": [
+        "Vendor Pickup",
+        "Supply Run",
+        "Bank Deposit",
+        "Marketing Event",
+        "Staff Training",
+        "Other"
+      ]
+    },
+    "start_location": {
+      "type": "string",
+      "title": "Start Location"
+    },
+    "end_location": {
+      "type": "string",
+      "title": "End Location"
+    },
+    "miles": {
+      "type": "number",
+      "title": "Miles Driven",
+      "minimum": 0
+    },
+    "reimbursement_rate": {
+      "type": "number",
+      "title": "Reimbursement Rate ($ per mile)",
+      "default": 0.67
+    },
+    "reimbursement_amount": {
+      "type": "number",
+      "title": "Reimbursement Amount ($)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Additional Notes"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending Review",
+        "Approved",
+        "Reimbursed",
+        "Rejected"
+      ],
+      "default": "Pending Review"
+    },
+    "approved_by": {
+      "type": "string",
+      "title": "Approved By (Admin Email)"
+    },
+    "approval_date": {
+      "type": "string",
+      "title": "Approval Date (YYYY-MM-DD)"
+    }
+  },
+  "required": [
+    "staff_name",
+    "trip_date",
+    "purpose",
+    "miles"
+  ]
+}
