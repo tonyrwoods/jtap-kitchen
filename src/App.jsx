@@ -9,6 +9,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import GiftCards from './pages/GiftCards';
 import VendorOverchargeAnalysis from './pages/VendorOverchargeAnalysis';
 import MileageTracking from './pages/MileageTracking';
+import PostedShifts from './pages/PostedShifts';
 import Events from './pages/Events';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
@@ -68,6 +69,7 @@ const AuthenticatedApp = () => {
         <Route path="/gift-cards" element={<GiftCards />} />
         <Route path="/vendor-overcharge-analysis" element={<VendorOverchargeAnalysis />} />
         <Route path="/mileage" element={<MileageTracking />} />
+        <Route path="/posted-shifts" element={<PostedShifts />} />
         <Route path="/events" element={<Events />} />
         <Route path="/reservations-calendar" element={<ReservationsCalendar />} />
         <Route path="/email-marketing" element={<EmailMarketing />} />

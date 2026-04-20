@@ -1,0 +1,66 @@
+{
+  "name": "OpenShift",
+  "type": "object",
+  "properties": {
+    "shift_id": {
+      "type": "string",
+      "title": "Original Shift ID"
+    },
+    "posted_by": {
+      "type": "string",
+      "title": "Posted By (Staff Name)"
+    },
+    "posted_by_email": {
+      "type": "string",
+      "title": "Posted By (Email)"
+    },
+    "shift_date": {
+      "type": "string",
+      "title": "Shift Date (YYYY-MM-DD)"
+    },
+    "shift_start_time": {
+      "type": "string",
+      "title": "Start Time (HH:MM)"
+    },
+    "shift_end_time": {
+      "type": "string",
+      "title": "End Time (HH:MM)"
+    },
+    "position": {
+      "type": "string",
+      "title": "Position"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason for Posting",
+      "enum": [
+        "Personal",
+        "Medical",
+        "Family",
+        "Other"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Open",
+        "Claimed",
+        "Approved",
+        "Cancelled"
+      ],
+      "default": "Open"
+    },
+    "posted_date": {
+      "type": "string",
+      "title": "Posted Date (YYYY-MM-DD)"
+    }
+  },
+  "required": [
+    "shift_id",
+    "posted_by",
+    "shift_date",
+    "shift_start_time",
+    "shift_end_time"
+  ]
+}

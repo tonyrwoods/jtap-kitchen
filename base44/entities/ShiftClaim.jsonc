@@ -1,0 +1,70 @@
+{
+  "name": "ShiftClaim",
+  "type": "object",
+  "properties": {
+    "open_shift_id": {
+      "type": "string",
+      "title": "Open Shift ID"
+    },
+    "claimed_by": {
+      "type": "string",
+      "title": "Claimed By (Staff Name)"
+    },
+    "claimed_by_email": {
+      "type": "string",
+      "title": "Claimed By (Email)"
+    },
+    "original_owner": {
+      "type": "string",
+      "title": "Original Owner (Staff Name)"
+    },
+    "original_owner_email": {
+      "type": "string",
+      "title": "Original Owner (Email)"
+    },
+    "shift_date": {
+      "type": "string",
+      "title": "Shift Date (YYYY-MM-DD)"
+    },
+    "shift_start_time": {
+      "type": "string",
+      "title": "Start Time (HH:MM)"
+    },
+    "shift_end_time": {
+      "type": "string",
+      "title": "End Time (HH:MM)"
+    },
+    "claim_date": {
+      "type": "string",
+      "title": "Claim Date (YYYY-MM-DD)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending Admin Approval",
+        "Approved",
+        "Rejected"
+      ],
+      "default": "Pending Admin Approval"
+    },
+    "approved_by": {
+      "type": "string",
+      "title": "Approved By (Admin Email)"
+    },
+    "approval_date": {
+      "type": "string",
+      "title": "Approval Date (YYYY-MM-DD)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Admin Notes"
+    }
+  },
+  "required": [
+    "open_shift_id",
+    "claimed_by",
+    "claimed_by_email",
+    "shift_date"
+  ]
+}
