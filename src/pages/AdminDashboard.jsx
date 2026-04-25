@@ -226,20 +226,22 @@ export default function AdminDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8">
-        <div className="flex gap-2 mb-8 border-b border-border overflow-x-auto">
-          {TABS.map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              aria-selected={tab === t}
-              role="tab"
-              className={`px-5 py-3 font-body text-sm font-medium transition-all border-b-2 -mb-px whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
-                tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t}
-            </button>
-          ))}
+        <div className="mb-8 border-b border-border">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+            {TABS.map(t => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                aria-selected={tab === t}
+                role="tab"
+                className={`px-5 py-3 font-body text-sm font-medium transition-all border-b-2 -mb-px whitespace-nowrap shrink-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
+                  tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
