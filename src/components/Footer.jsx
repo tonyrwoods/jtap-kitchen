@@ -160,14 +160,18 @@ export default function Footer() {
                 { label: "Gift Cards", href: "/gift-cards" },
                 { label: "Contact Us", href: "/contact" },
                 { label: "Support", href: "/support" },
+                { label: "Login", href: null },
               ].map(({ label, href }) => (
                 <a 
                   key={label} 
-                  href={href}
+                  href={href || "#"}
                   onClick={(e) => {
                     if (label === "Reserve a Table") {
                       e.preventDefault();
                       window.location.href = "/";
+                    } else if (label === "Login") {
+                      e.preventDefault();
+                      import("@/api/base44Client").then(({ base44 }) => base44.auth.redirectToLogin());
                     }
                   }}
                   className="block font-body text-sm text-background/60 hover:text-primary transition-colors duration-200"
