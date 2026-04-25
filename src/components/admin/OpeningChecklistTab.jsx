@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { CheckCircle2, Circle, RotateCcw, ClipboardList } from "lucide-react";
+import { CheckCircle2, Circle, RotateCcw, ClipboardList, PenLine } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -106,9 +106,24 @@ export default function OpeningChecklistTab() {
     setChecked((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const [signoffs, setSignoffs] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`opening-signoffs-${format(new Date(), "yyyy-MM-dd")}`);
+      return saved ? JSON.parse(saved) : { manager: "", foh_lead: "", kitchen_lead: "" };
+    } catch {
+      return { manager: "", foh_lead: "", kitchen_lead: "" };
+    }
+  });
+
+  const signoffKey = `opening-signoffs-${format(new Date(), "yyyy-MM-dd")}`;
+  useEffect(() => {
+    localStorage.setItem(signoffKey, JSON.stringify(signoffs));
+  }, [signoffs, signoffKey]);
+
   const reset = () => {
     if (!confirm("Reset today's checklist? All checks will be cleared.")) return;
     setChecked({});
+    setSignoffs({ manager: "", foh_lead: "", kitchen_lead: "" });
     toast.success("Checklist reset for today");
   };
 
@@ -192,6 +207,47 @@ export default function OpeningChecklistTab() {
           </div>
         );
       })}
+
+      {/* Staff Signoff */}
+      <div className="bg-card border border-border rounded-2xl overflow-hidden">
+        <div className="flex items-center gap-3 px-6 py-4 border-b border-border">
+          <PenLine className="w-4 h-4 text-primary" />
+          <h3 className="font-body font-semibold text-sm">Staff Signoff</h3>
+          <span className="font-body text-xs text-muted-foreground ml-auto">
+            {[signoffs.manager, signoffs.foh_lead, signoffs.kitchen_lead].filter(Boolean).length} / 3 signed
+          </span>
+        </div>
+        <div className="divide-y divide-border">
+          {[
+            { key: "manager", label: "Manager on Duty", placeholder: "Manager name & time (e.g. J. Thompson 9:00 AM)" },
+            { key: "foh_lead", label: "FOH Lead", placeholder: "FOH lead name & time" },
+            { key: "kitchen_lead", label: "Kitchen Lead", placeholder: "Kitchen lead name & time" },
+          ].map(({ key, label, placeholder }) => (
+            <div key={key} className="flex flex-col sm:flex-row sm:items-center gap-2 px-6 py-4">
+              <div className="flex items-center gap-3 sm:w-48 shrink-0">
+                {signoffs[key] ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                ) : (
+                  <Circle className="w-5 h-5 text-muted-foreground shrink-0" />
+                )}
+                <span className="font-body text-sm font-medium">{label}</span>
+              </div>
+              <input
+                type="text"
+                value={signoffs[key]}
+                onChange={e => setSignoffs(prev => ({ ...prev, [key]: e.target.value }))}
+                placeholder={placeholder}
+                className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background font-body placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+          ))}
+        </div>
+        {signoffs.manager && signoffs.foh_lead && signoffs.kitchen_lead && (
+          <div className="px-6 py-3 bg-green-50 border-t border-green-100">
+            <p className="font-body text-sm text-green-700 font-semibold text-center">✓ All staff have signed off — ready to open!</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
