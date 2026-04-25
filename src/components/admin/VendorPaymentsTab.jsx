@@ -18,6 +18,7 @@ const EXPENSE_CATEGORIES = [
   "Rent & Facilities",
   "Insurance",
   "Logistics & Shipping",
+  "Sales Tax Paid",
   "Other",
 ];
 
