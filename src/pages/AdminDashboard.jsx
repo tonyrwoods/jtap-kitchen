@@ -26,7 +26,17 @@ import LinkedInEventsTab from "../components/admin/LinkedInEventsTab";
 import OpeningChecklistTab from "../components/admin/OpeningChecklistTab";
 import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 
-const TABS = ["Overview", "Opening Checklist", "End of Year Checklist", "Menu Items", "Pricing Strategy", "Admin Calendar", "Reservations", "Calendar", "Staff Roster", "Inventory", "Gift Cards", "Reviews", "Feedback", "Vendor Payments", "Loyalty", "Chef Highlights", "Team Members", "Gallery", "Event Waitlist", "LinkedIn", "SEO", "Audit Report", "Reconciliation", "Profile"];
+const TAB_GROUPS = [
+  { label: "Operations", tabs: ["Overview", "Opening Checklist", "End of Year Checklist"] },
+  { label: "Menu & Pricing", tabs: ["Menu Items", "Pricing Strategy", "Chef Highlights"] },
+  { label: "Reservations", tabs: ["Admin Calendar", "Reservations", "Calendar", "Event Waitlist"] },
+  { label: "Staff", tabs: ["Staff Roster"] },
+  { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
+  { label: "Guests", tabs: ["Gift Cards", "Reviews", "Feedback", "Loyalty"] },
+  { label: "Marketing", tabs: ["Gallery", "Team Members", "LinkedIn", "SEO"] },
+  { label: "Account", tabs: ["Profile"] },
+];
+const TABS = TAB_GROUPS.flatMap(g => g.tabs);
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
@@ -226,20 +236,30 @@ export default function AdminDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8">
-        <div className="mb-8 border-b border-border">
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-            {TABS.map(t => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                aria-selected={tab === t}
-                role="tab"
-                className={`px-5 py-3 font-body text-sm font-medium transition-all border-b-2 -mb-px whitespace-nowrap shrink-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
-                  tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t}
-              </button>
+        <div className="mb-8 overflow-x-auto scrollbar-hide">
+          <div className="flex items-end gap-1 border-b border-border min-w-max">
+            {TAB_GROUPS.map((group, gi) => (
+              <div key={group.label} className="flex items-end">
+                {gi > 0 && <div className="w-px h-5 bg-border mx-1 mb-3 shrink-0" />}
+                <div className="flex flex-col">
+                  <span className="font-body text-[10px] uppercase tracking-widest text-muted-foreground/50 px-3 mb-1">{group.label}</span>
+                  <div className="flex">
+                    {group.tabs.map(t => (
+                      <button
+                        key={t}
+                        onClick={() => setTab(t)}
+                        aria-selected={tab === t}
+                        role="tab"
+                        className={`px-4 py-2.5 font-body text-sm font-medium transition-all border-b-2 -mb-px whitespace-nowrap shrink-0 focus:outline-none ${
+                          tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
