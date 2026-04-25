@@ -182,7 +182,13 @@ export default function AdminDashboard() {
         <div className="text-center">
           <XCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
           <h2 className="font-heading text-2xl font-bold mb-2">Access Denied</h2>
-          <p className="font-body text-muted-foreground">You need admin privileges to view this page.</p>
+          <p className="font-body text-muted-foreground mb-6">You need admin privileges to view this page.</p>
+          <button
+            onClick={() => base44.auth.redirectToLogin(window.location.href)}
+            className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            Log In
+          </button>
         </div>
       </div>
     );
