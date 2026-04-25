@@ -17,10 +17,27 @@ export default function useSeoMeta(pageKey) {
 
         setMeta("description", settings.meta_description);
         setMeta("keywords", settings.meta_keywords);
+        setMeta("robots", "index, follow");
 
         // Open Graph
+        setMetaProperty("og:type", "website");
+        setMetaProperty("og:url", window.location.href);
         setMetaProperty("og:title", settings.og_title || settings.meta_title);
         setMetaProperty("og:description", settings.og_description || settings.meta_description);
+        if (settings.og_image) {
+          setMetaProperty("og:image", settings.og_image);
+        }
+
+        // Twitter Card
+        setMeta("twitter:card", "summary_large_image");
+        setMeta("twitter:title", settings.og_title || settings.meta_title);
+        setMeta("twitter:description", settings.og_description || settings.meta_description);
+        if (settings.og_image) {
+          setMeta("twitter:image", settings.og_image);
+        }
+
+        // Canonical
+        setCanonical(window.location.href);
       })
       .catch(() => {});
   }, [pageKey]);
@@ -46,4 +63,14 @@ function setMetaProperty(property, content) {
     document.head.appendChild(el);
   }
   el.setAttribute("content", content);
+}
+
+function setCanonical(url) {
+  let el = document.querySelector('link[rel="canonical"]');
+  if (!el) {
+    el = document.createElement("link");
+    el.setAttribute("rel", "canonical");
+    document.head.appendChild(el);
+  }
+  el.setAttribute("href", url);
 }

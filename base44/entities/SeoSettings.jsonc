@@ -29,6 +29,10 @@
     "og_description": {
       "type": "string",
       "title": "OG Description (Social Share)"
+    },
+    "og_image": {
+      "type": "string",
+      "title": "OG Image URL (Social Share Image)"
     }
   },
   "required": [

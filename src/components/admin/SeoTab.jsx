@@ -11,6 +11,9 @@ const PAGES = [
   { key: "loyalty", label: "Loyalty Program" },
   { key: "submit-review", label: "Submit Review" },
   { key: "loyalty-portal", label: "Loyalty Portal" },
+  { key: "contact", label: "Contact Us" },
+  { key: "support", label: "Support" },
+  { key: "full-menu", label: "Full Menu" },
 ];
 
 const EMPTY = (page) => ({
@@ -21,6 +24,7 @@ const EMPTY = (page) => ({
   meta_keywords: "",
   og_title: "",
   og_description: "",
+  og_image: "",
 });
 
 function PageSeoForm({ page, initial, onSaved }) {
@@ -125,6 +129,15 @@ function PageSeoForm({ page, initial, onSaved }) {
                 placeholder="Defaults to Meta Description"
                 value={form.og_description}
                 onChange={e => set("og_description", e.target.value)}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="font-body text-xs text-muted-foreground font-medium mb-1 block">OG Image URL (Social Share Image)</label>
+              <input
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+                placeholder="https://… (1200×630 recommended)"
+                value={form.og_image}
+                onChange={e => set("og_image", e.target.value)}
               />
             </div>
           </div>
