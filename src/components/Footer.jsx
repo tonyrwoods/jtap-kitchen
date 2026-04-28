@@ -210,15 +210,12 @@ export default function Footer() {
             © {new Date().getFullYear()} JTAP Kitchen. All rights reserved.
           </p>
           <div className="flex gap-6">
-            {["Privacy Policy", "Terms of Service"].map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="font-body text-xs text-background/40 hover:text-background/70 transition-colors"
-              >
-                {link}
-              </a>
-            ))}
+            <a href="/privacy-policy" className="font-body text-xs text-background/40 hover:text-background/70 transition-colors">
+              Privacy Policy
+            </a>
+            <a href="#" className="font-body text-xs text-background/40 hover:text-background/70 transition-colors">
+              Terms of Service
+            </a>
           </div>
         </div>
       </div>
