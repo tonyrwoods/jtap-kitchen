@@ -36,6 +36,7 @@ import Support from './pages/Support';
 import InformationSecurityPolicy from './pages/InformationSecurityPolicy';
 import DataRetentionPolicy from './pages/DataRetentionPolicy';
 import RLSPolicy from './pages/RLSPolicy';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -93,6 +94,7 @@ const AuthenticatedApp = () => {
         <Route path="/security-policy" element={<InformationSecurityPolicy />} />
         <Route path="/data-retention-policy" element={<DataRetentionPolicy />} />
         <Route path="/rls-policy" element={<RLSPolicy />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
