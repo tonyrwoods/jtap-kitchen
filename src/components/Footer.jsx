@@ -213,7 +213,7 @@ export default function Footer() {
             <a href="/privacy-policy" className="font-body text-xs text-background/40 hover:text-background/70 transition-colors">
               Privacy Policy
             </a>
-            <a href="#" className="font-body text-xs text-background/40 hover:text-background/70 transition-colors">
+            <a href="/terms-of-service" className="font-body text-xs text-background/40 hover:text-background/70 transition-colors">
               Terms of Service
             </a>
           </div>
