@@ -38,6 +38,7 @@ import DataRetentionPolicy from './pages/DataRetentionPolicy';
 import RLSPolicy from './pages/RLSPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import BookTable from './pages/BookTable';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -97,6 +98,7 @@ const AuthenticatedApp = () => {
         <Route path="/rls-policy" element={<RLSPolicy />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/book" element={<BookTable />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
