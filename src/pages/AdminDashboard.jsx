@@ -24,6 +24,7 @@ import GalleryAdminTab from "../components/admin/GalleryAdminTab";
 import EventWaitlistTab from "../components/admin/EventWaitlistTab";
 import LinkedInEventsTab from "../components/admin/LinkedInEventsTab";
 import OpeningChecklistTab from "../components/admin/OpeningChecklistTab";
+import InviteUserPanel from "../components/admin/InviteUserPanel";
 import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 
 const TAB_GROUPS = [
@@ -602,6 +603,8 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
+
+                <InviteUserPanel />
 
                 <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
                   <h4 className="font-heading text-lg font-semibold text-red-900 mb-2">Danger Zone</h4>
