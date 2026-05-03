@@ -171,7 +171,7 @@ export default function Footer() {
                       window.location.href = "/";
                     } else if (label === "Login") {
                       e.preventDefault();
-                      import("@/api/base44Client").then(({ base44 }) => base44.auth.redirectToLogin(window.location.href));
+                      import("@/api/base44Client").then(({ base44 }) => base44.auth.redirectToLogin("https://jtapkitchen.com/admin"));
                     }
                   }}
                   className="block font-body text-sm text-background/60 hover:text-primary transition-colors duration-200"
