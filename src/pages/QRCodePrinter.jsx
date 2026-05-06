@@ -48,10 +48,7 @@ function QRCard({ tableNum, url }) {
           fgColor="#1a1a1a"
           bgColor="#ffffff"
           level="M"
-          imageSettings={{
-            src: "",
-            excavate: false,
-          }}
+          imageSettings={{ src: "", excavate: false }}
         />
       </div>
       <p className="font-body text-xs text-muted-foreground text-center max-w-[160px] break-all">{url}</p>
@@ -65,14 +62,13 @@ function QRCard({ tableNum, url }) {
   );
 }
 
-export default function TableQRGenerator() {
+export default function QRCodePrinter() {
   const [tableCount, setTableCount] = useState(10);
 
   const menuUrl = (table) => `${BASE_URL}/menu?table=${table}`;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="border-b border-border bg-card px-6 py-5 print:hidden">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -100,7 +96,6 @@ export default function TableQRGenerator() {
         </div>
       </div>
 
-      {/* Info banner */}
       <div className="max-w-5xl mx-auto px-6 py-4 print:hidden">
         <div className="bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 flex items-start gap-3">
           <span className="text-primary text-lg">📱</span>
@@ -113,7 +108,6 @@ export default function TableQRGenerator() {
         </div>
       </div>
 
-      {/* QR Grid */}
       <div className="max-w-5xl mx-auto px-6 pb-12">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {Array.from({ length: tableCount }, (_, i) => i + 1).map(n => (
