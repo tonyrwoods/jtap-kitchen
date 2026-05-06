@@ -65,7 +65,7 @@ function QRCard({ tableNum, url }) {
   );
 }
 
-export default function TableQRCodes() {
+export default function TableQRGenerator() {
   const [tableCount, setTableCount] = useState(10);
 
   const menuUrl = (table) => `${BASE_URL}/menu?table=${table}`;

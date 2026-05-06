@@ -20,7 +20,7 @@ import SubmitReview from './pages/SubmitReview';
 import LoyaltyProgram from './pages/LoyaltyProgram';
 import StaffScheduler from './pages/StaffScheduler';
 import DigitalMenu from './pages/DigitalMenu';
-import TableQRCodes from './pages/TableQRCodes';
+import TableQRGenerator from './pages/TableQRGenerator';
 import KitchenDashboard from './pages/KitchenDashboard';
 import MenuPerformance from './pages/MenuPerformance';
 import LoyaltyPortal from './pages/LoyaltyPortal';
@@ -81,7 +81,7 @@ const AuthenticatedApp = () => {
         <Route path="/staff-scheduler" element={<StaffScheduler />} />
         <Route path="/menu" element={<DigitalMenu />} />
         <Route path="/full-menu" element={<Menu />} />
-        <Route path="/table-qr-codes" element={<TableQRCodes />} />
+        <Route path="/table-qr-codes" element={<TableQRGenerator />} />
         <Route path="/kitchen" element={<KitchenDashboard />} />
         <Route path="/menu-performance" element={<MenuPerformance />} />
         <Route path="/loyalty-portal" element={<LoyaltyPortal />} />
