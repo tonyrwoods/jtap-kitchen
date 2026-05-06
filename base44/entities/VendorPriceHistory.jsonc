@@ -59,6 +59,11 @@
     "price_variance_percent": {
       "type": "number",
       "title": "Price Variance (%)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [

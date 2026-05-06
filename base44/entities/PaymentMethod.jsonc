@@ -41,6 +41,11 @@
       "type": "boolean",
       "title": "Active",
       "default": true
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [
@@ -48,5 +53,27 @@
     "type",
     "bank_name",
     "account_last4"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

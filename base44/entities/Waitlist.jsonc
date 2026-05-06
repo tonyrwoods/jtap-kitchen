@@ -57,11 +57,61 @@
       "type": "boolean",
       "title": "Ready Email Sent",
       "default": false
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [
     "guest_name",
     "email",
     "party_size"
-  ]
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        }
+      ]
+    }
+  }
 }

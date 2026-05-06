@@ -67,6 +67,11 @@
     "discrepancy_notes": {
       "type": "string",
       "title": "Discrepancy Notes"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [

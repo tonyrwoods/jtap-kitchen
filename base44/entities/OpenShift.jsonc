@@ -54,6 +54,11 @@
     "posted_date": {
       "type": "string",
       "title": "Posted Date (YYYY-MM-DD)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [
