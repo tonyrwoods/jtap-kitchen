@@ -25,6 +25,18 @@ export default function HeroSection() {
           Fine Dining Experience
         </motion.p>
 
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="inline-flex items-center gap-2 px-5 py-2 mb-6 rounded-full border border-amber-400/50 bg-amber-400/10 backdrop-blur-sm"
+        >
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span className="font-body text-xs uppercase tracking-[0.25em] font-semibold text-amber-300">
+            Opening Soon — Jun 2026
+          </span>
+        </motion.div>
+
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
