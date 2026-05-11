@@ -257,6 +257,14 @@ export default function Careers() {
 
   const filtered = filter === "All" ? jobs : jobs.filter(j => j.department === filter);
 
+  // Group by department
+  const grouped = filtered.reduce((acc, job) => {
+    const dept = job.department || "Other";
+    if (!acc[dept]) acc[dept] = [];
+    acc[dept].push(job);
+    return acc;
+  }, {});
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
@@ -321,9 +329,22 @@ export default function Careers() {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {filtered.map(job => (
-              <JobCard key={job.id} job={job} onApply={setApplyingTo} />
+          <div className="space-y-10">
+            {Object.entries(grouped).map(([dept, deptJobs]) => (
+              <div key={dept}>
+                <div className="flex items-center gap-3 mb-4">
+                  <h2 className="font-heading text-xl font-bold text-foreground">{dept}</h2>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary font-body">
+                    {deptJobs.length} opening{deptJobs.length !== 1 ? "s" : ""}
+                  </span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+                <div className="space-y-4">
+                  {deptJobs.map(job => (
+                    <JobCard key={job.id} job={job} onApply={setApplyingTo} />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}
