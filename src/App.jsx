@@ -40,6 +40,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import BookTable from './pages/BookTable';
 import Careers from './pages/Careers';
+import ScheduleInterview from './pages/ScheduleInterview';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -101,6 +102,7 @@ const AuthenticatedApp = () => {
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/careers" element={<Careers />} />
         <Route path="/book" element={<BookTable />} />
+        <Route path="/schedule-interview" element={<ScheduleInterview />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
