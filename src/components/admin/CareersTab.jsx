@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Pencil, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronDown, ChevronUp, Mail, Calendar, Clock, MapPin, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { format, parseISO } from "date-fns";
 
 const DEPARTMENTS = ["Front of House", "Back of House", "Management", "Bar", "Other"];
 const EMP_TYPES = ["Full-time", "Part-time", "Seasonal"];
@@ -84,13 +85,150 @@ function JobForm({ item, onSave, onCancel }) {
   );
 }
 
-function ApplicationRow({ app }) {
+function SlotForm({ onSave, onCancel }) {
+  const [form, setForm] = useState({ date: "", start_time: "", end_time: "", location: "JTAP Kitchen – In Person" });
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await base44.entities.InterviewSlot.create({ ...form, is_booked: false });
+    toast.success("Slot added");
+    onSave();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-5 space-y-3">
+      <h4 className="font-body text-sm font-semibold">Add Interview Slot</h4>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label className="font-body text-xs text-muted-foreground mb-1 block">Date *</label>
+          <input type="date" required className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+            value={form.date} onChange={e => set("date", e.target.value)} />
+        </div>
+        <div>
+          <label className="font-body text-xs text-muted-foreground mb-1 block">Start Time *</label>
+          <input type="time" required className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+            value={form.start_time} onChange={e => set("start_time", e.target.value)} />
+        </div>
+        <div>
+          <label className="font-body text-xs text-muted-foreground mb-1 block">End Time *</label>
+          <input type="time" required className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+            value={form.end_time} onChange={e => set("end_time", e.target.value)} />
+        </div>
+        <div className="sm:col-span-3">
+          <label className="font-body text-xs text-muted-foreground mb-1 block">Location</label>
+          <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+            value={form.location} onChange={e => set("location", e.target.value)} placeholder="e.g. JTAP Kitchen – In Person" />
+        </div>
+      </div>
+      <div className="flex gap-3">
+        <button type="submit" className="px-4 py-1.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">Add Slot</button>
+        <button type="button" onClick={onCancel} className="px-4 py-1.5 border border-border rounded-full font-body text-sm">Cancel</button>
+      </div>
+    </form>
+  );
+}
+
+function InterviewSlotsPanel() {
+  const [slots, setSlots] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    const s = await base44.entities.InterviewSlot.list("date", 200);
+    setSlots(s);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const deleteSlot = async (id) => {
+    await base44.entities.InterviewSlot.delete(id);
+    setSlots(prev => prev.filter(s => s.id !== id));
+  };
+
+  const today = new Date().toISOString().slice(0, 10);
+  const upcoming = slots.filter(s => s.date >= today);
+  const past = slots.filter(s => s.date < today);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-body text-sm font-semibold text-muted-foreground uppercase tracking-wide">Interview Slots</h3>
+        {!showForm && (
+          <button onClick={() => setShowForm(true)}
+            className="flex items-center gap-1.5 px-4 py-1.5 bg-primary text-primary-foreground rounded-full font-body text-xs font-medium">
+            <Plus className="w-3.5 h-3.5" /> Add Slot
+          </button>
+        )}
+      </div>
+
+      {showForm && <SlotForm onSave={() => { setShowForm(false); load(); }} onCancel={() => setShowForm(false)} />}
+
+      {loading ? (
+        <div className="flex justify-center py-8"><div className="w-6 h-6 border-4 border-muted border-t-primary rounded-full animate-spin" /></div>
+      ) : upcoming.length === 0 && !showForm ? (
+        <p className="font-body text-sm text-muted-foreground text-center py-6">No upcoming slots. Add one above.</p>
+      ) : (
+        <div className="space-y-2">
+          {upcoming.map(slot => (
+            <div key={slot.id} className="flex items-center justify-between bg-card border border-border rounded-xl px-4 py-3">
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-1.5 font-body text-sm">
+                  <Calendar className="w-3.5 h-3.5 text-primary" />
+                  {format(parseISO(slot.date), "EEE, MMM d")}
+                </div>
+                <div className="flex items-center gap-1.5 font-body text-sm text-muted-foreground">
+                  <Clock className="w-3.5 h-3.5" />
+                  {slot.start_time} – {slot.end_time}
+                </div>
+                <div className="flex items-center gap-1.5 font-body text-xs text-muted-foreground">
+                  <MapPin className="w-3 h-3" />
+                  {slot.location}
+                </div>
+                {slot.is_booked && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">
+                    <CheckCircle2 className="w-3 h-3" /> {slot.booked_by_name}
+                  </span>
+                )}
+              </div>
+              {!slot.is_booked && (
+                <button onClick={() => deleteSlot(slot.id)} className="p-1.5 hover:text-destructive transition-colors shrink-0">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          ))}
+          {past.length > 0 && (
+            <p className="font-body text-xs text-muted-foreground pt-2">+ {past.length} past slot(s) hidden</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ApplicationRow({ app, onInviteSent }) {
   const [expanded, setExpanded] = useState(false);
   const [status, setStatus] = useState(app.status || "New");
+  const [sending, setSending] = useState(false);
 
   const updateStatus = async (val) => {
     setStatus(val);
     await base44.entities.JobApplication.update(app.id, { status: val });
+  };
+
+  const sendInvite = async () => {
+    setSending(true);
+    const res = await base44.functions.invoke("sendInterviewInvite", { application_id: app.id });
+    if (res.data?.success) {
+      toast.success(`Interview invite sent to ${app.applicant_name}`);
+      setStatus("Under Review");
+      onInviteSent(app.id);
+    } else {
+      toast.error("Failed to send invite");
+    }
+    setSending(false);
   };
 
   return (
@@ -100,13 +238,33 @@ function ApplicationRow({ app }) {
           <p className="font-body text-sm font-semibold">{app.applicant_name}</p>
           <p className="font-body text-xs text-muted-foreground">{app.email} {app.phone ? `· ${app.phone}` : ""}</p>
           <p className="font-body text-xs text-muted-foreground mt-0.5">Applied for: <span className="font-medium">{app.job_title}</span></p>
+          {app.interview_date && (
+            <p className="font-body text-xs text-purple-700 mt-0.5">
+              Interview: {format(parseISO(app.interview_date), "MMM d")} at {app.interview_time}
+            </p>
+          )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap justify-end">
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${STATUS_COLORS[status] || ""}`}>{status}</span>
           <select value={status} onChange={e => updateStatus(e.target.value)}
             className="border border-border rounded-lg px-2 py-1.5 text-xs bg-background font-body">
             {APP_STATUSES.map(s => <option key={s}>{s}</option>)}
           </select>
+          <button
+            onClick={sendInvite}
+            disabled={sending || app.interview_invite_sent}
+            title={app.interview_invite_sent ? "Invite already sent" : "Send interview invite"}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-body text-xs font-medium transition-colors ${
+              app.interview_invite_sent
+                ? "bg-green-100 text-green-700 cursor-default"
+                : "bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            }`}
+          >
+            {app.interview_invite_sent
+              ? <><CheckCircle2 className="w-3.5 h-3.5" /> Invited</>
+              : <><Mail className="w-3.5 h-3.5" /> {sending ? "Sending..." : "Send Invite"}</>
+            }
+          </button>
           <button onClick={() => setExpanded(e => !e)} className="text-muted-foreground hover:text-foreground">
             {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -162,16 +320,20 @@ export default function CareersTab() {
 
   const onSave = () => { setShowForm(false); setEditingJob(null); load(); };
 
+  const onInviteSent = (appId) => {
+    setApplications(prev => prev.map(a => a.id === appId ? { ...a, interview_invite_sent: true, status: "Under Review" } : a));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
-          {["listings", "applications"].map(v => (
+          {["listings", "applications", "slots"].map(v => (
             <button key={v} onClick={() => setView(v)}
               className={`px-4 py-1.5 rounded-full font-body text-sm font-medium capitalize transition-colors ${
                 view === v ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted"
               }`}>
-              {v} {v === "applications" && `(${applications.length})`}
+              {v === "applications" ? `Applications (${applications.length})` : v === "slots" ? "Interview Slots" : "Listings"}
             </button>
           ))}
         </div>
@@ -230,12 +392,16 @@ export default function CareersTab() {
           </table>
           {jobs.length === 0 && <p className="font-body text-sm text-muted-foreground text-center py-10">No listings yet. Click "Add Listing" to create one.</p>}
         </div>
-      ) : (
+      ) : view === "applications" ? (
         <div className="bg-card border border-border rounded-2xl overflow-hidden">
           {applications.length === 0
             ? <p className="font-body text-sm text-muted-foreground text-center py-10">No applications yet.</p>
-            : applications.map(app => <ApplicationRow key={app.id} app={app} />)
+            : applications.map(app => <ApplicationRow key={app.id} app={app} onInviteSent={onInviteSent} />)
           }
+        </div>
+      ) : (
+        <div className="bg-card border border-border rounded-2xl p-6">
+          <InterviewSlotsPanel />
         </div>
       )}
     </div>

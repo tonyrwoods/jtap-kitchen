@@ -49,6 +49,23 @@
     "admin_notes": {
       "type": "string",
       "title": "Admin Notes"
+    },
+    "interview_invite_sent": {
+      "type": "boolean",
+      "title": "Interview Invite Sent",
+      "default": false
+    },
+    "interview_slot_id": {
+      "type": "string",
+      "title": "Booked Interview Slot ID"
+    },
+    "interview_date": {
+      "type": "string",
+      "title": "Interview Date (YYYY-MM-DD)"
+    },
+    "interview_time": {
+      "type": "string",
+      "title": "Interview Time (HH:MM)"
     }
   },
   "required": [
@@ -63,11 +80,7 @@
         "role": "admin"
       }
     },
-    "update": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
+    "update": {},
     "delete": {
       "user_condition": {
         "role": "admin"
