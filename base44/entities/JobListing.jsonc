@@ -1,0 +1,70 @@
+{
+  "name": "JobListing",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Job Title"
+    },
+    "department": {
+      "type": "string",
+      "title": "Department",
+      "enum": [
+        "Front of House",
+        "Back of House",
+        "Management",
+        "Bar",
+        "Other"
+      ]
+    },
+    "employment_type": {
+      "type": "string",
+      "title": "Employment Type",
+      "enum": [
+        "Full-time",
+        "Part-time",
+        "Seasonal"
+      ]
+    },
+    "pay_range": {
+      "type": "string",
+      "title": "Pay Range (e.g. $18\u2013$25/hr + tips)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Job Description"
+    },
+    "requirements": {
+      "type": "string",
+      "title": "Requirements"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active Listing",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "department",
+    "employment_type"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

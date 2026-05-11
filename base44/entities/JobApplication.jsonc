@@ -1,0 +1,77 @@
+{
+  "name": "JobApplication",
+  "type": "object",
+  "properties": {
+    "job_listing_id": {
+      "type": "string",
+      "title": "Job Listing ID"
+    },
+    "job_title": {
+      "type": "string",
+      "title": "Job Title"
+    },
+    "applicant_name": {
+      "type": "string",
+      "title": "Applicant Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "experience_years": {
+      "type": "number",
+      "title": "Years of Experience"
+    },
+    "cover_letter": {
+      "type": "string",
+      "title": "Cover Letter / Message"
+    },
+    "resume_url": {
+      "type": "string",
+      "title": "Resume URL"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "New",
+        "Under Review",
+        "Interview Scheduled",
+        "Hired",
+        "Rejected"
+      ],
+      "default": "New"
+    },
+    "admin_notes": {
+      "type": "string",
+      "title": "Admin Notes"
+    }
+  },
+  "required": [
+    "job_listing_id",
+    "applicant_name",
+    "email"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
