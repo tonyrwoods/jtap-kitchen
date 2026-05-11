@@ -13,6 +13,19 @@ const NAV_LINKS = [
   { label: "Reviews", href: "/submit-review" },
 ];
 
+function HiringBanner() {
+  return (
+    <div className="w-full bg-primary text-primary-foreground py-2 px-4 text-center z-40 relative">
+      <p className="font-body text-xs sm:text-sm font-semibold tracking-wide">
+        🍽️ NOW HIRING ALL POSITIONS —{" "}
+        <Link to="/careers" className="underline underline-offset-2 hover:opacity-80 transition-opacity font-bold">
+          Click here to apply
+        </Link>
+      </p>
+    </div>
+  );
+}
+
 export default function Navbar({ onBookTable, showBackButton = false }) {
   const { t } = useI18n();
   const location = useLocation();
@@ -40,8 +53,10 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
   }, []);
 
   return (
+    <>
+    <HiringBanner />
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border/50"
           : "bg-transparent"
@@ -171,5 +186,6 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
         )}
       </AnimatePresence>
     </nav>
+    </>
   );
 }
