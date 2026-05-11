@@ -158,6 +158,7 @@ export default function Footer() {
                 { label: "Our Menu", href: "/menu" },
                 { label: "Reserve a Table", href: "/" },
                 { label: "Gift Cards", href: "/gift-cards" },
+                { label: "Careers", href: "/careers" },
                 { label: "Contact Us", href: "/contact" },
                 { label: "Support", href: "/support" },
                 { label: "Login", href: null },
