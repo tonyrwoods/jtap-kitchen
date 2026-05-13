@@ -9,6 +9,7 @@ import AboutSection from "../components/AboutSection";
 import TestimonialsSection from "../components/TestimonialsSection";
 import ChefHighlights from "../components/ChefHighlights.jsx";
 import AvailabilityChecker from "../components/AvailabilityChecker";
+import WeekendAvailability from "../components/WeekendAvailability";
 import ReservationModal from "../components/ReservationModal";
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <WeekendAvailability onBook={handleBook} />
       <AvailabilityChecker onBook={handleBook} />
       <ChefHighlights />
       <MenuSection />
