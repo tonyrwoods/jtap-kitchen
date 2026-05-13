@@ -122,15 +122,26 @@ export default function GiftCards() {
     <div className="min-h-screen bg-background">
       {/* Hero */}
       <div className="relative bg-foreground text-background py-24 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600')] bg-cover bg-center opacity-20" />
+        <div className="absolute inset-0 opacity-15"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=1600&q=80')", backgroundSize: "cover", backgroundPosition: "center" }} />
+        {/* Decorative gift card shapes */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+          <div className="w-80 h-52 border-4 border-primary rounded-2xl rotate-6" />
+          <div className="absolute w-80 h-52 border-4 border-white rounded-2xl -rotate-3" />
+        </div>
         <div className="relative max-w-2xl mx-auto">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 border border-primary/30 mb-6">
             <Gift className="w-8 h-8 text-primary" />
           </div>
           <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4">Gift Cards</h1>
-          <p className="font-body text-background/70 text-lg leading-relaxed">
-            Give the gift of an unforgettable dining experience at JTAP Kitchen.
+          <p className="font-body text-background/70 text-lg leading-relaxed max-w-md mx-auto">
+            Give the gift of an unforgettable dining experience at JTAP Kitchen. Perfect for every occasion.
           </p>
+          <div className="mt-8 inline-flex items-center gap-6 px-8 py-4 bg-white/5 border border-white/15 rounded-2xl backdrop-blur-sm">
+            {["$25", "$50", "$100", "$150+"].map(v => (
+              <span key={v} className="font-heading text-lg font-bold text-primary">{v}</span>
+            ))}
+          </div>
         </div>
       </div>
 

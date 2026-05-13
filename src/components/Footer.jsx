@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Footer() {
+export default function Footer({ onBookTable }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false); // false | true | "done"
@@ -156,7 +156,7 @@ export default function Footer() {
             <div className="space-y-3">
               {[
                 { label: "Our Menu", href: "/menu" },
-                { label: "Reserve a Table", href: "/" },
+                { label: "Reserve a Table", href: null, action: "reserve" },
                 { label: "Event Center", href: "/event-center" },
                 { label: "Gift Cards", href: "/gift-cards" },
                 { label: "Careers", href: "/careers" },
@@ -164,14 +164,14 @@ export default function Footer() {
                 { label: "Contact Us", href: "/contact" },
                 { label: "Support", href: "/support" },
                 { label: "Login", href: null },
-              ].map(({ label, href }) => (
-                <a 
-                  key={label} 
+              ].map(({ label, href, action }) => (
+                <a
+                  key={label}
                   href={href || "#"}
                   onClick={(e) => {
-                    if (label === "Reserve a Table") {
+                    if (action === "reserve") {
                       e.preventDefault();
-                      window.location.href = "/";
+                      if (onBookTable) onBookTable();
                     } else if (label === "Login") {
                       e.preventDefault();
                       import("@/api/base44Client").then(({ base44 }) => base44.auth.redirectToLogin("https://jtapkitchen.com/admin"));
@@ -190,20 +190,15 @@ export default function Footer() {
             <h4 className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-background/40 mb-5">
               Follow Us
             </h4>
-            <div className="flex gap-3">
-              {["Instagram", "Facebook", "TikTok"].map((platform) => (
-                <a
-                  key={platform}
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary/80 transition-colors duration-300"
-                >
-                  <Instagram className="w-4 h-4 text-background/70" />
-                </a>
-              ))}
-            </div>
-            <p className="font-body text-sm text-background/50 mt-5">
-              @jtapkitchen
-            </p>
+            <a
+              href="https://www.instagram.com/jtapkitchen"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 px-4 py-2.5 rounded-full bg-background/10 hover:bg-primary/80 transition-colors duration-300"
+            >
+              <Instagram className="w-4 h-4 text-background/70" />
+              <span className="font-body text-sm text-background/60">@jtapkitchen</span>
+            </a>
           </div>
         </div>
 

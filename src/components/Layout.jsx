@@ -76,7 +76,7 @@ export default function Layout() {
           </motion.div>
         )}
       </main>
-      {!isChildRoute && <Footer />}
+      {!isChildRoute && <Footer onBookTable={() => setModalOpen(true)} />}
       <MobileTabBar />
       <ReservationModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
