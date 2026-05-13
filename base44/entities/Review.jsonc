@@ -44,7 +44,7 @@
     "comment"
   ],
   "rls": {
-    "create": true,
+    "create": {},
     "read": {
       "$or": [
         {
@@ -54,12 +54,12 @@
           "data.is_featured": true
         },
         {
+          "data.email": "{{user.email}}"
+        },
+        {
           "user_condition": {
             "role": "admin"
           }
-        },
-        {
-          "data.email": "{{user.email}}"
         }
       ]
     },
