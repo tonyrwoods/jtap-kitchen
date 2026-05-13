@@ -7,7 +7,7 @@ import { toast } from "sonner";
 const PACKAGES = [
   {
     name: "Social Gathering",
-    price: "Starting at $800",
+    price: "Starting at $1,600",
     guests: "Up to 30 guests",
     color: "border-amber-200 bg-amber-50/50",
     badge: "bg-amber-100 text-amber-800",
@@ -22,7 +22,7 @@ const PACKAGES = [
   },
   {
     name: "Elevated Experience",
-    price: "Starting at $1,800",
+    price: "Starting at $3,600",
     guests: "30–60 guests",
     color: "border-primary/30 bg-primary/5",
     badge: "bg-primary/15 text-primary",
@@ -40,7 +40,7 @@ const PACKAGES = [
   },
   {
     name: "Full Buyout",
-    price: "Starting at $4,500",
+    price: "Starting at $9,000",
     guests: "60–150 guests",
     color: "border-slate-300 bg-slate-50/50",
     badge: "bg-slate-100 text-slate-700",
