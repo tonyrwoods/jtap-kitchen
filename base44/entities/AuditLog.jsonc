@@ -53,13 +53,25 @@
     "timestamp"
   ],
   "rls": {
-    "create": false,
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "read": {
       "user_condition": {
         "role": "admin"
       }
     },
-    "update": false,
-    "delete": false
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
   }
 }
