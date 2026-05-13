@@ -124,6 +124,13 @@ export default function EventCenter() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Opening Soon Banner */}
+      <div className="bg-primary text-primary-foreground py-2.5 px-6 text-center">
+        <p className="font-body text-sm font-semibold tracking-wide">
+          🎉 Opening Soon — June / July 2026 · <span className="font-normal opacity-90">Inquire now to secure your date before we open!</span>
+        </p>
+      </div>
+
       {/* Hero */}
       <div className="relative bg-foreground text-background overflow-hidden">
         <div className="absolute inset-0 opacity-20"
