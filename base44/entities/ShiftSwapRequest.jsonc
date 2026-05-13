@@ -73,30 +73,29 @@
   ],
   "rls": {
     "create": {
-      "user_condition": {
-        "role": "staff"
-      },
-      "data.requester_staff_id": "{{user.id}}"
-    },
-    "read": {
       "$or": [
+        {
+          "data.requester_staff_id": "{{user.id}}"
+        },
         {
           "user_condition": {
             "role": "admin"
           }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.requester_staff_id": "{{user.id}}"
+        },
+        {
+          "data.target_staff_id": "{{user.id}}"
         },
         {
           "user_condition": {
-            "role": "staff"
-          },
-          "$or": [
-            {
-              "data.requester_staff_id": "{{user.id}}"
-            },
-            {
-              "data.target_staff_id": "{{user.id}}"
-            }
-          ]
+            "role": "admin"
+          }
         }
       ]
     },
