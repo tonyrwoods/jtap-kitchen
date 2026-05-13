@@ -9,6 +9,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
     const [invoices, inventoryItems, menuItems, reservations] = await Promise.all([
       base44.asServiceRole.entities.Invoice.list('-created_date', 1000),
       base44.asServiceRole.entities.InventoryItem.list('name', 200),

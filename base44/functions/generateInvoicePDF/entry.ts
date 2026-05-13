@@ -10,6 +10,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
     const { invoice_id } = await req.json();
     if (!invoice_id) {
       return Response.json({ error: 'invoice_id required' }, { status: 400 });

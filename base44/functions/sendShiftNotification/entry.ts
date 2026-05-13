@@ -10,6 +10,13 @@ Deno.serve(async (req) => {
     }
 
     const payload = await req.json();
+
+    // Allow entity automation triggers (have an event.type field) or admin users
+    const isAutomation = !!payload?.event?.type;
+    if (!isAutomation && user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
     const event = payload.event || {};
     const data = payload.data || {};
 

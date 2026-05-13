@@ -9,6 +9,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (user.role !== 'admin' && user.role !== 'staff') {
+      return Response.json({ error: 'Forbidden: Staff or admin access required' }, { status: 403 });
+    }
+
     const { waitlistId, guestName, guestEmail } = await req.json();
 
     if (!waitlistId || !guestEmail) {
