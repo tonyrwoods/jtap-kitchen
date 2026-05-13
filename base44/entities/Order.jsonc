@@ -59,40 +59,60 @@
   ],
   "rls": {
     "create": {
-      "user_condition": {
-        "$or": [
-          {
-            "role": "admin"
-          },
-          {
+      "$or": [
+        {
+          "user_condition": {
             "role": "staff"
           }
-        ]
-      }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "read": {
-      "user_condition": {
-        "$or": [
-          {
+      "$or": [
+        {
+          "user_condition": {
             "role": "admin"
-          },
-          {
-            "role": "staff"
           }
-        ]
-      }
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "staff"
+              }
+            },
+            {
+              "data.server_name": "{{user.full_name}}"
+            }
+          ]
+        }
+      ]
     },
     "update": {
-      "user_condition": {
-        "$or": [
-          {
+      "$or": [
+        {
+          "user_condition": {
             "role": "admin"
-          },
-          {
-            "role": "staff"
           }
-        ]
-      }
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "staff"
+              }
+            },
+            {
+              "data.server_name": "{{user.full_name}}"
+            }
+          ]
+        }
+      ]
     },
     "delete": {
       "user_condition": {
