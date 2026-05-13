@@ -41,6 +41,7 @@ import TermsOfService from './pages/TermsOfService';
 import BookTable from './pages/BookTable';
 import Careers from './pages/Careers';
 import ScheduleInterview from './pages/ScheduleInterview';
+import EventCenter from './pages/EventCenter';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -103,6 +104,7 @@ const AuthenticatedApp = () => {
         <Route path="/careers" element={<Careers />} />
         <Route path="/book" element={<BookTable />} />
         <Route path="/schedule-interview" element={<ScheduleInterview />} />
+        <Route path="/event-center" element={<EventCenter />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>

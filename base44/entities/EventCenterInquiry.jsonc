@@ -1,0 +1,98 @@
+{
+  "name": "EventCenterInquiry",
+  "type": "object",
+  "properties": {
+    "contact_name": {
+      "type": "string",
+      "title": "Contact Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "event_type": {
+      "type": "string",
+      "title": "Event Type",
+      "enum": [
+        "Birthday Party",
+        "Corporate Event",
+        "Wedding Reception",
+        "Baby/Bridal Shower",
+        "Graduation Party",
+        "Holiday Party",
+        "Other"
+      ]
+    },
+    "preferred_day": {
+      "type": "string",
+      "title": "Preferred Day",
+      "enum": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Flexible"
+      ]
+    },
+    "preferred_date": {
+      "type": "string",
+      "title": "Preferred Date (YYYY-MM-DD)"
+    },
+    "guest_count": {
+      "type": "number",
+      "title": "Estimated Guest Count"
+    },
+    "package": {
+      "type": "string",
+      "title": "Package Interest",
+      "enum": [
+        "Social Gathering",
+        "Elevated Experience",
+        "Full Buyout",
+        "Not Sure"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "title": "Additional Details"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "New",
+        "Contacted",
+        "Booked",
+        "Declined"
+      ],
+      "default": "New"
+    }
+  },
+  "required": [
+    "contact_name",
+    "email",
+    "preferred_day",
+    "guest_count"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
