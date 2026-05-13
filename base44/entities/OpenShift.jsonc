@@ -72,6 +72,21 @@
     "create": {
       "$or": [
         {
+          "data.posted_by_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.status": "Open"
+        },
+        {
           "user_condition": {
             "role": "admin"
           }
@@ -81,7 +96,7 @@
         }
       ]
     },
-    "read": {
+    "update": {
       "$or": [
         {
           "user_condition": {
@@ -89,16 +104,9 @@
           }
         },
         {
-          "user_condition": {
-            "role": "staff"
-          }
+          "data.posted_by_email": "{{user.email}}"
         }
       ]
-    },
-    "update": {
-      "user_condition": {
-        "role": "admin"
-      }
     },
     "delete": {
       "$or": [
