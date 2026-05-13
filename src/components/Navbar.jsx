@@ -1,19 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useI18n } from "@/lib/i18n";
-import { Menu, X, ChevronLeft } from "lucide-react";
+import { Menu, X, ChevronLeft, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const NAV_LINKS = [
+// Primary nav links shown directly in the bar
+const PRIMARY_LINKS = [
   { label: "Menu", href: "/menu" },
   { label: "Events", href: "/events" },
   { label: "Event Center", href: "/event-center" },
   { label: "Gift Cards", href: "/gift-cards" },
+];
+
+// Secondary links grouped under "More"
+const MORE_LINKS = [
   { label: "Our Story", href: "/#about" },
   { label: "Reviews", href: "/submit-review" },
   { label: "Careers", href: "/careers" },
 ];
+
+const ALL_LINKS = [...PRIMARY_LINKS, ...MORE_LINKS];
 
 function HiringBanner() {
   return (
@@ -34,6 +41,15 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef(null);
+
+  // Close "More" dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => { if (moreRef.current && !moreRef.current.contains(e.target)) setMoreOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   // Auto-show back button on mobile for nested routes (more than one path segment)
   const pathSegments = location.pathname.split("/").filter(Boolean);
@@ -101,28 +117,65 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
           )}
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((link) =>
-              link.href.startsWith("/") ? (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  className={`font-body text-sm font-medium tracking-wide transition-colors duration-300 uppercase ${
-                    location.pathname === link.href ? "text-primary" : "text-muted-foreground hover:text-primary"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="font-body text-sm font-medium tracking-wide text-muted-foreground hover:text-primary transition-colors duration-300 uppercase"
-                >
-                  {link.label}
-                </a>
-              )
-            )}
+          <div className="hidden md:flex items-center gap-5">
+            {PRIMARY_LINKS.map((link) => (
+              <Link
+                key={link.label}
+                to={link.href}
+                className={`font-body text-sm font-medium tracking-wide transition-colors duration-300 uppercase ${
+                  location.pathname === link.href ? "text-primary" : "text-muted-foreground hover:text-primary"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {/* More dropdown */}
+            <div className="relative" ref={moreRef}>
+              <button
+                onClick={() => setMoreOpen(o => !o)}
+                className={`flex items-center gap-1 font-body text-sm font-medium tracking-wide uppercase transition-colors duration-300 ${
+                  MORE_LINKS.some(l => location.pathname === l.href) ? "text-primary" : "text-muted-foreground hover:text-primary"
+                }`}
+              >
+                More <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`} />
+              </button>
+              <AnimatePresence>
+                {moreOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full right-0 mt-3 w-44 bg-background border border-border rounded-xl shadow-lg overflow-hidden z-50"
+                  >
+                    {MORE_LINKS.map((link) =>
+                      link.href.startsWith("/") ? (
+                        <Link
+                          key={link.label}
+                          to={link.href}
+                          onClick={() => setMoreOpen(false)}
+                          className={`block px-4 py-3 font-body text-sm font-medium transition-colors hover:bg-muted ${
+                            location.pathname === link.href ? "text-primary" : "text-foreground"
+                          }`}
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          onClick={() => setMoreOpen(false)}
+                          className="block px-4 py-3 font-body text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                        >
+                          {link.label}
+                        </a>
+                      )
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Right side: language + CTA */}
@@ -156,7 +209,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
             className="md:hidden bg-background/98 backdrop-blur-lg border-b border-border"
           >
             <div className="px-6 py-8 flex flex-col gap-6">
-              {NAV_LINKS.map((link) =>
+              {ALL_LINKS.map((link) =>
                 link.href.startsWith("/") ? (
                   <Link
                     key={link.label}

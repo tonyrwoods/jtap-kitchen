@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Leaf, Flame, Wheat, Nut, UtensilsCrossed } from "lucide-react";
+import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const CATEGORIES = [
-  { key: "All", label: "Full Menu" },
-  { key: "Appetizers", label: "Appetizers" },
-  { key: "Salads & Sandwiches", label: "Salads & Sandwiches" },
-  { key: "Entrees", label: "Entrees" },
-  { key: "Sides", label: "Sides" },
-  { key: "Desserts", label: "Desserts" },
+  { key: "All", label: "Full Menu", icon: UtensilsCrossed },
+  { key: "Appetizers", label: "Appetizers", icon: ChefHat },
+  { key: "Salads & Sandwiches", label: "Salads & Sandwiches", icon: Salad },
+  { key: "Entrees", label: "Entrees", icon: Beef },
+  { key: "Sides", label: "Sides", icon: CupSoda },
+  { key: "Desserts", label: "Desserts", icon: Cookie },
 ];
 
 const CATEGORY_IMAGES = {
@@ -162,21 +162,27 @@ export default function Menu() {
       </div>
 
       {/* Sticky Category Filter */}
-      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex gap-2 overflow-x-auto no-scrollbar">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => setActiveCategory(cat.key)}
-              className={`px-5 py-2 rounded-full font-body text-sm font-medium transition-all duration-300 border whitespace-nowrap shrink-0 ${
-                activeCategory === cat.key
-                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                  : "bg-transparent text-muted-foreground border-border hover:border-primary hover:text-primary"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+      <div className="sticky top-[calc(env(safe-area-inset-top)+80px)] z-30 bg-background/98 backdrop-blur-md border-b border-border shadow-md">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
+          {CATEGORIES.map((cat) => {
+            const Icon = cat.icon;
+            const count = cat.key === "All" ? items.length : items.filter(i => i.category === cat.key).length;
+            return (
+              <button
+                key={cat.key}
+                onClick={() => setActiveCategory(cat.key)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-body text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 border ${
+                  activeCategory === cat.key
+                    ? "bg-primary text-primary-foreground border-primary shadow-md scale-105"
+                    : "bg-card text-foreground border-border hover:border-primary hover:text-primary hover:bg-primary/5"
+                }`}
+              >
+                <Icon className="w-4 h-4 shrink-0" />
+                <span>{cat.label}</span>
+                {!loading && <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${activeCategory === cat.key ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{count}</span>}
+              </button>
+            );
+          })}
         </div>
       </div>
 
