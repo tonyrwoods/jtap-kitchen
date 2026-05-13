@@ -65,15 +65,12 @@
     "read": {
       "$or": [
         {
-          "data.purchaser_email": "{{user.email}}"
-        },
-        {
-          "data.recipient_email": "{{user.email}}"
-        },
-        {
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "data.purchaser_email": "{{user.email}}"
         }
       ]
     },
