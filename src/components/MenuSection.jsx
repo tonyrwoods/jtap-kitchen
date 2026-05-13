@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Leaf, Flame, Wheat, Nut } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { Link } from "react-router-dom";
 
 const CATEGORIES = ["All", "Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts"];
 
@@ -73,9 +74,13 @@ export default function MenuSection() {
     });
   }, []);
 
-  const filtered = items
+  const allFiltered = items
     .filter(item => item && item.id && item.name)
     .filter(activeCategory === "All" ? () => true : (item) => item.category === activeCategory);
+
+  // On homepage, show featured items first, cap at 8
+  const sortedByFeatured = [...allFiltered].sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
+  const filtered = sortedByFeatured.slice(0, 8);
 
   return (
     <section id="menu" className="py-24 md:py-32 px-6 lg:px-10">
@@ -130,11 +135,21 @@ export default function MenuSection() {
             <p className="font-body text-sm text-muted-foreground mt-2">Add menu items from the dashboard to get started.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
-            {filtered.map((item) => (
-              <MenuCard key={item.id} item={item} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
+              {filtered.map((item) => (
+                <MenuCard key={item.id} item={item} />
+              ))}
+            </div>
+            {allFiltered.length > 8 && (
+              <div className="text-center mt-12">
+                <Link to="/full-menu"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-foreground text-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:bg-foreground hover:text-background transition-all duration-300">
+                  View Full Menu
+                </Link>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

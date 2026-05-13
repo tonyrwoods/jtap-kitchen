@@ -181,7 +181,7 @@ export default function EventCenter() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {DAYS.map(({ day, desc }) => (
-            <motion.div key={day} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            <motion.div key={day} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               className="bg-card border border-border rounded-2xl p-6 text-center">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                 <CalendarDays className="w-5 h-5 text-primary" />
@@ -202,7 +202,7 @@ export default function EventCenter() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
             {PACKAGES.map((pkg) => (
-              <motion.div key={pkg.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              <motion.div key={pkg.name} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                 className={`relative border-2 rounded-2xl p-7 ${pkg.color} ${pkg.featured ? "shadow-lg scale-[1.02]" : ""}`}>
                 {pkg.featured && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">

@@ -157,6 +157,7 @@ export default function Footer() {
               {[
                 { label: "Our Menu", href: "/menu" },
                 { label: "Reserve a Table", href: "/" },
+                { label: "Event Center", href: "/event-center" },
                 { label: "Gift Cards", href: "/gift-cards" },
                 { label: "Careers", href: "/careers" },
                 { label: "Contact Us", href: "/contact" },

@@ -60,6 +60,10 @@ export default function TeamSection() {
 
         {loading ? (
           <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" /></div>
+        ) : members.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="font-body text-muted-foreground text-base">Our team profiles are coming soon. Stay tuned!</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
             {members.map((member) => (
