@@ -80,27 +80,26 @@
   ],
   "rls": {
     "create": {
-      "data.staff_email": "{{user.email}}",
-      "user_condition": {
-        "$or": [
-          {
-            "role": "admin"
-          },
-          {
-            "role": "staff"
-          }
-        ]
-      }
-    },
-    "read": {
       "$or": [
+        {
+          "data.staff_email": "{{user.email}}"
+        },
         {
           "user_condition": {
             "role": "admin"
           }
-        },
+        }
+      ]
+    },
+    "read": {
+      "$or": [
         {
           "data.staff_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
         }
       ]
     },
@@ -110,9 +109,16 @@
       }
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.staff_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }
