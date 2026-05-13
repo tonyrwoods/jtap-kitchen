@@ -133,7 +133,7 @@ export default function EventCenter() {
     await base44.integrations.Core.SendEmail({
       to: form.email,
       subject: "Event Inquiry Received — JTAP Kitchen Event Center",
-      body: `Hi ${form.contact_name},\n\nThank you for your interest in hosting your event at JTAP Kitchen!\n\nWe've received your inquiry for a ${form.event_type || "private event"} on ${form.preferred_day}${form.preferred_date ? ` (${form.preferred_date})` : ""} for approximately ${form.guest_count} guests.\n\nOur events team will be in touch within 24 hours to discuss availability and personalize your experience.\n\n— The JTAP Kitchen Events Team\nevents@jtapkitchen.com | (555) 012-3456`,
+      body: `Hi ${form.contact_name},\n\nThank you for your interest in hosting your event at JTAP Kitchen!\n\nWe've received your inquiry for a ${form.event_type || "private event"} on ${form.preferred_day}${form.preferred_date ? ` (${form.preferred_date})` : ""} for approximately ${form.guest_count} guests.\n\nOur events team will be in touch within 24 hours to discuss availability and personalize your experience.\n\n— The JTAP Kitchen Events Team\ninfo@jtapkitchen.com | 901-554-4431`,
     });
     setSubmitted(true);
     setSubmitting(false);
@@ -360,11 +360,11 @@ export default function EventCenter() {
 
         {/* Contact strip */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8 text-sm text-muted-foreground">
-          <a href="tel:5550123456" className="flex items-center gap-2 hover:text-primary transition-colors">
-            <Phone className="w-4 h-4" /> (555) 012-3456
+          <a href="tel:9015544431" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <Phone className="w-4 h-4" /> 901-554-4431
           </a>
-          <a href="mailto:events@jtapkitchen.com" className="flex items-center gap-2 hover:text-primary transition-colors">
-            <Mail className="w-4 h-4" /> events@jtapkitchen.com
+          <a href="mailto:info@jtapkitchen.com" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <Mail className="w-4 h-4" /> info@jtapkitchen.com
           </a>
         </div>
       </div>

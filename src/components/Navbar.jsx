@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { label: "Gift Cards", href: "/gift-cards" },
   { label: "Our Story", href: "/#about" },
   { label: "Reviews", href: "/submit-review" },
+  { label: "Careers", href: "/careers" },
 ];
 
 function HiringBanner() {

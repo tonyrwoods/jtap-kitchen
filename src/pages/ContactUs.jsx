@@ -17,7 +17,7 @@ export default function ContactUs() {
     setLoading(true);
     try {
       await base44.integrations.Core.SendEmail({
-        to: "contact@jtapkitchen.com",
+        to: "info@jtapkitchen.com",
         subject: `New Contact Form: ${form.subject || "General Inquiry"}`,
         body: `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone || "Not provided"}\n\nMessage:\n${form.message}`,
         from_name: "JTAP Kitchen Contact",
@@ -49,8 +49,8 @@ export default function ContactUs() {
                 <Phone className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-heading font-semibold text-foreground mb-1">Phone</h3>
-                  <a href="tel:+15551234567" className="font-body text-muted-foreground hover:text-primary">
-                    +1 (555) 123-4567
+                  <a href="tel:9015544431" className="font-body text-muted-foreground hover:text-primary">
+                    901-554-4431
                   </a>
                 </div>
               </div>
@@ -61,8 +61,8 @@ export default function ContactUs() {
                 <Mail className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-heading font-semibold text-foreground mb-1">Email</h3>
-                  <a href="mailto:contact@jtapkitchen.com" className="font-body text-muted-foreground hover:text-primary">
-                    contact@jtapkitchen.com
+                  <a href="mailto:info@jtapkitchen.com" className="font-body text-muted-foreground hover:text-primary">
+                    info@jtapkitchen.com
                   </a>
                 </div>
               </div>
@@ -74,8 +74,7 @@ export default function ContactUs() {
                 <div>
                   <h3 className="font-heading font-semibold text-foreground mb-1">Location</h3>
                   <p className="font-body text-muted-foreground">
-                    123 Main Street<br />
-                    Chicago, IL 60601
+                    Memphis, TN
                   </p>
                 </div>
               </div>
