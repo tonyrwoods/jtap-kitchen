@@ -105,7 +105,7 @@ export default function GiftCards() {
             <p className="font-body text-sm text-muted-foreground mt-2">Value: <span className="font-semibold text-foreground">${success.amount}</span></p>
           </div>
           <p className="font-body text-xs text-muted-foreground mb-6">
-            To complete your purchase, please call us at <span className="text-foreground font-medium">+1 (212) 555-0198</span> or email <span className="text-foreground font-medium">hello@aurelian.com</span> with your voucher code.
+            To complete your purchase, please call us at <span className="text-foreground font-medium">901-554-4431</span> or email <span className="text-foreground font-medium">info@jtapkitchen.com</span> with your voucher code.
           </p>
           <button
             onClick={() => { setSuccess(null); setForm({ purchaser_name: "", purchaser_email: "", recipient_name: "", recipient_email: "", message: "" }); setAmount(50); setCustomAmount(""); }}
