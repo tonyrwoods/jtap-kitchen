@@ -1,0 +1,107 @@
+{
+  "name": "EventServiceProvider",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "business_name": {
+      "type": "string",
+      "title": "Business / Brand Name"
+    },
+    "service_category": {
+      "type": "string",
+      "title": "Service Category",
+      "enum": [
+        "DJ / Music",
+        "Live Band / Musicians",
+        "Photography",
+        "Videography",
+        "Floral Design",
+        "Event Decor",
+        "Caricature / Entertainment",
+        "Photo Booth",
+        "MC / Host",
+        "Event Planning",
+        "Lighting & AV",
+        "Bartending / Mixology",
+        "Cake & Desserts",
+        "Hair & Makeup",
+        "Other"
+      ]
+    },
+    "experience_years": {
+      "type": "number",
+      "title": "Years of Experience"
+    },
+    "portfolio_url": {
+      "type": "string",
+      "title": "Portfolio / Website URL"
+    },
+    "instagram_handle": {
+      "type": "string",
+      "title": "Instagram Handle"
+    },
+    "bio": {
+      "type": "string",
+      "title": "About You / Your Services"
+    },
+    "availability": {
+      "type": "string",
+      "title": "General Availability",
+      "enum": [
+        "Sundays Only",
+        "Mondays Only",
+        "Tuesdays Only",
+        "Sun\u2013Tue (Any)",
+        "Flexible"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending Review",
+        "Approved",
+        "Declined"
+      ],
+      "default": "Pending Review"
+    },
+    "admin_notes": {
+      "type": "string",
+      "title": "Admin Notes"
+    }
+  },
+  "required": [
+    "full_name",
+    "email",
+    "service_category"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

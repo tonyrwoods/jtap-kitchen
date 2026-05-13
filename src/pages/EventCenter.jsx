@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Users, Star, CalendarDays, Phone, Mail, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
+import EventServiceProviderSignup from "../components/EventServiceProviderSignup";
 
 const PACKAGES = [
   {
@@ -329,6 +330,9 @@ export default function EventCenter() {
           </a>
         </div>
       </div>
+
+      {/* Service Provider Signup */}
+      <EventServiceProviderSignup />
 
       {/* FAQ */}
       <div className="bg-muted/30 py-16">
