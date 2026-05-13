@@ -1,0 +1,81 @@
+{
+  "name": "FeaturedDish",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Dish Name"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "season": {
+      "type": "string",
+      "title": "Season",
+      "enum": [
+        "Spring",
+        "Summer",
+        "Fall",
+        "Winter",
+        "Year-Round"
+      ],
+      "default": "Year-Round"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Image URL"
+    },
+    "chef_note": {
+      "type": "string",
+      "title": "Chef's Note"
+    },
+    "price": {
+      "type": "number",
+      "title": "Price (USD)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Show on Homepage",
+      "default": true
+    },
+    "sort_order": {
+      "type": "number",
+      "title": "Display Order",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "image_url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.is_active": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
