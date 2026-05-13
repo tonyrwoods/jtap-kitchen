@@ -1,0 +1,103 @@
+{
+  "name": "Order",
+  "type": "object",
+  "properties": {
+    "table_number": {
+      "type": "number",
+      "title": "Table Number"
+    },
+    "server_name": {
+      "type": "string",
+      "title": "Server Name"
+    },
+    "items": {
+      "type": "array",
+      "title": "Order Items",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "New",
+        "Preparing",
+        "Ready",
+        "Served"
+      ],
+      "default": "New"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Special Notes"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "Normal",
+        "Rush"
+      ],
+      "default": "Normal"
+    }
+  },
+  "required": [
+    "table_number",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "$or": [
+          {
+            "role": "admin"
+          },
+          {
+            "role": "staff"
+          }
+        ]
+      }
+    },
+    "read": {
+      "user_condition": {
+        "$or": [
+          {
+            "role": "admin"
+          },
+          {
+            "role": "staff"
+          }
+        ]
+      }
+    },
+    "update": {
+      "user_condition": {
+        "$or": [
+          {
+            "role": "admin"
+          },
+          {
+            "role": "staff"
+          }
+        ]
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
