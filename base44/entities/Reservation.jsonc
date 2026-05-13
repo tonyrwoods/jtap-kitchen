@@ -59,9 +59,12 @@
     "party_size"
   ],
   "rls": {
-    "create": true,
+    "create": {},
     "read": {
       "$or": [
+        {
+          "data.email": "{{user.email}}"
+        },
         {
           "user_condition": {
             "role": "admin"
@@ -71,14 +74,14 @@
           "user_condition": {
             "role": "staff"
           }
-        },
-        {
-          "data.email": "{{user.email}}"
         }
       ]
     },
     "update": {
       "$or": [
+        {
+          "data.email": "{{user.email}}"
+        },
         {
           "user_condition": {
             "role": "admin"
@@ -92,9 +95,16 @@
       ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }
