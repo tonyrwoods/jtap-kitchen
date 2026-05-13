@@ -1,14 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+
+function ReviewCard({ review }) {
+  return (
+    <div className="bg-card border border-border rounded-2xl p-6 flex flex-col gap-3">
+      <div className="flex items-center gap-1">
+        {[1,2,3,4,5].map(i => (
+          <Star key={i} className={`w-4 h-4 ${i <= review.rating ? "text-primary fill-primary" : "text-muted-foreground"}`} />
+        ))}
+      </div>
+      <p className="font-body text-sm text-foreground leading-relaxed">"{review.comment}"</p>
+      <div className="flex items-center justify-between mt-auto pt-2 border-t border-border">
+        <span className="font-body text-sm font-semibold text-foreground">{review.guest_name}</span>
+        {review.visit_date && <span className="font-body text-xs text-muted-foreground">{review.visit_date}</span>}
+      </div>
+    </div>
+  );
+}
 
 export default function SubmitReview() {
   const [form, setForm] = useState({ guest_name: "", email: "", rating: 0, comment: "", visit_date: "" });
   const [hover, setHover] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [approvedReviews, setApprovedReviews] = useState([]);
+
+  useEffect(() => {
+    base44.entities.Review.filter({ status: "Approved" }, "-created_date", 6).then(setApprovedReviews);
+  }, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -40,6 +62,20 @@ export default function SubmitReview() {
 
   return (
     <div className="min-h-screen bg-background py-20 px-6">
+
+      {/* Approved Reviews Section */}
+      {approvedReviews.length > 0 && (
+        <div className="max-w-5xl mx-auto mb-16">
+          <div className="text-center mb-8">
+            <p className="font-body text-xs uppercase tracking-widest text-primary font-semibold mb-2">Guest Experiences</p>
+            <h2 className="font-heading text-3xl font-bold">What Our Guests Are Saying</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {approvedReviews.map(r => <ReviewCard key={r.id} review={r} />)}
+          </div>
+        </div>
+      )}
+
       <div className="max-w-xl mx-auto">
         <div className="text-center mb-10">
           <p className="font-body text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-2">Share Your Experience</p>

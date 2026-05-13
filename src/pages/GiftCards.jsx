@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { motion } from "framer-motion";
-import { Gift, CheckCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Gift, CheckCircle, Search, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 
 const AMOUNTS = [25, 50, 100, 150, 200];
@@ -11,6 +11,25 @@ function generateCode() {
 }
 
 export default function GiftCards() {
+  const [tab, setTab] = useState("buy"); // "buy" | "check"
+  const [checkCode, setCheckCode] = useState("");
+  const [checkResult, setCheckResult] = useState(null);
+  const [checking, setChecking] = useState(false);
+
+  const handleCheckBalance = async (e) => {
+    e.preventDefault();
+    if (!checkCode.trim()) return;
+    setChecking(true);
+    setCheckResult(null);
+    const results = await base44.entities.GiftCard.filter({ code: checkCode.trim().toUpperCase() });
+    if (results.length === 0) {
+      setCheckResult({ error: "No gift card found with that code. Please check and try again." });
+    } else {
+      setCheckResult({ card: results[0] });
+    }
+    setChecking(false);
+  };
+
   const [amount, setAmount] = useState(50);
   const [customAmount, setCustomAmount] = useState("");
   const [form, setForm] = useState({
@@ -115,8 +134,86 @@ export default function GiftCards() {
         </div>
       </div>
 
+      {/* Tab Switcher */}
+      <div className="max-w-2xl mx-auto px-6 pt-10 pb-2">
+        <div className="flex bg-muted rounded-full p-1 gap-1">
+          <button
+            onClick={() => setTab("buy")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full font-body text-sm font-semibold transition-all ${tab === "buy" ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Gift className="w-4 h-4" /> Buy a Gift Card
+          </button>
+          <button
+            onClick={() => setTab("check")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full font-body text-sm font-semibold transition-all ${tab === "check" ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Search className="w-4 h-4" /> Check Balance
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence mode="wait">
+      {tab === "check" && (
+        <motion.div key="check" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+          className="max-w-md mx-auto px-6 py-10">
+          <div className="text-center mb-8">
+            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <CreditCard className="w-7 h-7 text-primary" />
+            </div>
+            <h2 className="font-heading text-2xl font-bold mb-2">Check Your Balance</h2>
+            <p className="font-body text-sm text-muted-foreground">Enter your gift card code to see the remaining value.</p>
+          </div>
+          <form onSubmit={handleCheckBalance} className="space-y-4">
+            <input
+              value={checkCode}
+              onChange={e => { setCheckCode(e.target.value); setCheckResult(null); }}
+              placeholder="e.g. JTAP-ABC123"
+              className="w-full border border-border rounded-xl px-4 py-3 text-sm bg-background font-body text-center tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <button type="submit" disabled={checking}
+              className="w-full py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all">
+              {checking ? "Checking…" : "Check Balance"}
+            </button>
+          </form>
+          {checkResult && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              className={`mt-6 rounded-2xl p-6 border text-center ${checkResult.error ? "bg-destructive/5 border-destructive/20" : "bg-primary/5 border-primary/20"}`}>
+              {checkResult.error ? (
+                <p className="font-body text-sm text-destructive">{checkResult.error}</p>
+              ) : (
+                <>
+                  <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-1">Gift Card Code</p>
+                  <p className="font-heading text-2xl font-bold text-primary tracking-widest mb-3">{checkResult.card.code}</p>
+                  <div className="flex justify-around text-sm font-body">
+                    <div>
+                      <p className="text-muted-foreground text-xs mb-0.5">Original Value</p>
+                      <p className="font-semibold text-foreground">${checkResult.card.amount?.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs mb-0.5">Status</p>
+                      <p className={`font-semibold ${checkResult.card.status === "Active" ? "text-green-600" : checkResult.card.status === "Redeemed" ? "text-muted-foreground" : "text-amber-600"}`}>
+                        {checkResult.card.status}
+                      </p>
+                    </div>
+                    {checkResult.card.balance != null && (
+                      <div>
+                        <p className="text-muted-foreground text-xs mb-0.5">Balance</p>
+                        <p className="font-semibold text-foreground">${checkResult.card.balance?.toFixed(2)}</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </motion.div>
+          )}
+        </motion.div>
+      )}
+
+      {tab === "buy" && (
+      <motion.div key="buy" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+
       {/* Form */}
-      <div className="max-w-2xl mx-auto px-6 py-16">
+      <div className="max-w-2xl mx-auto px-6 py-10">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Amount */}
           <div>
@@ -196,6 +293,9 @@ export default function GiftCards() {
           </button>
         </form>
       </div>
+      </motion.div>
+      )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -90,7 +90,10 @@ export default function ContactUs() {
                     <p>Fri – Sat: 5:30 PM – 11:00 PM</p>
                     <p>Sun Brunch: 10:00 AM – 3:00 PM</p>
                     <p>Sun Dinner: 5:00 PM – 10:00 PM</p>
-                    <p>Mon – Tue: Closed</p>
+                    <p className="text-foreground/80 font-medium">Mon – Tue: Closed</p>
+                    <p className="text-xs text-primary mt-1">Event Center available Mon & Tue by reservation →{" "}
+                      <a href="/event-center" className="underline underline-offset-2 hover:text-primary/80">Learn more</a>
+                    </p>
                   </div>
                 </div>
               </div>
