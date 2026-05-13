@@ -82,11 +82,13 @@
     "create": {
       "$or": [
         {
-          "data.staff_email": "{{user.email}}"
+          "user_condition": {
+            "role": "admin"
+          }
         },
         {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         }
       ]
@@ -94,12 +96,12 @@
     "read": {
       "$or": [
         {
-          "data.staff_email": "{{user.email}}"
-        },
-        {
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "data.staff_email": "{{user.email}}"
         }
       ]
     },
@@ -109,16 +111,9 @@
       }
     },
     "delete": {
-      "$or": [
-        {
-          "data.staff_email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
+      "user_condition": {
+        "role": "admin"
+      }
     }
   }
 }
