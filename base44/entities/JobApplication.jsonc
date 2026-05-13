@@ -80,7 +80,11 @@
         "role": "admin"
       }
     },
-    "update": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "delete": {
       "user_condition": {
         "role": "admin"
