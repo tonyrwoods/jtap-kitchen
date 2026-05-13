@@ -48,7 +48,18 @@
         "role": "admin"
       }
     },
-    "read": {},
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.is_booked": false
+        }
+      ]
+    },
     "update": {
       "user_condition": {
         "role": "admin"
