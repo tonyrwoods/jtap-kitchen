@@ -228,14 +228,7 @@
   "rls": {
     "create": {
       "user_condition": {
-        "$or": [
-          {
-            "role": "admin"
-          },
-          {
-            "role": "staff"
-          }
-        ]
+        "role": "admin"
       }
     },
     "read": {
@@ -246,12 +239,16 @@
           }
         },
         {
-          "user_condition": {
-            "role": "staff"
-          }
-        },
-        {
-          "created_by": "{{user.email}}"
+          "$and": [
+            {
+              "user_condition": {
+                "role": "staff"
+              }
+            },
+            {
+              "data.server_name": "{{user.full_name}}"
+            }
+          ]
         }
       ]
     },
