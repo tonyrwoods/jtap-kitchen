@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-const JTAPLEDGER_APP_ID = '69d2f797069bd30cb2a44f2c';
+const JTAPLEDGER_APP_ID = Deno.env.get('JTAPLEDGER_APP_ID');
 
 Deno.serve(async (req) => {
   try {
