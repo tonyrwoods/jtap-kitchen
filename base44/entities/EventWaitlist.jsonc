@@ -2,17 +2,9 @@
   "name": "EventWaitlist",
   "type": "object",
   "properties": {
-    "event_id": {
+    "contact_name": {
       "type": "string",
-      "title": "Event ID"
-    },
-    "event_title": {
-      "type": "string",
-      "title": "Event Title"
-    },
-    "guest_name": {
-      "type": "string",
-      "title": "Guest Name"
+      "title": "Contact Name"
     },
     "email": {
       "type": "string",
@@ -22,10 +14,37 @@
       "type": "string",
       "title": "Phone"
     },
-    "party_size": {
+    "preferred_date": {
+      "type": "string",
+      "title": "Preferred Date (YYYY-MM-DD)"
+    },
+    "preferred_day": {
+      "type": "string",
+      "title": "Preferred Day",
+      "enum": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Flexible"
+      ]
+    },
+    "guest_count": {
       "type": "number",
-      "title": "Party Size",
-      "default": 1
+      "title": "Estimated Guest Count"
+    },
+    "event_type": {
+      "type": "string",
+      "title": "Event Type"
+    },
+    "package": {
+      "type": "string",
+      "title": "Package Interest",
+      "enum": [
+        "Social Gathering",
+        "Elevated Experience",
+        "Full Buyout",
+        "Not Sure"
+      ]
     },
     "status": {
       "type": "string",
@@ -33,24 +52,41 @@
       "enum": [
         "Waiting",
         "Notified",
-        "Booked",
-        "Cancelled"
+        "Converted",
+        "Expired"
       ],
       "default": "Waiting"
     },
-    "notification_sent_date": {
+    "notified_at": {
       "type": "string",
-      "title": "Notification Sent Date"
+      "title": "Notified At (ISO)"
     },
     "notes": {
       "type": "string",
-      "title": "Special Requests"
+      "title": "Notes"
     }
   },
   "required": [
-    "event_id",
-    "guest_name",
+    "contact_name",
     "email",
-    "party_size"
-  ]
+    "preferred_day"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

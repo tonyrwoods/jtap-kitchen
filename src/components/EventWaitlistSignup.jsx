@@ -1,193 +1,152 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { motion } from "framer-motion";
-import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Clock, CheckCircle2, X } from "lucide-react";
 import { toast } from "sonner";
 
-export default function EventWaitlistSignup({ event, onClose, onSuccess }) {
-  const [step, setStep] = useState("form");
+const EMPTY = {
+  contact_name: "", email: "", phone: "",
+  preferred_date: "", preferred_day: "Flexible",
+  guest_count: "", event_type: "", package: "Not Sure",
+};
+
+export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }) {
   const [form, setForm] = useState({
-    guest_name: "",
-    email: "",
-    phone: "",
-    party_size: 1,
-    notes: "",
+    ...EMPTY,
+    preferred_date: prefillDate || "",
+    preferred_day: prefillDay || "Flexible",
   });
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.guest_name || !form.email || !form.party_size) {
-      toast.error("Please fill in all required fields");
+    if (!form.contact_name || !form.email) {
+      toast.error("Please fill in your name and email.");
       return;
     }
-
-    setLoading(true);
-    try {
-      await base44.entities.EventWaitlist.create({
-        event_id: event.id,
-        event_title: event.title,
-        ...form,
-        status: "Waiting",
-      });
-      setStep("success");
-    } catch (error) {
-      toast.error("Failed to join waitlist");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSuccessClose = () => {
-    onSuccess?.();
-    onClose();
+    setSubmitting(true);
+    await base44.entities.EventWaitlist.create({
+      ...form,
+      guest_count: parseInt(form.guest_count) || 0,
+    });
+    await base44.integrations.Core.SendEmail({
+      to: form.email,
+      subject: "You're on the Waitlist — JTAP Kitchen Event Center",
+      body: `Hi ${form.contact_name},\n\nYou've been added to the JTAP Kitchen Event Center waitlist!\n\nWe'll notify you immediately if a spot opens up for ${form.preferred_date || form.preferred_day}. You'll have first priority to book before anyone else.\n\nIf you have questions in the meantime, reach us at events@jtapkitchen.com or (555) 012-3456.\n\n— The JTAP Kitchen Events Team`,
+    });
+    setSubmitted(true);
+    setSubmitting(false);
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" onClick={onClose}>
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="bg-card border border-border rounded-2xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
         onClick={e => e.stopPropagation()}
-        className="bg-card rounded-3xl p-8 max-w-md w-full shadow-2xl"
       >
-        {step === "form" && (
-          <>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2.5 bg-amber-100 rounded-xl">
-                <AlertCircle className="w-5 h-5 text-amber-700" />
-              </div>
-              <div>
-                <h2 className="font-heading text-xl font-semibold">Event Full</h2>
-                <p className="font-body text-sm text-muted-foreground">Join the waitlist</p>
-              </div>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center">
+              <Clock className="w-4.5 h-4.5 text-amber-600" />
             </div>
+            <h3 className="font-heading text-xl font-bold">Join the Waitlist</h3>
+          </div>
+          <button onClick={onClose} className="p-2 hover:text-destructive transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <p className="font-body text-sm text-muted-foreground mb-6">
+          That date is fully booked. Join the waitlist and we'll contact you immediately if a spot opens up.
+        </p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="font-body text-xs font-semibold text-muted-foreground mb-1 block">YOUR NAME *</label>
-                <input
-                  type="text"
-                  required
-                  value={form.guest_name}
-                  onChange={e => setForm(f => ({ ...f, guest_name: e.target.value }))}
-                  className="w-full border border-border rounded-xl px-4 py-2.5 text-sm bg-background focus:outline-none focus:border-primary"
-                  placeholder="Full name"
-                />
-              </div>
-
-              <div>
-                <label className="font-body text-xs font-semibold text-muted-foreground mb-1 block">EMAIL *</label>
-                <input
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  className="w-full border border-border rounded-xl px-4 py-2.5 text-sm bg-background focus:outline-none focus:border-primary"
-                  placeholder="your@email.com"
-                />
-              </div>
-
-              <div>
-                <label className="font-body text-xs font-semibold text-muted-foreground mb-1 block">PHONE</label>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                  className="w-full border border-border rounded-xl px-4 py-2.5 text-sm bg-background focus:outline-none focus:border-primary"
-                  placeholder="(901) 000-0000"
-                />
-              </div>
-
-              <div>
-                <label className="font-body text-xs font-semibold text-muted-foreground mb-1 block">PARTY SIZE *</label>
-                <select
-                  required
-                  value={form.party_size}
-                  onChange={e => setForm(f => ({ ...f, party_size: parseInt(e.target.value) }))}
-                  className="w-full border border-border rounded-xl px-4 py-2.5 text-sm bg-background focus:outline-none focus:border-primary"
-                >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-                    <option key={n} value={n}>{n} {n === 1 ? "guest" : "guests"}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="font-body text-xs font-semibold text-muted-foreground mb-1 block">SPECIAL REQUESTS</label>
-                <textarea
-                  value={form.notes}
-                  onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                  className="w-full border border-border rounded-xl px-4 py-2.5 text-sm bg-background focus:outline-none focus:border-primary"
-                  rows={2}
-                  placeholder="Dietary restrictions, seating preferences..."
-                />
-              </div>
-
-              <p className="font-body text-xs text-muted-foreground">
-                We'll email you immediately if a spot opens up for {event.title}.
-              </p>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all"
-                >
-                  {loading ? "Joining..." : "Join Waitlist"}
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="flex-1 px-6 py-3 border border-border rounded-xl font-body text-sm font-semibold hover:bg-muted transition-all"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </>
-        )}
-
-        {step === "success" && (
-          <>
-            <div className="flex items-center justify-center mb-6">
-              <div className="p-3 bg-green-100 rounded-full">
+        <AnimatePresence mode="wait">
+          {submitted ? (
+            <motion.div key="done" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              className="text-center py-8">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-8 h-8 text-green-600" />
               </div>
-            </div>
-
-            <h2 className="font-heading text-2xl font-bold text-center mb-2">You're on the List!</h2>
-            <p className="font-body text-muted-foreground text-center mb-6">
-              We'll notify you at <strong>{form.email}</strong> immediately if a spot opens up.
-            </p>
-
-            <div className="bg-muted p-4 rounded-xl mb-6">
-              <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <h4 className="font-heading text-lg font-bold mb-2">You're on the list!</h4>
+              <p className="font-body text-sm text-muted-foreground mb-6">
+                We'll reach out as soon as a spot becomes available. You have first priority!
+              </p>
+              <button onClick={onClose}
+                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold">
+                Close
+              </button>
+            </motion.div>
+          ) : (
+            <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="font-body text-sm font-semibold mb-1">What happens next?</p>
-                  <p className="font-body text-xs text-muted-foreground">
-                    You'll be contacted as soon as a cancellation occurs. You'll have 24 hours to confirm your booking.
-                  </p>
+                  <label className="font-body text-sm font-semibold mb-1 block">Full Name *</label>
+                  <input required value={form.contact_name} onChange={e => set("contact_name", e.target.value)}
+                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Your name" />
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1 block">Email *</label>
+                  <input required type="email" value={form.email} onChange={e => set("email", e.target.value)}
+                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="you@email.com" />
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1 block">Phone</label>
+                  <input value={form.phone} onChange={e => set("phone", e.target.value)}
+                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="(555) 000-0000" />
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1 block">Guest Count</label>
+                  <input type="number" min="1" value={form.guest_count} onChange={e => set("guest_count", e.target.value)}
+                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="e.g. 40" />
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1 block">Preferred Date</label>
+                  <input type="date" value={form.preferred_date} onChange={e => set("preferred_date", e.target.value)}
+                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1 block">Preferred Day</label>
+                  <select value={form.preferred_day} onChange={e => set("preferred_day", e.target.value)}
+                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary">
+                    {["Sunday", "Monday", "Tuesday", "Flexible"].map(d => <option key={d}>{d}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1 block">Event Type</label>
+                  <select value={form.event_type} onChange={e => set("event_type", e.target.value)}
+                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">Select type...</option>
+                    {["Birthday Party","Corporate Event","Wedding Reception","Baby/Bridal Shower","Graduation Party","Holiday Party","Other"].map(t => (
+                      <option key={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1 block">Package Interest</label>
+                  <select value={form.package} onChange={e => set("package", e.target.value)}
+                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary">
+                    {["Social Gathering","Elevated Experience","Full Buyout","Not Sure"].map(p => <option key={p}>{p}</option>)}
+                  </select>
                 </div>
               </div>
-            </div>
-
-            <button
-              onClick={handleSuccessClose}
-              className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-xl font-body text-sm font-semibold hover:opacity-90 transition-all"
-            >
-              Got It
-            </button>
-          </>
-        )}
+              <button type="submit" disabled={submitting}
+                className="w-full py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+                {submitting ? "Joining waitlist..." : "Join Waitlist"}
+              </button>
+            </motion.form>
+          )}
+        </AnimatePresence>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

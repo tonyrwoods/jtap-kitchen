@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Users, Star, CalendarDays, Phone, Mail, ChevronDown, ChevronUp } from "lucide-react";
+import { CheckCircle2, Users, Star, CalendarDays, Phone, Mail, ChevronDown, ChevronUp, Clock } from "lucide-react";
 import { toast } from "sonner";
 import EventServiceProviderSignup from "../components/EventServiceProviderSignup";
+import EventWaitlistSignup from "../components/EventWaitlistSignup";
 
 const PACKAGES = [
   {
@@ -100,8 +101,23 @@ export default function EventCenter() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [bookedDates, setBookedDates] = useState([]);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // Check if a selected date is fully booked
+  const isDateFullyBooked = (date) => bookedDates.includes(date);
+
+  const handleDateChange = async (date) => {
+    set("preferred_date", date);
+    if (!date) return;
+    // Fetch existing confirmed inquiries for this date
+    const existing = await base44.entities.EventCenterInquiry.filter({ preferred_date: date, status: "Booked" });
+    if (existing.length >= 1) {
+      setBookedDates(prev => [...new Set([...prev, date])]);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -295,8 +311,18 @@ export default function EventCenter() {
                 </div>
                 <div>
                   <label className="font-body text-sm font-semibold mb-1 block">Preferred Date</label>
-                  <input type="date" value={form.preferred_date} onChange={e => set("preferred_date", e.target.value)}
+                  <input type="date" value={form.preferred_date} onChange={e => handleDateChange(e.target.value)}
                     className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary" />
+                  {form.preferred_date && isDateFullyBooked(form.preferred_date) && (
+                    <div className="mt-2 flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span className="font-body text-xs text-amber-800">This date is fully booked.</span>
+                      <button type="button" onClick={() => setWaitlistOpen(true)}
+                        className="ml-auto text-xs font-semibold text-amber-700 underline underline-offset-2 hover:text-amber-900">
+                        Join Waitlist
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="font-body text-sm font-semibold mb-1 block">Package Interest</label>
@@ -320,6 +346,18 @@ export default function EventCenter() {
           )}
         </AnimatePresence>
 
+        {/* Waitlist CTA */}
+        <div className="mt-6 text-center">
+          <p className="font-body text-sm text-muted-foreground">
+            Date unavailable?{" "}
+            <button onClick={() => setWaitlistOpen(true)}
+              className="text-primary font-semibold hover:underline underline-offset-2">
+              Join our waitlist
+            </button>{" "}
+            and we'll contact you when a spot opens up.
+          </p>
+        </div>
+
         {/* Contact strip */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8 text-sm text-muted-foreground">
           <a href="tel:5550123456" className="flex items-center gap-2 hover:text-primary transition-colors">
@@ -330,6 +368,17 @@ export default function EventCenter() {
           </a>
         </div>
       </div>
+
+      {/* Waitlist Modal */}
+      <AnimatePresence>
+        {waitlistOpen && (
+          <EventWaitlistSignup
+            onClose={() => setWaitlistOpen(false)}
+            prefillDate={form.preferred_date}
+            prefillDay={form.preferred_day}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Service Provider Signup */}
       <EventServiceProviderSignup />
