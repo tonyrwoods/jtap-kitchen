@@ -50,23 +50,16 @@
     "requester_email"
   ],
   "rls": {
-    "create": {
-      "data.requester_email": "{{user.email}}",
-      "user_condition": {
-        "$ne": {
-          "role": null
-        }
-      }
-    },
+    "create": {},
     "read": {
       "$or": [
+        {
+          "data.requester_email": "{{user.email}}"
+        },
         {
           "user_condition": {
             "role": "admin"
           }
-        },
-        {
-          "data.requester_email": "{{user.email}}"
         }
       ]
     },
