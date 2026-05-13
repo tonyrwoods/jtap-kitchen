@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Users, Star, CalendarDays, Phone, Mail, ChevronDown, ChevronUp, Clock } from "lucide-react";
+import { CheckCircle2, Users, Star, CalendarDays, Phone, Mail, ChevronDown, ChevronUp, Clock, MapPin } from "lucide-react";
 import { toast } from "sonner";
-import EventServiceProviderSignup from "../components/EventServiceProviderSignup";
+import { Link } from "react-router-dom";
 import EventWaitlistSignup from "../components/EventWaitlistSignup";
 
 const PACKAGES = [
@@ -358,8 +358,14 @@ export default function EventCenter() {
           </p>
         </div>
 
-        {/* Contact strip */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8 text-sm text-muted-foreground">
+        {/* Location & Contact strip */}
+        <div className="mt-8 mb-2 flex flex-col sm:flex-row items-center justify-center gap-2 p-4 bg-muted/40 border border-border rounded-2xl text-sm text-muted-foreground">
+          <MapPin className="w-4 h-4 text-primary shrink-0" />
+          <span className="font-body text-sm font-medium text-foreground">Memphis, TN</span>
+          <span className="hidden sm:inline text-border">·</span>
+          <span className="font-body text-xs text-muted-foreground">Exact address provided upon booking confirmation</span>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4 text-sm text-muted-foreground">
           <a href="tel:9015544431" className="flex items-center gap-2 hover:text-primary transition-colors">
             <Phone className="w-4 h-4" /> 901-554-4431
           </a>
@@ -380,8 +386,18 @@ export default function EventCenter() {
         )}
       </AnimatePresence>
 
-      {/* Service Provider Signup */}
-      <EventServiceProviderSignup />
+      {/* Service Provider Teaser */}
+      <div className="bg-foreground text-background py-12 px-6 text-center">
+        <p className="font-body text-xs uppercase tracking-widest text-primary mb-2">Vendors & Talent</p>
+        <h2 className="font-heading text-2xl font-bold mb-3">Are You a Creative Professional?</h2>
+        <p className="font-body text-sm text-white/60 max-w-md mx-auto mb-6">
+          DJs, photographers, florists, MCs & more — partner with JTAP Kitchen to bring your talents to our private events.
+        </p>
+        <Link to="/vendor-signup"
+          className="inline-block px-8 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity">
+          Apply to Join Our Network
+        </Link>
+      </div>
 
       {/* FAQ */}
       <div className="bg-muted/30 py-16">

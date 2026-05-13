@@ -160,6 +160,7 @@ export default function Footer() {
                 { label: "Event Center", href: "/event-center" },
                 { label: "Gift Cards", href: "/gift-cards" },
                 { label: "Careers", href: "/careers" },
+                { label: "Vendor / Talent Signup", href: "/vendor-signup" },
                 { label: "Contact Us", href: "/contact" },
                 { label: "Support", href: "/support" },
                 { label: "Login", href: null },
