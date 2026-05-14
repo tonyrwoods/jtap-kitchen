@@ -58,17 +58,23 @@ export default function WeekendAvailability({ onBook }) {
 
   const fetchData = async () => {
     setLoading(true);
-    const results = await Promise.all(
-      weekendDates.map(date =>
-        base44.entities.Reservation.filter({ date })
-          .then(res => ({ date, count: res.filter(r => r.status !== "Cancelled").length }))
-      )
-    );
-    const map = {};
-    results.forEach(({ date, count }) => { map[date] = count; });
-    setData(map);
-    setLastUpdated(new Date());
-    setLoading(false);
+    try {
+      const results = await Promise.all(
+        weekendDates.map(date =>
+          base44.entities.Reservation.filter({ date })
+            .then(res => ({ date, count: res.filter(r => r.status !== "Cancelled").length }))
+            .catch(() => ({ date, count: 0 }))
+        )
+      );
+      const map = {};
+      results.forEach(({ date, count }) => { map[date] = count; });
+      setData(map);
+      setLastUpdated(new Date());
+    } catch {
+      // silently fail for unauthenticated users
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
