@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Gift, CheckCircle, Search, CreditCard } from "lucide-react";
@@ -11,6 +11,11 @@ function generateCode() {
 }
 
 export default function GiftCards() {
+  useEffect(() => {
+    document.title = "Gift Cards — JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Give the gift of fine dining. Purchase a JTAP Kitchen gift card for any occasion.");
+  }, []);
   const [tab, setTab] = useState("buy"); // "buy" | "check"
   const [checkCode, setCheckCode] = useState("");
   const [checkResult, setCheckResult] = useState(null);

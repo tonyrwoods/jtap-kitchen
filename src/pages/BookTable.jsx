@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const TIME_SLOTS = [
   "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM",
@@ -97,6 +98,11 @@ function MiniCalendar({ selectedDate, onSelect }) {
 }
 
 export default function BookTable() {
+  useEffect(() => {
+    document.title = "Reserve a Table at JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Reserve a table at JTAP Kitchen in Memphis. Choose your date, time, and party size — instant confirmation.");
+  }, []);
   const [step, setStep] = useState(1);
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
@@ -120,7 +126,24 @@ export default function BookTable() {
   };
 
   const handleSubmit = async () => {
+    if (!date || date < new Date()) {
+      toast.error("Please select a future date");
+      return;
+    }
     setLoading(true);
+    try {
+      const appSettings = await base44.entities.AppSettings.list().then(data => data[0]);
+      const maxCapacity = appSettings?.max_capacity || 80;
+      const confirmed = await base44.entities.Reservation.filter({ date: date.toISOString().split("T")[0], status: "Confirmed" });
+      const bookedPartySize = confirmed.reduce((sum, r) => sum + (r.party_size || 0), 0);
+      if (bookedPartySize + party > maxCapacity) {
+        toast.error("Sorry, we're fully booked for that time. Please choose a different date or time.");
+        setLoading(false);
+        return;
+      }
+    } catch (error) {
+      console.error("Capacity check failed:", error);
+    }
     await base44.entities.Reservation.create({
       guest_name: name,
       email,

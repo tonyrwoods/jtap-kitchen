@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { RefreshCw, Upload, Filter, Zap, Trash2 } from "lucide-react";
+import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { toast } from "sonner";
 import { autoMatch } from "../components/reconciliation/useAutoMatch";
 import ImportTransactionsModal from "../components/reconciliation/ImportTransactionsModal";
@@ -10,6 +11,7 @@ import ReconciliationSummaryBar from "../components/reconciliation/Reconciliatio
 const STATUS_FILTERS = ["All", "Unmatched", "Auto-Matched", "Confirmed", "Dismissed"];
 
 export default function ReconciliationCenter() {
+  useRobotsNoindex();
   const [transactions, setTransactions] = useState([]);
   const [matchedData, setMatchedData] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);

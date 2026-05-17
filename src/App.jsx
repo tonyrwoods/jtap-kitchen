@@ -35,7 +35,7 @@ import ContactUs from './pages/ContactUs';
 import Support from './pages/Support';
 import InformationSecurityPolicy from './pages/InformationSecurityPolicy';
 import DataRetentionPolicy from './pages/DataRetentionPolicy';
-import RLSPolicy from './pages/RLSPolicy';
+
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import BookTable from './pages/BookTable';
@@ -43,6 +43,7 @@ import Careers from './pages/Careers';
 import ScheduleInterview from './pages/ScheduleInterview';
 import EventCenter from './pages/EventCenter';
 import VendorSignup from './pages/VendorSignup';
+import RevenueAnalytics from './pages/RevenueAnalytics';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -99,7 +100,7 @@ const AuthenticatedApp = () => {
         <Route path="/support" element={<Support />} />
         <Route path="/security-policy" element={<InformationSecurityPolicy />} />
         <Route path="/data-retention-policy" element={<DataRetentionPolicy />} />
-        <Route path="/rls-policy" element={<RLSPolicy />} />
+
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/careers" element={<Careers />} />
@@ -107,6 +108,7 @@ const AuthenticatedApp = () => {
         <Route path="/schedule-interview" element={<ScheduleInterview />} />
         <Route path="/event-center" element={<EventCenter />} />
         <Route path="/vendor-signup" element={<VendorSignup />} />
+        <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>

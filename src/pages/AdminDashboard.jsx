@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
+import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
@@ -145,6 +146,7 @@ function MenuItemForm({ item, onSave, onCancel }) {
 }
 
 export default function AdminDashboard() {
+  useRobotsNoindex();
   const { user } = useAuth();
   const [tab, setTab] = useState("Overview");
   const [menuItems, setMenuItems] = useState([]);

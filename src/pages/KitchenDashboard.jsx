@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
+import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { Plus, Clock, ChefHat, CheckCircle, Utensils, AlertTriangle, X, ArrowLeftRight, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import SwapRequestsPanel from "../components/SwapRequestsPanel";
@@ -187,6 +188,7 @@ function Column({ status, orders, onStatusChange }) {
 }
 
 export default function KitchenDashboard() {
+  useRobotsNoindex();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChefHat, AlertTriangle, Clock, CheckCircle, Wifi, WifiOff } from "lucide-react";
 import { toast } from "sonner";
@@ -154,6 +155,7 @@ function LaneColumn({ status, orders, onAdvance, onRecall }) {
 }
 
 export default function KDS() {
+  useRobotsNoindex();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [connected, setConnected] = useState(true);

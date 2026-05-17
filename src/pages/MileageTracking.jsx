@@ -11,7 +11,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
-const REIMBURSEMENT_RATE = 0.67;
+let REIMBURSEMENT_RATE = 0.67;
+
+const initRate = async () => {
+  try {
+    const settings = await base44.entities.AppSettings.list().then(data => data[0]);
+    if (settings?.mileage_rate) REIMBURSEMENT_RATE = settings.mileage_rate;
+  } catch (error) {
+    console.error("Failed to load mileage rate from AppSettings");
+  }
+};
+
+initRate();
 
 export default function MileageTracking() {
   const [showForm, setShowForm] = useState(false);
@@ -256,7 +267,7 @@ export default function MileageTracking() {
                       ${((formData.miles || 0) * REIMBURSEMENT_RATE).toFixed(2)}
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      @ ${REIMBURSEMENT_RATE}/mi
+                      Current IRS rate: ${REIMBURSEMENT_RATE.toFixed(2)}/mile
                     </span>
                   </div>
                 </div>

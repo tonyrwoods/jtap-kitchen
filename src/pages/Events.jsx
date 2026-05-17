@@ -100,6 +100,11 @@ function EventCard({ event, onBook, index }) {
 
 export default function Events() {
   useSeoMeta("events");
+  useEffect(() => {
+    document.title = "Upcoming Events at JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Upcoming events at JTAP Kitchen — wine tastings, chef's table dinners, and seasonal tasting menus in Memphis.");
+  }, []);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");

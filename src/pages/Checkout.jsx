@@ -5,7 +5,18 @@ import { toast } from "sonner";
 import CustomerLoyaltyPanel from "../components/checkout/CustomerLoyaltyPanel";
 import SelectDropdown from "../components/SelectDropdown";
 
-const TAX_RATE = 9.25; // %
+let TAX_RATE = 9.25; // %
+
+const initTaxRate = async () => {
+  try {
+    const settings = await base44.entities.AppSettings.list().then(data => data[0]);
+    if (settings?.tax_rate) TAX_RATE = settings.tax_rate;
+  } catch (error) {
+    console.error("Failed to load tax rate from AppSettings");
+  }
+};
+
+initTaxRate();
 
 function calcCustomerTier(totalSpend) {
   if (totalSpend >= 5000) return "Platinum";

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -31,6 +32,7 @@ const DEFAULT_TEMPLATE = `<div style="font-family:Georgia,serif;max-width:600px;
 </div>`;
 
 export default function EmailMarketing() {
+  useRobotsNoindex();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // list | compose

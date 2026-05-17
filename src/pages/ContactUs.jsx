@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ContactUs() {
+  useEffect(() => {
+    document.title = "Contact Us — JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Contact JTAP Kitchen in Memphis, TN. Reach us by phone, email, or our online form.");
+  }, []);
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [loading, setLoading] = useState(false);
 

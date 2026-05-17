@@ -246,6 +246,11 @@ function JobCard({ job, onApply }) {
 }
 
 export default function Careers() {
+  useEffect(() => {
+    document.title = "Careers at JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Join the JTAP Kitchen team. View open positions and apply online.");
+  }, []);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [applyingTo, setApplyingTo] = useState(null);
