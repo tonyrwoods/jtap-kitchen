@@ -67,12 +67,12 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         },
         {
           "user_condition": {
-            "role": "staff"
+            "role": "admin"
           }
         }
       ]
@@ -80,31 +80,21 @@
     "update": {
       "$or": [
         {
-          "data.email": "{{user.email}}"
-        },
-        {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         },
         {
           "user_condition": {
-            "role": "staff"
+            "role": "admin"
           }
         }
       ]
     },
     "delete": {
-      "$or": [
-        {
-          "data.email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
+      "user_condition": {
+        "role": "admin"
+      }
     }
   }
 }
