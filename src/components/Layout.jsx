@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
@@ -14,13 +14,26 @@ export default function Layout() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const scrollRef = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const el = scrollRef.current;
+    if (!el) return;
+    const handleScroll = () => setShowScrollTop(el.scrollTop > 400);
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Reset scroll and button on route change
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    setShowScrollTop(false);
+  }, [location.pathname]);
+
+  const scrollToTop = () => {
+    if (scrollRef.current) scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Detect dark mode preference
   useEffect(() => {
@@ -78,6 +91,7 @@ export default function Layout() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.3 }}
+            ref={scrollRef}
             className="h-full overflow-y-auto scrollbar-hide"
           >
             <Outlet />
@@ -93,7 +107,7 @@ export default function Layout() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={scrollToTop}
             className="fixed bottom-24 md:bottom-8 right-5 z-50 w-11 h-11 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center hover:opacity-90 transition-opacity"
             aria-label="Return to top"
           >
