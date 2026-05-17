@@ -1,58 +1,61 @@
 {
   "name": "GiftCard",
-  "type": "object",
   "properties": {
-    "code": {
-      "type": "string",
-      "title": "Voucher Code"
-    },
     "amount": {
-      "type": "number",
-      "title": "Amount (USD)"
+      "title": "Amount (USD)",
+      "type": "number"
     },
-    "purchaser_name": {
-      "type": "string",
-      "title": "Purchaser Name"
+    "code": {
+      "title": "Voucher Code",
+      "type": "string"
     },
-    "purchaser_email": {
-      "type": "string",
-      "title": "Purchaser Email"
+    "description": {
+      "maxLength": 1000,
+      "title": "Description",
+      "type": "string"
     },
-    "recipient_name": {
-      "type": "string",
-      "title": "Recipient Name"
-    },
-    "recipient_email": {
-      "type": "string",
-      "title": "Recipient Email"
+    "expiry_date": {
+      "title": "Expiry Date (YYYY-MM-DD)",
+      "type": "string"
     },
     "message": {
-      "type": "string",
-      "title": "Personal Message"
+      "title": "Personal Message",
+      "type": "string"
+    },
+    "purchaser_email": {
+      "title": "Purchaser Email",
+      "type": "string"
+    },
+    "purchaser_name": {
+      "title": "Purchaser Name",
+      "type": "string"
+    },
+    "redeemed_at": {
+      "title": "Redeemed At",
+      "type": "string"
+    },
+    "redeemed_by": {
+      "title": "Redeemed By (Guest Name)",
+      "type": "string"
+    },
+    "recipient_email": {
+      "title": "Recipient Email",
+      "type": "string"
+    },
+    "recipient_name": {
+      "title": "Recipient Name",
+      "type": "string"
     },
     "status": {
-      "type": "string",
-      "title": "Status",
+      "default": "Pending Payment",
       "enum": [
         "Pending Payment",
         "Active",
         "Redeemed",
         "Expired"
       ],
-      "default": "Pending Payment"
-    },
-    "redeemed_at": {
-      "type": "string",
-      "title": "Redeemed At"
-    },
-    "redeemed_by": {
-      "type": "string",
-      "title": "Redeemed By (Guest Name)"
-    },
-    "description": {
-      "type": "string",
-      "title": "Description",
-      "maxLength": 1000
+      "title": "Status",
+      "type": "string"
     }
   },
   "required": [
@@ -60,17 +63,25 @@
     "purchaser_name",
     "purchaser_email"
   ],
+  "type": "object",
   "rls": {
-    "create": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "read": {
       "$or": [
+        {
+          "data.purchaser_email": "{{user.email}}"
+        },
+        {
+          "data.recipient_email": "{{user.email}}"
+        },
         {
           "user_condition": {
             "role": "admin"
           }
-        },
-        {
-          "data.purchaser_email": "{{user.email}}"
         }
       ]
     },
