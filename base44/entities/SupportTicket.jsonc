@@ -54,19 +54,33 @@
     "read": {
       "$or": [
         {
+          "data.requester_email": "{{user.email}}"
+        },
+        {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         },
         {
-          "data.requester_email": "{{user.email}}"
+          "user_condition": {
+            "role": "admin"
+          }
         }
       ]
     },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
       "user_condition": {
