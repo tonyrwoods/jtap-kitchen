@@ -1,73 +1,79 @@
 {
   "name": "Order",
-  "type": "object",
   "properties": {
-    "table_number": {
-      "type": "number",
-      "title": "Table Number"
-    },
-    "server_name": {
-      "type": "string",
-      "title": "Server Name"
-    },
     "items": {
-      "type": "array",
-      "title": "Order Items",
       "items": {
-        "type": "object",
         "properties": {
+          "menu_item_id": {
+            "type": "string"
+          },
           "name": {
+            "type": "string"
+          },
+          "notes": {
             "type": "string"
           },
           "quantity": {
             "type": "number"
           },
-          "notes": {
-            "type": "string"
+          "unit_price": {
+            "type": "number"
           }
-        }
-      }
+        },
+        "type": "object"
+      },
+      "title": "Order Items",
+      "type": "array"
+    },
+    "notes": {
+      "title": "Special Notes",
+      "type": "string"
+    },
+    "priority": {
+      "default": "Normal",
+      "enum": [
+        "Normal",
+        "Rush"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "server_name": {
+      "title": "Server Name",
+      "type": "string"
     },
     "status": {
-      "type": "string",
-      "title": "Status",
+      "default": "New",
       "enum": [
         "New",
         "Preparing",
         "Ready",
         "Served"
       ],
-      "default": "New"
+      "title": "Status",
+      "type": "string"
     },
-    "notes": {
-      "type": "string",
-      "title": "Special Notes"
-    },
-    "priority": {
-      "type": "string",
-      "title": "Priority",
-      "enum": [
-        "Normal",
-        "Rush"
-      ],
-      "default": "Normal"
+    "table_number": {
+      "title": "Table Number",
+      "type": "number"
     }
   },
   "required": [
     "table_number",
     "status"
   ],
+  "type": "object",
   "rls": {
     "create": {
       "$or": [
         {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         },
         {
           "user_condition": {
-            "role": "staff"
+            "role": "admin"
           }
         }
       ]
@@ -76,12 +82,12 @@
       "$or": [
         {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         },
         {
           "user_condition": {
-            "role": "staff"
+            "role": "admin"
           }
         }
       ]
@@ -90,12 +96,12 @@
       "$or": [
         {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         },
         {
           "user_condition": {
-            "role": "staff"
+            "role": "admin"
           }
         }
       ]
