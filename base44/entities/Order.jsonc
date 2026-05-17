@@ -68,12 +68,12 @@
       "$or": [
         {
           "user_condition": {
-            "role": "staff"
+            "role": "admin"
           }
         },
         {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         }
       ]
@@ -82,12 +82,12 @@
       "$or": [
         {
           "user_condition": {
-            "role": "staff"
+            "role": "admin"
           }
         },
         {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         }
       ]
@@ -96,20 +96,29 @@
       "$or": [
         {
           "user_condition": {
-            "role": "staff"
+            "role": "admin"
           }
         },
         {
           "user_condition": {
-            "role": "admin"
+            "role": "staff"
           }
         }
       ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        }
+      ]
     }
   }
 }
