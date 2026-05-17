@@ -71,27 +71,27 @@
     "create": {
       "$or": [
         {
-          "data.claimed_by_email": "{{user.email}}"
-        },
-        {
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "data.claimed_by_email": "{{user.email}}"
         }
       ]
     },
     "read": {
       "$or": [
         {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
           "data.claimed_by_email": "{{user.email}}"
         },
         {
           "data.original_owner_email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
         }
       ]
     },
