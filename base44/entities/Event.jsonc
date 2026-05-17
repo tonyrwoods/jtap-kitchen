@@ -81,18 +81,7 @@
         "role": "admin"
       }
     },
-    "read": {
-      "$or": [
-        {
-          "data.is_published": true
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
+    "read": {},
     "update": {
       "user_condition": {
         "role": "admin"
