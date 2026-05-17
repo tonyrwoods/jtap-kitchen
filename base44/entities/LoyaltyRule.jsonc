@@ -1,0 +1,81 @@
+{
+  "name": "LoyaltyRule",
+  "properties": {
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "is_active": {
+      "default": true,
+      "title": "Active",
+      "type": "boolean"
+    },
+    "points_awarded": {
+      "title": "Points Awarded",
+      "type": "number"
+    },
+    "redemption_dollar_value": {
+      "description": "Dollar value when redeeming this many points",
+      "title": "Redemption Value ($)",
+      "type": "number"
+    },
+    "redemption_points_required": {
+      "description": "Points needed to redeem for the dollar value above",
+      "title": "Points Required for Redemption",
+      "type": "number"
+    },
+    "trigger": {
+      "enum": [
+        "purchase",
+        "visit",
+        "birthday",
+        "referral",
+        "signup",
+        "review"
+      ],
+      "title": "Trigger Event",
+      "type": "string"
+    },
+    "trigger_amount_per_dollar": {
+      "description": "For purchase trigger: points earned per dollar spent",
+      "title": "Points Per Dollar (purchase trigger)",
+      "type": "number"
+    }
+  },
+  "required": [
+    "trigger",
+    "points_awarded"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}
