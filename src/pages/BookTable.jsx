@@ -126,7 +126,9 @@ export default function BookTable() {
   };
 
   const handleSubmit = async () => {
-    if (!date || date < new Date()) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (!date || date < today) {
       toast.error("Please select a future date");
       return;
     }

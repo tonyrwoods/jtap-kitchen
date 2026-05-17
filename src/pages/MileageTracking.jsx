@@ -267,7 +267,7 @@ export default function MileageTracking() {
                       ${((formData.miles || 0) * REIMBURSEMENT_RATE).toFixed(2)}
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      Current IRS rate: ${REIMBURSEMENT_RATE.toFixed(2)}/mile
+                      Current rate: ${REIMBURSEMENT_RATE.toFixed(2)}/mile
                     </span>
                   </div>
                 </div>
