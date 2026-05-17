@@ -75,7 +75,7 @@
     "create": {
       "$or": [
         {
-          "data.requester_staff_id": "{{user.id}}"
+          "data.requester_staff_name": "{{user.full_name}}"
         },
         {
           "user_condition": {
@@ -87,10 +87,10 @@
     "read": {
       "$or": [
         {
-          "data.requester_staff_id": "{{user.id}}"
+          "data.requester_staff_name": "{{user.full_name}}"
         },
         {
-          "data.target_staff_id": "{{user.id}}"
+          "data.target_staff_name": "{{user.full_name}}"
         },
         {
           "user_condition": {
