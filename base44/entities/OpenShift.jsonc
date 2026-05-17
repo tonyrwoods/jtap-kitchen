@@ -72,7 +72,7 @@
     "create": {
       "$or": [
         {
-          "data.posted_by_email": "{{user.email}}"
+          "created_by": "{{user.email}}"
         },
         {
           "user_condition": {
@@ -84,41 +84,33 @@
     "read": {
       "$or": [
         {
-          "data.status": "Open"
+          "user_condition": {
+            "role": "staff"
+          }
         },
         {
           "user_condition": {
             "role": "admin"
           }
-        },
-        {
-          "data.posted_by_email": "{{user.email}}"
         }
       ]
     },
     "update": {
       "$or": [
         {
+          "created_by": "{{user.email}}"
+        },
+        {
           "user_condition": {
             "role": "admin"
           }
-        },
-        {
-          "data.posted_by_email": "{{user.email}}"
         }
       ]
     },
     "delete": {
-      "$or": [
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        {
-          "data.posted_by_email": "{{user.email}}"
-        }
-      ]
+      "user_condition": {
+        "role": "admin"
+      }
     }
   }
 }
