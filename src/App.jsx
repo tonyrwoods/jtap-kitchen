@@ -5,37 +5,26 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { I18nProvider } from '@/lib/i18n';
-import AdminDashboard from './pages/AdminDashboard';
-import GiftCards from './pages/GiftCards';
-import VendorOverchargeAnalysis from './pages/VendorOverchargeAnalysis';
-import MileageTracking from './pages/MileageTracking';
-import PostedShifts from './pages/PostedShifts';
-import Events from './pages/Events';
+import { lazy, Suspense } from 'react';
+
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
+
+// Eagerly loaded
+import GiftCards from './pages/GiftCards';
+import Events from './pages/Events';
 import Home from './pages/Home';
-import ReservationsCalendar from './pages/ReservationsCalendar';
-import EmailMarketing from './pages/EmailMarketing';
 import SubmitReview from './pages/SubmitReview';
 import LoyaltyProgram from './pages/LoyaltyProgram';
-import StaffScheduler from './pages/StaffScheduler';
 import DigitalMenu from './pages/DigitalMenu';
 import QRCodePrinter from './pages/QRCodePrinter';
-import KitchenDashboard from './pages/KitchenDashboard';
-import MenuPerformance from './pages/MenuPerformance';
 import LoyaltyPortal from './pages/LoyaltyPortal';
-import StaffPerformance from './pages/StaffPerformance';
 import Checkout from './pages/Checkout';
-import InventoryManagement from './pages/InventoryManagement';
-import KDS from './pages/KDS';
-import StaffShifts from './pages/StaffShifts';
-import ReconciliationCenter from './pages/ReconciliationCenter';
 import Menu from './pages/Menu';
 import ContactUs from './pages/ContactUs';
 import Support from './pages/Support';
 import InformationSecurityPolicy from './pages/InformationSecurityPolicy';
 import DataRetentionPolicy from './pages/DataRetentionPolicy';
-
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import BookTable from './pages/BookTable';
@@ -43,8 +32,23 @@ import Careers from './pages/Careers';
 import ScheduleInterview from './pages/ScheduleInterview';
 import EventCenter from './pages/EventCenter';
 import VendorSignup from './pages/VendorSignup';
-import RevenueAnalytics from './pages/RevenueAnalytics';
-import { lazy, Suspense } from 'react';
+
+// Lazily loaded (heavy/admin pages - prevents SyntaxError from eager init)
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const VendorOverchargeAnalysis = lazy(() => import('./pages/VendorOverchargeAnalysis'));
+const MileageTracking = lazy(() => import('./pages/MileageTracking'));
+const PostedShifts = lazy(() => import('./pages/PostedShifts'));
+const ReservationsCalendar = lazy(() => import('./pages/ReservationsCalendar'));
+const EmailMarketing = lazy(() => import('./pages/EmailMarketing'));
+const StaffScheduler = lazy(() => import('./pages/StaffScheduler'));
+const KitchenDashboard = lazy(() => import('./pages/KitchenDashboard'));
+const MenuPerformance = lazy(() => import('./pages/MenuPerformance'));
+const StaffPerformance = lazy(() => import('./pages/StaffPerformance'));
+const InventoryManagement = lazy(() => import('./pages/InventoryManagement'));
+const KDS = lazy(() => import('./pages/KDS'));
+const StaffShifts = lazy(() => import('./pages/StaffShifts'));
+const ReconciliationCenter = lazy(() => import('./pages/ReconciliationCenter'));
+const RevenueAnalytics = lazy(() => import('./pages/RevenueAnalytics'));
 const ReservationChat = lazy(() => import('./pages/ReservationChat'));
 
 const AuthenticatedApp = () => {
@@ -71,7 +75,9 @@ const AuthenticatedApp = () => {
   }
 
   // Render the main app
+  const spinner = <div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin" /></div>;
   return (
+    <Suspense fallback={spinner}>
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
@@ -111,10 +117,11 @@ const AuthenticatedApp = () => {
         <Route path="/event-center" element={<EventCenter />} />
         <Route path="/vendor-signup" element={<VendorSignup />} />
         <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
-        <Route path="/dining-assistant" element={<Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" /></div>}><ReservationChat /></Suspense>} />
+        <Route path="/dining-assistant" element={<ReservationChat />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
+    </Suspense>
   );
 };
 
