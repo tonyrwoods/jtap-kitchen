@@ -23,6 +23,12 @@
     },
     {
       "src": "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
