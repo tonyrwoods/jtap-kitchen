@@ -1,0 +1,38 @@
+{
+  "name": "JTAP Kitchen",
+  "short_name": "JTAP Kitchen",
+  "description": "Fine dining in Memphis, TN. Reserve your table, explore our seasonal menu.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f4f0",
+  "theme_color": "#C89B4F",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://app.base44.com/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "JTAP Kitchen — Desktop View"
+    },
+    {
+      "src": "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "label": "JTAP Kitchen — Mobile View"
+    }
+  ]
+}
