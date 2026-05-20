@@ -181,9 +181,7 @@ function JobCard({ job, onApply }) {
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold font-body bg-secondary text-secondary-foreground">
               {job.employment_type}
             </span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold font-body bg-green-100 text-green-800">
-              💰 Quarterly Bonus
-            </span>
+
           </div>
           <h3 className="font-heading text-xl font-bold text-foreground mb-1">{job.title}</h3>
           <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
