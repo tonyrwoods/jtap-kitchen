@@ -44,7 +44,8 @@ import ScheduleInterview from './pages/ScheduleInterview';
 import EventCenter from './pages/EventCenter';
 import VendorSignup from './pages/VendorSignup';
 import RevenueAnalytics from './pages/RevenueAnalytics';
-import ReservationChat from './pages/ReservationChat';
+import { lazy, Suspense } from 'react';
+const ReservationChat = lazy(() => import('./pages/ReservationChat'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -110,7 +111,7 @@ const AuthenticatedApp = () => {
         <Route path="/event-center" element={<EventCenter />} />
         <Route path="/vendor-signup" element={<VendorSignup />} />
         <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
-        <Route path="/dining-assistant" element={<ReservationChat />} />
+        <Route path="/dining-assistant" element={<Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" /></div>}><ReservationChat /></Suspense>} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
