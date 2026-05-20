@@ -44,6 +44,7 @@ import ScheduleInterview from './pages/ScheduleInterview';
 import EventCenter from './pages/EventCenter';
 import VendorSignup from './pages/VendorSignup';
 import RevenueAnalytics from './pages/RevenueAnalytics';
+import ReservationChat from './pages/ReservationChat';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -109,6 +110,7 @@ const AuthenticatedApp = () => {
         <Route path="/event-center" element={<EventCenter />} />
         <Route path="/vendor-signup" element={<VendorSignup />} />
         <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
+        <Route path="/dining-assistant" element={<ReservationChat />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
