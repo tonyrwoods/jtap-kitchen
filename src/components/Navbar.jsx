@@ -16,6 +16,7 @@ const PRIMARY_LINKS = [
 // Secondary links grouped under "More"
 const MORE_LINKS = [
   { label: "Our Story", href: "/#about" },
+  { label: "Dining Assistant", href: "/dining-assistant" },
   { label: "Reviews", href: "/submit-review" },
   { label: "Careers", href: "/careers" },
 ];
