@@ -38,6 +38,13 @@ function MessageBubble({ message }) {
   );
 }
 
+const SUGGESTIONS = [
+  "Book a table for 2",
+  "What's on the menu?",
+  "Check my reservation",
+  "What are your hours?",
+];
+
 export default function ReservationChat() {
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -47,7 +54,7 @@ export default function ReservationChat() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    document.title = "Dining Assistant — JTAP Kitchen";
+    document.title = "Dining Assistant - JTAP Kitchen";
     initConversation();
   }, []);
 
@@ -62,7 +69,6 @@ export default function ReservationChat() {
     });
     setConversation(conv);
     setLoading(false);
-
     base44.agents.subscribeToConversation(conv.id, (data) => {
       setMessages(data.messages || []);
     });
@@ -78,7 +84,11 @@ export default function ReservationChat() {
     setSending(false);
   };
 
-  const visibleMessages = messages.filter(m => m.role === "user" || m.role === "assistant");
+  const handleSuggestion = (text) => {
+    setInput(text);
+  };
+
+  const visibleMessages = messages.filter((m) => m.role === "user" || m.role === "assistant");
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -98,7 +108,7 @@ export default function ReservationChat() {
       {/* Chat Area */}
       <div className="flex-1 max-w-2xl w-full mx-auto flex flex-col px-4 py-6">
         {loading ? (
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
           </div>
         ) : (
@@ -106,22 +116,17 @@ export default function ReservationChat() {
             <div className="flex-1 space-y-4 overflow-y-auto pb-4 min-h-[400px] max-h-[60vh]">
               {visibleMessages.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="font-body text-muted-foreground text-sm">
-                    👋 Hi! I'm your JTAP Kitchen dining assistant. How can I help you today?
+                  <p className="font-body text-muted-foreground text-sm mb-6">
+                    Hi! I am your JTAP Kitchen dining assistant. How can I help you today?
                   </p>
-                  <div className="mt-6 flex flex-wrap justify-center gap-2">
-                    {[
-                      "Book a table for 2",
-                      "What's on the menu?",
-                      "Check my reservation",
-                      "What are your hours?",
-                    ].map(suggestion => (
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {SUGGESTIONS.map((s) => (
                       <button
-                        key={suggestion}
-                        onClick={() => setInput(suggestion)}
+                        key={s}
+                        onClick={() => handleSuggestion(s)}
                         className="px-4 py-2 rounded-full border border-border text-sm font-body hover:bg-muted hover:border-primary transition-all"
                       >
-                        {suggestion}
+                        {s}
                       </button>
                     ))}
                   </div>
@@ -153,13 +158,13 @@ export default function ReservationChat() {
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSend} className="mt-4 flex gap-3 items-end">
+            <form onSubmit={handleSend} className="mt-4 flex gap-3 items-center">
               <input
                 value={input}
-                onChange={e => setInput(e.target.value)}
-                placeholder="Type your message…"
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your message..."
                 disabled={sending}
-                className="flex-1 border border-border rounded-2xl px-4 py-3 text-sm font-body bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50 resize-none"
+                className="flex-1 border border-border rounded-2xl px-4 py-3 text-sm font-body bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
               />
               <button
                 type="submit"
