@@ -51,7 +51,9 @@
   "selected_skill_names": [
     "support-escalation"
   ],
-  "selected_workspace_skill_ids": [],
+  "selected_workspace_skill_ids": [
+    "69cd3eb97396bf1b0d4d67e4"
+  ],
   "model": "automatic",
   "whatsapp_greeting": "",
   "telegram_greeting": "",
