@@ -1,12 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Home, Utensils, Calendar, MessageCircle } from "lucide-react";
+import { Home, Utensils, Calendar } from "lucide-react";
 import { useEffect } from "react";
 import { saveTabState, loadTabState } from "@/lib/TabStateManager";
 
 const TABS = [
   { icon: Home, label: "Home", href: "/", id: "home" },
   { icon: Utensils, label: "Menu", href: "/menu", id: "menu" },
-  { icon: MessageCircle, label: "Assistant", href: "/dining-assistant", id: "assistant" },
   { icon: Calendar, label: "Book", href: "/#reserve", id: "book" }
 ];
 
