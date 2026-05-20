@@ -52,7 +52,8 @@
     "support-escalation"
   ],
   "selected_workspace_skill_ids": [
-    "69cd3eb97396bf1b0d4d67e4"
+    "69cd3eb97396bf1b0d4d67e4",
+    "69cf3a96319b89f58bbbe4a9"
   ],
   "model": "automatic",
   "whatsapp_greeting": "",
