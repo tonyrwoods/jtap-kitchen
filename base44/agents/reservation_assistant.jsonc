@@ -17,8 +17,33 @@
       ]
     },
     {
-      "function_name": "awardLoyaltyPoints",
-      "description": ""
+      "entity_name": "Order",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "LoyaltyMember",
+      "allowed_operations": [
+        "read",
+        "create"
+      ]
+    },
+    {
+      "entity_name": "SupportTicket",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "LoyaltyTier",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
     }
   ],
   "context_files": [],
