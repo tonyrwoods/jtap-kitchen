@@ -9,7 +9,9 @@ export default function HeroSection() {
         <img
           src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/dbe7ca72f_generated_6964c032.png"
           alt="Fine dining dish beautifully plated"
-          className="w-full h-full object-cover" />
+          className="w-full h-full object-cover"
+          fetchpriority="high"
+          decoding="async" />
         
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
       </div>
@@ -38,7 +40,7 @@ export default function HeroSection() {
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 1, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.1] mb-8">
