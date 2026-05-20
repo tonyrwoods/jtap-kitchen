@@ -18,10 +18,12 @@
 
     <!-- Primary SEO -->
     <title>JTAP Kitchen — Fine Dining in Memphis, TN</title>
-    <meta name="description" content="Fine dining in Memphis, TN. Reserve your table, explore our seasonal menu, and experience JTAP Kitchen." />
-    <meta name="keywords" content="JTAP Kitchen, fine dining Memphis, Memphis restaurant, farm-to-table, chef's table, wine tasting Memphis, special events Memphis" />
+    <meta name="description" content="JTAP Kitchen is an elevated fine dining restaurant in Memphis, TN. Reserve your table, explore our seasonal farm-to-table menu, book private events, or chat with our AI dining assistant." />
+    <meta name="keywords" content="JTAP Kitchen, fine dining Memphis, Memphis restaurant, farm-to-table, chef's table, wine tasting Memphis, private events Memphis, event venue Memphis, Memphis brunch, Memphis catering, loyalty rewards Memphis, gift cards Memphis, dining assistant" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="JTAP Kitchen" />
+    <meta name="geo.region" content="US-TN" />
+    <meta name="geo.placename" content="Memphis" />
     <link rel="canonical" href="https://jtapkitchen.com/" />
 
     <!-- Open Graph / Facebook -->
@@ -47,7 +49,7 @@
       "@context": "https://schema.org",
       "@type": "Restaurant",
       "name": "JTAP Kitchen",
-      "description": "An elevated fine dining experience in Memphis, TN featuring seasonal menus, chef's table events, and curated wine tastings.",
+      "description": "An elevated fine dining experience in Memphis, TN featuring seasonal farm-to-table menus, private event spaces, chef's table experiences, and curated wine tastings.",
       "url": "https://jtapkitchen.com",
       "telephone": "+19012334060",
       "email": "info@jtapkitchen.com",
@@ -55,6 +57,7 @@
         "@type": "PostalAddress",
         "addressLocality": "Memphis",
         "addressRegion": "TN",
+        "postalCode": "38103",
         "addressCountry": "US"
       },
       "openingHoursSpecification": [
@@ -63,12 +66,60 @@
           "dayOfWeek": ["Wednesday", "Thursday", "Friday", "Saturday"],
           "opens": "17:30",
           "closes": "23:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Sunday"],
+          "opens": "11:00",
+          "closes": "15:00",
+          "description": "Sunday Brunch"
         }
       ],
-      "servesCuisine": ["American", "Farm-to-table", "Fine Dining"],
+      "servesCuisine": ["American", "Farm-to-table", "Fine Dining", "Southern"],
       "priceRange": "$$$",
+      "acceptsReservations": true,
+      "hasMenu": "https://jtapkitchen.com/menu",
+      "currenciesAccepted": "USD",
+      "paymentAccepted": "Credit Card, Debit Card, Gift Card",
       "image": "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png",
+      "logo": "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png",
       "sameAs": []
+    }
+    </script>
+
+    <!-- Structured Data: WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "JTAP Kitchen",
+      "url": "https://jtapkitchen.com",
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": "https://jtapkitchen.com/book",
+        "result": {
+          "@type": "Reservation",
+          "name": "Table Reservation"
+        }
+      }
+    }
+    </script>
+
+    <!-- Structured Data: LocalBusiness (Event Venue) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EventVenue",
+      "name": "JTAP Kitchen Event Center",
+      "description": "Private event space in Memphis, TN offering Social Gathering, Elevated Experience, and Full Buyout packages for birthdays, corporate events, weddings, and more.",
+      "url": "https://jtapkitchen.com/event-center",
+      "telephone": "+19012334060",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Memphis",
+        "addressRegion": "TN",
+        "addressCountry": "US"
+      }
     }
     </script>
 
