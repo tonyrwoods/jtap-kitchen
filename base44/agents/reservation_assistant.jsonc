@@ -49,7 +49,8 @@
   "context_files": [],
   "app_user_connector_configs": [],
   "selected_skill_names": [
-    "support-escalation"
+    "support-escalation",
+    "brand-voice"
   ],
   "selected_workspace_skill_ids": [
     "69cd3eb97396bf1b0d4d67e4",
