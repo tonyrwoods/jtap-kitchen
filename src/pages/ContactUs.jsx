@@ -79,7 +79,7 @@ export default function ContactUs() {
                 <div>
                   <h3 className="font-heading font-semibold text-foreground mb-1">Location</h3>
                   <p className="font-body text-muted-foreground">
-                    Memphis, TN
+                    3397 Summer Ave.<br />Memphis, TN 38122
                   </p>
                 </div>
               </div>
