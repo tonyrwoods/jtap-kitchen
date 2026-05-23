@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import MobileTabBar from "./MobileTabBar";
 import ReservationModal from "./ReservationModal";
 import PullToRefresh from "./PullToRefresh";
+import FloatingChat from "./FloatingChat";
 
 const TAB_ROUTES = ["/", "/menu", "/gift-cards", "/events"];
 
@@ -101,6 +102,7 @@ export default function Layout() {
       {!isChildRoute && <Footer onBookTable={() => setModalOpen(true)} />}
       <MobileTabBar />
       <ReservationModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <FloatingChat />
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
