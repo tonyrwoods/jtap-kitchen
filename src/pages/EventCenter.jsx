@@ -366,8 +366,8 @@ export default function EventCenter() {
           <span className="font-body text-xs text-muted-foreground">Exact address provided upon booking confirmation</span>
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4 text-sm text-muted-foreground">
-          <a href="tel:9015544431" className="flex items-center gap-2 hover:text-primary transition-colors">
-            <Phone className="w-4 h-4" /> 901-554-4431
+          <a href="tel:9012334060" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <Phone className="w-4 h-4" /> 901-233-4060
           </a>
           <a href="mailto:info@jtapkitchen.com" className="flex items-center gap-2 hover:text-primary transition-colors">
             <Mail className="w-4 h-4" /> info@jtapkitchen.com
@@ -377,13 +377,14 @@ export default function EventCenter() {
 
       {/* Waitlist Modal */}
       <AnimatePresence>
-        {waitlistOpen &&
-        <EventWaitlistSignup
-          onClose={() => setWaitlistOpen(false)}
-          prefillDate={form.preferred_date}
-          prefillDay={form.preferred_day} />
-
-        }
+        {waitlistOpen && (
+          <motion.div key="waitlist" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <EventWaitlistSignup
+              onClose={() => setWaitlistOpen(false)}
+              prefillDate={form.preferred_date}
+              prefillDay={form.preferred_day} />
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Service Provider Teaser */}
