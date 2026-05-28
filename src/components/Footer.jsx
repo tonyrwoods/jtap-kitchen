@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { MapPin, Phone, Mail, Instagram, Clock, Send, CheckCircle2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Footer({ onBookTable }) {
-  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false); // false | true | "done"
@@ -20,7 +18,6 @@ export default function Footer({ onBookTable }) {
     setName("");
     setEmail("");
     setLoading("done");
-    navigate("/admin/memberships");
   };
   return (
     <footer className="bg-foreground text-background py-16 md:py-20 px-6 lg:px-10">
@@ -47,7 +44,7 @@ export default function Footer({ onBookTable }) {
                   >
                     <CheckCircle2 className="w-10 h-10 text-primary" />
                     <p className="font-body text-sm font-semibold text-background">You're on the list — welcome to the family!</p>
-                    <p className="font-body text-xs text-background/40">Expect seasonal news, exclusive events &amp; chef&apos;s specials.</p>
+                    <p className="font-body text-xs text-background/40">Expect seasonal news, exclusive events & chef's specials.</p>
                   </motion.div>
                 ) : (
                   <motion.form
