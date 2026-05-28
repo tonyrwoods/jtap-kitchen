@@ -18,6 +18,9 @@ const MORE_LINKS = [
   { label: "Our Story", href: "/#about" },
   { label: "Reviews", href: "/submit-review" },
   { label: "Careers", href: "/careers" },
+  { label: "Tap Room Society", href: "/tap-room-society" },
+  { label: "My Membership", href: "/my-membership" },
+  { label: "Founders Wall", href: "/founders" },
 ];
 
 const ALL_LINKS = [...PRIMARY_LINKS, ...MORE_LINKS];

@@ -32,6 +32,13 @@ import Careers from './pages/Careers';
 import ScheduleInterview from './pages/ScheduleInterview';
 import EventCenter from './pages/EventCenter';
 import VendorSignup from './pages/VendorSignup';
+import TapRoomSociety from './pages/TapRoomSociety';
+import MyMembership from './pages/MyMembership';
+import FoundersWall from './pages/FoundersWall';
+import BookPrivateRoom from './pages/BookPrivateRoom';
+const AdminMemberships = lazy(() => import('./pages/AdminMemberships'));
+const AdminPrivateRoom = lazy(() => import('./pages/AdminPrivateRoom'));
+const AdminPointsAnalytics = lazy(() => import('./pages/AdminPointsAnalytics'));
 
 // Lazily loaded (heavy/admin pages - prevents SyntaxError from eager init)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
@@ -116,6 +123,13 @@ const AuthenticatedApp = () => {
         <Route path="/schedule-interview" element={<ScheduleInterview />} />
         <Route path="/event-center" element={<EventCenter />} />
         <Route path="/vendor-signup" element={<VendorSignup />} />
+        <Route path="/tap-room-society" element={<TapRoomSociety />} />
+        <Route path="/my-membership" element={<MyMembership />} />
+        <Route path="/founders" element={<FoundersWall />} />
+        <Route path="/book-private-room" element={<BookPrivateRoom />} />
+        <Route path="/admin/memberships" element={<AdminMemberships />} />
+        <Route path="/admin/private-room" element={<AdminPrivateRoom />} />
+        <Route path="/admin/points-analytics" element={<AdminPointsAnalytics />} />
         <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
         <Route path="/dining-assistant" element={<ReservationChat />} />
         <Route path="*" element={<PageNotFound />} />
