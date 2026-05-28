@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -48,6 +49,7 @@ function generateReferralCode(name) {
 
 export default function TapRoomSociety() {
   const joinRef = useRef(null);
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     guest_name: "", email: "", phone: "",
     birthday_month: "", birthday_day: "",
@@ -93,6 +95,7 @@ export default function TapRoomSociety() {
       body: `Hi ${form.guest_name},\n\nYou're officially in.\n\nWelcome to The Tap Room Society.\n\nYour tier: ${form.tier}\n${tierData.welcome_credit_issued > 0 ? `Welcome credit: $${tierData.welcome_credit_issued}\n` : ""}${tierData.private_room_access ? "Private Room Access: UNLOCKED\n" : ""}\nSee you at the table.\n\n— The JTAP Kitchen Team`
     });
     setSubmitted(true);
+    setTimeout(() => navigate("/my-membership"), 1500);
     setSubmitting(false);
   };
 
