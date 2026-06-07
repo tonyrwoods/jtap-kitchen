@@ -70,44 +70,5 @@
     "requester_staff_id",
     "requester_shift_id",
     "target_shift_id"
-  ],
-  "rls": {
-    "create": {
-      "$or": [
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        {
-          "data.requester_staff_id": "{{user.id}}"
-        }
-      ]
-    },
-    "read": {
-      "$or": [
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        {
-          "data.requester_staff_id": "{{user.id}}"
-        },
-        {
-          "data.target_staff_id": "{{user.id}}"
-        }
-      ]
-    },
-    "update": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
-    "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
-    }
-  }
+  ]
 }

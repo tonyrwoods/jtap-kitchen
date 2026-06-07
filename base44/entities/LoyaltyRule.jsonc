@@ -52,26 +52,13 @@
         "role": "admin"
       }
     },
-    "read": {
-      "$or": [
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        {
-          "user_condition": {
-            "role": "staff"
-          }
-        }
-      ]
-    },
-    "update": {
+    "delete": {
       "user_condition": {
         "role": "admin"
       }
     },
-    "delete": {
+    "read": {},
+    "update": {
       "user_condition": {
         "role": "admin"
       }

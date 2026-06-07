@@ -1,0 +1,84 @@
+{
+  "name": "FoundingMemberWall",
+  "type": "object",
+  "properties": {
+    "member_id": {
+      "type": "string",
+      "title": "TapRoomMember ID"
+    },
+    "member_number": {
+      "type": "number",
+      "title": "Member Number (#001\u2013#020)"
+    },
+    "display_name": {
+      "type": "string",
+      "title": "Display Name (e.g. 'James M.' or 'The Chen Family')"
+    },
+    "quote": {
+      "type": "string",
+      "title": "Personal Quote / Why They Joined"
+    },
+    "wall_photo_url": {
+      "type": "string",
+      "title": "Wall Install Photo URL"
+    },
+    "portrait_url": {
+      "type": "string",
+      "title": "Member Portrait / Avatar URL"
+    },
+    "install_date": {
+      "type": "string",
+      "title": "Wall Install Date (YYYY-MM-DD)"
+    },
+    "plate_style": {
+      "type": "string",
+      "title": "Plate Style",
+      "enum": [
+        "Brass",
+        "Steel",
+        "Chalkboard"
+      ],
+      "default": "Brass"
+    },
+    "sort_order": {
+      "type": "number",
+      "title": "Display Order",
+      "default": 0
+    },
+    "is_displayed": {
+      "type": "boolean",
+      "title": "Show on Digital Wall",
+      "default": true
+    },
+    "instagram_handle": {
+      "type": "string",
+      "title": "Instagram Handle (optional)"
+    },
+    "member_since": {
+      "type": "string",
+      "title": "Member Since (YYYY-MM-DD)"
+    }
+  },
+  "required": [
+    "display_name",
+    "member_number"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

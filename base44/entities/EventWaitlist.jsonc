@@ -72,18 +72,11 @@
     "preferred_day"
   ],
   "rls": {
-    "create": true,
+    "create": {},
     "read": {
-      "$or": [
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        {
-          "data.email": "{{user.email}}"
-        }
-      ]
+      "user_condition": {
+        "role": "admin"
+      }
     },
     "update": {
       "user_condition": {

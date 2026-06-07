@@ -1,47 +1,89 @@
 {
   "name": "Shift",
-  "type": "object",
   "properties": {
-    "staff_id": {
-      "type": "string",
-      "title": "Staff Member ID"
+    "date": {
+      "title": "Date (YYYY-MM-DD)",
+      "type": "string"
     },
-    "staff_name": {
-      "type": "string",
-      "title": "Staff Member Name"
+    "notes": {
+      "title": "Notes",
+      "type": "string"
+    },
+    "role": {
+      "title": "Role for Shift",
+      "type": "string"
+    },
+    "shift_end_time": {
+      "title": "End Time (HH:MM)",
+      "type": "string"
+    },
+    "shift_start_time": {
+      "title": "Start Time (HH:MM)",
+      "type": "string"
     },
     "staff_color": {
-      "type": "string",
-      "title": "Staff Color"
+      "title": "Staff Color",
+      "type": "string"
     },
-    "date": {
-      "type": "string",
-      "title": "Date (YYYY-MM-DD)"
+    "staff_id": {
+      "title": "Staff Member ID",
+      "type": "string"
+    },
+    "staff_name": {
+      "title": "Staff Member Name",
+      "type": "string"
     },
     "time_block": {
-      "type": "string",
-      "title": "Time Block",
+      "default": "Dinner (5pm\u20139pm)",
+      "description": "Convenience label derived from start/end times",
       "enum": [
         "Breakfast (8am\u201311am)",
         "Lunch (11am\u20133pm)",
         "Dinner (5pm\u20139pm)",
         "Late Night (9pm\u201312am)",
-        "Full Day"
+        "Full Day",
+        "Custom"
       ],
-      "default": "Dinner (5pm\u20139pm)"
-    },
-    "role": {
-      "type": "string",
-      "title": "Role for Shift"
-    },
-    "notes": {
-      "type": "string",
-      "title": "Notes"
+      "title": "Time Block",
+      "type": "string"
     }
   },
   "required": [
     "staff_id",
     "date",
-    "time_block"
-  ]
+    "shift_start_time",
+    "shift_end_time"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
 }

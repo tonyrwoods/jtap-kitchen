@@ -1,0 +1,115 @@
+{
+  "name": "PointsActivity",
+  "type": "object",
+  "properties": {
+    "member_id": {
+      "type": "string",
+      "title": "TapRoomMember ID"
+    },
+    "member_name": {
+      "type": "string",
+      "title": "Member Name"
+    },
+    "member_email": {
+      "type": "string",
+      "title": "Member Email"
+    },
+    "transaction_type": {
+      "type": "string",
+      "title": "Transaction Type",
+      "enum": [
+        "Earn",
+        "Redeem",
+        "Bonus",
+        "Expire",
+        "Adjustment",
+        "Welcome"
+      ]
+    },
+    "points": {
+      "type": "number",
+      "title": "Points (positive=earn, negative=redeem)"
+    },
+    "balance_after": {
+      "type": "number",
+      "title": "Points Balance After Transaction"
+    },
+    "trigger": {
+      "type": "string",
+      "title": "Trigger",
+      "enum": [
+        "purchase",
+        "visit",
+        "birthday",
+        "referral",
+        "signup",
+        "review",
+        "bonus_night",
+        "private_room_visit",
+        "bottle_order",
+        "redemption_food",
+        "redemption_rental",
+        "redemption_experience",
+        "admin_adjustment",
+        "expiration"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "multiplier": {
+      "type": "number",
+      "title": "Points Multiplier Applied",
+      "default": 1
+    },
+    "spend_amount": {
+      "type": "number",
+      "title": "Spend Amount ($) if purchase trigger"
+    },
+    "invoice_id": {
+      "type": "string",
+      "title": "Linked Invoice ID"
+    },
+    "transaction_date": {
+      "type": "string",
+      "title": "Transaction Date (YYYY-MM-DD)"
+    }
+  },
+  "required": [
+    "member_id",
+    "member_name",
+    "transaction_type",
+    "points",
+    "trigger"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.member_email": "{{user.email}}"
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

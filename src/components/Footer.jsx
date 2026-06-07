@@ -115,7 +115,7 @@ export default function Footer({ onBookTable }) {
             <div className="space-y-4">
               {[
                 { icon: MapPin, text: "3397 Summer Ave., Memphis TN 38122" },
-                { icon: Phone, text: "901-233-4060" },
+                { icon: Phone, text: "(901) 213-8085" },
                 { icon: Mail, text: "info@jtapkitchen.com" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-start gap-3">

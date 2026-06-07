@@ -10,10 +10,6 @@
       "type": "string",
       "title": "Plaid Item ID"
     },
-    "plaid_access_token": {
-      "type": "string",
-      "title": "Plaid Access Token"
-    },
     "bank_name": {
       "type": "string",
       "title": "Bank Name"

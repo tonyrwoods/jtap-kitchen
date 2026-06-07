@@ -1,0 +1,98 @@
+{
+  "name": "AppSettings",
+  "type": "object",
+  "properties": {
+    "tax_rate": {
+      "type": "number",
+      "title": "Sales Tax Rate (%)",
+      "default": 9.25,
+      "description": "Memphis/Shelby County rate \u2014 update if location or rate changes"
+    },
+    "mileage_rate": {
+      "type": "number",
+      "title": "IRS Mileage Reimbursement Rate ($ per mile)",
+      "default": 0.7,
+      "description": "2025/2026 IRS standard mileage rate"
+    },
+    "max_capacity": {
+      "type": "number",
+      "title": "Restaurant Max Seating Capacity",
+      "default": 80
+    },
+    "max_reservation_party_size": {
+      "type": "number",
+      "title": "Max Party Size for Online Reservations",
+      "default": 10
+    },
+    "slot_interval_minutes": {
+      "type": "number",
+      "title": "Reservation Time Slot Interval (minutes)",
+      "default": 30
+    },
+    "opening_time": {
+      "type": "string",
+      "title": "Opening Time (HH:MM)",
+      "default": "17:00"
+    },
+    "closing_time": {
+      "type": "string",
+      "title": "Closing Time (HH:MM)",
+      "default": "22:00"
+    },
+    "restaurant_name": {
+      "type": "string",
+      "title": "Restaurant Name",
+      "default": "JTAP Kitchen"
+    },
+    "contact_email": {
+      "type": "string",
+      "title": "Contact Email"
+    },
+    "contact_phone": {
+      "type": "string",
+      "title": "Contact Phone"
+    },
+    "address": {
+      "type": "string",
+      "title": "Restaurant Address"
+    },
+    "loyalty_points_per_dollar": {
+      "type": "number",
+      "title": "Loyalty Points Earned Per Dollar Spent",
+      "default": 1
+    },
+    "loyalty_points_redemption_value": {
+      "type": "number",
+      "title": "Dollar Value Per 100 Points",
+      "default": 5
+    },
+    "gift_card_expiry_months": {
+      "type": "number",
+      "title": "Gift Card Expiry (months from purchase)",
+      "default": 12
+    }
+  },
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "required": []
+}

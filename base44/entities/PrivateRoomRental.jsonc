@@ -1,0 +1,170 @@
+{
+  "name": "PrivateRoomRental",
+  "type": "object",
+  "properties": {
+    "member_id": {
+      "type": "string",
+      "title": "Member ID"
+    },
+    "member_name": {
+      "type": "string",
+      "title": "Member Name"
+    },
+    "member_email": {
+      "type": "string",
+      "title": "Member Email"
+    },
+    "member_tier": {
+      "type": "string",
+      "title": "Member Tier"
+    },
+    "event_date": {
+      "type": "string",
+      "title": "Event Date (YYYY-MM-DD)"
+    },
+    "day_of_week": {
+      "type": "string",
+      "title": "Day of Week",
+      "enum": [
+        "Sunday",
+        "Monday",
+        "Tuesday"
+      ]
+    },
+    "start_time": {
+      "type": "string",
+      "title": "Start Time (HH:MM)"
+    },
+    "end_time": {
+      "type": "string",
+      "title": "End Time (HH:MM)"
+    },
+    "event_type": {
+      "type": "string",
+      "title": "Event Type",
+      "enum": [
+        "Birthday",
+        "Anniversary",
+        "Corporate Dinner",
+        "Business Meeting",
+        "Private Party",
+        "Celebration",
+        "Other"
+      ]
+    },
+    "guest_count": {
+      "type": "number",
+      "title": "Expected Guest Count"
+    },
+    "rental_rate": {
+      "type": "number",
+      "title": "Rental Rate ($)",
+      "default": 0
+    },
+    "is_free_rental": {
+      "type": "boolean",
+      "title": "Using Complimentary Rental",
+      "default": false
+    },
+    "deposit_amount": {
+      "type": "number",
+      "title": "Deposit Amount ($)",
+      "default": 0
+    },
+    "deposit_paid": {
+      "type": "boolean",
+      "title": "Deposit Paid",
+      "default": false
+    },
+    "deposit_payment_date": {
+      "type": "string",
+      "title": "Deposit Paid Date (YYYY-MM-DD)"
+    },
+    "min_fb_spend": {
+      "type": "number",
+      "title": "F&B Minimum Spend ($)",
+      "default": 300
+    },
+    "actual_fb_spend": {
+      "type": "number",
+      "title": "Actual F&B Spend ($)",
+      "default": 0
+    },
+    "total_invoice_amount": {
+      "type": "number",
+      "title": "Total Invoice ($)",
+      "default": 0
+    },
+    "special_requests": {
+      "type": "string",
+      "title": "Special Requests / Setup Notes"
+    },
+    "av_needed": {
+      "type": "boolean",
+      "title": "AV Equipment Needed",
+      "default": false
+    },
+    "floral_needed": {
+      "type": "boolean",
+      "title": "Floral / Decor Needed",
+      "default": false
+    },
+    "preferred_server": {
+      "type": "string",
+      "title": "Preferred Server Name"
+    },
+    "status": {
+      "type": "string",
+      "title": "Booking Status",
+      "enum": [
+        "Inquiry",
+        "Tentative",
+        "Confirmed",
+        "Completed",
+        "Cancelled"
+      ],
+      "default": "Inquiry"
+    },
+    "confirmation_sent": {
+      "type": "boolean",
+      "title": "Confirmation Email Sent",
+      "default": false
+    },
+    "admin_notes": {
+      "type": "string",
+      "title": "Admin Notes"
+    }
+  },
+  "required": [
+    "member_name",
+    "member_email",
+    "event_date",
+    "day_of_week",
+    "guest_count"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.member_email": "{{user.email}}"
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

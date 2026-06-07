@@ -366,8 +366,8 @@ export default function EventCenter() {
           <span className="font-body text-xs text-muted-foreground">Exact address provided upon booking confirmation</span>
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4 text-sm text-muted-foreground">
-          <a href="tel:9012334060" className="flex items-center gap-2 hover:text-primary transition-colors">
-            <Phone className="w-4 h-4" /> 901-233-4060
+          <a href="tel:9012138085" className="flex items-center gap-2 hover:text-primary transition-colors">
+            <Phone className="w-4 h-4" /> (901) 213-8085
           </a>
           <a href="mailto:info@jtapkitchen.com" className="flex items-center gap-2 hover:text-primary transition-colors">
             <Mail className="w-4 h-4" /> info@jtapkitchen.com

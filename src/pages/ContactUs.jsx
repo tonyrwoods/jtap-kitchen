@@ -54,8 +54,8 @@ export default function ContactUs() {
                 <Phone className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-heading font-semibold text-foreground mb-1">Phone</h3>
-                  <a href="tel:9012334060" className="font-body text-muted-foreground hover:text-primary">
-                    901-233-4060
+                  <a href="tel:9012138085" className="font-body text-muted-foreground hover:text-primary">
+                    (901) 213-8085
                   </a>
                 </div>
               </div>

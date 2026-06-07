@@ -1,0 +1,107 @@
+{
+  "name": "Table",
+  "properties": {
+    "capacity": {
+      "title": "Seating Capacity",
+      "type": "number"
+    },
+    "floor_plan_x": {
+      "title": "Floor Plan X Position",
+      "type": "number"
+    },
+    "floor_plan_y": {
+      "title": "Floor Plan Y Position",
+      "type": "number"
+    },
+    "is_active": {
+      "default": true,
+      "title": "Active",
+      "type": "boolean"
+    },
+    "notes": {
+      "title": "Notes",
+      "type": "string"
+    },
+    "section": {
+      "enum": [
+        "Main Dining",
+        "Bar",
+        "Patio",
+        "Private Room",
+        "Chef's Table"
+      ],
+      "title": "Section",
+      "type": "string"
+    },
+    "shape": {
+      "default": "square",
+      "enum": [
+        "round",
+        "square",
+        "rectangle"
+      ],
+      "title": "Table Shape",
+      "type": "string"
+    },
+    "status": {
+      "default": "Available",
+      "enum": [
+        "Available",
+        "Reserved",
+        "Occupied",
+        "Unavailable"
+      ],
+      "title": "Current Status",
+      "type": "string"
+    },
+    "table_number": {
+      "title": "Table Number",
+      "type": "number"
+    }
+  },
+  "required": [
+    "table_number",
+    "capacity"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "staff"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

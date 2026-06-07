@@ -1,0 +1,228 @@
+{
+  "name": "TapRoomMember",
+  "type": "object",
+  "properties": {
+    "member_number": {
+      "type": "number",
+      "title": "Member Number"
+    },
+    "guest_name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "birthday_month": {
+      "type": "number",
+      "title": "Birthday Month (1-12)"
+    },
+    "birthday_day": {
+      "type": "number",
+      "title": "Birthday Day"
+    },
+    "tier": {
+      "type": "string",
+      "title": "Membership Tier",
+      "enum": [
+        "Regular",
+        "Tap Member",
+        "Reserve Member",
+        "Founding Member"
+      ],
+      "default": "Regular"
+    },
+    "tier_earned_or_paid": {
+      "type": "string",
+      "title": "How Tier Obtained",
+      "enum": [
+        "Earned by Spend",
+        "Paid Annual Fee",
+        "Invite Only",
+        "Free"
+      ],
+      "default": "Free"
+    },
+    "annual_fee_paid": {
+      "type": "boolean",
+      "title": "Annual Fee Paid",
+      "default": false
+    },
+    "annual_fee_amount": {
+      "type": "number",
+      "title": "Annual Fee Amount ($)",
+      "default": 0
+    },
+    "fee_payment_date": {
+      "type": "string",
+      "title": "Fee Payment Date (YYYY-MM-DD)"
+    },
+    "fee_renewal_date": {
+      "type": "string",
+      "title": "Fee Renewal Date (YYYY-MM-DD)"
+    },
+    "welcome_credit_issued": {
+      "type": "number",
+      "title": "Welcome Credit Issued ($)",
+      "default": 0
+    },
+    "welcome_credit_remaining": {
+      "type": "number",
+      "title": "Welcome Credit Remaining ($)",
+      "default": 0
+    },
+    "points_balance": {
+      "type": "number",
+      "title": "Current Points Balance",
+      "default": 0
+    },
+    "total_points_earned": {
+      "type": "number",
+      "title": "Total Points Ever Earned",
+      "default": 0
+    },
+    "total_points_redeemed": {
+      "type": "number",
+      "title": "Total Points Redeemed",
+      "default": 0
+    },
+    "total_visits": {
+      "type": "number",
+      "title": "Total Visits",
+      "default": 0
+    },
+    "total_spend": {
+      "type": "number",
+      "title": "Total Lifetime Spend ($)",
+      "default": 0
+    },
+    "current_year_spend": {
+      "type": "number",
+      "title": "Current Year Spend ($)",
+      "default": 0
+    },
+    "is_founding_member": {
+      "type": "boolean",
+      "title": "Founding Member",
+      "default": false
+    },
+    "founding_member_quote": {
+      "type": "string",
+      "title": "Founding Member Wall Quote"
+    },
+    "wall_install_date": {
+      "type": "string",
+      "title": "Wall Plate Install Date (YYYY-MM-DD)"
+    },
+    "wall_photo_url": {
+      "type": "string",
+      "title": "Wall Photo URL"
+    },
+    "referral_code": {
+      "type": "string",
+      "title": "Referral Code"
+    },
+    "referred_by_code": {
+      "type": "string",
+      "title": "Referred By (Code)"
+    },
+    "referred_by_name": {
+      "type": "string",
+      "title": "Referred By (Name)"
+    },
+    "referral_count": {
+      "type": "number",
+      "title": "Members Referred",
+      "default": 0
+    },
+    "physical_card_sent": {
+      "type": "boolean",
+      "title": "Physical Card Sent",
+      "default": false
+    },
+    "welcome_kit_sent": {
+      "type": "boolean",
+      "title": "Welcome Kit Sent",
+      "default": false
+    },
+    "private_room_access": {
+      "type": "boolean",
+      "title": "Private Room Access",
+      "default": false
+    },
+    "free_rentals_remaining": {
+      "type": "number",
+      "title": "Free Rentals Remaining",
+      "default": 0
+    },
+    "how_heard": {
+      "type": "string",
+      "title": "How Did You Hear About Us",
+      "enum": [
+        "Friend/Referral",
+        "Instagram",
+        "In-Restaurant",
+        "Google",
+        "Email",
+        "Other"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "title": "Membership Status",
+      "enum": [
+        "Active",
+        "Inactive",
+        "Suspended",
+        "Pending"
+      ],
+      "default": "Active"
+    },
+    "joined_date": {
+      "type": "string",
+      "title": "Member Since (YYYY-MM-DD)"
+    },
+    "last_visit_date": {
+      "type": "string",
+      "title": "Last Visit Date (YYYY-MM-DD)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Admin Notes"
+    }
+  },
+  "required": [
+    "guest_name",
+    "email"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.email": "{{user.email}}"
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

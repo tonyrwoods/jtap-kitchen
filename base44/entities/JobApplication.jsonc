@@ -1,42 +1,61 @@
 {
   "name": "JobApplication",
-  "type": "object",
   "properties": {
-    "job_listing_id": {
-      "type": "string",
-      "title": "Job Listing ID"
-    },
-    "job_title": {
-      "type": "string",
-      "title": "Job Title"
+    "admin_notes": {
+      "title": "Admin Notes",
+      "type": "string"
     },
     "applicant_name": {
-      "type": "string",
-      "title": "Applicant Name"
-    },
-    "email": {
-      "type": "string",
-      "title": "Email"
-    },
-    "phone": {
-      "type": "string",
-      "title": "Phone"
-    },
-    "experience_years": {
-      "type": "number",
-      "title": "Years of Experience"
+      "title": "Applicant Name",
+      "type": "string"
     },
     "cover_letter": {
-      "type": "string",
-      "title": "Cover Letter / Message"
+      "title": "Cover Letter / Message",
+      "type": "string"
+    },
+    "email": {
+      "title": "Email",
+      "type": "string"
+    },
+    "experience_years": {
+      "title": "Years of Experience",
+      "type": "number"
+    },
+    "interview_date": {
+      "title": "Interview Date (YYYY-MM-DD)",
+      "type": "string"
+    },
+    "interview_invite_sent": {
+      "default": false,
+      "title": "Interview Invite Sent",
+      "type": "boolean"
+    },
+    "interview_slot_id": {
+      "title": "Booked Interview Slot ID",
+      "type": "string"
+    },
+    "interview_time": {
+      "title": "Interview Time (HH:MM)",
+      "type": "string"
+    },
+    "job_listing_id": {
+      "title": "Job Listing ID",
+      "type": "string"
+    },
+    "job_title": {
+      "title": "Job Title",
+      "type": "string"
+    },
+    "phone": {
+      "title": "Phone",
+      "type": "string"
     },
     "resume_url": {
-      "type": "string",
-      "title": "Resume URL"
+      "title": "Resume URL",
+      "type": "string"
     },
     "status": {
-      "type": "string",
-      "title": "Status",
+      "default": "New",
       "enum": [
         "New",
         "Under Review",
@@ -44,28 +63,8 @@
         "Hired",
         "Rejected"
       ],
-      "default": "New"
-    },
-    "admin_notes": {
-      "type": "string",
-      "title": "Admin Notes"
-    },
-    "interview_invite_sent": {
-      "type": "boolean",
-      "title": "Interview Invite Sent",
-      "default": false
-    },
-    "interview_slot_id": {
-      "type": "string",
-      "title": "Booked Interview Slot ID"
-    },
-    "interview_date": {
-      "type": "string",
-      "title": "Interview Date (YYYY-MM-DD)"
-    },
-    "interview_time": {
-      "type": "string",
-      "title": "Interview Time (HH:MM)"
+      "title": "Status",
+      "type": "string"
     }
   },
   "required": [
@@ -75,20 +74,28 @@
   ],
   "rls": {
     "create": {},
-    "read": {
+    "delete": {
       "user_condition": {
         "role": "admin"
       }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.email": "{{user.email}}"
+        }
+      ]
     },
     "update": {
       "user_condition": {
         "role": "admin"
       }
-    },
-    "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
     }
-  }
+  },
+  "type": "object"
 }
