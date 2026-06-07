@@ -50,11 +50,14 @@ function MenuCard({ item }) {
   );
 }
 
+const DIETARY_FILTERS = ["Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Contains Nuts", "Spicy"];
+
 export default function DigitalMenu() {
   useSeoMeta("menu");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [activeDietaryTags, setActiveDietaryTags] = useState([]);
   const urlParams = new URLSearchParams(window.location.search);
   const tableNum = urlParams.get("table");
 
@@ -65,8 +68,16 @@ export default function DigitalMenu() {
     });
   }, []);
 
+  const toggleTag = (tag) => {
+    setActiveDietaryTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+
   const categories = ["All", ...CATEGORIES.filter(c => items.some(i => i.category === c))];
-  const filtered = activeCategory === "All" ? items : items.filter(i => i.category === activeCategory);
+  const filtered = items
+    .filter(i => activeCategory === "All" || i.category === activeCategory)
+    .filter(i => activeDietaryTags.length === 0 || activeDietaryTags.every(tag => i.dietary_tags?.includes(tag)));
 
   return (
     <div className="min-h-screen bg-background">
@@ -95,6 +106,22 @@ export default function DigitalMenu() {
               </button>
             ))}
           </div>
+          {/* Dietary tag filters */}
+          <div className="flex gap-2 overflow-x-auto pt-2 pb-1 scrollbar-hide">
+            {DIETARY_FILTERS.map(tag => (
+              <button
+                key={tag}
+                onClick={() => toggleTag(tag)}
+                className={`shrink-0 px-3 py-1 rounded-full font-body text-xs font-medium border transition-all ${
+                  activeDietaryTags.includes(tag)
+                    ? "bg-foreground text-background border-foreground"
+                    : "border-border text-muted-foreground hover:border-foreground/40"
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -105,7 +132,7 @@ export default function DigitalMenu() {
             <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <p className="text-center font-body text-muted-foreground py-20">No items in this category.</p>
+          <p className="text-center font-body text-muted-foreground py-20">No items match your current filters.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filtered.map(item => <MenuCard key={item.id} item={item} />)}
