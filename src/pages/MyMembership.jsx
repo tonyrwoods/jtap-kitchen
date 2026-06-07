@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { Crown, Star, Lock, Gift, Copy, Check, ChevronDown, ChevronUp, TrendingUp, Wallet, CalendarDays } from "lucide-react";
+import RewardsSection from "@/components/membership/RewardsSection";
 
 const GOLD = "#C89B4F";
 
@@ -255,6 +256,9 @@ export default function MyMembership() {
             </div>
           </div>
         </div>
+
+        {/* REWARDS */}
+        <RewardsSection points={member.points_balance || 0} />
 
         {/* HOW TO EARN */}
         <div className="rounded-2xl" style={{ background: "#1a1a1a", border: "1px solid rgba(200,155,79,0.15)" }}>
