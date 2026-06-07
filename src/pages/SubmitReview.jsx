@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Star } from "lucide-react";
+import { Star, Crown } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+
+const GOLD = "#C89B4F";
 
 function ReviewCard({ review }) {
   return (
@@ -27,9 +29,20 @@ export default function SubmitReview() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [approvedReviews, setApprovedReviews] = useState([]);
+  const [member, setMember] = useState(null);
 
   useEffect(() => {
     base44.entities.Review.filter({ status: "Approved" }, "-created_date", 6).then(setApprovedReviews);
+    // Check if logged-in user is a Tap Room Society member
+    base44.auth.isAuthenticated().then(async (authed) => {
+      if (!authed) return;
+      const user = await base44.auth.me();
+      const members = await base44.entities.TapRoomMember.filter({ email: user.email });
+      if (members[0]) {
+        setMember(members[0]);
+        setForm(f => ({ ...f, guest_name: members[0].guest_name || user.full_name || "", email: user.email || "" }));
+      }
+    });
   }, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -37,8 +50,14 @@ export default function SubmitReview() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.rating) { toast.error("Please select a star rating."); return; }
+    if (!form.comment.trim()) { toast.error("Please write a review."); return; }
     setLoading(true);
-    await base44.entities.Review.create({ ...form, status: "Pending", is_featured: false });
+    await base44.entities.Review.create({
+      ...form,
+      status: "Pending",
+      is_featured: false,
+      ...(member ? { guest_name: `${form.guest_name} ⭐ ${member.tier}` } : {}),
+    });
     setSubmitted(true);
     setLoading(false);
   };
@@ -82,6 +101,18 @@ export default function SubmitReview() {
           <h1 className="font-heading text-4xl font-semibold mb-3">Leave a Review</h1>
           <p className="font-body text-muted-foreground">We'd love to hear about your visit to JTAP Kitchen.</p>
         </div>
+
+        {member && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-3 rounded-xl px-5 py-3 mb-6"
+            style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}40` }}>
+            <Crown className="w-5 h-5 shrink-0" style={{ color: GOLD }} />
+            <div>
+              <p className="font-body text-sm font-bold" style={{ color: GOLD }}>Tap Room Society Member — {member.tier}</p>
+              <p className="font-body text-xs" style={{ color: "rgba(0,0,0,0.5)" }}>Your info is pre-filled. Your tier will be noted on your review.</p>
+            </div>
+          </motion.div>
+        )}
 
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 space-y-6">
           {/* Star Rating */}
