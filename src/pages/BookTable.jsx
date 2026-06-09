@@ -19,6 +19,8 @@ const BRUNCH_SLOTS = [
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
+const OPENING_DATE = new Date("2026-07-17");
+
 function isSunday(date) {
   return date.getDay() === 0;
 }
@@ -42,6 +44,7 @@ function MiniCalendar({ selectedDate, onSelect }) {
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   const isPast = (d) => new Date(year, month, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const isBeforeOpening = (d) => new Date(year, month, d) < OPENING_DATE;
   const isClosed = (d) => !isRestaurantOpen(new Date(year, month, d));
   const isSelected = (d) => selectedDate &&
     selectedDate.getDate() === d &&
@@ -77,11 +80,11 @@ function MiniCalendar({ selectedDate, onSelect }) {
           <div key={i} className="flex items-center justify-center">
             {d ? (
               <button
-                disabled={isPast(d) || isClosed(d)}
+                disabled={isPast(d) || isClosed(d) || isBeforeOpening(d)}
                 onClick={() => onSelect(new Date(year, month, d))}
-                title={isClosed(d) && !isPast(d) ? "Closed" : undefined}
+                title={isClosed(d) && !isPast(d) ? "Closed" : isBeforeOpening(d) && !isPast(d) ? "Not yet available" : undefined}
                 className={`w-9 h-9 rounded-full text-sm font-body font-medium transition-all duration-200
-                  ${isPast(d) || isClosed(d) ? "text-muted-foreground/30 cursor-not-allowed" :
+                  ${isPast(d) || isClosed(d) || isBeforeOpening(d) ? "text-muted-foreground/30 cursor-not-allowed" :
                     isSelected(d) ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" :
                     isToday(d) ? "border-2 border-primary text-primary hover:bg-primary/10" :
                     "text-foreground hover:bg-secondary"}`}
@@ -93,6 +96,7 @@ function MiniCalendar({ selectedDate, onSelect }) {
         ))}
       </div>
       <p className="font-body text-xs text-muted-foreground mt-3 text-center">Closed Mondays & Tuesdays</p>
+      <p className="font-body text-xs text-primary font-semibold mt-1 text-center">Reservations open July 17, 2026</p>
     </div>
   );
 }
@@ -126,10 +130,8 @@ export default function BookTable() {
   };
 
   const handleSubmit = async () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (!date || date < today) {
-      toast.error("Please select a future date");
+    if (!date || date < OPENING_DATE) {
+      toast.error("Reservations open July 17, 2026. Please select a date on or after that.");
       return;
     }
     setLoading(true);
