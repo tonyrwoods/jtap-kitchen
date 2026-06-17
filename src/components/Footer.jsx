@@ -102,8 +102,8 @@ export default function Footer({ onBookTable }) {
           <div className="lg:col-span-1">
             <h3 className="font-heading text-3xl font-semibold mb-4">JTAP Kitchen</h3>
             <p className="font-body text-sm text-background/60 leading-relaxed max-w-xs">
-              JTAP Kitchen — an intimate fine dining experience where culinary artistry meets
-              timeless hospitality.
+              JTAP Kitchen — high-end casual dining where culinary artistry meets
+              a warm, welcoming atmosphere.
             </p>
           </div>
 

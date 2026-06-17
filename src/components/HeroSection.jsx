@@ -8,7 +8,7 @@ export default function HeroSection() {
       <div className="absolute inset-0">
         <img
           src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/dbe7ca72f_generated_6964c032.png"
-          alt="Fine dining dish beautifully plated"
+          alt="Beautifully plated dish at JTAP Kitchen"
           className="w-full h-full object-cover"
           fetchpriority="high"
           decoding="async" />
@@ -24,7 +24,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-body text-sm md:text-base uppercase tracking-[0.3em] text-white/70 mb-6">
           
-          Fine Dining Experience
+          High-End Casual Dining
         </motion.p>
 
         <motion.div
@@ -56,8 +56,8 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="font-body text-base md:text-lg text-white/75 max-w-xl mx-auto mb-12 leading-relaxed">
           
-          An intimate culinary journey crafted with seasonal ingredients,
-          timeless techniques, and a passion for perfection.
+          An elevated dining experience crafted with seasonal ingredients,
+          bold technique, and a warm, welcoming atmosphere.
         </motion.p>
 
         <motion.div

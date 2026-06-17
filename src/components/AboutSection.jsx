@@ -32,16 +32,15 @@ export default function AboutSection() {
               <span className="italic font-normal">Culinary Artistry</span>
             </h2>
             <p className="font-body text-muted-foreground text-base leading-relaxed mb-6">
-              Founded in 2010, JTAP Kitchen was born from a simple belief: that dining should
-              be an experience that touches all the senses. Our chef, trained in the finest
-              kitchens of Lyon and Tokyo, brings a unique fusion of classical technique
-              and modern creativity to every plate.
+              JTAP Kitchen was born from a simple belief: that exceptional food and genuine
+              hospitality belong together — no dress code required. Our chef brings a unique
+              fusion of classical technique and bold, modern creativity to every plate, in an
+              atmosphere where you can actually relax and enjoy it.
             </p>
             <p className="font-body text-muted-foreground text-base leading-relaxed mb-10">
-              We source exclusively from local farms and artisanal producers, ensuring
-              that each ingredient tells a story of the land it came from. Every evening
-              at Aurelian is a celebration of flavor, craft, and the joy of sharing a
-              memorable meal.
+              We source from local farms and artisanal producers, ensuring every ingredient
+              tells a story. Every visit to JTAP Kitchen is a celebration of flavor, craft,
+              and the joy of sharing an unforgettable meal — without the pretense.
             </p>
 
             {/* Stats Row */}
