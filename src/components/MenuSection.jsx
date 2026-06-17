@@ -88,13 +88,13 @@ export default function MenuSection() {
         {/* Header */}
         <div className="text-center mb-14">
           <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">
-            Culinary Excellence
+            What We're Serving
           </span>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mt-4 mb-5">
             Our Menu
           </h2>
           <p className="font-body text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
-            Thoughtfully crafted dishes using the finest seasonal ingredients, designed to surprise and delight.
+            Real food made with care. Seasonal ingredients, bold flavors, and dishes worth coming back for.
           </p>
         </div>
 

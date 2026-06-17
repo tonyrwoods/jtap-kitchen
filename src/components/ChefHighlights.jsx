@@ -22,8 +22,8 @@ export default function ChefHighlights() {
     <section className="py-20 px-6 bg-foreground text-background overflow-hidden">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <p className="font-body text-xs uppercase tracking-[0.3em] text-primary mb-2">Seasonal Selection</p>
-          <h2 className="font-heading text-4xl font-bold">Chef's Highlights</h2>
+          <p className="font-body text-xs uppercase tracking-[0.3em] text-primary mb-2">On the Menu Now</p>
+          <h2 className="font-heading text-4xl font-bold">Chef's Favorites</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">

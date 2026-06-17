@@ -177,7 +177,7 @@ export default function BookTable() {
           <p className="font-body text-xs uppercase tracking-[0.35em] font-semibold text-primary mb-3">JTAP Kitchen</p>
           <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4">Reserve a Table</h1>
           <p className="font-body text-background/60 text-sm leading-relaxed">
-            Join us for an unforgettable dining experience. Secure your table in just a few steps.
+            Great food, good company, and a table with your name on it. Book in just a few steps.
           </p>
         </div>
       </div>

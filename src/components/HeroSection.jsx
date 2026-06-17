@@ -56,8 +56,8 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="font-body text-base md:text-lg text-white/75 max-w-xl mx-auto mb-12 leading-relaxed">
           
-          An elevated dining experience crafted with seasonal ingredients,
-          bold technique, and a warm, welcoming atmosphere.
+          Bold flavors. Real hospitality. No pretense.
+          Come hungry, leave obsessed.
         </motion.p>
 
         <motion.div

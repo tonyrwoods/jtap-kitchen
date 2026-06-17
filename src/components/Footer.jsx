@@ -31,7 +31,7 @@ export default function Footer({ onBookTable }) {
                 Join Our Inner Circle
               </h4>
               <p className="font-body text-sm text-background/50 mb-8 max-w-md mx-auto leading-relaxed">
-                Be the first to hear about seasonal menus, exclusive chef's table events, and special announcements — delivered straight to your inbox.
+                Be the first to know about new dishes, member events, and what's good at JTAP right now — straight to your inbox.
               </p>
 
               <AnimatePresence mode="wait">

@@ -27,9 +27,9 @@ export default function AboutSection() {
               Our Story
             </span>
             <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mt-4 mb-6 leading-tight">
-              A Legacy of
+              Great Food.
               <br />
-              <span className="italic font-normal">Culinary Artistry</span>
+              <span className="italic font-normal">Real Welcome.</span>
             </h2>
             <p className="font-body text-muted-foreground text-base leading-relaxed mb-6">
               JTAP Kitchen was born from a simple belief: that exceptional food and genuine

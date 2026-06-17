@@ -156,7 +156,7 @@ export default function Menu() {
           <p className="font-body text-xs uppercase tracking-[0.3em] text-primary mb-3">JTAP Kitchen</p>
           <h1 className="font-heading text-5xl md:text-6xl font-bold text-white mb-4">Our Menu</h1>
           <p className="font-body text-white/70 max-w-lg text-base md:text-lg">
-            Crafted with passion, served with pride. Explore our full menu of Southern-inspired dishes.
+            Bold, seasonal cooking served the way food should be — honest, satisfying, and made to share.
           </p>
         </div>
       </div>
