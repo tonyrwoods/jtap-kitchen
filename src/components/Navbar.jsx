@@ -95,7 +95,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
             ) : (
               <a href="/" className="flex items-center gap-2.5">
                 <img
-                  src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png"
+                  src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png"
                   alt="JTAP Kitchen Logo"
                   className="h-20 w-20 rounded-full object-cover border border-primary/30"
                 />
@@ -107,7 +107,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
             {(showBackButton || shouldShowBackButton) && (
               <a href="/" className="hidden md:flex items-center gap-2.5">
                 <img
-                  src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/9fb891e3e_generated_image.png"
+                  src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png"
                   alt="JTAP Kitchen Logo"
                   className="h-20 w-20 rounded-full object-cover border border-primary/30"
                 />
