@@ -12,6 +12,13 @@ const TIME_SLOTS = [
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
+const OPENING_DATE = new Date("2026-07-17");
+
+function isRestaurantOpen(date) {
+  const day = date.getDay();
+  return day !== 1 && day !== 2; // closed Mon & Tue
+}
+
 function MiniCalendar({ selectedDate, onSelect }) {
   const today = new Date();
   const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
@@ -26,6 +33,8 @@ function MiniCalendar({ selectedDate, onSelect }) {
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   const isPast = (d) => new Date(year, month, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const isBeforeOpening = (d) => new Date(year, month, d) < OPENING_DATE;
+  const isClosed = (d) => !isRestaurantOpen(new Date(year, month, d));
   const isSelected = (d) => selectedDate &&
     selectedDate.getDate() === d &&
     selectedDate.getMonth() === month &&
@@ -60,10 +69,11 @@ function MiniCalendar({ selectedDate, onSelect }) {
           <div key={i} className="flex items-center justify-center">
             {d ? (
               <button
-                disabled={isPast(d)}
+                disabled={isPast(d) || isClosed(d) || isBeforeOpening(d)}
                 onClick={() => onSelect(new Date(year, month, d))}
+                title={isClosed(d) && !isPast(d) ? "Closed" : isBeforeOpening(d) && !isPast(d) ? "Not yet available" : undefined}
                 className={`w-8 h-8 rounded-full text-xs font-body font-medium transition-all duration-200
-                  ${isPast(d) ? "text-muted-foreground/40 cursor-not-allowed" :
+                  ${isPast(d) || isClosed(d) || isBeforeOpening(d) ? "text-muted-foreground/40 cursor-not-allowed" :
                     isSelected(d) ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" :
                     isToday(d) ? "border border-primary text-primary hover:bg-primary/10" :
                     "text-foreground hover:bg-secondary"}`}
@@ -102,6 +112,9 @@ export default function ReservationModal({ open, onClose, prefill }) {
   const canNext2 = name.trim() && email.trim();
 
   const handleSubmit = async () => {
+    if (!date || date < OPENING_DATE) {
+      return;
+    }
     await base44.entities.Reservation.create({
       guest_name: name,
       email,
@@ -224,6 +237,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
                       <div className="bg-secondary/50 rounded-2xl p-4">
                         <MiniCalendar selectedDate={date} onSelect={setDate} />
                       </div>
+                      <p className="font-body text-xs text-primary font-semibold mt-2 text-center">Reservations open July 17, 2026</p>
                     </div>
 
                     {/* Time */}

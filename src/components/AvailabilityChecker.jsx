@@ -37,80 +37,31 @@ export default function AvailabilityChecker({ onBook }) {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-body font-medium mb-3">
             <CalendarCheck className="w-4 h-4" />
-            Tonight's Availability
+            Opening Soon
           </div>
           <h2 className="font-heading text-3xl font-bold text-foreground">
-            Book Your Table for Tonight
+            Reservations Open July 17, 2026
           </h2>
           <p className="font-body text-muted-foreground mt-2">
-            Check open slots and reserve in seconds.
+            We&apos;re getting everything ready. Check back soon to book your table.
           </p>
         </div>
 
-        {/* Party Size Selector */}
-        <div className="flex items-center justify-center gap-4 mb-8">
-          <span className="font-body text-sm text-muted-foreground flex items-center gap-1.5">
-            <Users className="w-4 h-4" /> Party size:
-          </span>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-              <button
-                key={n}
-                onClick={() => setPartySize(n)}
-                className={`w-9 h-9 rounded-full text-sm font-body font-medium transition-all ${
-                  partySize === n
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-secondary text-secondary-foreground hover:bg-primary/10"
-                }`}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
+        {/* Countdown CTA */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href="/book"
+            className="px-8 py-3.5 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/20"
+          >
+            Reserve a Table
+          </a>
+          <a
+            href="/tap-room-society"
+            className="px-8 py-3.5 border-2 border-border text-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:bg-secondary transition-all duration-300"
+          >
+            Join the Society
+          </a>
         </div>
-
-        {/* Time Slots */}
-        {loading ? (
-          <div className="flex justify-center py-6">
-            <div className="w-6 h-6 border-4 border-muted border-t-primary rounded-full animate-spin" />
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-            {TIME_SLOTS.map(slot => {
-              const available = isAvailable(slot);
-              return (
-                <button
-                  key={slot}
-                  disabled={!available}
-                  onClick={() => available && onBook && onBook({ time: slot, party_size: partySize, date: today })}
-                  className={`flex flex-col items-center gap-1 py-3 px-2 rounded-xl border text-sm font-body font-medium transition-all ${
-                    available
-                      ? "border-primary/30 bg-primary/5 text-primary hover:bg-primary hover:text-primary-foreground cursor-pointer"
-                      : "border-border bg-muted/50 text-muted-foreground cursor-not-allowed opacity-60"
-                  }`}
-                >
-                  <Clock className="w-3.5 h-3.5" />
-                  {slot}
-                  <span className={`text-xs font-normal ${available ? "text-green-600" : "text-muted-foreground"}`}>
-                    {available ? "Available" : "Full"}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {!loading && availableSlots.length === 0 && (
-          <p className="text-center font-body text-muted-foreground mt-4">
-            No open tables tonight — <a href="/reservations-calendar" className="text-primary underline">try another date</a>.
-          </p>
-        )}
-
-        {!loading && availableSlots.length > 0 && (
-          <p className="text-center font-body text-sm text-muted-foreground mt-5">
-            {availableSlots.length} time slot{availableSlots.length !== 1 ? "s" : ""} available tonight — click any to book.
-          </p>
-        )}
       </div>
     </section>
   );
