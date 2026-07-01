@@ -1,0 +1,37 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "JTAP Kitchen Delivery Zone",
+        "description": "Primary delivery and routing coverage area for JTAP Kitchen, Memphis TN",
+        "restaurant": "JTAP Kitchen",
+        "address": "3397 Summer Ave., Memphis TN 38122"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-90.0620, 35.1700],
+            [-90.0000, 35.1700],
+            [-89.9300, 35.1500],
+            [-89.8800, 35.1200],
+            [-89.8600, 35.0800],
+            [-89.8700, 35.0400],
+            [-89.9100, 35.0100],
+            [-89.9700, 34.9900],
+            [-90.0400, 34.9850],
+            [-90.1000, 34.9950],
+            [-90.1500, 35.0200],
+            [-90.1700, 35.0600],
+            [-90.1650, 35.1000],
+            [-90.1400, 35.1400],
+            [-90.1000, 35.1650],
+            [-90.0620, 35.1700]
+          ]
+        ]
+      }
+    }
+  ]
+}
