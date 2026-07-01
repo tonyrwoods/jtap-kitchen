@@ -28,6 +28,7 @@ import OpeningChecklistTab from "../components/admin/OpeningChecklistTab";
 import InviteUserPanel from "../components/admin/InviteUserPanel";
 import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 import CareersTab from "../components/admin/CareersTab";
+import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
   { label: "Operations", tabs: ["Overview", "Opening Checklist", "End of Year Checklist"] },
@@ -107,9 +108,7 @@ function MenuItemForm({ item, onSave, onCancel }) {
         </div>
         <div>
           <label className="font-body text-sm text-muted-foreground mb-1 block">Category *</label>
-          <select className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={form.category} onChange={e => set("category", e.target.value)}>
-            {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-          </select>
+          <SelectDropdown value={form.category} onChange={v => set("category", v)} options={CATEGORIES.map(c => ({ value: c, label: c }))} />
         </div>
         <div>
           <label className="font-body text-sm text-muted-foreground mb-1 block">Price (USD) *</label>
@@ -393,10 +392,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex items-center gap-3">
                       <StatusBadge status={r.status || "Pending"} />
-                      <select value={r.status || "Pending"} onChange={e => updateResStatus(r.id, e.target.value)}
-                        className="border border-border rounded-lg px-3 py-1.5 text-sm bg-background font-body">
-                        {STATUSES.map(s => <option key={s}>{s}</option>)}
-                      </select>
+                      <SelectDropdown value={r.status || "Pending"} onChange={v => updateResStatus(r.id, v)} options={STATUSES.map(s => ({ value: s, label: s }))} />
                     </div>
                   </div>
                 ))}
@@ -451,10 +447,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex items-center gap-3">
                       <StatusBadge status={g.status || "Pending Payment"} />
-                      <select value={g.status || "Pending Payment"} onChange={e => updateGiftCardStatus(g.id, e.target.value)}
-                        className="border border-border rounded-lg px-3 py-1.5 text-sm bg-background font-body">
-                        {GIFT_STATUSES.map(s => <option key={s}>{s}</option>)}
-                      </select>
+                      <SelectDropdown value={g.status || "Pending Payment"} onChange={v => updateGiftCardStatus(g.id, v)} options={GIFT_STATUSES.map(s => ({ value: s, label: s }))} />
                     </div>
                   </div>
                 ))}
@@ -502,15 +495,14 @@ export default function AdminDashboard() {
                       {rv.visit_date && <p className="font-body text-xs text-muted-foreground">Visited: {rv.visit_date}</p>}
                     </div>
                     <div className="flex flex-col gap-2 shrink-0">
-                      <select value={rv.status || "Pending"}
-                        onChange={async e => {
-                          const status = e.target.value;
-                          await base44.entities.Review.update(rv.id, { status });
-                          setReviews(prev => prev.map(r => r.id === rv.id ? { ...r, status } : r));
+                      <SelectDropdown
+                        value={rv.status || "Pending"}
+                        onChange={async v => {
+                          await base44.entities.Review.update(rv.id, { status: v });
+                          setReviews(prev => prev.map(r => r.id === rv.id ? { ...r, status: v } : r));
                         }}
-                        className="border border-border rounded-lg px-3 py-1.5 text-sm bg-background font-body">
-                        {["Pending", "Approved", "Rejected"].map(s => <option key={s}>{s}</option>)}
-                      </select>
+                        options={["Pending", "Approved", "Rejected"].map(s => ({ value: s, label: s }))}
+                      />
                       {rv.status === "Approved" && (
                         <button
                           onClick={async () => {

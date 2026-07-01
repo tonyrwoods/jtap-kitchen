@@ -51,17 +51,15 @@ export default function Layout() {
   }, []);
 
   // Hide footer on child routes (mobile optimization)
-  const isChildRoute = location.pathname !== "/" && 
-    !location.pathname.startsWith("/gift-cards") && 
+  const isChildRoute = location.pathname !== "/" &&
+    !location.pathname.startsWith("/gift-cards") &&
     !location.pathname.startsWith("/events") &&
     location.pathname !== "/menu";
-  
-  const isTabRoute = TAB_ROUTES.some(route => 
-    route === location.pathname || 
+
+  const isTabRoute = TAB_ROUTES.some(route =>
+    route === location.pathname ||
     (route !== "/#book" && location.pathname.startsWith(route.split("#")[0]))
   );
-
-  const shouldShowPullToRefresh = isTabRoute;
 
   const handleRefresh = async () => {
     // Refetch data based on current route
@@ -69,35 +67,21 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+    <div className="min-h-screen flex flex-col">
       <Navbar onBookTable={() => setModalOpen(true)} showBackButton={!isTabRoute} />
-      <main className="flex-1 pt-20 pb-20 md:pb-0 overflow-hidden">
-        {shouldShowPullToRefresh ? (
-          <PullToRefresh onRefresh={handleRefresh}>
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.3 }}
-              className="h-full"
-            >
-              <Outlet />
-            </motion.div>
-          </PullToRefresh>
-        ) : (
+      <main className="flex-1 pt-20 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 overflow-hidden">
+        <PullToRefresh onRefresh={handleRefresh} externalRef={scrollRef}>
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.3 }}
-            ref={scrollRef}
-            className="h-full overflow-y-auto scrollbar-hide"
+            className="h-full"
           >
             <Outlet />
           </motion.div>
-        )}
+        </PullToRefresh>
       </main>
       {!isChildRoute && <Footer onBookTable={() => setModalOpen(true)} />}
       <MobileTabBar />

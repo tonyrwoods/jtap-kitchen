@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { ChevronLeft, ChevronRight, Plus, Trash2, Edit2, Check, X, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import SelectDropdown from "@/components/SelectDropdown";
 
 const TIME_BLOCKS = ["Breakfast (8am–11am)", "Lunch (11am–3pm)", "Dinner (5pm–9pm)", "Late Night (9pm–12am)", "Full Day"];
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -101,13 +102,11 @@ function StaffListPanel({ staff, loading, onAdd, onToggle, onDelete }) {
             onChange={e => setNewName(e.target.value)}
             className="w-full border border-border rounded-lg px-3 py-2 text-xs bg-background font-body"
           />
-          <select
+          <SelectDropdown
             value={newRole}
-            onChange={e => setNewRole(e.target.value)}
-            className="w-full border border-border rounded-lg px-3 py-2 text-xs bg-background font-body"
-          >
-            {ROLES.map(r => <option key={r}>{r}</option>)}
-          </select>
+            onChange={setNewRole}
+            options={ROLES.map(r => ({ value: r, label: r }))}
+          />
           <button
             type="submit"
             className="w-full flex items-center justify-center gap-1.5 py-2 bg-primary text-primary-foreground rounded-lg font-body text-xs font-semibold hover:opacity-90 transition-opacity"
@@ -156,33 +155,27 @@ function ShiftModal({ date, staffList, onSave, onClose }) {
 
           <div>
             <label className="font-body text-xs text-muted-foreground mb-1.5 block uppercase font-semibold">Staff Member</label>
-            <select
+            <SelectDropdown
               value={selectedStaff}
-              onChange={e => {
-                const s = staffList.find(st => st.id === e.target.value);
-                setSelectedStaff(e.target.value);
+              onChange={v => {
+                const s = staffList.find(st => st.id === v);
+                setSelectedStaff(v);
                 setRole(s?.role || "");
               }}
-              className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
-            >
-              <option value="">Select a staff member</option>
-              {staffList.filter(s => s.is_active).map(s => (
-                <option key={s.id} value={s.id}>{s.name} ({s.role})</option>
-              ))}
-            </select>
+              options={[
+                { value: "", label: "Select a staff member" },
+                ...staffList.filter(s => s.is_active).map(s => ({ value: s.id, label: `${s.name} (${s.role})` }))
+              ]}
+            />
           </div>
 
           <div>
             <label className="font-body text-xs text-muted-foreground mb-1.5 block uppercase font-semibold">Time Block</label>
-            <select
+            <SelectDropdown
               value={selectedBlock}
-              onChange={e => setSelectedBlock(e.target.value)}
-              className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
-            >
-              {TIME_BLOCKS.map(b => (
-                <option key={b}>{b}</option>
-              ))}
-            </select>
+              onChange={setSelectedBlock}
+              options={TIME_BLOCKS.map(b => ({ value: b, label: b }))}
+            />
           </div>
 
           <div>

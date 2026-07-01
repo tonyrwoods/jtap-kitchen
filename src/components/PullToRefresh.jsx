@@ -2,11 +2,12 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
-export default function PullToRefresh({ children, onRefresh }) {
+export default function PullToRefresh({ children, onRefresh, externalRef }) {
   const [pulling, setPulling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const containerRef = useRef(null);
+  const internalRef = useRef(null);
+  const containerRef = externalRef || internalRef;
   const startYRef = useRef(0);
   const scrollTopRef = useRef(0);
 
