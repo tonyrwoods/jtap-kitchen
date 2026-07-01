@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routers>
+    <router id="com.jtapkitchen.app">
+        <subroutes>
+            <subroute path="/">
+                <subroute path="pitch-deck"/>
+                <subroute path="admin">
+                    <subroute path="memberships"/>
+                    <subroute path="private-room"/>
+                    <subroute path="points-analytics"/>
+                </subroute>
+                <subroute path="gift-cards"/>
+                <subroute path="vendor-overcharge-analysis"/>
+                <subroute path="mileage"/>
+                <subroute path="posted-shifts"/>
+                <subroute path="events"/>
+                <subroute path="reservations-calendar"/>
+                <subroute path="email-marketing"/>
+                <subroute path="submit-review"/>
+                <subroute path="loyalty"/>
+                <subroute path="staff-scheduler"/>
+                <subroute path="menu"/>
+                <subroute path="full-menu"/>
+                <subroute path="table-qr-codes"/>
+                <subroute path="kitchen"/>
+                <subroute path="menu-performance"/>
+                <subroute path="loyalty-portal"/>
+                <subroute path="staff-performance"/>
+                <subroute path="checkout"/>
+                <subroute path="inventory"/>
+                <subroute path="kds"/>
+                <subroute path="my-shifts"/>
+                <subroute path="reconciliation"/>
+                <subroute path="contact"/>
+                <subroute path="support"/>
+                <subroute path="security-policy"/>
+                <subroute path="data-retention-policy"/>
+                <subroute path="privacy-policy"/>
+                <subroute path="terms-of-service"/>
+                <subroute path="careers"/>
+                <subroute path="book"/>
+                <subroute path="schedule-interview"/>
+                <subroute path="event-center"/>
+                <subroute path="vendor-signup"/>
+                <subroute path="tap-room-society"/>
+                <subroute path="my-membership"/>
+                <subroute path="founders"/>
+                <subroute path="book-private-room"/>
+                <subroute path="revenue-analytics"/>
+                <subroute path="dining-assistant"/>
+            </subroute>
+        </subroutes>
+    </router>
+</routers>
