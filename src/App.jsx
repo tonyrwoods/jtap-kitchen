@@ -36,6 +36,7 @@ import TapRoomSociety from './pages/TapRoomSociety';
 import MyMembership from './pages/MyMembership';
 import FoundersWall from './pages/FoundersWall';
 import BookPrivateRoom from './pages/BookPrivateRoom';
+import PitchDeck from './pages/PitchDeck';
 const AdminMemberships = lazy(() => import('./pages/AdminMemberships'));
 const AdminPrivateRoom = lazy(() => import('./pages/AdminPrivateRoom'));
 const AdminPointsAnalytics = lazy(() => import('./pages/AdminPointsAnalytics'));
@@ -88,6 +89,7 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/pitch-deck" element={<PitchDeck />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/gift-cards" element={<GiftCards />} />
         <Route path="/vendor-overcharge-analysis" element={<VendorOverchargeAnalysis />} />
