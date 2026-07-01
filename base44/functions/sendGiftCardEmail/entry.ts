@@ -15,6 +15,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required gift card data' }, { status: 400 });
     }
 
+    // Verify the requesting user owns this gift card or is an admin
+    const isOwner = giftCard.purchaser_email && giftCard.purchaser_email.toLowerCase() === (user.email || '').toLowerCase();
+    if (!isOwner && user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden — you can only send gift cards you purchased' }, { status: 403 });
+    }
+
     // Determine recipient email
     const recipientEmail = giftCard.recipient_email || giftCard.purchaser_email;
     const recipientName = giftCard.recipient_name || 'Valued Guest';
