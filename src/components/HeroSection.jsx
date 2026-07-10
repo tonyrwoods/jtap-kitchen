@@ -35,7 +35,7 @@ export default function HeroSection() {
         >
           <span className="w-3 h-3 rounded-full bg-amber-400 animate-pulse shrink-0" />
           <span className="font-body text-sm md:text-base uppercase tracking-[0.25em] font-semibold text-amber-300">
-            Opening Soon — Jul 2026
+            Grand Opening — August 12th, 2026
           </span>
         </motion.div>
 
