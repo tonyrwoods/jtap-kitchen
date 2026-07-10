@@ -19,7 +19,7 @@ const BRUNCH_SLOTS = [
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-const OPENING_DATE = new Date("2026-07-17");
+const OPENING_DATE = new Date("2026-08-12");
 
 function isSunday(date) {
   return date.getDay() === 0;
@@ -96,7 +96,7 @@ function MiniCalendar({ selectedDate, onSelect }) {
         ))}
       </div>
       <p className="font-body text-xs text-muted-foreground mt-3 text-center">Closed Mondays & Tuesdays</p>
-      <p className="font-body text-xs text-primary font-semibold mt-1 text-center">Reservations open July 17, 2026</p>
+      <p className="font-body text-xs text-primary font-semibold mt-1 text-center">Reservations open August 12, 2026</p>
     </div>
   );
 }
@@ -131,7 +131,7 @@ export default function BookTable() {
 
   const handleSubmit = async () => {
     if (!date || date < OPENING_DATE) {
-      toast.error("Reservations open July 17, 2026. Please select a date on or after that.");
+      toast.error("Reservations open August 12, 2026. Please select a date on or after that.");
       return;
     }
     setLoading(true);

@@ -37,10 +37,10 @@ export default function AvailabilityChecker({ onBook }) {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-body font-medium mb-3">
             <CalendarCheck className="w-4 h-4" />
-            Opening Soon
+            Grand Opening August 12
           </div>
           <h2 className="font-heading text-3xl font-bold text-foreground">
-            Reservations Open July 17, 2026
+            Reservations Open August 12, 2026
           </h2>
           <p className="font-body text-muted-foreground mt-2">
             We&apos;re getting everything ready. Check back soon to book your table.

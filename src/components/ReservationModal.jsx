@@ -12,7 +12,7 @@ const TIME_SLOTS = [
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-const OPENING_DATE = new Date("2026-07-17");
+const OPENING_DATE = new Date("2026-08-12");
 
 function isRestaurantOpen(date) {
   const day = date.getDay();
@@ -237,7 +237,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
                       <div className="bg-secondary/50 rounded-2xl p-4">
                         <MiniCalendar selectedDate={date} onSelect={setDate} />
                       </div>
-                      <p className="font-body text-xs text-primary font-semibold mt-2 text-center">Reservations open July 17, 2026</p>
+                      <p className="font-body text-xs text-primary font-semibold mt-2 text-center">Reservations open August 12, 2026</p>
                     </div>
 
                     {/* Time */}
