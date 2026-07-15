@@ -290,6 +290,17 @@ export default function Careers() {
         >
           Careers at JTAP Kitchen
         </motion.h1>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.15 }}
+          className="inline-flex items-center gap-2 px-5 py-2 mb-5 rounded-full border border-amber-400/50 bg-amber-400/10 backdrop-blur-sm"
+        >
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">
+            Now Hiring All Positions
+          </span>
+        </motion.div>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -297,6 +308,14 @@ export default function Careers() {
           className="font-body text-base text-white/60 max-w-xl mx-auto"
         >
           Be part of a team passionate about exceptional food, genuine hospitality, and creating unforgettable moments.
+        </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="font-body text-sm font-semibold uppercase tracking-[0.15em] text-white/80 mt-3"
+        >
+          New Competitive Pay Rates
         </motion.p>
       </div>
 
