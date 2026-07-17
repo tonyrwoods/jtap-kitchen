@@ -49,6 +49,7 @@ function ApplicationModal({ job, onClose }) {
       job_listing_id: job.id,
       job_title: job.title,
     });
+    base44.analytics.track({ eventName: "job_application_submitted", properties: { job_title: job.title, department: job.department } });
     setSubmitted(true);
     setSubmitting(false);
   };

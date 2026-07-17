@@ -33,6 +33,8 @@ function MenuCard({ item }) {
           <img
             src={item.image_url}
             alt={item.name}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           {item.is_featured && (

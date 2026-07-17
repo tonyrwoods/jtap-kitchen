@@ -33,6 +33,8 @@ export default function ChefHighlights() {
               key={dish.id}
               src={dish.image_url}
               alt={dish.name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover transition-opacity duration-500"
             />
             {dish.season && (
