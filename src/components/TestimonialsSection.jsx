@@ -33,6 +33,7 @@ function StarRatingInput({ value, onChange }) {
             onClick={() => onChange(i + 1)}
             onMouseEnter={() => setHovered(i + 1)}
             onMouseLeave={() => setHovered(0)}
+            aria-label={`${i + 1} star${i + 1 > 1 ? "s" : ""}`}
             className="transition-transform hover:scale-110"
           >
             <Star className={`w-7 h-7 transition-colors ${filled ? "text-primary fill-primary" : "text-border hover:text-primary"}`} />

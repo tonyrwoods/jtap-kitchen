@@ -56,6 +56,7 @@ export default function Footer({ onBookTable }) {
                   >
                     <input
                       type="text"
+                      aria-label="Your name"
                       value={name}
                       onChange={e => setName(e.target.value)}
                       placeholder="Your name"
@@ -66,6 +67,7 @@ export default function Footer({ onBookTable }) {
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-background/30 pointer-events-none" />
                         <input
                           type="email"
+                          aria-label="Email address"
                           value={email}
                           onChange={e => setEmail(e.target.value)}
                           placeholder="your@email.com"

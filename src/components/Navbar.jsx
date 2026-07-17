@@ -29,7 +29,7 @@ function HiringBanner() {
   return (
     <div className="w-full bg-primary text-primary-foreground py-2 px-4 text-center z-40 relative">
       <p className="font-body text-xs sm:text-sm font-semibold tracking-wide">
-        🍽️ NOW HIRING ALL POSITIONS —{" "}
+        🍽️ NOW HIRING ALL POSITIONS — NEW COMPETITIVE PAY RATES —{" "}
         <Link to="/careers" className="underline underline-offset-2 hover:opacity-80 transition-opacity font-bold">
           Click here to apply
         </Link>
@@ -134,11 +134,14 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
               {/* More dropdown */}
               <div className="relative" ref={moreRef}>
                 <button
-                  onClick={() => setMoreOpen(o => !o)}
-                  className={`flex items-center gap-1 font-body text-sm font-medium tracking-wide uppercase transition-colors duration-300 ${
-                    MORE_LINKS.some(l => location.pathname === l.href) ? "text-primary" : "text-muted-foreground hover:text-primary"
-                  }`}
-                >
+                   onClick={() => setMoreOpen(o => !o)}
+                   aria-label="More navigation links"
+                   aria-expanded={moreOpen}
+                   aria-haspopup="true"
+                   className={`flex items-center gap-1 font-body text-sm font-medium tracking-wide uppercase transition-colors duration-300 ${
+                     MORE_LINKS.some(l => location.pathname === l.href) ? "text-primary" : "text-muted-foreground hover:text-primary"
+                   }`}
+                 >
                   More <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`} />
                 </button>
                 <AnimatePresence>
@@ -192,6 +195,9 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
             {/* Mobile Toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
               className="md:hidden p-2 text-foreground"
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -203,6 +209,9 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
+              id="mobile-menu"
+              role="navigation"
+              aria-label="Mobile navigation"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}

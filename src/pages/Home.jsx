@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useSeoMeta from "../hooks/useSeoMeta";
 import HeroSection from "../components/HeroSection";
+import GrandOpeningCountdown from "../components/GrandOpeningCountdown";
 import GallerySectionCMS from "../components/GallerySectionCMS";
 import InstagramSection from "../components/InstagramSection";
 import TeamSection from "../components/TeamSection";
@@ -25,6 +26,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <GrandOpeningCountdown />
       <WeekendAvailability onBook={handleBook} />
       <AvailabilityChecker onBook={handleBook} />
       <ChefHighlights />
