@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
   UtensilsCrossed, CalendarDays,
-  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload
+  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload, Salad, Heart
 } from "lucide-react";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
@@ -152,6 +152,7 @@ export default function AdminDashboard() {
   const [reservations, setReservations] = useState([]);
   const [giftCards, setGiftCards] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [customerProfiles, setCustomerProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -162,11 +163,13 @@ export default function AdminDashboard() {
       base44.entities.Reservation.list("-created_date", 100),
       base44.entities.GiftCard.list("-created_date", 100),
       base44.entities.Review.list("-created_date", 100),
-    ]).then(([m, r, g, rv]) => {
+      base44.entities.CustomerProfile.list("-created_date", 200),
+    ]).then(([m, r, g, rv, cp]) => {
       setMenuItems(m);
       setReservations(r);
       setGiftCards(g);
       setReviews(rv);
+      setCustomerProfiles(cp);
       setLoading(false);
     });
   }, []);
@@ -218,6 +221,9 @@ export default function AdminDashboard() {
   };
 
   const GIFT_STATUSES = ["Pending Payment", "Active", "Redeemed", "Expired"];
+
+  const profileByEmail = new Map(customerProfiles.map(p => [p.email?.toLowerCase(), p]));
+  const getGuestProfile = (email) => email ? profileByEmail.get(email.toLowerCase()) : null;
 
   const stats = [
     { icon: UtensilsCrossed, label: "Menu Items", value: menuItems.length, color: "bg-primary" },
@@ -382,20 +388,41 @@ export default function AdminDashboard() {
 
             {tab === "Reservations" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                {reservations.map(r => (
+                {reservations.map(r => {
+                  const profile = getGuestProfile(r.email);
+                  return (
                   <div key={r.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
+                    <div className="flex-1">
                       <p className="font-body font-semibold">{r.guest_name}</p>
                       <p className="font-body text-sm text-muted-foreground">{r.email} · {r.phone}</p>
                       <p className="font-body text-sm text-muted-foreground mt-1">{r.date} at {r.time} · {r.party_size} guests</p>
                       {r.special_requests && <p className="font-body text-xs text-muted-foreground mt-1 italic">"{r.special_requests}"</p>}
+                      {profile && (profile.dietary_restrictions?.length > 0 || profile.favorite_dishes) && (
+                        <div className="mt-2 pt-2 border-t border-border space-y-1.5">
+                          {profile.dietary_restrictions?.length > 0 && (
+                            <div className="flex items-start gap-1.5 flex-wrap">
+                              <Salad className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                              {profile.dietary_restrictions.map(d => (
+                                <span key={d} className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">{d}</span>
+                              ))}
+                            </div>
+                          )}
+                          {profile.favorite_dishes && (
+                            <div className="flex items-start gap-1.5">
+                              <Heart className="w-3.5 h-3.5 text-rose-500 shrink-0 mt-0.5" />
+                              <span className="font-body text-xs text-muted-foreground">{profile.favorite_dishes}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <div className="flex items-center gap-3">
                       <StatusBadge status={r.status || "Pending"} />
                       <SelectDropdown value={r.status || "Pending"} onChange={v => updateResStatus(r.id, v)} options={STATUSES.map(s => ({ value: s, label: s }))} />
                     </div>
                   </div>
-                ))}
+                  );
+                })}
                 {reservations.length === 0 && (
                   <div className="text-center py-20">
                     <CalendarDays className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
