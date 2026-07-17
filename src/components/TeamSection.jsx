@@ -10,6 +10,8 @@ function TeamCard({ member }) {
           <img
             src={member.photo_url}
             alt={member.name}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />

@@ -100,6 +100,8 @@ export default function GallerySectionCMS() {
                   <img
                     src={image.image_url}
                     alt={image.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>

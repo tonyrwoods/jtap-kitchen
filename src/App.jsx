@@ -8,6 +8,7 @@ import { I18nProvider } from '@/lib/i18n';
 import { lazy, Suspense } from 'react';
 
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import Layout from './components/Layout';
 
 // Eagerly loaded
@@ -144,16 +145,18 @@ const AuthenticatedApp = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <I18nProvider>
-        <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <AuthenticatedApp />
-          </Router>
-          <Toaster />
-        </QueryClientProvider>
-      </I18nProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <I18nProvider>
+          <QueryClientProvider client={queryClientInstance}>
+            <Router>
+              <AuthenticatedApp />
+            </Router>
+            <Toaster />
+          </QueryClientProvider>
+        </I18nProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
