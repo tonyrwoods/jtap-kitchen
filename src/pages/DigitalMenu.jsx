@@ -22,7 +22,7 @@ function MenuCard({ item }) {
     >
       {item.image_url && (
         <div className="h-44 overflow-hidden">
-          <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+          <img src={item.image_url} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
         </div>
       )}
       <div className="p-4 flex flex-col flex-1">

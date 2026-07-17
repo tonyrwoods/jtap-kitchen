@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -39,6 +39,11 @@ const STATUS_COLORS = {
 const inputStyle = { background: "#252525", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" };
 
 export default function BookPrivateRoom() {
+  useEffect(() => {
+    document.title = "Book Private Room — JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Book the JTAP Kitchen private room for your event. Exclusive dining space available Sunday through Tuesday for Tap Room Society members.");
+  }, []);
   const qc = useQueryClient();
   const today = new Date().toISOString().split("T")[0];
   const [form, setForm] = useState({

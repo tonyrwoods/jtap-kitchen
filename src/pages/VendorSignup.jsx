@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import EventServiceProviderSignup from "../components/EventServiceProviderSignup";
 import { ArrowLeft, CalendarDays, Users, Star, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -10,6 +11,11 @@ const PERKS = [
 ];
 
 export default function VendorSignup() {
+  useEffect(() => {
+    document.title = "Vendor & Talent Signup — JTAP Kitchen Event Center";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Join the JTAP Kitchen vendor network. DJs, photographers, florists, MCs and more — get booked for private events at our Memphis event center.");
+  }, []);
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-6 pt-10 pb-4">

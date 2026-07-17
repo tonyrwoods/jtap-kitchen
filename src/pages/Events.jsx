@@ -37,7 +37,7 @@ function EventCard({ event, onBook, index }) {
     >
       <div className="relative h-52 overflow-hidden bg-muted">
         {event.image_url ? (
-          <img src={event.image_url} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <img src={event.image_url} alt={event.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/30">
             <CalendarDays className="w-14 h-14 text-primary/40" />

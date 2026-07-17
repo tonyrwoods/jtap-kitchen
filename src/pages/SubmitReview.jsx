@@ -32,6 +32,9 @@ export default function SubmitReview() {
   const [member, setMember] = useState(null);
 
   useEffect(() => {
+    document.title = "Share Your Experience — JTAP Kitchen Reviews";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Share your dining experience at JTAP Kitchen. Leave a review and read what other guests have to say about their visits.");
     base44.entities.Review.filter({ status: "Approved" }, "-created_date", 6).then(setApprovedReviews);
     // Check if logged-in user is a Tap Room Society member
     base44.auth.isAuthenticated().then(async (authed) => {

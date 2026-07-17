@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HelpCircle, ChevronDown, Mail, Phone, MessageSquare, Database } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -107,6 +107,7 @@ function FAQItem({ item, isOpen, onToggle }) {
     <motion.div className="border-b border-border last:border-0">
       <button
         onClick={onToggle}
+        aria-expanded={isOpen}
         className="w-full py-4 px-6 flex items-center justify-between hover:bg-muted/50 transition-colors"
       >
         <span className="text-left font-body font-medium text-foreground">{item.q}</span>
@@ -134,6 +135,11 @@ function FAQItem({ item, isOpen, onToggle }) {
 }
 
 export default function Support() {
+  useEffect(() => {
+    document.title = "Support Center — JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Find answers to common questions about reservations, events, gift cards, loyalty, and dining policies at JTAP Kitchen.");
+  }, []);
   const [openFAQs, setOpenFAQs] = useState({});
 
   const toggleFAQ = (id) => {

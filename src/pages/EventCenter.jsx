@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Users, Star, CalendarDays, Phone, Mail, ChevronDown, ChevronUp, Clock, MapPin } from "lucide-react";
@@ -76,7 +76,7 @@ function FaqItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="border-b border-border last:border-0">
-      <button onClick={() => setOpen((o) => !o)} className="w-full flex items-center justify-between py-4 text-left gap-4">
+      <button onClick={() => setOpen((o) => !o)} aria-expanded={open} className="w-full flex items-center justify-between py-4 text-left gap-4">
         <span className="font-body text-sm font-semibold">{q}</span>
         {open ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
       </button>
@@ -98,6 +98,11 @@ const EMPTY_FORM = {
 };
 
 export default function EventCenter() {
+  useEffect(() => {
+    document.title = "Event Center & Private Events — JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Host your next unforgettable event at JTAP Kitchen Event Center in Memphis. Private dining packages for birthdays, corporate events, weddings and more.");
+  }, []);
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);

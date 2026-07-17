@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -7,6 +8,11 @@ import { Crown, User } from "lucide-react";
 const GOLD = "#C89B4F";
 
 export default function FoundersWall() {
+  useEffect(() => {
+    document.title = "The Founding 20 — JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Meet the Founding 20 — the first members of the JTAP Kitchen family who showed up before anyone else. Permanent members, forever.");
+  }, []);
   const { data: founders = [], isLoading } = useQuery({
     queryKey: ["founders-wall"],
     queryFn: () => base44.entities.FoundingMemberWall.filter({ is_displayed: true }),

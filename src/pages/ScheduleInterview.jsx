@@ -14,6 +14,11 @@ function groupSlotsByDate(slots) {
 }
 
 export default function ScheduleInterview() {
+  useEffect(() => {
+    document.title = "Schedule Your Interview — JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Book your interview time slot at JTAP Kitchen. Select a date and time that works for you.");
+  }, []);
   const urlParams = new URLSearchParams(window.location.search);
   const appId = urlParams.get("app_id");
 

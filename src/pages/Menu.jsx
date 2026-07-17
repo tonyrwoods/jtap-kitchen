@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import useSeoMeta from "../hooks/useSeoMeta";
 
 const CATEGORIES = [
   { key: "All", label: "Full Menu", icon: UtensilsCrossed },
@@ -65,6 +66,8 @@ function MenuCard({ item }) {
         <img
           src={imgSrc}
           alt={item.name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -107,7 +110,7 @@ function CategorySection({ category, items }) {
       {/* Section header with banner */}
       <div className="relative rounded-2xl overflow-hidden h-36 mb-8">
         {heroImg && (
-          <img src={heroImg} alt={category} className="w-full h-full object-cover" />
+          <img src={heroImg} alt={category} loading="lazy" decoding="async" className="w-full h-full object-cover" />
         )}
         <div className="absolute inset-0 bg-black/55" />
         <div className="absolute inset-0 flex items-center px-8">
@@ -122,6 +125,12 @@ function CategorySection({ category, items }) {
 }
 
 export default function Menu() {
+  useSeoMeta("full_menu");
+  useEffect(() => {
+    document.title = "Full Menu — JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Explore JTAP Kitchen's full seasonal menu — appetizers, entrees, sides, desserts and more. Farm-to-table fine dining in Memphis, TN.");
+  }, []);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");

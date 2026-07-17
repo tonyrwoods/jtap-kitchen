@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -48,6 +48,11 @@ function generateReferralCode(name) {
 }
 
 export default function TapRoomSociety() {
+  useEffect(() => {
+    document.title = "Tap Room Society — Membership tiers at JTAP Kitchen";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Join the JTAP Kitchen Tap Room Society. Member tiers with dining discounts, private room access, birthday rewards, and exclusive events.");
+  }, []);
   const joinRef = useRef(null);
   const navigate = useNavigate();
   const [form, setForm] = useState({
