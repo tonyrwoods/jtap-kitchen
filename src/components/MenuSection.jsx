@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Leaf, Flame, Wheat, Nut } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
+import SmartImage from "@/components/SmartImage";
 
 const CATEGORIES = ["All", "Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts"];
 
@@ -30,12 +31,12 @@ function MenuCard({ item }) {
     <div className="bg-card border border-border rounded-2xl overflow-hidden group flex flex-col">
       {item.image_url && (
         <div className="relative overflow-hidden aspect-[4/3]">
-          <img
+          <SmartImage
             src={item.image_url}
             alt={item.name}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            imgClassName="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           {item.is_featured && (
             <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full font-body uppercase tracking-wide">

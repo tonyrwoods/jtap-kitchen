@@ -1,17 +1,19 @@
 import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
+import SmartImage from "@/components/SmartImage";
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img
+        <SmartImage
           src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/dbe7ca72f_generated_6964c032.png"
           alt="Beautifully plated dish at JTAP Kitchen"
-          className="w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
           fetchpriority="high"
-          decoding="async" />
+          imgClassName="w-full h-full object-cover" />
         
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
       </div>
