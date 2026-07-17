@@ -68,8 +68,14 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-full focus:text-sm focus:font-semibold focus:shadow-lg"
+      >
+        Skip to content
+      </a>
       <Navbar onBookTable={() => setModalOpen(true)} showBackButton={!isTabRoute} />
-      <main className="flex-1 pt-20 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 overflow-hidden">
+      <main id="main-content" className="flex-1 pt-20 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 overflow-hidden">
         <PullToRefresh onRefresh={handleRefresh} externalRef={scrollRef}>
           <motion.div
             key={location.pathname}

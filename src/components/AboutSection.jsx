@@ -9,6 +9,8 @@ export default function AboutSection() {
               <img
                 src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/69593e5e6_generated_103ea6e4.png"
                 alt="Luxurious restaurant interior with warm lighting"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-[400px] md:h-[550px] object-cover"
               />
             </div>
