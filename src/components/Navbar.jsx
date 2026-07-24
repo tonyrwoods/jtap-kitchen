@@ -25,18 +25,7 @@ const MORE_LINKS = [
 
 const ALL_LINKS = [...PRIMARY_LINKS, ...MORE_LINKS];
 
-function HiringBanner() {
-  return (
-    <div className="w-full bg-primary text-primary-foreground py-2 px-4 text-center z-40 relative">
-      <p className="font-body text-xs sm:text-sm font-semibold tracking-wide">
-        🍽️ NOW HIRING ALL POSITIONS — NEW COMPETITIVE PAY RATES —{" "}
-        <Link to="/careers" className="underline underline-offset-2 hover:opacity-80 transition-opacity font-bold">
-          Click here to apply
-        </Link>
-      </p>
-    </div>
-  );
-}
+const HiringBanner = null;
 
 export default function Navbar({ onBookTable, showBackButton = false }) {
   const { t } = useI18n();
@@ -73,7 +62,6 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
 
   return (
     <>
-      <HiringBanner />
       <nav
         className={`sticky top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
