@@ -28,6 +28,7 @@ import OpeningChecklistTab from "../components/admin/OpeningChecklistTab";
 import InviteUserPanel from "../components/admin/InviteUserPanel";
 import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 import CareersTab from "../components/admin/CareersTab";
+import PromotionsTab from "../components/admin/PromotionsTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
@@ -37,7 +38,7 @@ const TAB_GROUPS = [
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
   { label: "Guests", tabs: ["Gift Cards", "Reviews", "Feedback", "Loyalty"] },
-  { label: "Marketing", tabs: ["Gallery", "Team Members", "LinkedIn", "SEO"] },
+  { label: "Marketing", tabs: ["Gallery", "Team Members", "LinkedIn", "Promotions", "SEO"] },
   { label: "Careers", tabs: ["Job Listings"] },
   { label: "Account", tabs: ["Profile"] },
 ];
@@ -583,6 +584,12 @@ export default function AdminDashboard() {
             {tab === "LinkedIn" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <LinkedInEventsTab />
+              </motion.div>
+            )}
+
+            {tab === "Promotions" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <PromotionsTab />
               </motion.div>
             )}
 

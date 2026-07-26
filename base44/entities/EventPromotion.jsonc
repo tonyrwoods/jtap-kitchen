@@ -1,0 +1,120 @@
+{
+  "name": "EventPromotion",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Event / Party Title"
+    },
+    "subtitle": {
+      "type": "string",
+      "title": "Subtitle / Tagline"
+    },
+    "description": {
+      "type": "string",
+      "title": "Announcement Description"
+    },
+    "event_type": {
+      "type": "string",
+      "title": "Event Type",
+      "enum": [
+        "Birthday Party",
+        "Corporate Event",
+        "Wedding Reception",
+        "Baby/Bridal Shower",
+        "Graduation Party",
+        "Holiday Party",
+        "Wine Tasting",
+        "Tasting Menu",
+        "Chef's Table",
+        "Cooking Class",
+        "Special Occasion",
+        "Other"
+      ]
+    },
+    "linked_event_id": {
+      "type": "string",
+      "title": "Linked Ticketed Event ID (optional)"
+    },
+    "banner_image_url": {
+      "type": "string",
+      "title": "Advertisement Banner Image URL"
+    },
+    "date": {
+      "type": "string",
+      "title": "Event Date (YYYY-MM-DD)"
+    },
+    "time": {
+      "type": "string",
+      "title": "Start Time (HH:MM)"
+    },
+    "end_time": {
+      "type": "string",
+      "title": "End Time (HH:MM)"
+    },
+    "location_label": {
+      "type": "string",
+      "title": "Location Label",
+      "default": "JTAP Kitchen \u2014 Memphis, TN"
+    },
+    "rsvp_deadline": {
+      "type": "string",
+      "title": "RSVP Deadline (YYYY-MM-DD)"
+    },
+    "max_guests": {
+      "type": "number",
+      "title": "Max Guests (Capacity)",
+      "default": 50
+    },
+    "price_per_guest": {
+      "type": "number",
+      "title": "Price per Guest (USD, 0 = free)",
+      "default": 0
+    },
+    "host_name": {
+      "type": "string",
+      "title": "Host Name"
+    },
+    "host_message": {
+      "type": "string",
+      "title": "Personal Host Message (shown on announcement)"
+    },
+    "invite_email_subject": {
+      "type": "string",
+      "title": "Invite Email Subject"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active Promotion",
+      "default": true
+    },
+    "share_slug": {
+      "type": "string",
+      "title": "Share Slug (unique URL identifier)"
+    }
+  },
+  "required": [
+    "title",
+    "event_type",
+    "date",
+    "host_name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": null,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "name": "EventInvite",
+  "type": "object",
+  "properties": {
+    "promotion_id": {
+      "type": "string",
+      "title": "Promotion ID"
+    },
+    "promotion_title": {
+      "type": "string",
+      "title": "Promotion Title (cache)"
+    },
+    "guest_name": {
+      "type": "string",
+      "title": "Guest Name"
+    },
+    "guest_email": {
+      "type": "string",
+      "title": "Guest Email"
+    },
+    "rsvp_status": {
+      "type": "string",
+      "title": "RSVP Status",
+      "enum": [
+        "Pending",
+        "Attending",
+        "Declined",
+        "Maybe"
+      ],
+      "default": "Pending"
+    },
+    "party_size": {
+      "type": "number",
+      "title": "Party Size (incl. guest)",
+      "default": 1
+    },
+    "plus_ones": {
+      "type": "string",
+      "title": "Plus One Names"
+    },
+    "dietary_notes": {
+      "type": "string",
+      "title": "Dietary Notes / Special Requests"
+    },
+    "invite_token": {
+      "type": "string",
+      "title": "Invite Token (unique RSVP link)"
+    },
+    "invite_sent_at": {
+      "type": "string",
+      "title": "Invite Sent At (ISO)"
+    },
+    "rsvp_responded_at": {
+      "type": "string",
+      "title": "RSVP Responded At (ISO)"
+    },
+    "reminder_sent_at": {
+      "type": "string",
+      "title": "Reminder Sent At (ISO)"
+    }
+  },
+  "required": [
+    "promotion_id",
+    "guest_name",
+    "guest_email",
+    "invite_token"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -8,6 +8,7 @@ import EventBookingModal from "../components/EventBookingModal";
 import EventCardSkeleton from "../components/EventCardSkeleton";
 import EventCountdown from "../components/EventCountdown";
 import WaitlistConfirmationModal from "../components/WaitlistConfirmationModal";
+import PromoBanner from "../components/events/PromoBanner";
 
 const CATEGORY_COLORS = {
   "Wine Tasting": "bg-purple-100 text-purple-700",
@@ -146,6 +147,7 @@ export default function Events() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-14">
+        <PromoBanner />
         {/* Calendar + Filter Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
           {/* Calendar */}

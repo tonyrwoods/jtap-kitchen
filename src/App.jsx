@@ -38,6 +38,7 @@ import MyMembership from './pages/MyMembership';
 import FoundersWall from './pages/FoundersWall';
 import BookPrivateRoom from './pages/BookPrivateRoom';
 import PitchDeck from './pages/PitchDeck';
+import EventAnnouncement from './pages/EventAnnouncement';
 const AdminMemberships = lazy(() => import('./pages/AdminMemberships'));
 const AdminPrivateRoom = lazy(() => import('./pages/AdminPrivateRoom'));
 const AdminPointsAnalytics = lazy(() => import('./pages/AdminPointsAnalytics'));
@@ -135,6 +136,8 @@ const AuthenticatedApp = () => {
         <Route path="/admin/points-analytics" element={<AdminPointsAnalytics />} />
         <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
         <Route path="/dining-assistant" element={<ReservationChat />} />
+        <Route path="/event-announce/:slug" element={<EventAnnouncement />} />
+        <Route path="/event-invite/:token" element={<EventAnnouncement />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
