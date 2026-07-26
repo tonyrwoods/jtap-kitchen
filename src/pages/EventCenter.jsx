@@ -135,10 +135,13 @@ export default function EventCenter() {
       ...form,
       guest_count: parseInt(form.guest_count) || 0
     });
-    await base44.integrations.Core.SendEmail({
-      to: form.email,
-      subject: "Event Inquiry Received — JTAP Kitchen Event Center",
-      body: `Hi ${form.contact_name},\n\nThank you for your interest in hosting your event at JTAP Kitchen!\n\nWe've received your inquiry for a ${form.event_type || "private event"} on ${form.preferred_day}${form.preferred_date ? ` (${form.preferred_date})` : ""} for approximately ${form.guest_count} guests.\n\nOur events team will be in touch within 24 hours to discuss availability and personalize your experience.\n\n— The JTAP Kitchen Events Team\ninfo@jtapkitchen.com | 901-554-4431`
+    await base44.functions.invoke("sendEventInquiryConfirmation", {
+      contact_name: form.contact_name,
+      email: form.email,
+      event_type: form.event_type,
+      preferred_day: form.preferred_day,
+      preferred_date: form.preferred_date,
+      guest_count: form.guest_count,
     });
     setSubmitted(true);
     setSubmitting(false);

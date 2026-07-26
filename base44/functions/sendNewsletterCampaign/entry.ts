@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -45,7 +46,7 @@ Deno.serve(async (req) => {
       const personalizedBody = campaign.body
         .replace(/{{name}}/g, recipient.name || "Valued Guest");
 
-      await base44.asServiceRole.integrations.Core.SendEmail({
+      await sendEmailViaGmail(base44, {
         to: recipient.email,
         subject: campaign.subject,
         body: personalizedBody,

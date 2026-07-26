@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -45,7 +46,7 @@ Deno.serve(async (req) => {
             })
           : preferred_day || 'a date you requested';
 
-        await base44.asServiceRole.integrations.Core.SendEmail({
+        await sendEmailViaGmail(base44, {
           to: entry.email,
           subject: "Great News — A Spot Just Opened at JTAP Kitchen Event Center!",
           body: `Hi ${entry.contact_name},\n\nExciting news! A date has just become available at the JTAP Kitchen Event Center — ${dateLabel}.\n\nAs someone on our waitlist, you have first priority to claim this date. Please reach out to us as soon as possible to secure your booking before it's offered to others.\n\n📞 (555) 012-3456\n✉️ events@jtapkitchen.com\n\nWe'd love to host your event!\n\n— The JTAP Kitchen Events Team`,

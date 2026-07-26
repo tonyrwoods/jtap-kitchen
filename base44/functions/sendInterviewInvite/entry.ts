@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -19,7 +20,7 @@ Deno.serve(async (req) => {
 
   const scheduleUrl = `${req.headers.get('origin') || 'https://jtapkitchen.com'}/schedule-interview?app_id=${application_id}`;
 
-  await base44.asServiceRole.integrations.Core.SendEmail({
+  await sendEmailViaGmail(base44, {
     to: app.email,
     subject: `Interview Invitation — ${app.job_title} at JTAP Kitchen`,
     body: `

@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -22,7 +23,7 @@ Deno.serve(async (req) => {
       ? ticket.resolution_notes
       : 'Our team has resolved your request. Please reach out if you need further assistance.';
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
+    await sendEmailViaGmail(base44, {
       to: ticket.requester_email,
       subject: `Your Support Ticket Has Been Resolved – ${ticket.subject}`,
       body: `

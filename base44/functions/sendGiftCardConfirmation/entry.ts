@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -72,7 +73,7 @@ Deno.serve(async (req) => {
       </div>
     `;
 
-    await base44.integrations.Core.SendEmail({
+    await sendEmailViaGmail(base44, {
       to: giftCard.purchaser_email,
       subject: 'Gift Card Purchase Confirmed',
       body: purchaserBody,
@@ -130,7 +131,7 @@ Deno.serve(async (req) => {
         </div>
       `;
 
-      await base44.integrations.Core.SendEmail({
+      await sendEmailViaGmail(base44, {
         to: giftCard.recipient_email,
         subject: `You've Received a $${amountFormatted} Gift Card to JTAP Kitchen!`,
         body: recipientBody,

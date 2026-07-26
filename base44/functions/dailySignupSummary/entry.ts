@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -59,7 +60,7 @@ Deno.serve(async (req) => {
 
   await Promise.all(
     admins.map(admin =>
-      base44.asServiceRole.integrations.Core.SendEmail({
+      sendEmailViaGmail(base44, {
         to: admin.email,
         subject: `Daily Signup Summary — ${newUsers.length} new signup${newUsers.length !== 1 ? 's' : ''} · ${today}`,
         body,

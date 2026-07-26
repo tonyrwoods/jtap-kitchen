@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -24,9 +25,6 @@ Deno.serve(async (req) => {
     if (!vendorEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vendorEmail)) {
       throw new Error('Invalid vendor email format');
     }
-
-    // Get Gmail access token
-    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
     // HTML escape utility
     const escapeHtml = (text) => {
@@ -56,20 +54,11 @@ Deno.serve(async (req) => {
     `;
 
     // Send email via Gmail API
-    const emailResponse = await fetch('https://www.googleapis.com/gmail/v1/users/me/messages/send', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        raw: btoa(`To: ${vendorEmail}\nSubject: Invoice Summary - ${escapeHtml(data.receipt_number)}\nContent-Type: text/html\n\n${invoiceHTML}`),
-      }),
+    await sendEmailViaGmail(base44, {
+      to: vendorEmail,
+      subject: `Invoice Summary - ${escapeHtml(data.receipt_number)}`,
+      body: invoiceHTML,
     });
-
-    if (!emailResponse.ok) {
-      throw new Error(`Gmail API error: ${emailResponse.statusText}`);
-    }
 
     // Update delivery status
     await base44.entities.Invoice.update(data.id, {

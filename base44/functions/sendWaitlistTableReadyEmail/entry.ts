@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -17,7 +18,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: "Email required" }, { status: 400 });
     }
 
-    await base44.integrations.Core.SendEmail({
+    await sendEmailViaGmail(base44, {
       to: guestEmail,
       subject: "Your Table at JTAP Kitchen is Ready!",
       body: `Hello ${guestName},\n\nYour table at JTAP Kitchen is ready! Please check in with the host within 10 minutes.\n\nThank you!`,

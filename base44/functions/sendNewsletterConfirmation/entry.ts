@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -32,7 +33,7 @@ The JTAP Kitchen Team
 To manage your preferences or unsubscribe, reply to this email.
     `;
 
-    await base44.integrations.Core.SendEmail({
+    await sendEmailViaGmail(base44, {
       to: email,
       subject: 'Welcome to JTAP Kitchen Inner Circle',
       body: emailBody,

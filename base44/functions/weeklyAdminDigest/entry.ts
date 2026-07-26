@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -116,7 +117,7 @@ Deno.serve(async (req) => {
 
     // Send to all admins
     for (const admin of admins) {
-      await base44.asServiceRole.integrations.Core.SendEmail({
+      await sendEmailViaGmail(base44, {
         to: admin.email,
         subject: `JTAP Kitchen — Weekly Digest (${weekLabel})`,
         body,

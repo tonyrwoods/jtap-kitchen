@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 export default async function(req) {
   try {
@@ -41,7 +42,7 @@ export default async function(req) {
     for (const invite of invites) {
       const rsvpUrl = `${origin}/event-invite/${invite.invite_token}`;
       try {
-        await base44.asServiceRole.integrations.Core.SendEmail({
+        await sendEmailViaGmail(base44, {
           to: invite.guest_email,
           subject,
           body: buildInviteEmail(promotion, invite, rsvpUrl),

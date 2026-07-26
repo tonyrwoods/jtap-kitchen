@@ -21,11 +21,12 @@ export default function ContactUs() {
 
     setLoading(true);
     try {
-      await base44.integrations.Core.SendEmail({
-        to: "info@jtapkitchen.com",
-        subject: `New Contact Form: ${form.subject || "General Inquiry"}`,
-        body: `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone || "Not provided"}\n\nMessage:\n${form.message}`,
-        from_name: "JTAP Kitchen Contact",
+      await base44.functions.invoke("sendContactFormNotification", {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        subject: form.subject,
+        message: form.message,
       });
       toast.success("Message sent! We'll be in touch soon.");
       setForm({ name: "", email: "", phone: "", subject: "", message: "" });
