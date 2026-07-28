@@ -57,6 +57,10 @@
     "reminder_sent_at": {
       "type": "string",
       "title": "Reminder Sent At (ISO)"
+    },
+    "calendar_event_id": {
+      "type": "string",
+      "title": "Google Calendar Event ID"
     }
   },
   "required": [
