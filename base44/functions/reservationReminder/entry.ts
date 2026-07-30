@@ -1,6 +1,23 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
+// Convert "7:00 PM" → "19:00" (24-hour HH:MM) for ISO datetime parsing
+function to24Hour(timeStr) {
+  if (!timeStr) return '12:00';
+  // Already 24-hour format (e.g., "19:00") — return padded
+  if (/^\d{1,2}:\d{2}$/.test(timeStr) && !/AM|PM/i.test(timeStr)) {
+    return timeStr.padStart(5, '0');
+  }
+  const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!match) return '12:00';
+  let hours = parseInt(match[1]);
+  const minutes = match[2];
+  const ampm = match[3].toUpperCase();
+  if (ampm === 'PM' && hours !== 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+  return `${String(hours).padStart(2, '0')}:${minutes}`;
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
@@ -24,7 +41,14 @@ Deno.serve(async (req) => {
     return Response.json({ skipped: 'Not a confirmed reservation' });
   }
 
-  const resDate = new Date(`${reservation.date}T${reservation.time || '12:00'}`);
+  const time24 = to24Hour(reservation.time);
+  const resDate = new Date(`${reservation.date}T${time24}:00`);
+
+  // Guard against unparseable date/time — never send a reminder with "Invalid Date"
+  if (isNaN(resDate.getTime())) {
+    return Response.json({ skipped: 'Invalid reservation date/time — reminder not sent' });
+  }
+
   const now = new Date();
   const hoursUntil = (resDate - now) / (1000 * 60 * 60);
 
