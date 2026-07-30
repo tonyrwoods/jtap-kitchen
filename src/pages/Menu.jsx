@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSeoMeta from "../hooks/useSeoMeta";
+import MenuQRCode from "../components/MenuQRCode";
 
 const CATEGORIES = [
   { key: "All", label: "Full Menu", icon: UtensilsCrossed },
@@ -237,6 +238,12 @@ export default function Menu() {
             </AnimatePresence>
           </div>
         )}
+      </div>
+
+      <div className="border-t border-border bg-secondary/30">
+        <div className="max-w-7xl mx-auto">
+          <MenuQRCode />
+        </div>
       </div>
     </div>
   );
