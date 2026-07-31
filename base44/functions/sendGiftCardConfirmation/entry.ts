@@ -4,12 +4,16 @@ import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const body = await req.json();
-    const { event } = body;
+    const body = await req.json().catch(() => ({}));
+    const event = body.event || {};
 
     if (event.type !== 'create') return Response.json({ skipped: true });
 
-    const giftCard = event.data;
+    // Fetch the real gift card record from the DB — never trust the request body
+    // (prevents arbitrary recipient / content injection via direct HTTP calls)
+    if (!event.entity_id) return Response.json({ error: 'Missing entity_id' }, { status: 400 });
+    const giftCard = await base44.asServiceRole.entities.GiftCard.get(event.entity_id);
+    if (!giftCard) return Response.json({ error: 'Gift card not found' }, { status: 404 });
     if (!giftCard.purchaser_email || !giftCard.code) {
       return Response.json({ error: 'Missing email or code' }, { status: 400 });
     }

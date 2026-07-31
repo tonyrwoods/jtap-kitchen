@@ -5,18 +5,24 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
+    const event = body.event || {};
 
     // Support both manual invocation and entity automation trigger
     let preferred_date, preferred_day;
 
-    if (body?.event?.type === 'update' && body?.data) {
-      // Triggered by automation — extract date/day from the declined inquiry
-      preferred_date = body.data.preferred_date;
-      preferred_day = body.data.preferred_day;
+    if (event.type === 'update' && event.entity_id) {
+      // Automation path: fetch the real inquiry and verify it was actually
+      // declined (only admins can decline — prevents spoofing the trigger).
+      const inquiry = await base44.asServiceRole.entities.EventCenterInquiry.get(event.entity_id);
+      if (!inquiry) return Response.json({ error: 'Inquiry not found' }, { status: 404 });
+      if (inquiry.status !== 'Declined') return Response.json({ skipped: 'Inquiry not declined' });
+      preferred_date = inquiry.preferred_date;
+      preferred_day = inquiry.preferred_day;
     } else {
-      // Manual invocation — requires admin
-      const user = await base44.auth.me();
-      if (user?.role !== 'admin') {
+      // Manual invocation — requires admin (reject unauthenticated calls)
+      let user;
+      try { user = await base44.auth.me(); } catch (_) { user = null; }
+      if (!user || user.role !== 'admin') {
         return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
       }
       preferred_date = body.preferred_date;

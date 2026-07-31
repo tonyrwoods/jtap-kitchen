@@ -5,19 +5,27 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Allow entity automations (no user) or admin manual trigger
-    let user = null;
-    try { user = await base44.auth.me(); } catch (_) {}
-    if (user && user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-    }
-
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const event = body.event || {};
 
-    if (event.type !== 'create') return Response.json({ skipped: true });
+    let reservation;
+    if (event.type) {
+      // Entity automation trigger — fetch the real record, never trust body.data
+      if (event.type !== 'create') return Response.json({ skipped: true });
+      if (!event.entity_id) return Response.json({ error: 'Missing entity_id' }, { status: 400 });
+      reservation = await base44.asServiceRole.entities.Reservation.get(event.entity_id);
+      if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
+    } else {
+      // Manual invocation — requires admin (reject unauthenticated calls)
+      let user;
+      try { user = await base44.auth.me(); } catch (_) { user = null; }
+      if (!user || user.role !== 'admin') {
+        return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+      }
+      reservation = body.data;
+      if (!reservation) return Response.json({ error: 'Missing reservation data' }, { status: 400 });
+    }
 
-    const reservation = body.data || event.data;
     if (!reservation.email || !reservation.guest_name) {
       return Response.json({ error: 'Missing email or name' }, { status: 400 });
     }
