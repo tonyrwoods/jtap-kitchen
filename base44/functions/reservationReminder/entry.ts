@@ -42,7 +42,9 @@ Deno.serve(async (req) => {
   }
 
   const time24 = to24Hour(reservation.time);
-  const resDate = new Date(`${reservation.date}T${time24}:00`);
+  // Normalize date to YYYY-MM-DD in case it's stored as a full ISO timestamp
+  const dateOnly = String(reservation.date || '').split('T')[0];
+  const resDate = new Date(`${dateOnly}T${time24}:00`);
 
   // Guard against unparseable date/time — never send a reminder with "Invalid Date"
   if (isNaN(resDate.getTime())) {
