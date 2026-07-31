@@ -1,0 +1,68 @@
+{
+  "name": "ReservationInvite",
+  "type": "object",
+  "properties": {
+    "reservation_id": {
+      "type": "string",
+      "title": "Reservation ID"
+    },
+    "guest_name": {
+      "type": "string",
+      "title": "Guest Name"
+    },
+    "guest_email": {
+      "type": "string",
+      "title": "Guest Email"
+    },
+    "rsvp_status": {
+      "type": "string",
+      "title": "RSVP Status",
+      "enum": [
+        "Pending",
+        "Attending",
+        "Declined"
+      ],
+      "default": "Pending"
+    },
+    "invite_token": {
+      "type": "string",
+      "title": "Invite Token (RSVP link)"
+    },
+    "invite_sent_at": {
+      "type": "string",
+      "title": "Invite Sent At (ISO)"
+    },
+    "rsvp_responded_at": {
+      "type": "string",
+      "title": "RSVP Responded At (ISO)"
+    }
+  },
+  "required": [
+    "reservation_id",
+    "guest_name",
+    "guest_email",
+    "invite_token"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

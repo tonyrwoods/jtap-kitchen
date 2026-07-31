@@ -157,6 +157,7 @@ export default function BookTable() {
       party_size: party,
       special_requests: special,
       status: "Pending",
+      confirm_token: crypto.randomUUID(),
     });
     base44.analytics.track({ eventName: "reservation_created", properties: { party_size: party, date: date?.toISOString().split("T")[0] } });
     setLoading(false);

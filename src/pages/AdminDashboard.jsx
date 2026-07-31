@@ -29,6 +29,7 @@ import InviteUserPanel from "../components/admin/InviteUserPanel";
 import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 import CareersTab from "../components/admin/CareersTab";
 import PromotionsTab from "../components/admin/PromotionsTab";
+import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
@@ -157,6 +158,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [rsvpOpen, setRsvpOpen] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -420,9 +422,11 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-3">
                       <StatusBadge status={r.status || "Pending"} />
                       <SelectDropdown value={r.status || "Pending"} onChange={v => updateResStatus(r.id, v)} options={STATUSES.map(s => ({ value: s, label: s }))} />
-                    </div>
-                  </div>
-                  );
+                      <button onClick={() => setRsvpOpen(rsvpOpen === r.id ? null : r.id)} className="px-3 py-1.5 rounded-lg text-xs font-body font-medium border border-border hover:bg-muted transition-colors shrink-0">RSVP</button>
+                      </div>
+                      {rsvpOpen === r.id && <ReservationRsvpPanel reservation={r} />}
+                      </div>
+                      );
                 })}
                 {reservations.length === 0 && (
                   <div className="text-center py-20">

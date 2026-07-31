@@ -45,6 +45,18 @@
       "type": "string",
       "title": "Internal Admin Notes"
     },
+    "confirm_token": {
+      "type": "string",
+      "title": "Confirm Token (RSVP link)"
+    },
+    "confirmed_at": {
+      "type": "string",
+      "title": "Confirmed At (ISO)"
+    },
+    "declined_at": {
+      "type": "string",
+      "title": "Declined At (ISO)"
+    },
     "description": {
       "type": "string",
       "title": "Description",
