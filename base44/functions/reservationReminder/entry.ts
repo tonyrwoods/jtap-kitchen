@@ -1,68 +1,41 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
-// Convert "7:00 PM" → "19:00" (24-hour HH:MM) for ISO datetime parsing
-function to24Hour(timeStr) {
-  if (!timeStr) return '12:00';
-  // Already 24-hour format (e.g., "19:00") — return padded
-  if (/^\d{1,2}:\d{2}$/.test(timeStr) && !/AM|PM/i.test(timeStr)) {
-    return timeStr.padStart(5, '0');
-  }
-  const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if (!match) return '12:00';
-  let hours = parseInt(match[1]);
-  const minutes = match[2];
-  const ampm = match[3].toUpperCase();
-  if (ampm === 'PM' && hours !== 12) hours += 12;
-  if (ampm === 'AM' && hours === 12) hours = 0;
-  return `${String(hours).padStart(2, '0')}:${minutes}`;
-}
+// Scheduled daily automation — scans for confirmed reservations happening
+// tomorrow and sends each guest a reminder (tracked via reminder_sent_at).
+// Previously this was entity-triggered, which only fired at create/update
+// time, so guests who booked days ahead never received a reminder.
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
-  // Allow entity automations (no user) or admin manual trigger
-  let user = null;
-  try { user = await base44.auth.me(); } catch (_) {}
-  if (user && user.role !== 'admin') {
-    return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-  }
-
-  const payload = await req.json();
-
-  const reservationId = payload?.event?.entity_id;
-  if (!reservationId) return Response.json({ error: 'No entity_id' }, { status: 400 });
-
-  const reservation = await base44.asServiceRole.entities.Reservation.get(reservationId);
-  if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
-
-  // Only send for Confirmed reservations with a future date
-  if (reservation.status !== 'Confirmed') {
-    return Response.json({ skipped: 'Not a confirmed reservation' });
-  }
-
-  const time24 = to24Hour(reservation.time);
-  // Normalize date to YYYY-MM-DD in case it's stored as a full ISO timestamp
-  const dateOnly = String(reservation.date || '').split('T')[0];
-  const resDate = new Date(`${dateOnly}T${time24}:00`);
-
-  // Guard against unparseable date/time — never send a reminder with "Invalid Date"
-  if (isNaN(resDate.getTime())) {
-    return Response.json({ skipped: 'Invalid reservation date/time — reminder not sent' });
-  }
-
+  // Determine tomorrow's date string (YYYY-MM-DD). Runs at 09:00 local,
+  // so the simple UTC-derived date aligns with the calendar date.
   const now = new Date();
-  const hoursUntil = (resDate - now) / (1000 * 60 * 60);
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-  // Only schedule reminder if the reservation is between 20–28 hours away
-  if (hoursUntil < 20 || hoursUntil > 28) {
-    return Response.json({ skipped: `${Math.round(hoursUntil)}h until reservation — outside reminder window` });
+  // Fetch confirmed reservations scheduled for tomorrow that haven't been reminded yet.
+  const reservations = await base44.asServiceRole.entities.Reservation.filter({
+    status: 'Confirmed',
+    date: tomorrowStr,
+  });
+
+  const eligible = reservations.filter((r) => !r.reminder_sent_at);
+  if (eligible.length === 0) {
+    return Response.json({ sent: 0, message: 'No reminders due' });
   }
 
-  const formattedDate = resDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  const formattedTime = resDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  let sent = 0;
+  const errors = [];
+  for (const reservation of eligible) {
+    const dateObj = new Date(tomorrowStr + 'T12:00:00');
+    const formattedDate = dateObj.toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric',
+    });
 
-  const body = `
+    const body = `
     <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
       <div style="background:#1a1a1a;padding:28px 32px;text-align:center;">
         <h1 style="color:#c89b4f;font-size:22px;margin:0;letter-spacing:2px;">JTAP Kitchen</h1>
@@ -74,7 +47,7 @@ Deno.serve(async (req) => {
         <div style="background:#fff;border:1px solid #e8e0d4;border-radius:12px;padding:24px;">
           <table style="width:100%;font-size:14px;border-collapse:collapse;">
             <tr><td style="padding:8px 0;color:#888;width:120px;">Date</td><td style="padding:8px 0;font-weight:600;">${formattedDate}</td></tr>
-            <tr><td style="padding:8px 0;color:#888;">Time</td><td style="padding:8px 0;font-weight:600;">${formattedTime}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Time</td><td style="padding:8px 0;font-weight:600;">${reservation.time}</td></tr>
             <tr><td style="padding:8px 0;color:#888;">Party size</td><td style="padding:8px 0;font-weight:600;">${reservation.party_size} guest${reservation.party_size !== 1 ? 's' : ''}</td></tr>
             ${reservation.special_requests ? `<tr><td style="padding:8px 0;color:#888;vertical-align:top;">Requests</td><td style="padding:8px 0;color:#555;font-style:italic;">${reservation.special_requests}</td></tr>` : ''}
           </table>
@@ -89,12 +62,21 @@ Deno.serve(async (req) => {
       </div>
     </div>`;
 
-  await sendEmailViaGmail(base44, {
-    to: reservation.email,
-    from_name: 'JTAP Kitchen',
-    subject: `Reminder: Your reservation tomorrow at ${formattedTime}`,
-    body,
-  });
+    try {
+      await sendEmailViaGmail(base44, {
+        to: reservation.email,
+        from_name: 'JTAP Kitchen',
+        subject: `Reminder: Your reservation tomorrow at ${reservation.time}`,
+        body,
+      });
+      await base44.asServiceRole.entities.Reservation.update(reservation.id, {
+        reminder_sent_at: new Date().toISOString(),
+      });
+      sent++;
+    } catch (err) {
+      errors.push({ id: reservation.id, error: err.message });
+    }
+  }
 
-  return Response.json({ sent: true, to: reservation.email });
+  return Response.json({ sent, total: eligible.length, errors });
 });

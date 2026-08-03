@@ -18,7 +18,6 @@ import VendorPaymentsTab from "../components/admin/VendorPaymentsTab";
 import AuditReportTab from "../components/admin/AuditReportTab";
 import FeaturedDishesTab from "../components/admin/FeaturedDishesTab";
 import TeamMembersTab from "../components/admin/TeamMembersTab";
-import AdminCalendarTab from "../components/admin/AdminCalendarTab";
 import WaitlistAdminTab from "../components/admin/WaitlistAdminTab";
 import PricingStrategyTab from "../components/admin/PricingStrategyTab";
 import GalleryAdminTab from "../components/admin/GalleryAdminTab";
@@ -35,7 +34,7 @@ import SelectDropdown from "../components/SelectDropdown";
 const TAB_GROUPS = [
   { label: "Operations", tabs: ["Overview", "Opening Checklist", "End of Year Checklist"] },
   { label: "Menu & Pricing", tabs: ["Menu Items", "Pricing Strategy", "Chef Highlights"] },
-  { label: "Reservations", tabs: ["Admin Calendar", "Reservations", "Calendar", "Event Waitlist"] },
+  { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
   { label: "Guests", tabs: ["Gift Cards", "Reviews", "Feedback", "Loyalty"] },
@@ -321,12 +320,6 @@ export default function AdminDashboard() {
             {tab === "Pricing Strategy" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <PricingStrategyTab />
-              </motion.div>
-            )}
-
-            {tab === "Admin Calendar" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <AdminCalendarTab />
               </motion.div>
             )}
 

@@ -48,6 +48,8 @@ function Chip({ r, compact, onClick }) {
 function DetailPanel({ reservation, onClose, onUpdate }) {
   const [status, setStatus] = useState(reservation.status || "Pending");
   const [saving, setSaving] = useState(false);
+  const [notes, setNotes] = useState(reservation.admin_notes || "");
+  const [savingNotes, setSavingNotes] = useState(false);
 
   const save = async (newStatus) => {
     setSaving(true);
@@ -56,6 +58,13 @@ function DetailPanel({ reservation, onClose, onUpdate }) {
     setStatus(newStatus);
     setSaving(false);
     toast.success("Status updated");
+  };
+
+  const saveNotes = async () => {
+    setSavingNotes(true);
+    await base44.entities.Reservation.update(reservation.id, { admin_notes: notes });
+    setSavingNotes(false);
+    toast.success("Notes saved");
   };
 
   const s = STATUS_STYLES[status] || STATUS_STYLES.Pending;
@@ -93,6 +102,20 @@ function DetailPanel({ reservation, onClose, onUpdate }) {
             <p className="font-body text-sm italic">{reservation.special_requests}</p>
           </div>
         )}
+
+        <div>
+          <p className="font-body text-xs text-muted-foreground font-semibold mb-2 uppercase tracking-wide">Admin Notes</p>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Internal notes..."
+            rows={2}
+            className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background resize-none"
+          />
+          <button onClick={saveNotes} disabled={savingNotes} className="mt-2 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-medium disabled:opacity-50">
+            {savingNotes ? "Saving..." : "Save Notes"}
+          </button>
+        </div>
 
         <div>
           <p className="font-body text-xs text-muted-foreground font-semibold mb-2 uppercase tracking-wide">Status</p>

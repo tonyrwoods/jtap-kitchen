@@ -136,12 +136,21 @@ export default function BookTable() {
     }
     setLoading(true);
     try {
+      const dateStr = date.toISOString().split("T")[0];
+      // Duplicate-booking guard: same email + date + time, not cancelled
+      const existing = await base44.entities.Reservation.filter({ email, date: dateStr, time });
+      if (existing.find(r => r.status !== "Cancelled")) {
+        toast.error("You already have a reservation for this date and time. Check your inbox for the confirmation link.");
+        setLoading(false);
+        return;
+      }
+      // Per-time-slot capacity check (not whole-day)
       const appSettings = await base44.entities.AppSettings.list().then(data => data[0]);
       const maxCapacity = appSettings?.max_capacity || 80;
-      const confirmed = await base44.entities.Reservation.filter({ date: date.toISOString().split("T")[0], status: "Confirmed" });
+      const confirmed = await base44.entities.Reservation.filter({ date: dateStr, time, status: "Confirmed" });
       const bookedPartySize = confirmed.reduce((sum, r) => sum + (r.party_size || 0), 0);
       if (bookedPartySize + party > maxCapacity) {
-        toast.error("Sorry, we're fully booked for that time. Please choose a different date or time.");
+        toast.error("Sorry, we're fully booked for that time slot. Please choose a different time.");
         setLoading(false);
         return;
       }

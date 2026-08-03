@@ -57,6 +57,10 @@
       "type": "string",
       "title": "Declined At (ISO)"
     },
+    "reminder_sent_at": {
+      "type": "string",
+      "title": "Reminder Sent At (ISO)"
+    },
     "description": {
       "type": "string",
       "title": "Description",
