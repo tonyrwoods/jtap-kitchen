@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
+import { Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle, Mail } from "lucide-react";
 import { toast } from "sonner";
+import CompanionInviteForm from "@/components/CompanionInviteForm";
 
 const TIME_SLOTS = [
   "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM",
@@ -117,6 +118,8 @@ export default function BookTable() {
   const [special, setSpecial] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [reservationToken, setReservationToken] = useState(null);
+  const [reservationId, setReservationId] = useState(null);
 
   const canNext1 = date && time;
   const canNext2 = name.trim() && email.trim();
@@ -157,7 +160,7 @@ export default function BookTable() {
     } catch (error) {
       console.error("Capacity check failed:", error);
     }
-    await base44.entities.Reservation.create({
+    const created = await base44.entities.Reservation.create({
       guest_name: name,
       email,
       phone,
@@ -168,6 +171,8 @@ export default function BookTable() {
       status: "Pending",
       confirm_token: crypto.randomUUID(),
     });
+    setReservationToken(created.confirm_token);
+    setReservationId(created.id);
     base44.analytics.track({ eventName: "reservation_created", properties: { party_size: party, date: date?.toISOString().split("T")[0] } });
     setLoading(false);
     setSubmitted(true);
@@ -176,6 +181,7 @@ export default function BookTable() {
   const reset = () => {
     setStep(1); setDate(null); setTime(null); setParty(2);
     setName(""); setEmail(""); setPhone(""); setSpecial(""); setSubmitted(false);
+    setReservationToken(null); setReservationId(null);
   };
 
   return (
@@ -225,6 +231,16 @@ export default function BookTable() {
                   Back to Home
                 </a>
               </div>
+
+              {reservationToken && reservationId && (
+                <div className="mt-10 text-left">
+                  <div className="flex items-center gap-2 justify-center mb-4">
+                    <Mail className="w-4 h-4 text-primary" />
+                    <p className="font-body text-sm font-semibold text-foreground">Invite your dining companions</p>
+                  </div>
+                  <CompanionInviteForm confirmToken={reservationToken} reservationId={reservationId} />
+                </div>
+              )}
             </motion.div>
           ) : (
             <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

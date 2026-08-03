@@ -12,8 +12,8 @@ export default async function (req) {
     const reservations = await base44.asServiceRole.entities.Reservation.filter({ confirm_token: reservation_token });
     const reservation = reservations[0];
     if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
-    if (reservation.status !== 'Confirmed') {
-      return Response.json({ error: 'Reservation must be confirmed before inviting companions' }, { status: 400 });
+    if (reservation.status !== 'Confirmed' && reservation.status !== 'Pending') {
+      return Response.json({ error: 'Reservation must be active (Pending or Confirmed) before inviting companions' }, { status: 400 });
     }
 
     const token = crypto.randomUUID();
