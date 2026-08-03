@@ -17,8 +17,10 @@ export default async function (req) {
     }
 
     // Cap companion invites to party_size - 1 (the holder counts as 1)
+    // Only count active (Pending or Attending) invites — declined invites free up the slot
     const existingInvites = await base44.asServiceRole.entities.ReservationInvite.filter({ reservation_id: reservation.id });
-    if (existingInvites.length >= reservation.party_size - 1) {
+    const activeInvites = existingInvites.filter((i) => i.rsvp_status !== 'Declined');
+    if (activeInvites.length >= reservation.party_size - 1) {
       return Response.json({ error: `You can invite up to ${reservation.party_size - 1} companion${reservation.party_size - 1 !== 1 ? 's' : ''} for a party of ${reservation.party_size}.` }, { status: 400 });
     }
 
