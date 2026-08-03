@@ -63,6 +63,13 @@ Deno.serve(async (req) => {
   </div>
 </body></html>`;
       await sendEmailViaGmail(base44, { to: reservation.email, subject, body: body_html, from_name: 'JTAP Kitchen' });
+      // Admin notification
+      await sendEmailViaGmail(base44, {
+        to: 'info@jtapkitchen.com',
+        subject: `New Reservation — ${reservation.guest_name}, ${formattedDate} at ${reservation.time}`,
+        body: `New reservation request:<br><br><strong>${reservation.guest_name}</strong> (${reservation.email})<br>Phone: ${reservation.phone || 'N/A'}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${reservation.special_requests || 'None'}<br><br><a href="${rsvpUrl}">View reservation</a>`,
+        from_name: 'JTAP Kitchen Reservations',
+      }).catch(() => {});
       return Response.json({ sent: true, email: reservation.email, type: 'rsvp_confirm' });
     }
 
@@ -115,6 +122,13 @@ Deno.serve(async (req) => {
       body: body_html,
       from_name: 'JTAP Kitchen'
     });
+    // Admin notification
+    await sendEmailViaGmail(base44, {
+      to: 'info@jtapkitchen.com',
+      subject: `New Reservation — ${reservation.guest_name}, ${formattedDate} at ${reservation.time}`,
+      body: `New reservation:<br><br><strong>${reservation.guest_name}</strong> (${reservation.email})<br>Phone: ${reservation.phone || 'N/A'}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${reservation.special_requests || 'None'}`,
+      from_name: 'JTAP Kitchen Reservations',
+    }).catch(() => {});
 
     return Response.json({ sent: true, email: reservation.email });
   } catch (error) {

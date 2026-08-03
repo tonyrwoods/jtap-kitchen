@@ -210,8 +210,8 @@ export default function ReservationConfirm() {
         {confirmed && (
           <div className="bg-card border border-border rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-1"><Users className="w-4 h-4 text-primary" /><h3 className="font-heading text-base font-semibold">Invite Your Party</h3></div>
-            <p className="font-body text-xs text-muted-foreground mb-4">Send RSVP links to your dining companions so they can confirm too.</p>
-            <form onSubmit={sendCompanion} className="flex flex-col sm:flex-row gap-2 mb-4">
+            <p className="font-body text-xs text-muted-foreground mb-4">Send RSVP links to your dining companions so they can confirm too.{reservation?.party_size > 1 && <span className="text-muted-foreground/70"> (Up to {reservation.party_size - 1} for your party of {reservation.party_size})</span>}</p>
+            <form onSubmit={sendCompanion} className={`flex flex-col sm:flex-row gap-2 mb-4 ${(companions?.length || 0) >= (reservation?.party_size || 1) - 1 ? 'opacity-40 pointer-events-none' : ''}`}>
               <input value={cName} onChange={(e) => setCName(e.target.value)} placeholder="Companion name" className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background" />
               <input value={cEmail} onChange={(e) => setCEmail(e.target.value)} placeholder="email@example.com" type="email" className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background" />
               <button type="submit" disabled={sending} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5 justify-center">
@@ -235,7 +235,7 @@ export default function ReservationConfirm() {
                 })}
               </div>
             ) : (
-              <p className="font-body text-xs text-muted-foreground text-center py-2">No companions invited yet.</p>
+              <p className="font-body text-xs text-muted-foreground text-center py-2">{(companions?.length || 0) >= (reservation?.party_size || 1) - 1 ? 'All companion slots filled.' : 'No companions invited yet.'}</p>
             )}
           </div>
         )}

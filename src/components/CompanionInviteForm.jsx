@@ -9,7 +9,7 @@ const STATUS = {
   Pending: { icon: Clock, color: "bg-muted text-muted-foreground" },
 };
 
-export default function CompanionInviteForm({ confirmToken, reservationId }) {
+export default function CompanionInviteForm({ confirmToken, reservationId, partySize = 2 }) {
   const [companions, setCompanions] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -63,8 +63,9 @@ export default function CompanionInviteForm({ confirmToken, reservationId }) {
       </div>
       <p className="font-body text-xs text-muted-foreground mb-4">
         Send RSVP links to your dining companions so they can confirm too.
+        {partySize > 1 && <span className="text-muted-foreground/70"> (Up to {partySize - 1} for your party of {partySize})</span>}
       </p>
-      <form onSubmit={send} className="flex flex-col sm:flex-row gap-2 mb-4">
+      <form onSubmit={send} className={`flex flex-col sm:flex-row gap-2 mb-4 ${companions.length >= partySize - 1 ? 'opacity-40 pointer-events-none' : ''}`}>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -105,7 +106,7 @@ export default function CompanionInviteForm({ confirmToken, reservationId }) {
           })}
         </div>
       ) : (
-        <p className="font-body text-xs text-muted-foreground text-center py-2">No companions invited yet.</p>
+        <p className="font-body text-xs text-muted-foreground text-center py-2">{companions.length >= partySize - 1 ? 'All companion slots filled.' : 'No companions invited yet.'}</p>
       )}
     </div>
   );

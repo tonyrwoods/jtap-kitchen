@@ -158,7 +158,9 @@ export default function BookTable() {
         return;
       }
     } catch (error) {
-      console.error("Capacity check failed:", error);
+      toast.error("Unable to verify availability. Please try again.");
+      setLoading(false);
+      return;
     }
     const created = await base44.entities.Reservation.create({
       guest_name: name,
@@ -238,7 +240,7 @@ export default function BookTable() {
                     <Mail className="w-4 h-4 text-primary" />
                     <p className="font-body text-sm font-semibold text-foreground">Invite your dining companions</p>
                   </div>
-                  <CompanionInviteForm confirmToken={reservationToken} reservationId={reservationId} />
+                  <CompanionInviteForm confirmToken={reservationToken} reservationId={reservationId} partySize={party} />
                 </div>
               )}
             </motion.div>

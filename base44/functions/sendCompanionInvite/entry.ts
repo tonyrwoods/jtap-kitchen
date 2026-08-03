@@ -16,6 +16,12 @@ export default async function (req) {
       return Response.json({ error: 'Reservation must be active (Pending or Confirmed) before inviting companions' }, { status: 400 });
     }
 
+    // Cap companion invites to party_size - 1 (the holder counts as 1)
+    const existingInvites = await base44.asServiceRole.entities.ReservationInvite.filter({ reservation_id: reservation.id });
+    if (existingInvites.length >= reservation.party_size - 1) {
+      return Response.json({ error: `You can invite up to ${reservation.party_size - 1} companion${reservation.party_size - 1 !== 1 ? 's' : ''} for a party of ${reservation.party_size}.` }, { status: 400 });
+    }
+
     const token = crypto.randomUUID();
     await base44.asServiceRole.entities.ReservationInvite.create({
       reservation_id: reservation.id,

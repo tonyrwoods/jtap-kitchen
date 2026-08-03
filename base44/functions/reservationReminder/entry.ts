@@ -16,24 +16,75 @@ Deno.serve(async (req) => {
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-  // Fetch confirmed reservations scheduled for tomorrow that haven't been reminded yet.
-  const reservations = await base44.asServiceRole.entities.Reservation.filter({
+  // Fetch confirmed and pending reservations scheduled for tomorrow that haven't been reminded yet.
+  const confirmedRes = await base44.asServiceRole.entities.Reservation.filter({
     status: 'Confirmed',
     date: tomorrowStr,
   });
+  const pendingRes = await base44.asServiceRole.entities.Reservation.filter({
+    status: 'Pending',
+    date: tomorrowStr,
+  });
 
-  const eligible = reservations.filter((r) => !r.reminder_sent_at);
+  const eligible = [...confirmedRes, ...pendingRes].filter((r) => !r.reminder_sent_at);
   if (eligible.length === 0) {
     return Response.json({ sent: 0, message: 'No reminders due' });
   }
 
   let sent = 0;
   const errors = [];
+  const origin = req.headers.get('origin') || 'https://jtapkitchen.com';
   for (const reservation of eligible) {
+    const isPending = reservation.status === 'Pending';
     const dateObj = new Date(tomorrowStr + 'T12:00:00');
     const formattedDate = dateObj.toLocaleDateString('en-US', {
       weekday: 'long', month: 'long', day: 'numeric',
     });
+
+    if (isPending) {
+      // Nudge unconfirmed guests to confirm
+      const rsvpUrl = `${origin}/reserve/${reservation.confirm_token}`;
+      const body = `<!DOCTYPE html>
+<html><body style="font-family:Georgia,serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
+  <div style="background:#1a1a1a;padding:28px 32px;text-align:center;">
+    <h1 style="color:#c89b4f;font-size:22px;margin:0;letter-spacing:2px;">JTAP Kitchen</h1>
+    <p style="color:#888;font-size:12px;margin:8px 0 0;">Confirm Your Reservation</p>
+  </div>
+  <div style="padding:36px 32px;background:#faf9f7;">
+    <h2 style="font-size:20px;margin:0 0 8px;">Don't forget to confirm, ${reservation.guest_name}!</h2>
+    <p style="color:#666;font-size:14px;margin:0 0 28px;">You have a pending reservation at JTAP Kitchen for tomorrow. Please confirm so we can hold your table.</p>
+    <div style="background:#fff;border:1px solid #e8e0d4;border-radius:12px;padding:24px;">
+      <table style="width:100%;font-size:14px;border-collapse:collapse;">
+        <tr><td style="padding:8px 0;color:#888;width:120px;">Date</td><td style="padding:8px 0;font-weight:600;">${formattedDate}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;">Time</td><td style="padding:8px 0;font-weight:600;">${reservation.time}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;">Party size</td><td style="padding:8px 0;font-weight:600;">${reservation.party_size} guest${reservation.party_size !== 1 ? 's' : ''}</td></tr>
+      </table>
+    </div>
+    <div style="text-align:center;margin:24px 0;">
+      <a href="${rsvpUrl}" style="display:inline-block;background:#C89B4F;color:#fff;text-decoration:none;padding:14px 40px;border-radius:50px;font-family:Inter,sans-serif;font-size:15px;font-weight:600;">Confirm Your Reservation &rarr;</a>
+    </div>
+    <p style="margin:0;font-size:13px;color:#888;">Can't make it? You can cancel through the link above. Call us at <strong>901-233-4060</strong> if you have questions.</p>
+  </div>
+  <div style="padding:20px 32px;background:#1a1a1a;text-align:center;">
+    <p style="color:#555;font-size:12px;margin:0;">JTAP Kitchen · Memphis, TN</p>
+  </div>
+</body></html>`;
+      try {
+        await sendEmailViaGmail(base44, {
+          to: reservation.email,
+          from_name: 'JTAP Kitchen',
+          subject: `Action needed: Confirm your reservation tomorrow at ${reservation.time}`,
+          body,
+        });
+        await base44.asServiceRole.entities.Reservation.update(reservation.id, {
+          reminder_sent_at: new Date().toISOString(),
+        });
+        sent++;
+      } catch (err) {
+        errors.push({ id: reservation.id, error: err.message });
+      }
+      continue;
+    }
 
     const body = `
     <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
