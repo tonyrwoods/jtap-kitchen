@@ -16,9 +16,21 @@ export default async function (req) {
       return Response.json({ error: 'Reservation must be active (Pending or Confirmed) before inviting companions' }, { status: 400 });
     }
 
+    // Don't allow invites for reservations whose date has already passed
+    // (limits the abuse window if a reservation token is ever leaked)
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (reservation.date && reservation.date < todayStr) {
+      return Response.json({ error: 'This reservation date has passed and can no longer accept companion invites.' }, { status: 400 });
+    }
+
     // Cap companion invites to party_size - 1 (the holder counts as 1)
     // Only count active (Pending or Attending) invites — declined invites free up the slot
     const existingInvites = await base44.asServiceRole.entities.ReservationInvite.filter({ reservation_id: reservation.id });
+    // Prevent duplicate invites to the same guest (avoid repeat spam if token leaks)
+    const alreadyInvited = existingInvites.find((i) => i.guest_email && i.guest_email.toLowerCase() === email.toLowerCase() && i.rsvp_status !== 'Declined');
+    if (alreadyInvited) {
+      return Response.json({ error: 'This guest has already been invited to your reservation.' }, { status: 400 });
+    }
     const activeInvites = existingInvites.filter((i) => i.rsvp_status !== 'Declined');
     if (activeInvites.length >= reservation.party_size - 1) {
       return Response.json({ error: `You can invite up to ${reservation.party_size - 1} companion${reservation.party_size - 1 !== 1 ? 's' : ''} for a party of ${reservation.party_size}.` }, { status: 400 });
