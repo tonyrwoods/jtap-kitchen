@@ -6,10 +6,21 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { event } = body;
 
-    if (event.type !== 'update') return Response.json({ skipped: true });
+    if (!event || event.type !== 'update') return Response.json({ skipped: true });
+    if (event.entity_name !== 'EventInvite') return Response.json({ skipped: true });
 
-    const invite = event.data;
-    if (!invite || !invite.promotion_id) {
+    const inviteId = event?.data?.id;
+    if (!inviteId) {
+      return Response.json({ error: 'Missing invite id' }, { status: 400 });
+    }
+
+    // Fetch the invite from the database — do not trust client-supplied event data
+    const invites = await base44.asServiceRole.entities.EventInvite.filter({ id: inviteId });
+    const invite = invites[0];
+    if (!invite) {
+      return Response.json({ error: 'Invite not found' }, { status: 404 });
+    }
+    if (!invite.promotion_id) {
       return Response.json({ error: 'Missing invite data' }, { status: 400 });
     }
 
