@@ -41,6 +41,8 @@ export default function EmailMarketing() {
   const [form, setForm] = useState({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
   const [sending, setSending] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [previewing, setPreviewing] = useState(false);
 
   const load = async () => {
     const data = await base44.entities.NewsletterCampaign.list("-created_date", 50);
@@ -94,6 +96,16 @@ export default function EmailMarketing() {
     await base44.entities.NewsletterCampaign.delete(id);
     setCampaigns(prev => prev.filter(c => c.id !== id));
     toast.success("Campaign deleted.");
+  };
+
+  const previewRecipients = async () => {
+    setPreviewing(true);
+    try {
+      const res = await base44.functions.invoke("previewCampaignRecipients", { segment: form.segment, contact_group_id: form.contact_group_id });
+      if (res.data?.success) setPreview(res.data);
+      else toast.error(res.data?.error || "Failed to preview");
+    } catch { toast.error("Failed to preview recipients"); }
+    setPreviewing(false);
   };
 
   return (
@@ -242,6 +254,33 @@ export default function EmailMarketing() {
                   )}
                 </div>
               )}
+
+              {/* Recipient Preview */}
+              <div>
+                <button
+                  type="button"
+                  onClick={previewRecipients}
+                  disabled={previewing || (form.segment === "Saved Contact Group" && !form.contact_group_id)}
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-full font-body text-sm font-medium hover:bg-muted disabled:opacity-50 transition-colors"
+                >
+                  <Users className="w-3.5 h-3.5" /> {previewing ? "Counting…" : "Preview recipients"}
+                </button>
+                {preview && (
+                  <div className="mt-3 p-4 rounded-xl bg-primary/5 border border-primary/20">
+                    <p className="font-body text-sm font-semibold text-foreground">~{preview.count} recipient{preview.count !== 1 ? "s" : ""}</p>
+                    {preview.sample?.length > 0 && (
+                      <div className="mt-2">
+                        <p className="font-body text-xs text-muted-foreground mb-1">Sample:</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {preview.sample.map((r, i) => (
+                            <span key={i} className="font-body text-xs bg-card border border-border px-2 py-0.5 rounded-full">{r.email}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
 
               {/* Schedule */}
               <div>

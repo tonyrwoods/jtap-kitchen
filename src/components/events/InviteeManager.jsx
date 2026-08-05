@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { UserPlus, Send, Mail, Check, Trash2, Users } from "lucide-react";
+import { UserPlus, Send, Mail, Check, Trash2, Users, FolderOpen } from "lucide-react";
 
 export default function InviteeManager({ promotion }) {
   const [invitees, setInvitees] = useState([]);
@@ -12,6 +13,9 @@ export default function InviteeManager({ promotion }) {
   const [showBulk, setShowBulk] = useState(false);
   const [sendingAll, setSendingAll] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [groupPicker, setGroupPicker] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const [importing, setImporting] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -21,6 +25,38 @@ export default function InviteeManager({ promotion }) {
   }, [promotion.id]);
 
   useEffect(() => { load(); }, [load]);
+
+  const { data: groups = [] } = useQuery({
+    queryKey: ["all-contact-groups"],
+    queryFn: () => base44.entities.ContactGroup.list("-created_date", 200),
+  });
+
+  const importGroup = async () => {
+    if (!selectedGroup) { toast.error("Choose a group first"); return; }
+    const group = groups.find((g) => g.id === selectedGroup);
+    if (!group) return;
+    const existing = new Set(invitees.map((i) => (i.guest_email || "").toLowerCase()));
+    const records = (group.contacts || [])
+      .filter((c) => c.email && !existing.has(c.email.toLowerCase()))
+      .map((c) => ({
+        promotion_id: promotion.id,
+        promotion_title: promotion.title,
+        guest_name: c.name || c.email.split("@")[0],
+        guest_email: c.email.toLowerCase(),
+        invite_token: crypto.randomUUID(),
+        rsvp_status: "Pending",
+        party_size: 1,
+      }));
+    if (records.length === 0) { toast.info("All group contacts are already invitees"); return; }
+    setImporting(true);
+    try {
+      await base44.entities.EventInvite.bulkCreate(records);
+      toast.success(`Imported ${records.length} from "${group.name}"`);
+      setSelectedGroup(""); setGroupPicker(false);
+      load();
+    } catch { toast.error("Failed to import group"); }
+    setImporting(false);
+  };
 
   const addInvitee = async (e) => {
     e.preventDefault();
@@ -136,6 +172,19 @@ export default function InviteeManager({ promotion }) {
         </div>
       )}
       <button onClick={() => setShowBulk(!showBulk)} className="text-xs text-primary hover:underline mb-3">{showBulk ? "← Single add" : "Bulk add (paste list)"}</button>
+
+      <button onClick={() => setGroupPicker(!groupPicker)} className="text-xs text-primary hover:underline mb-3 ml-2 inline-flex items-center gap-1"><FolderOpen className="w-3 h-3" /> {groupPicker ? "← Hide groups" : "Import saved group"}</button>
+      {groupPicker && (
+        <div className="flex gap-2 mb-3 p-3 rounded-lg bg-muted/40 border border-border">
+          <select value={selectedGroup} onChange={(e) => setSelectedGroup(e.target.value)} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background font-body">
+            <option value="">Choose a saved group…</option>
+            {groups.map((g) => <option key={g.id} value={g.id}>{g.name} ({g.contacts?.length || 0})</option>)}
+          </select>
+          <button onClick={importGroup} disabled={importing || !selectedGroup} className="px-3 py-1.5 bg-foreground text-background rounded-lg font-body text-sm font-medium hover:opacity-90 disabled:opacity-50">
+            {importing ? "Importing…" : "Import"}
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="space-y-2">{[...Array(3)].map((_, i) => <div key={i} className="h-12 bg-muted rounded-lg animate-pulse" />)}</div>

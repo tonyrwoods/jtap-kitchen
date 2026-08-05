@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { motion } from "framer-motion";
 import { Mail, Calendar, Clock, Users, Bookmark, Crown, Sparkles, LogOut, ChevronRight, CheckCircle2, XCircle, Clock3 } from "lucide-react";
+import ContactGroupsPanel from "@/components/account/ContactGroupsPanel";
 
 const STATUS_STYLES = {
   Pending: { icon: Clock3, color: "text-amber-600", bg: "bg-amber-50", label: "Pending" },
@@ -76,6 +77,9 @@ export default function Account() {
             <span className="font-body text-xs font-medium text-destructive">Log Out</span>
           </button>
         </div>
+
+        {/* Contact groups */}
+        <ContactGroupsPanel />
 
         {/* Upcoming reservations */}
         <section className="mb-10">
