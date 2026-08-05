@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Plus, Pencil, Trash2, Crown, Users, Star } from "lucide-react";
+import { Plus, Pencil, Trash2, Crown, Users, Star, UserPlus, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 function StatCard({ icon: Icon, label, value, color }) {
@@ -197,6 +198,17 @@ export default function LoyaltyAdminTab() {
 
   return (
     <div className="space-y-6">
+      <Link to="/admin/referrals" className="flex items-center justify-between p-4 rounded-2xl bg-primary/5 border border-primary/20 hover:bg-primary/10 transition-colors">
+        <div className="flex items-center gap-3">
+          <UserPlus className="w-5 h-5 text-primary" />
+          <div>
+            <p className="font-body text-sm font-semibold">Referral Tracking Dashboard</p>
+            <p className="font-body text-xs text-muted-foreground">See top referrers and recent member referrals</p>
+          </div>
+        </div>
+        <ChevronRight className="w-4 h-4 text-primary" />
+      </Link>
+
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard icon={Users} label="Total Members" value={members.length} color="bg-primary" />

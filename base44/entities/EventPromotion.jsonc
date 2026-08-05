@@ -88,6 +88,11 @@
       "title": "Active Promotion",
       "default": true
     },
+    "attendance_points_awarded": {
+      "type": "boolean",
+      "title": "Attendance Loyalty Points Awarded",
+      "default": false
+    },
     "share_slug": {
       "type": "string",
       "title": "Share Slug (unique URL identifier)"

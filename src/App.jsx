@@ -45,6 +45,7 @@ import ReservationConfirm from './pages/ReservationConfirm';
 const AdminMemberships = lazy(() => import('./pages/AdminMemberships'));
 const AdminPrivateRoom = lazy(() => import('./pages/AdminPrivateRoom'));
 const AdminPointsAnalytics = lazy(() => import('./pages/AdminPointsAnalytics'));
+const AdminReferrals = lazy(() => import('./pages/AdminReferrals'));
 
 // Lazily loaded (heavy/admin pages - prevents SyntaxError from eager init)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
@@ -139,6 +140,7 @@ const AuthenticatedApp = () => {
         <Route path="/admin/memberships" element={<AdminMemberships />} />
         <Route path="/admin/private-room" element={<AdminPrivateRoom />} />
         <Route path="/admin/points-analytics" element={<AdminPointsAnalytics />} />
+        <Route path="/admin/referrals" element={<AdminReferrals />} />
         <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
         <Route path="/dining-assistant" element={<ReservationChat />} />
         <Route path="/event-announce/:slug" element={<EventAnnouncement />} />
