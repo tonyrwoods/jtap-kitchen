@@ -6,6 +6,11 @@
       "type": "string",
       "title": "Email Address"
     },
+    "is_unsubscribed": {
+      "type": "boolean",
+      "title": "Unsubscribed",
+      "default": false
+    },
     "description": {
       "type": "string",
       "title": "Description",

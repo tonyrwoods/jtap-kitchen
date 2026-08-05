@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
-import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle, FolderOpen } from "lucide-react";
+import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle, FolderOpen, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -156,6 +156,9 @@ export default function EmailMarketing() {
                     <span className="flex items-center gap-1 font-body text-xs text-muted-foreground"><Users className="w-3 h-3" />{c.segment}</span>
                     {c.status === "Sent" && c.recipient_count != null && (
                       <span className="flex items-center gap-1 font-body text-xs text-green-700"><CheckCircle className="w-3 h-3" />Sent to {c.recipient_count}</span>
+                    )}
+                    {c.status === "Sent" && c.failed_count > 0 && (
+                      <span className="flex items-center gap-1 font-body text-xs text-amber-700"><AlertCircle className="w-3 h-3" />{c.failed_count} failed</span>
                     )}
                     {c.scheduled_at && c.status === "Scheduled" && (
                       <span className="flex items-center gap-1 font-body text-xs text-muted-foreground"><Clock className="w-3 h-3" />{new Date(c.scheduled_at).toLocaleString()}</span>

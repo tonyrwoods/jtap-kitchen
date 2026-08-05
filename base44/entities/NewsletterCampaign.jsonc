@@ -51,6 +51,10 @@
     "recipient_count": {
       "type": "number",
       "title": "Recipients Sent To"
+    },
+    "failed_count": {
+      "type": "number",
+      "title": "Failed Deliveries"
     }
   },
   "required": [

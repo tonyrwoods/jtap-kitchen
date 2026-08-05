@@ -46,27 +46,49 @@ Deno.serve(async (req) => {
       return true;
     });
 
-    // Send emails
-    for (const recipient of unique) {
-      const personalizedBody = campaign.body
-        .replace(/{{name}}/g, recipient.name || "Valued Guest");
+    // Exclude unsubscribed recipients (CAN-SPAM compliance)
+    const allSubs = await base44.asServiceRole.entities.Newsletter.list();
+    const unsubscribed = new Set(allSubs.filter(s => s.is_unsubscribed).map(s => (s.email || '').toLowerCase()));
+    const recipients = unique.filter(r => !unsubscribed.has((r.email || '').toLowerCase()));
 
-      await sendEmailViaGmail(base44, {
-        to: recipient.email,
-        subject: campaign.subject,
-        body: personalizedBody,
-      });
+    const appUrl = process.env.APP_URL || 'https://jtapkitchen.com';
+
+    // Send emails — track per-recipient success/failure so one bad address
+    // no longer aborts the entire campaign.
+    let sent = 0;
+    let failed = 0;
+    for (const recipient of recipients) {
+      const unsubscribeUrl = `${appUrl}/unsubscribe?email=${encodeURIComponent(recipient.email)}`;
+      const personalizedBody = campaign.body
+        .replace(/{{name}}/g, recipient.name || "Valued Guest")
+        + buildUnsubscribeFooter(unsubscribeUrl);
+
+      try {
+        await sendEmailViaGmail(base44, {
+          to: recipient.email,
+          subject: campaign.subject,
+          body: personalizedBody,
+        });
+        sent++;
+      } catch {
+        failed++;
+      }
     }
 
     // Update campaign status
     await base44.asServiceRole.entities.NewsletterCampaign.update(campaignId, {
       status: "Sent",
       sent_at: new Date().toISOString(),
-      recipient_count: unique.length,
+      recipient_count: sent,
+      failed_count: failed,
     });
 
-    return Response.json({ success: true, sent: unique.length });
+    return Response.json({ success: true, sent, failed, skipped: unique.length - recipients.length });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
+
+function buildUnsubscribeFooter(unsubscribeUrl) {
+  return `\n<p style="text-align:center;color:#999;font-size:11px;margin-top:24px;padding-top:16px;border-top:1px solid #eee;">You're receiving this because you joined the JTAP Kitchen mailing list.<br/><a href="${unsubscribeUrl}" style="color:#999;">Unsubscribe</a> &middot; JTAP Kitchen, Memphis, TN</p>`;
+}

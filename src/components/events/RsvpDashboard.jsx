@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Check, X, HelpCircle, Clock } from "lucide-react";
+import { Check, X, HelpCircle, Clock, Salad } from "lucide-react";
 
 const STATUS_CONFIG = {
   Attending: { icon: Check, color: "bg-green-100 text-green-700" },
@@ -54,6 +54,21 @@ export default function RsvpDashboard({ promotion }) {
       {stats.totalParty > 0 && (
         <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 text-center">
           <span className="font-body text-sm text-foreground"><strong className="font-heading">{stats.totalParty}</strong> confirmed guests attending out of <strong className="font-heading">{promotion.max_guests || "∞"}</strong> max</span>
+        </div>
+      )}
+
+      {stats.attending.some((i) => i.dietary_notes) && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+          <p className="font-heading text-sm font-semibold text-amber-900 mb-2 flex items-center gap-1.5">
+            <Salad className="w-4 h-4" /> Dietary Notes ({stats.attending.filter((i) => i.dietary_notes).length})
+          </p>
+          <ul className="space-y-1.5">
+            {stats.attending.filter((i) => i.dietary_notes).map((i) => (
+              <li key={i.id} className="font-body text-xs text-amber-800">
+                <strong className="font-medium">{i.guest_name}:</strong> {i.dietary_notes}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

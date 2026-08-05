@@ -30,6 +30,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import BookTable from './pages/BookTable';
 import Account from './pages/Account';
+import Unsubscribe from './pages/Unsubscribe';
 import Careers from './pages/Careers';
 import ScheduleInterview from './pages/ScheduleInterview';
 import EventCenter from './pages/EventCenter';
@@ -127,6 +128,7 @@ const AuthenticatedApp = () => {
         <Route path="/careers" element={<Careers />} />
         <Route path="/book" element={<BookTable />} />
         <Route path="/account" element={<Account />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/schedule-interview" element={<ScheduleInterview />} />
         <Route path="/event-center" element={<EventCenter />} />
         <Route path="/vendor-signup" element={<VendorSignup />} />
