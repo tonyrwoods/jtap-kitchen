@@ -3,8 +3,9 @@ import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { CalendarDays, Clock, MapPin, Users, Ticket, CheckCircle2, PartyPopper, Mail } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Users, Ticket, CheckCircle2, PartyPopper, Mail, CalendarPlus } from "lucide-react";
 import SmartImage from "@/components/SmartImage";
+import { buildEventIcs, downloadIcs } from "@/lib/buildEventIcs";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -196,9 +197,19 @@ export default function EventAnnouncement() {
                   ? `See you at ${promo.title}! ${invite?.party_size > 1 ? `Party of ${invite.party_size}.` : ""}`
                   : `Your response (${invite?.rsvp_status}) has been recorded.`}
               </p>
-              <button onClick={() => setSubmitted(false)} className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted">
-                Update Response
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button onClick={() => setSubmitted(false)} className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted">
+                  Update Response
+                </button>
+                {invite?.rsvp_status === "Attending" && (
+                  <button
+                    onClick={() => downloadIcs(`${promo.title}.ics`, buildEventIcs(promo))}
+                    className="px-6 py-2.5 bg-primary/10 border border-primary/30 text-primary rounded-full font-body text-sm font-medium hover:bg-primary/15 inline-flex items-center gap-2 justify-center"
+                  >
+                    <CalendarPlus className="w-4 h-4" /> Add to Calendar
+                  </button>
+                )}
+              </div>
             </motion.div>
           ) : (
             <motion.form initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={submitRSVP} className="bg-card border border-border rounded-2xl p-6 md:p-8">
