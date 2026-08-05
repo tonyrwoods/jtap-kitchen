@@ -31,6 +31,11 @@ Deno.serve(async (req) => {
     } else if (segment === "VIP Guests (4+ people)") {
       const res = await base44.asServiceRole.entities.Reservation.list();
       emails = res.filter(r => r.party_size >= 4).map(r => ({ email: r.email, name: r.guest_name }));
+    } else if (segment === "Saved Contact Group") {
+      if (!campaign.contact_group_id) return Response.json({ error: 'No contact group selected' }, { status: 400 });
+      const group = await base44.asServiceRole.entities.ContactGroup.get(campaign.contact_group_id);
+      if (!group) return Response.json({ error: 'Contact group not found' }, { status: 404 });
+      emails = (group.contacts || []).map(c => ({ email: c.email, name: c.name || "" }));
     }
 
     // Deduplicate by email

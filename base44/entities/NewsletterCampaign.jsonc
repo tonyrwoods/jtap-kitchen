@@ -21,9 +21,14 @@
         "All Subscribers",
         "Completed Guests",
         "Upcoming Reservations",
-        "VIP Guests (4+ people)"
+        "VIP Guests (4+ people)",
+        "Saved Contact Group"
       ],
       "default": "All Subscribers"
+    },
+    "contact_group_id": {
+      "type": "string",
+      "title": "Saved Contact Group ID (for 'Saved Contact Group' segment)"
     },
     "status": {
       "type": "string",

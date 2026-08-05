@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
-import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle } from "lucide-react";
+import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle, FolderOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -10,6 +10,7 @@ const SEGMENTS = [
   { value: "Completed Guests", desc: "Guests who have dined with you" },
   { value: "Upcoming Reservations", desc: "Guests with confirmed future bookings" },
   { value: "VIP Guests (4+ people)", desc: "Groups of 4 or more guests" },
+  { value: "Saved Contact Group", desc: "Send to a saved user contact group" },
 ];
 
 const STATUS_COLORS = {
@@ -34,9 +35,10 @@ const DEFAULT_TEMPLATE = `<div style="font-family:Georgia,serif;max-width:600px;
 export default function EmailMarketing() {
   useRobotsNoindex();
   const [campaigns, setCampaigns] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // list | compose
-  const [form, setForm] = useState({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", scheduled_at: "" });
+  const [form, setForm] = useState({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
   const [sending, setSending] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -46,7 +48,10 @@ export default function EmailMarketing() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    base44.entities.ContactGroup.list("-created_date", 100).then(setGroups).catch(() => {});
+  }, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -56,7 +61,7 @@ export default function EmailMarketing() {
     toast.success("Draft saved!");
     setSaving(false);
     setView("list");
-    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", scheduled_at: "" });
+    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
     load();
   };
 
@@ -73,7 +78,7 @@ export default function EmailMarketing() {
     }
     setSaving(false);
     setView("list");
-    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", scheduled_at: "" });
+    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
     load();
   };
 
@@ -213,6 +218,31 @@ export default function EmailMarketing() {
                 </div>
               </div>
 
+              {/* Contact Group Picker */}
+              {form.segment === "Saved Contact Group" && (
+                <div>
+                  <label className="font-body text-sm text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                    <FolderOpen className="w-3.5 h-3.5" /> Select Contact Group *
+                  </label>
+                  {groups.length === 0 ? (
+                    <p className="font-body text-xs text-muted-foreground">No saved contact groups yet. Users can create groups from their reservation invite page.</p>
+                  ) : (
+                    <select
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+                      value={form.contact_group_id}
+                      onChange={e => set("contact_group_id", e.target.value)}
+                    >
+                      <option value="">Choose a group…</option>
+                      {groups.map(g => (
+                        <option key={g.id} value={g.id}>
+                          {g.name} ({g.contacts?.length || 0} contacts)
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              )}
+
               {/* Schedule */}
               <div>
                 <label className="font-body text-sm text-muted-foreground mb-1.5 block">Schedule (optional — leave blank to send manually)</label>
@@ -243,7 +273,7 @@ export default function EmailMarketing() {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={saveDraft}
-                disabled={saving || !form.title || !form.subject}
+                disabled={saving || !form.title || !form.subject || (form.segment === "Saved Contact Group" && !form.contact_group_id)}
                 className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted disabled:opacity-50 transition-colors"
               >
                 {saving ? "Saving…" : "Save as Draft"}
@@ -251,7 +281,7 @@ export default function EmailMarketing() {
               {form.scheduled_at && (
                 <button
                   onClick={() => scheduleOrSend(false)}
-                  disabled={saving || !form.title || !form.subject}
+                  disabled={saving || !form.title || !form.subject || (form.segment === "Saved Contact Group" && !form.contact_group_id)}
                   className="flex items-center gap-2 px-6 py-2.5 border border-primary text-primary rounded-full font-body text-sm font-medium hover:bg-primary/5 disabled:opacity-50 transition-colors"
                 >
                   <Clock className="w-4 h-4" /> Schedule
@@ -259,7 +289,7 @@ export default function EmailMarketing() {
               )}
               <button
                 onClick={() => scheduleOrSend(true)}
-                disabled={saving || !form.title || !form.subject}
+                disabled={saving || !form.title || !form.subject || (form.segment === "Saved Contact Group" && !form.contact_group_id)}
                 className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 disabled:opacity-50 transition-all"
               >
                 <Send className="w-4 h-4" /> Send Now
