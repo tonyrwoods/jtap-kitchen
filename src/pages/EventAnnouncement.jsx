@@ -111,6 +111,8 @@ export default function EventAnnouncement() {
   }
 
   const isInviteMode = !!token;
+  const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
+  const rsvpClosed = !!promo.rsvp_deadline && todayStr > promo.rsvp_deadline;
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -202,9 +204,11 @@ export default function EventAnnouncement() {
                     : `Your response (${invite?.rsvp_status}) has been recorded.`}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <button onClick={() => setSubmitted(false)} className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted">
-                  Update Response
-                </button>
+                {!rsvpClosed && (
+                  <button onClick={() => setSubmitted(false)} className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted">
+                    Update Response
+                  </button>
+                )}
                 {invite?.rsvp_status === "Attending" && (
                   <button
                     onClick={() => downloadIcs(`${promo.title}.ics`, buildEventIcs(promo))}
@@ -215,6 +219,18 @@ export default function EventAnnouncement() {
                 )}
               </div>
             </motion.div>
+          ) : rsvpClosed ? (
+            <div className="bg-card border border-border rounded-2xl p-8 text-center">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CalendarClock className="w-8 h-8 text-amber-600" />
+              </div>
+              <h2 className="font-heading text-2xl font-bold mb-2">RSVP Has Closed</h2>
+              <p className="font-body text-muted-foreground mb-4">The RSVP deadline for <strong>{promo.title}</strong> has passed. Please reach out if you have any questions.</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="tel:9015544431" className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90">Call Us</a>
+                <a href="mailto:info@jtapkitchen.com" className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-semibold hover:bg-muted inline-flex items-center gap-2 justify-center"><Mail className="w-4 h-4" /> Email Us</a>
+              </div>
+            </div>
           ) : (
             <motion.form initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={submitRSVP} className="bg-card border border-border rounded-2xl p-6 md:p-8">
               <h2 className="font-heading text-xl font-bold mb-1">RSVP — {invite?.guest_name}</h2>
