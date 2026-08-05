@@ -140,6 +140,11 @@
       "title": "Members Referred",
       "default": 0
     },
+    "referral_reward_awarded": {
+      "type": "boolean",
+      "title": "Referral Bonus Awarded to Referrer",
+      "default": false
+    },
     "physical_card_sent": {
       "type": "boolean",
       "title": "Physical Card Sent",

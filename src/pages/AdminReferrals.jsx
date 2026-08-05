@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { Link } from "react-router-dom";
-import { UserPlus, ChevronRight, Crown, Users, TrendingUp, Mail } from "lucide-react";
+import { UserPlus, ChevronRight, Crown, Users, TrendingUp, Mail, Gift } from "lucide-react";
 
 function StatCard({ icon: Icon, label, value, color }) {
   return (
@@ -35,6 +35,7 @@ export default function AdminReferrals() {
     .filter((m) => m.referred_by_code)
     .sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0));
   const totalReferrals = members.reduce((sum, m) => sum + (m.referral_count || 0), 0);
+  const bonusesPaid = members.filter((m) => m.referral_reward_awarded).length;
   const topReferrer = referrers[0];
 
   return (
@@ -62,6 +63,7 @@ export default function AdminReferrals() {
               <StatCard icon={UserPlus} label="Active Referrers" value={referrers.length} color="bg-emerald-500" />
               <StatCard icon={TrendingUp} label="Total Referrals" value={totalReferrals} color="bg-purple-500" />
               <StatCard icon={Crown} label="Top Referrer" value={topReferrer ? `${topReferrer.referral_count}` : "—"} color="bg-amber-500" />
+              <StatCard icon={Gift} label="Bonuses Paid" value={bonusesPaid} color="bg-rose-500" />
             </div>
 
             {topReferrer && (
