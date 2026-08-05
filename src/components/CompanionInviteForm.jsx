@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Users, Send, Loader2, Check, X, Clock } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
+import { Users, Send, Loader2, Check, X, Clock, User, ClipboardList, FolderOpen } from "lucide-react";
 import { toast } from "sonner";
+import InviteTemplateSelect from "@/components/companions/InviteTemplateSelect";
+import BulkInviteInput from "@/components/companions/BulkInviteInput";
+import SavedGroupsPicker from "@/components/companions/SavedGroupsPicker";
+import { DEFAULT_TEMPLATE } from "@/lib/inviteTemplates";
 
 const STATUS = {
   Attending: { icon: Check, color: "bg-green-100 text-green-700" },
@@ -9,12 +15,27 @@ const STATUS = {
   Pending: { icon: Clock, color: "bg-muted text-muted-foreground" },
 };
 
+const TABS = [
+  { id: "single", label: "Single", icon: User },
+  { id: "bulk", label: "Bulk Paste", icon: ClipboardList },
+  { id: "group", label: "Saved Groups", icon: FolderOpen },
+];
+
 export default function CompanionInviteForm({ confirmToken, reservationId, partySize = 2 }) {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [companions, setCompanions] = useState([]);
+  const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
+  const [tab, setTab] = useState("single");
+  const [loaded, setLoaded] = useState(false);
+  const [busy, setBusy] = useState(false);
+  // single-tab fields
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [sending, setSending] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+
+  const maxCompanions = Math.max(0, partySize - 1);
+  const activeCount = companions.filter((c) => c.rsvp_status !== "Declined").length;
+  const slotsFull = activeCount >= maxCompanions;
 
   const loadCompanions = useCallback(async () => {
     try {
@@ -28,23 +49,20 @@ export default function CompanionInviteForm({ confirmToken, reservationId, party
 
   useEffect(() => { loadCompanions(); }, [loadCompanions]);
 
-  const send = async (e) => {
+  const invoke = (payload) => base44.functions.invoke("sendCompanionInvite", { reservation_token: confirmToken, template, ...payload });
+
+  const sendSingle = async (e) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) {
       toast.error("Name and email required");
       return;
     }
-    setSending(true);
+    setBusy(true);
     try {
-      const res = await base44.functions.invoke("sendCompanionInvite", {
-        reservation_token: confirmToken,
-        name: name.trim(),
-        email: email.trim(),
-      });
+      const res = await invoke({ name: name.trim(), email: email.trim() });
       if (res.data?.success) {
         toast.success(`Invite sent to ${name.trim()}`);
-        setName("");
-        setEmail("");
+        setName(""); setEmail("");
         loadCompanions();
       } else {
         toast.error(res.data?.error || "Failed to send invite");
@@ -52,7 +70,30 @@ export default function CompanionInviteForm({ confirmToken, reservationId, party
     } catch {
       toast.error("Failed to send invite");
     }
-    setSending(false);
+    setBusy(false);
+  };
+
+  const sendBulk = async (contacts) => {
+    if (!contacts.length) {
+      toast.error("No valid contacts");
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await invoke({ contacts });
+      if (res.data?.success) {
+        const s = res.data.sent?.length || 0;
+        const k = res.data.skipped?.length || 0;
+        toast.success(`Sent ${s} invite${s !== 1 ? "s" : ""}${k ? ` · ${k} skipped` : ""}`);
+        queryClient.invalidateQueries({ queryKey: ["contact-groups", user?.email] });
+        loadCompanions();
+      } else {
+        toast.error(res.data?.error || "Failed to send invites");
+      }
+    } catch {
+      toast.error("Failed to send invites");
+    }
+    setBusy(false);
   };
 
   return (
@@ -63,50 +104,90 @@ export default function CompanionInviteForm({ confirmToken, reservationId, party
       </div>
       <p className="font-body text-xs text-muted-foreground mb-4">
         Send RSVP links to your dining companions so they can confirm too.
-        {partySize > 1 && <span className="text-muted-foreground/70"> (Up to {partySize - 1} for your party of {partySize})</span>}
+        {partySize > 1 && <span className="text-muted-foreground/70"> (Up to {maxCompanions} for your party of {partySize})</span>}
       </p>
-      <form onSubmit={send} className={`flex flex-col sm:flex-row gap-2 mb-4 ${companions.length >= partySize - 1 ? 'opacity-40 pointer-events-none' : ''}`}>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Companion name"
-          className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background"
-        />
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="email@example.com"
-          type="email"
-          className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background"
-        />
-        <button
-          type="submit"
-          disabled={sending}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5 justify-center"
-        >
-          {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : (<><Send className="w-3.5 h-3.5" /> Send</>)}
-        </button>
-      </form>
-      {companions.length > 0 ? (
-        <div className="space-y-1.5">
-          {companions.map((c) => {
-            const cfg = STATUS[c.rsvp_status] || STATUS.Pending;
-            const Icon = cfg.icon;
+
+      {!slotsFull && <InviteTemplateSelect value={template} onChange={setTemplate} />}
+
+      {/* Tabs */}
+      {!slotsFull && (
+        <div className="flex gap-1 mt-4 mb-3 border-b border-border">
+          {TABS.map((t) => {
+            const Icon = t.icon;
+            const active = tab === t.id;
             return (
-              <div key={c.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/40">
-                <div className="flex-1 min-w-0">
-                  <p className="font-body text-sm font-medium truncate">{c.guest_name}</p>
-                  <p className="font-body text-xs text-muted-foreground truncate">{c.guest_email}</p>
-                </div>
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.color}`}>
-                  <Icon className="w-3 h-3" /> {c.rsvp_status}
-                </span>
-              </div>
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setTab(t.id)}
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-body font-medium border-b-2 transition-colors ${
+                  active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" /> {t.label}
+              </button>
             );
           })}
         </div>
-      ) : (
-        <p className="font-body text-xs text-muted-foreground text-center py-2">{companions.length >= partySize - 1 ? 'All companion slots filled.' : 'No companions invited yet.'}</p>
+      )}
+
+      {/* Tab content */}
+      <div className={slotsFull ? "opacity-40 pointer-events-none" : ""}>
+        {tab === "single" && (
+          <form onSubmit={sendSingle} className="flex flex-col sm:flex-row gap-2">
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Companion name"
+              className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+            />
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="email@example.com"
+              type="email"
+              className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
+            />
+            <button
+              type="submit"
+              disabled={busy}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5 justify-center"
+            >
+              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : (<><Send className="w-3.5 h-3.5" /> Send</>)}
+            </button>
+          </form>
+        )}
+        {tab === "bulk" && <BulkInviteInput onSend={sendBulk} busy={busy} slotsFull={slotsFull} />}
+        {tab === "group" && <SavedGroupsPicker onInvite={sendBulk} busy={busy} slotsFull={slotsFull} />}
+      </div>
+
+      {/* Invited companions */}
+      {loaded && (
+        <div className="mt-5">
+          {companions.length > 0 ? (
+            <div className="space-y-1.5">
+              {companions.map((c) => {
+                const cfg = STATUS[c.rsvp_status] || STATUS.Pending;
+                const Icon = cfg.icon;
+                return (
+                  <div key={c.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/40">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-body text-sm font-medium truncate">{c.guest_name}</p>
+                      <p className="font-body text-xs text-muted-foreground truncate">{c.guest_email}</p>
+                    </div>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.color}`}>
+                      <Icon className="w-3 h-3" /> {c.rsvp_status}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="font-body text-xs text-muted-foreground text-center py-2">
+              {slotsFull ? "All companion slots filled." : "No companions invited yet."}
+            </p>
+          )}
+        </div>
       )}
     </div>
   );
