@@ -25,7 +25,8 @@
         "Pending",
         "Attending",
         "Declined",
-        "Maybe"
+        "Maybe",
+        "Waitlisted"
       ],
       "default": "Pending"
     },

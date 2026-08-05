@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { CalendarDays, Clock, MapPin, Users, Ticket, CheckCircle2, PartyPopper, Mail, CalendarPlus } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Users, Ticket, CheckCircle2, PartyPopper, Mail, CalendarPlus, CalendarClock } from "lucide-react";
 import SmartImage from "@/components/SmartImage";
 import { buildEventIcs, downloadIcs } from "@/lib/buildEventIcs";
 
@@ -186,16 +186,20 @@ export default function EventAnnouncement() {
         {isInviteMode ? (
           submitted ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card border border-border rounded-2xl p-8 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="w-8 h-8 text-green-600" />
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${invite?.rsvp_status === "Waitlisted" ? "bg-amber-100" : "bg-green-100"}`}>
+                {invite?.rsvp_status === "Waitlisted"
+                  ? <CalendarClock className="w-8 h-8 text-amber-600" />
+                  : <CheckCircle2 className="w-8 h-8 text-green-600" />}
               </div>
               <h2 className="font-heading text-2xl font-bold mb-2">
-                {invite?.rsvp_status === "Attending" ? "You're In!" : invite?.rsvp_status === "Declined" ? "Response Received" : "Thanks for Responding!"}
+                {invite?.rsvp_status === "Attending" ? "You're In!" : invite?.rsvp_status === "Waitlisted" ? "You're on the Waitlist" : invite?.rsvp_status === "Declined" ? "Response Received" : "Thanks for Responding!"}
               </h2>
               <p className="font-body text-muted-foreground mb-4">
                 {invite?.rsvp_status === "Attending"
                   ? `See you at ${promo.title}! ${invite?.party_size > 1 ? `Party of ${invite.party_size}.` : ""}`
-                  : `Your response (${invite?.rsvp_status}) has been recorded.`}
+                  : invite?.rsvp_status === "Waitlisted"
+                    ? `This event is at capacity. You're on the waitlist for ${promo.title} (party of ${invite?.party_size || 1}). If a spot opens up, we'll automatically confirm you and email you.`
+                    : `Your response (${invite?.rsvp_status}) has been recorded.`}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <button onClick={() => setSubmitted(false)} className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted">
