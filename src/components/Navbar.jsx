@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 import { Menu, X, ChevronLeft, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import AccountMenu from "./AccountMenu";
 
 // Primary nav links shown directly in the bar
 const PRIMARY_LINKS = [
@@ -170,8 +171,9 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
               </div>
             </div>
 
-            {/* Right side: CTA */}
+            {/* Right side: Account + CTA */}
             <div className="hidden md:flex items-center gap-3">
+              <AccountMenu />
               <button
                 onClick={onBookTable}
                 className="inline-flex items-center px-5 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full hover:opacity-90 transition-opacity duration-300"
@@ -233,6 +235,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
                 >
                   {t("nav.book")}
                 </button>
+                <AccountMenu variant="mobile" />
               </div>
             </motion.div>
           )}
