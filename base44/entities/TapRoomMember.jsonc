@@ -145,6 +145,15 @@
       "title": "Referral Bonus Awarded to Referrer",
       "default": false
     },
+    "last_birthday_email_year": {
+      "type": "number",
+      "title": "Last Birthday Email Sent (Year)",
+      "default": 0
+    },
+    "renewal_reminder_for_date": {
+      "type": "string",
+      "title": "Renewal Reminder Sent For (Fee Date)"
+    },
     "physical_card_sent": {
       "type": "boolean",
       "title": "Physical Card Sent",
