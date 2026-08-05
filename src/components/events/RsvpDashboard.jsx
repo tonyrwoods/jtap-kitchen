@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Check, X, HelpCircle, Clock, Salad } from "lucide-react";
+import { Check, X, HelpCircle, Clock, Salad, Hourglass, ArrowUpCircle } from "lucide-react";
 
 const STATUS_CONFIG = {
   Attending: { icon: Check, color: "bg-green-100 text-green-700" },
   Declined: { icon: X, color: "bg-red-100 text-red-700" },
   Maybe: { icon: HelpCircle, color: "bg-amber-100 text-amber-700" },
   Pending: { icon: Clock, color: "bg-muted text-muted-foreground" },
+  Waitlisted: { icon: Hourglass, color: "bg-amber-100 text-amber-800" },
 };
 
 function StatCard({ label, value, sub, color }) {
@@ -22,6 +23,7 @@ function StatCard({ label, value, sub, color }) {
 export default function RsvpDashboard({ promotion }) {
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [promotingId, setPromotingId] = useState(null);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -38,7 +40,19 @@ export default function RsvpDashboard({ promotion }) {
     declined: invites.filter((i) => i.rsvp_status === "Declined"),
     maybe: invites.filter((i) => i.rsvp_status === "Maybe"),
     pending: invites.filter((i) => i.rsvp_status === "Pending"),
+    waitlisted: invites.filter((i) => i.rsvp_status === "Waitlisted"),
     totalParty: invites.filter((i) => i.rsvp_status === "Attending").reduce((sum, i) => sum + (i.party_size || 1), 0),
+  };
+
+  const promote = async (inv) => {
+    if (!window.confirm(`Promote ${inv.guest_name} (party of ${inv.party_size || 1}) to Attending? They'll be emailed a confirmation automatically.`)) return;
+    setPromotingId(inv.id);
+    try {
+      await base44.entities.EventInvite.update(inv.id, { rsvp_status: "Attending", rsvp_responded_at: new Date().toISOString() });
+      load();
+    } finally {
+      setPromotingId(null);
+    }
   };
 
   return (
@@ -54,6 +68,15 @@ export default function RsvpDashboard({ promotion }) {
       {stats.totalParty > 0 && (
         <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 text-center">
           <span className="font-body text-sm text-foreground"><strong className="font-heading">{stats.totalParty}</strong> confirmed guests attending out of <strong className="font-heading">{promotion.max_guests || "∞"}</strong> max</span>
+        </div>
+      )}
+
+      {stats.waitlisted.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center gap-2">
+          <Hourglass className="w-4 h-4 text-amber-700 shrink-0" />
+          <span className="font-body text-sm text-amber-900">
+            <strong className="font-heading">{stats.waitlisted.length}</strong> on the waitlist. Guests are auto-promoted when others decline; you can also promote manually from the list below.
+          </span>
         </div>
       )}
 
@@ -99,9 +122,20 @@ export default function RsvpDashboard({ promotion }) {
                         <p className="font-body text-xs text-muted-foreground">{inv.guest_email}</p>
                       </td>
                       <td className="px-4 py-2.5">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.color}`}>
-                          <Icon className="w-3 h-3" /> {inv.rsvp_status}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.color}`}>
+                            <Icon className="w-3 h-3" /> {inv.rsvp_status}
+                          </span>
+                          {inv.rsvp_status === "Waitlisted" && (
+                            <button
+                              onClick={() => promote(inv)}
+                              disabled={promotingId === inv.id}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                            >
+                              <ArrowUpCircle className="w-3 h-3" /> {promotingId === inv.id ? "…" : "Promote"}
+                            </button>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-2.5 font-body text-sm">{inv.rsvp_status === "Attending" ? `${inv.party_size || 1}` : "—"}</td>
                       <td className="px-4 py-2.5 hidden sm:table-cell">
