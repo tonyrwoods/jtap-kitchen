@@ -1,5 +1,6 @@
 {
   "name": "JobApplication",
+  "type": "object",
   "properties": {
     "admin_notes": {
       "title": "Admin Notes",
@@ -78,7 +79,11 @@
     "email"
   ],
   "rls": {
-    "create": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "delete": {
       "user_condition": {
         "role": "admin"
@@ -101,6 +106,5 @@
         "role": "admin"
       }
     }
-  },
-  "type": "object"
+  }
 }
