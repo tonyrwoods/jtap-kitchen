@@ -50,7 +50,18 @@
   ],
   "rls": {
     "create": null,
-    "read": null,
+    "read": {
+      "$or": [
+        {
+          "data.status": "Approved"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "update": {
       "$or": [
         {
