@@ -131,17 +131,9 @@ export default function EventCenter() {
       return;
     }
     setSubmitting(true);
-    await base44.entities.EventCenterInquiry.create({
+    await base44.functions.invoke("submitEventInquiry", {
       ...form,
       guest_count: parseInt(form.guest_count) || 0
-    });
-    await base44.functions.invoke("sendEventInquiryConfirmation", {
-      contact_name: form.contact_name,
-      email: form.email,
-      event_type: form.event_type,
-      preferred_day: form.preferred_day,
-      preferred_date: form.preferred_date,
-      guest_count: form.guest_count,
     });
     setSubmitted(true);
     setSubmitting(false);

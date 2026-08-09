@@ -13,8 +13,7 @@ export default function Footer({ onBookTable }) {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
-    await base44.entities.Subscriber.create({ name: name.trim(), email: email.trim(), source: "footer", is_active: true });
-    await base44.functions.invoke("sendNewsletterConfirmation", { name: name.trim(), email: email.trim() });
+    await base44.functions.invoke("subscribeNewsletter", { name: name.trim(), email: email.trim(), source: "footer" });
     base44.analytics.track({ eventName: "newsletter_signup", properties: { source: "footer" } });
     setName("");
     setEmail("");

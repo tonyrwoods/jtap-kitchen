@@ -43,7 +43,7 @@ function ApplicationModal({ job, onClose }) {
       return;
     }
     setSubmitting(true);
-    await base44.entities.JobApplication.create({
+    await base44.functions.invoke("submitJobApplication", {
       ...form,
       experience_years: parseFloat(form.experience_years) || 0,
       job_listing_id: job.id,

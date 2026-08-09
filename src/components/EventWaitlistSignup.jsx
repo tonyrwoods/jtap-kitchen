@@ -28,14 +28,9 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
       return;
     }
     setSubmitting(true);
-    await base44.entities.EventWaitlist.create({
+    await base44.functions.invoke("submitEventWaitlist", {
       ...form,
       guest_count: parseInt(form.guest_count) || 0,
-    });
-    await base44.integrations.Core.SendEmail({
-      to: form.email,
-      subject: "You're on the Waitlist — JTAP Kitchen Event Center",
-      body: `Hi ${form.contact_name},\n\nYou've been added to the JTAP Kitchen Event Center waitlist!\n\nWe'll notify you immediately if a spot opens up for ${form.preferred_date || form.preferred_day}. You'll have first priority to book before anyone else.\n\nIf you have questions in the meantime, reach us at events@jtapkitchen.com or (555) 012-3456.\n\n— The JTAP Kitchen Events Team`,
     });
     setSubmitted(true);
     setSubmitting(false);
