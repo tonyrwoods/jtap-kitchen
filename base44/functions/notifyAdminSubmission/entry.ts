@@ -88,6 +88,29 @@ export default async function(req) {
         </div>`;
         break;
 
+      case 'PrivateRoomRental':
+        subject = `New Private Room Request: ${d.event_type || 'Booking'} — ${d.member_name || 'Unknown'}`;
+        bodyHtml = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
+          <h2 style="color:#C89B4F;">New Private Room Booking Request</h2>
+          <table style="width:100%;font-size:14px;border-collapse:collapse;">
+            <tr><td style="padding:8px 0;color:#888;width:120px;">Member:</td><td style="padding:8px 0;">${escapeHtml(d.member_name)}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Email:</td><td style="padding:8px 0;">${escapeHtml(d.member_email)}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Tier:</td><td style="padding:8px 0;">${escapeHtml(d.member_tier || 'N/A')}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Event Type:</td><td style="padding:8px 0;">${escapeHtml(d.event_type || 'N/A')}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Date:</td><td style="padding:8px 0;">${escapeHtml(d.event_date || 'N/A')} (${escapeHtml(d.day_of_week || '')})</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Time:</td><td style="padding:8px 0;">${escapeHtml(d.start_time || '')} – ${escapeHtml(d.end_time || '')}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Guests:</td><td style="padding:8px 0;">${escapeHtml(d.guest_count || 'N/A')}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Rental Rate:</td><td style="padding:8px 0;">${d.is_free_rental ? 'FREE (complimentary)' : '$' + (d.rental_rate || 0)}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Deposit:</td><td style="padding:8px 0;">$${escapeHtml(d.deposit_amount || 0)}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">F&amp;B Min:</td><td style="padding:8px 0;">$${escapeHtml(d.min_fb_spend || 0)}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">AV Needed:</td><td style="padding:8px 0;">${d.av_needed ? 'Yes' : 'No'}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Floral/Decor:</td><td style="padding:8px 0;">${d.floral_needed ? 'Yes' : 'No'}</td></tr>
+          </table>
+          ${d.special_requests ? `<h3 style="margin-top:20px;font-size:14px;color:#888;text-transform:uppercase;">Special Requests</h3><div style="background:#f9f9f9;padding:16px;border-radius:8px;line-height:1.6;white-space:pre-wrap;">${escapeHtml(d.special_requests)}</div>` : ''}
+          <p style="margin-top:24px;font-size:13px;color:#999;">Review and confirm in the admin dashboard under Private Room Rentals.</p>
+        </div>`;
+        break;
+
       default:
         return Response.json({ skipped: true, reason: `No handler for ${entityType}` });
     }
