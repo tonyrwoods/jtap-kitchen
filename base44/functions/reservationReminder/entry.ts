@@ -9,6 +9,10 @@ import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
+  const user = await base44.auth.me();
+  if (!user || user.role !== 'admin') {
+    return Response.json({ error: 'Admin access required' }, { status: 403 });
+  }
 
   // Determine tomorrow's date string (YYYY-MM-DD). Runs at 09:00 local,
   // so the simple UTC-derived date aligns with the calendar date.

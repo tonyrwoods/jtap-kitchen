@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 function fmtDate(dateStr) {
   if (!dateStr) return '';
@@ -23,6 +24,9 @@ export default async function (req) {
     if (!application_id || !slot_id) {
       return Response.json({ error: 'application_id and slot_id are required' }, { status: 400 });
     }
+
+    const rl = await enforceRateLimit(req, base44, 'interview-booking', application_id, 5, 600000);
+    if (rl) return rl;
 
     const apps = await base44.asServiceRole.entities.JobApplication.filter({ id: application_id });
     const application = apps[0];

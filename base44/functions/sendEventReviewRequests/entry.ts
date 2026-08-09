@@ -10,6 +10,10 @@ import { notifyAdmins } from '../../shared/notifyAdmins.js';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
     const today = new Date().toISOString().split('T')[0];
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
@@ -18,7 +22,7 @@ Deno.serve(async (req) => {
       p.date && p.date < today && p.date >= weekAgo && !p.review_request_sent
     );
 
-    const appUrl = process.env.APP_URL || 'https://jtapkitchen.com';
+    const appUrl = Deno.env.get('APP_URL') || 'https://jtapkitchen.com';
 
     let emailsSent = 0;
     let eventsProcessed = 0;

@@ -4,8 +4,10 @@ import { notifyAdmins } from '../../shared/notifyAdmins.js';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-
-    // Scheduled automation — no user context; runs as service role.
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
     const today = new Date().toISOString().split('T')[0];
 
     // Fetch all reservations using service role

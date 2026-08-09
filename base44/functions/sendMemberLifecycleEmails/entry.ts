@@ -73,6 +73,10 @@ function buildRenewalEmail(m) {
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
     const now = new Date();
     const chicagoNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
     const currentMonth = chicagoNow.getMonth() + 1;

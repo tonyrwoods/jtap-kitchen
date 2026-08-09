@@ -4,6 +4,10 @@ import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
     const body = await req.json().catch(() => ({}));
     const { event, data } = body;
     const entityType = event?.entity_name;

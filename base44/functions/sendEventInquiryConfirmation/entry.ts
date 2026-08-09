@@ -11,6 +11,10 @@ const escapeHtml = (text) => String(text == null ? '' : text)
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
     const { contact_name, email, event_type, preferred_day, preferred_date, guest_count } = await req.json();
 
     if (!email) {

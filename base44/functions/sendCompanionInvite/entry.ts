@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 const escapeHtml = (text) => String(text == null ? '' : text)
   .replace(/&/g, '&amp;')
@@ -40,6 +41,9 @@ export default async function (req) {
     if (!reservation_token) {
       return Response.json({ error: 'reservation_token required' }, { status: 400 });
     }
+
+    const rl = await enforceRateLimit(req, base44, 'companion-invite', reservation_token, 10, 600000);
+    if (rl) return rl;
 
     // Resolve a list of { name, email } contacts from either a single name+email
     // or a bulk contacts array.

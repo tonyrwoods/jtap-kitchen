@@ -45,7 +45,7 @@ export async function sendCampaignById(base44, campaignId) {
   const unsubscribed = new Set(allSubs.filter(s => s.is_unsubscribed).map(s => (s.email || '').toLowerCase()));
   const recipients = unique.filter(r => !unsubscribed.has((r.email || '').toLowerCase()));
 
-  const appUrl = process.env.APP_URL || 'https://jtapkitchen.com';
+  const appUrl = Deno.env.get('APP_URL') || 'https://jtapkitchen.com';
 
   // Send emails — track per-recipient success/failure so one bad address
   // no longer aborts the entire campaign.
