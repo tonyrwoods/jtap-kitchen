@@ -2,11 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
-import { Users, Send, Loader2, Check, X, Clock, User, ClipboardList, FolderOpen } from "lucide-react";
+import { Users, Send, Loader2, Check, X, Clock, User, ClipboardList, FolderOpen, Mail } from "lucide-react";
 import { toast } from "sonner";
 import InviteTemplateSelect from "@/components/companions/InviteTemplateSelect";
 import BulkInviteInput from "@/components/companions/BulkInviteInput";
 import SavedGroupsPicker from "@/components/companions/SavedGroupsPicker";
+import OutlookContactsPicker from "@/components/companions/OutlookContactsPicker";
 import { DEFAULT_TEMPLATE } from "@/lib/inviteTemplates";
 
 const STATUS = {
@@ -19,9 +20,10 @@ const TABS = [
   { id: "single", label: "Single", icon: User },
   { id: "bulk", label: "Bulk Paste", icon: ClipboardList },
   { id: "group", label: "Saved Groups", icon: FolderOpen },
+  { id: "outlook", label: "Outlook", icon: Mail },
 ];
 
-export default function CompanionInviteForm({ confirmToken, reservationId, partySize = 2 }) {
+export default function CompanionInviteForm({ confirmToken, reservationId, partySize = 2, adminMode = false }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [companions, setCompanions] = useState([]);
@@ -36,6 +38,7 @@ export default function CompanionInviteForm({ confirmToken, reservationId, party
   const maxCompanions = Math.max(0, partySize - 1);
   const activeCount = companions.filter((c) => c.rsvp_status !== "Declined").length;
   const slotsFull = activeCount >= maxCompanions;
+  const tabs = adminMode ? TABS : TABS.filter((t) => t.id !== "outlook");
 
   const loadCompanions = useCallback(async () => {
     try {
@@ -112,7 +115,7 @@ export default function CompanionInviteForm({ confirmToken, reservationId, party
       {/* Tabs */}
       {!slotsFull && (
         <div className="flex gap-1 mt-4 mb-3 border-b border-border">
-          {TABS.map((t) => {
+          {tabs.map((t) => {
             const Icon = t.icon;
             const active = tab === t.id;
             return (
@@ -159,6 +162,7 @@ export default function CompanionInviteForm({ confirmToken, reservationId, party
         )}
         {tab === "bulk" && <BulkInviteInput onSend={sendBulk} busy={busy} slotsFull={slotsFull} />}
         {tab === "group" && <SavedGroupsPicker onInvite={sendBulk} busy={busy} slotsFull={slotsFull} />}
+        {tab === "outlook" && adminMode && <OutlookContactsPicker onSend={sendBulk} busy={busy} slotsFull={slotsFull} />}
       </div>
 
       {/* Invited companions */}

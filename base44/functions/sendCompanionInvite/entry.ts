@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendEmailViaOutlook } from '../../shared/sendEmailViaOutlook.js';
 
 const escapeHtml = (text) => String(text == null ? '' : text)
   .replace(/&/g, '&amp;')
@@ -121,7 +121,7 @@ export default async function (req) {
         invite_sent_at: new Date().toISOString(),
       });
       const rsvpUrl = `${origin}/reserve/${token}`;
-      await sendEmailViaGmail(base44, {
+      await sendEmailViaOutlook(base44, {
         to: c.email,
         subject: tpl.subject(safeHolder),
         body: buildEmail(tpl, safeHolder, escapeHtml(c.name), dateStr, reservation, rsvpUrl),

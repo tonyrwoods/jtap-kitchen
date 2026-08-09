@@ -39,6 +39,7 @@ export default function ReservationRsvpPanel({ reservation }) {
           confirmToken={reservation.confirm_token}
           reservationId={reservation.id}
           partySize={reservation.party_size || 1}
+          adminMode
         />
       ) : (
         <p className="font-body text-xs text-muted-foreground">
