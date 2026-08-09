@@ -1,8 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
+  try {
 
   // Allow scheduled automation (no user) or admin manual trigger
   let user = null;
@@ -54,6 +56,12 @@ Deno.serve(async (req) => {
     }
   }
 
+  if (errors.length > 0) {
+    await notifyAdmins(base44, {
+      subject: `Event reminders: ${errors.length} failed (sent ${sentCount})`,
+      body: `The 2-day event reminder job for <strong>${targetDateStr}</strong> hit ${errors.length} error(s).<br><br>Reminders sent: ${sentCount}<br><br><strong>Failed:</strong><br>${errors.map((e) => `${e.email} — ${e.error}`).join('<br>')}`,
+    }).catch(() => {});
+  }
   return Response.json({
     success: true,
     target_date: targetDateStr,
@@ -61,6 +69,13 @@ Deno.serve(async (req) => {
     reminders_sent: sentCount,
     errors,
   });
+  } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Event reminder job crashed',
+      body: `The 2-day event reminder job threw an uncaught error.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+    }).catch(() => {});
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 });
 
 function formatTime(time) {

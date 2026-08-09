@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
   try {
@@ -64,6 +65,10 @@ Deno.serve(async (req) => {
       totalProcessed: pendingUpdated + confirmedUpdated + invitesDeclined,
     });
   } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Reservation cleanup job crashed',
+      body: `The daily reservation cleanup job threw an uncaught error.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+    }).catch(() => {});
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

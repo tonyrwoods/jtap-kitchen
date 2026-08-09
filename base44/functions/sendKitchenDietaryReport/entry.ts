@@ -1,11 +1,13 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Recipient for the kitchen prep report. Change here to route elsewhere.
 const KITCHEN_EMAIL = 'info@jtapkitchen.com';
 
 export default async function(req) {
   const base44 = createClientFromRequest(req);
+  try {
 
   // Today's date in the restaurant's timezone (Memphis = America/Chicago),
   // formatted YYYY-MM-DD to match how EventPromotion.date is stored.
@@ -36,7 +38,20 @@ export default async function(req) {
     }
   }
 
+  if (errors.length > 0) {
+    await notifyAdmins(base44, {
+      subject: `Kitchen dietary report: ${errors.length} failed`,
+      body: `The daily kitchen dietary prep report for <strong>${today}</strong> hit ${errors.length} error(s).<br><br>Sent: ${sent}<br><br><strong>Failed:</strong><br>${errors.map((e) => `${e.promotion_id} — ${e.error}`).join('<br>')}`,
+    }).catch(() => {});
+  }
   return Response.json({ success: true, sent, errors });
+  } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Kitchen dietary report job crashed',
+      body: `The daily kitchen dietary prep report threw an uncaught error.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+    }).catch(() => {});
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 };
 
 function formatTime(time) {

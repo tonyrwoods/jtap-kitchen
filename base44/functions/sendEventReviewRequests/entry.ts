@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Scheduled job: for events that occurred in the last week, email each
 // attending guest a review request. Guarded by `review_request_sent` on the
@@ -46,6 +47,10 @@ Deno.serve(async (req) => {
 
     return Response.json({ success: true, eventsProcessed, emailsSent });
   } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Event review request job crashed',
+      body: `The post-event review request job threw an uncaught error.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+    }).catch(() => {});
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

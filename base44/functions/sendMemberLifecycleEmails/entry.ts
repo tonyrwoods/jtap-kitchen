@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 function esc(s) {
   return String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -122,8 +123,18 @@ export default async function(req) {
       }
     }
 
+    if (errors > 0) {
+      await notifyAdmins(base44, {
+        subject: `Member lifecycle emails: ${errors} failed`,
+        body: `The daily member lifecycle job hit ${errors} email error(s).<br><br>Birthdays sent: ${birthdays}<br>Renewals sent: ${renewals}<br>Members processed: ${members.length}`,
+      }).catch(() => {});
+    }
     return Response.json({ success: true, birthdays, renewals, errors, processed: members.length });
   } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Member lifecycle job crashed',
+      body: `The daily member lifecycle job threw an uncaught error.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+    }).catch(() => {});
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
