@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
   try {
@@ -135,16 +136,28 @@ Deno.serve(async (req) => {
         </div>
       `;
 
-      await sendTransactionalEmail(base44, {
-        to: giftCard.recipient_email,
-        subject: `You've Received a $${amountFormatted} Gift Card to JTAP Kitchen!`,
-        body: recipientBody,
-        from_name: 'JTAP Kitchen'
-      });
+      try {
+        await sendTransactionalEmail(base44, {
+          to: giftCard.recipient_email,
+          subject: `You've Received a $${amountFormatted} Gift Card to JTAP Kitchen!`,
+          body: recipientBody,
+          from_name: 'JTAP Kitchen'
+        });
+      } catch (recipientErr) {
+        // Purchaser confirmation already sent — don't fail the job for the recipient copy.
+        await notifyAdmins(base44, {
+          subject: 'Gift card recipient email failed',
+          body: `The purchaser confirmation was sent, but the recipient gift-card email failed.<br><br><strong>Recipient:</strong> ${giftCard.recipient_email}<br><strong>Purchaser:</strong> ${giftCard.purchaser_email}<br><strong>Error:</strong> ${recipientErr.message}<br><strong>Code:</strong> ${giftCard.code}`,
+        }).catch(() => {});
+      }
     }
 
     return Response.json({ sent: true, purchaser: giftCard.purchaser_email, recipient: isForRecipient ? giftCard.recipient_email : null });
   } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Gift card confirmation email failed',
+      body: `A gift card confirmation email could not be sent.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}<br><br>Please check recent gift card purchases and follow up with purchasers directly.`,
+    }).catch(() => {});
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

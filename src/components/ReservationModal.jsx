@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const TIME_SLOTS = [
   "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM",
@@ -115,17 +116,24 @@ export default function ReservationModal({ open, onClose, prefill }) {
     if (!date || date < OPENING_DATE) {
       return;
     }
-    await base44.entities.Reservation.create({
-      guest_name: name,
-      email,
-      phone,
-      date: date?.toISOString().split("T")[0],
-      time,
-      party_size: party,
-      special_requests: special,
-      status: "Pending",
-    });
-    setSubmitted(true);
+    try {
+      const res = await base44.functions.invoke("submitReservation", {
+        guest_name: name,
+        email,
+        phone,
+        date: date?.toISOString().split("T")[0],
+        time,
+        party_size: party,
+        special_requests: special,
+      });
+      if (res.data?.success) {
+        setSubmitted(true);
+      } else {
+        toast.error(res.data?.error || "Could not book. Please try again.");
+      }
+    } catch {
+      toast.error("Could not book. Please try again.");
+    }
   };
 
   const handleClose = () => {
