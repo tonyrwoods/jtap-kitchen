@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
   try {
@@ -132,6 +133,10 @@ Deno.serve(async (req) => {
 
     return Response.json({ sent: true, email: reservation.email });
   } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Reservation confirmation email failed',
+      body: `A reservation confirmation email could not be sent.<br><br><strong>Error:</strong> ${error.message}<br><strong>Guest:</strong> ${reservation?.guest_name || 'unknown'} (${reservation?.email || 'n/a'})<br><strong>Time:</strong> ${new Date().toISOString()}<br><br>Please follow up with the guest directly.`,
+    }).catch(() => {});
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

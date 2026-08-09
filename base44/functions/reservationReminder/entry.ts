@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Scheduled daily automation — scans for confirmed reservations happening
 // tomorrow and sends each guest a reminder (tracked via reminder_sent_at).
@@ -129,5 +130,11 @@ Deno.serve(async (req) => {
     }
   }
 
+  if (errors.length > 0) {
+    await notifyAdmins(base44, {
+      subject: `Reservation reminders: ${errors.length} failed (sent ${sent}/${eligible.length})`,
+      body: `The daily reservation reminder job for <strong>${tomorrowStr}</strong> hit ${errors.length} error(s).<br><br>Sent: ${sent} / ${eligible.length}<br><br><strong>Failed reservations:</strong><br>${errors.map((e) => `${e.id} — ${e.error}`).join('<br>')}`,
+    }).catch(() => {});
+  }
   return Response.json({ sent, total: eligible.length, errors });
 });
