@@ -87,7 +87,10 @@ export default function CompanionInviteForm({ confirmToken, reservationId, party
       if (res.data?.success) {
         const s = res.data.sent?.length || 0;
         const k = res.data.skipped?.length || 0;
-        toast.success(`Sent ${s} invite${s !== 1 ? "s" : ""}${k ? ` · ${k} skipped` : ""}`);
+        const f = res.data.failed?.length || 0;
+        if (s) toast.success(`Sent ${s} invite${s !== 1 ? "s" : ""}${k ? ` · ${k} skipped` : ""}${f ? ` · ${f} failed` : ""}`);
+        else toast.error(`No invites delivered${k ? ` · ${k} skipped` : ""}${f ? ` · ${f} failed` : ""}`);
+        if (f) toast.error(`${f} invite(s) failed to send and were not saved — you can retry them.`);
         queryClient.invalidateQueries({ queryKey: ["contact-groups", user?.email] });
         loadCompanions();
       } else {

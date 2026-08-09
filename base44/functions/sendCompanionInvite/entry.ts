@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaOutlook } from '../../shared/sendEmailViaOutlook.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 const escapeHtml = (text) => String(text == null ? '' : text)
   .replace(/&/g, '&amp;')
@@ -110,9 +110,10 @@ export default async function (req) {
     const safeHolder = escapeHtml(reservation.guest_name);
 
     const sent = [];
+    const failed = [];
     for (const c of toInvite) {
       const token = crypto.randomUUID();
-      await base44.asServiceRole.entities.ReservationInvite.create({
+      const created = await base44.asServiceRole.entities.ReservationInvite.create({
         reservation_id: reservation.id,
         guest_name: c.name,
         guest_email: c.email,
@@ -121,16 +122,21 @@ export default async function (req) {
         invite_sent_at: new Date().toISOString(),
       });
       const rsvpUrl = `${origin}/reserve/${token}`;
-      await sendEmailViaOutlook(base44, {
+      const delivery = await sendTransactionalEmail(base44, {
         to: c.email,
         subject: tpl.subject(safeHolder),
         body: buildEmail(tpl, safeHolder, escapeHtml(c.name), dateStr, reservation, rsvpUrl),
-        from_name: 'JTAP Kitchen',
-      }).catch(() => {});
+      }).catch((e) => ({ ok: false, error: e.message }));
+      if (!delivery.ok) {
+        // Roll back the invite record so the recipient can be re-invited later.
+        await base44.asServiceRole.entities.ReservationInvite.delete(created.id).catch(() => {});
+        failed.push({ ...c, reason: delivery.error });
+        continue;
+      }
       sent.push(c);
     }
 
-    return Response.json({ success: true, sent, skipped });
+    return Response.json({ success: true, sent, skipped, failed });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
