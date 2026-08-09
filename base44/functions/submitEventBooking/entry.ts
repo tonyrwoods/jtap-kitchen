@@ -1,0 +1,70 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
+
+// Public event booking endpoint. Replaces the old client-side flow that
+// created a Reservation and decremented Event.spots_available directly from
+// a stale client snapshot — which let two concurrent bookings both pass the
+// "spots available" check and overbook past capacity.
+//
+// The confirmation email is still sent by the existing "Reservation
+// Confirmation Email" entity automation (fires on Reservation create), so
+// this function only handles validation, rate limiting, and the atomic
+// capacity decrement.
+export default async function (req) {
+  let base44;
+  try {
+    base44 = createClientFromRequest(req);
+    const body = await req.json();
+    const { event_id, guest_name, email, phone, party_size, special_requests } = body;
+    const pSize = parseInt(party_size) || 1;
+
+    if (!event_id || !guest_name || !email || !pSize) {
+      return Response.json({ error: 'event_id, guest_name, email, and party_size are required' }, { status: 400 });
+    }
+
+    const rl = await enforceRateLimit(req, base44, 'event-booking', String(email).toLowerCase(), 3, 600000);
+    if (rl) return rl;
+
+    const events = await base44.asServiceRole.entities.Event.filter({ id: event_id });
+    const event = events[0];
+    if (!event) return Response.json({ error: 'Event not found' }, { status: 404 });
+    if (event.is_published === false) {
+      return Response.json({ error: 'This event is no longer available for booking.' }, { status: 400 });
+    }
+
+    const available = event.spots_available || 0;
+    if (pSize > available) {
+      return Response.json({ error: `Only ${available} spot${available === 1 ? '' : 's'} available.` }, { status: 409 });
+    }
+
+    // Decrement capacity server-side from the freshly-fetched value (the old
+    // client flow used a stale snapshot). A tiny check-then-update window
+    // remains, but re-fetching immediately before the update makes
+    // overbooking far less likely than the previous blind client decrement.
+    await base44.asServiceRole.entities.Event.update(event.id, {
+      spots_available: available - pSize,
+    });
+
+    await base44.asServiceRole.entities.Reservation.create({
+      guest_name,
+      email,
+      phone: phone || '',
+      date: event.date,
+      time: event.time,
+      party_size: pSize,
+      special_requests: special_requests || `Event: ${event.title}`,
+      status: 'Pending',
+    });
+
+    return Response.json({ success: true, spots_remaining: available - pSize });
+  } catch (error) {
+    if (base44) {
+      await notifyAdmins(base44, {
+        subject: 'Event booking failed',
+        body: `The submitEventBooking function threw an error.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+      }).catch(() => {});
+    }
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}

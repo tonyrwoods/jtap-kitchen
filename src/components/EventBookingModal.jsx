@@ -29,26 +29,22 @@ export default function EventBookingModal({ event, onClose, onWaitlist, onBookin
 
     setSubmitting(true);
     try {
-      await base44.entities.Reservation.create({
+      const res = await base44.functions.invoke("submitEventBooking", {
+        event_id: event.id,
         guest_name: form.guest_name,
         email: form.email,
         phone: form.phone,
-        date: event.date,
-        time: event.time,
         party_size: guestCount,
         special_requests: form.special_requests || `Event: ${event.title}`,
-        status: "Pending"
       });
-
-      // Update available spots
-      await base44.entities.Event.update(event.id, {
-        spots_available: event.spots_available - guestCount
-      });
-
-      toast.success("Booking submitted! Check your email for confirmation.");
-      onBookingComplete();
-      onClose();
-    } catch (error) {
+      if (res.data?.success) {
+        toast.success("Booking submitted! Check your email for confirmation.");
+        onBookingComplete();
+        onClose();
+      } else {
+        toast.error(res.data?.error || "Booking failed. Please try again.");
+      }
+    } catch {
       toast.error("Booking failed. Please try again.");
     }
     setSubmitting(false);
