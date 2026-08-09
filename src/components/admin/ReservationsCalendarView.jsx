@@ -67,40 +67,139 @@ function DetailPanel({ reservation, onClose, onUpdate }) {
     toast.success("Notes saved");
   };
 
+  const [editing, setEditing] = useState(false);
+  const [savingDetails, setSavingDetails] = useState(false);
+  const [editForm, setEditForm] = useState({
+    guest_name: reservation.guest_name || "",
+    email: reservation.email || "",
+    phone: reservation.phone || "",
+    date: reservation.date || "",
+    time: reservation.time || "",
+    party_size: reservation.party_size || 1,
+    special_requests: reservation.special_requests || "",
+  });
+
+  const startEdit = () => {
+    setEditForm({
+      guest_name: reservation.guest_name || "",
+      email: reservation.email || "",
+      phone: reservation.phone || "",
+      date: reservation.date || "",
+      time: reservation.time || "",
+      party_size: reservation.party_size || 1,
+      special_requests: reservation.special_requests || "",
+    });
+    setEditing(true);
+  };
+
+  const saveDetails = async () => {
+    if (!editForm.guest_name || !editForm.email || !editForm.date || !editForm.time || !editForm.party_size) {
+      toast.error("Name, email, date, time, and party size are required.");
+      return;
+    }
+    setSavingDetails(true);
+    const payload = {
+      guest_name: editForm.guest_name,
+      email: editForm.email,
+      phone: editForm.phone || null,
+      date: editForm.date,
+      time: editForm.time,
+      party_size: parseInt(editForm.party_size) || 1,
+      special_requests: editForm.special_requests || null,
+    };
+    await base44.entities.Reservation.update(reservation.id, payload);
+    onUpdate(reservation.id, null, payload);
+    setSavingDetails(false);
+    setEditing(false);
+    toast.success("Reservation updated");
+  };
+
   const s = STATUS_STYLES[status] || STATUS_STYLES.Pending;
 
   return (
     <div className="w-72 shrink-0 border-l border-border bg-card flex flex-col">
       <div className="flex items-center justify-between px-5 py-4 border-b border-border">
         <h3 className="font-heading text-base font-semibold">Reservation</h3>
-        <button onClick={onClose} className="p-1 hover:bg-muted rounded-lg transition-colors">
-          <X className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-1">
+          {!editing && (
+            <button onClick={startEdit} className="px-2 py-1 text-xs font-body text-primary hover:bg-primary/5 rounded-lg transition-colors">
+              Edit
+            </button>
+          )}
+          <button onClick={onClose} className="p-1 hover:bg-muted rounded-lg transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       <div className="p-5 flex-1 space-y-5 overflow-y-auto">
-        <div>
-          <p className="font-heading text-lg font-bold">{reservation.guest_name}</p>
-          <p className="font-body text-sm text-muted-foreground">{reservation.email}</p>
-          {reservation.phone && <p className="font-body text-sm text-muted-foreground">{reservation.phone}</p>}
-        </div>
+        {editing ? (
+          <div className="space-y-3">
+            <div>
+              <label className="font-body text-xs text-muted-foreground mb-1 block">Guest Name *</label>
+              <input value={editForm.guest_name} onChange={(e) => setEditForm({ ...editForm, guest_name: e.target.value })} className="w-full border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background" />
+            </div>
+            <div>
+              <label className="font-body text-xs text-muted-foreground mb-1 block">Email *</label>
+              <input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="w-full border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background" />
+            </div>
+            <div>
+              <label className="font-body text-xs text-muted-foreground mb-1 block">Phone</label>
+              <input value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} className="w-full border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="font-body text-xs text-muted-foreground mb-1 block">Date *</label>
+                <input type="date" value={editForm.date} onChange={(e) => setEditForm({ ...editForm, date: e.target.value })} className="w-full border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background" />
+              </div>
+              <div>
+                <label className="font-body text-xs text-muted-foreground mb-1 block">Time *</label>
+                <input value={editForm.time} onChange={(e) => setEditForm({ ...editForm, time: e.target.value })} placeholder="7:00 PM" className="w-full border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background" />
+              </div>
+            </div>
+            <div>
+              <label className="font-body text-xs text-muted-foreground mb-1 block">Party Size *</label>
+              <input type="number" min="1" value={editForm.party_size} onChange={(e) => setEditForm({ ...editForm, party_size: e.target.value })} className="w-full border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background" />
+            </div>
+            <div>
+              <label className="font-body text-xs text-muted-foreground mb-1 block">Special Requests</label>
+              <textarea rows={2} value={editForm.special_requests} onChange={(e) => setEditForm({ ...editForm, special_requests: e.target.value })} className="w-full border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background resize-none" />
+            </div>
+            <div className="flex gap-2 pt-1">
+              <button onClick={saveDetails} disabled={savingDetails} className="flex-1 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-medium disabled:opacity-50">
+                {savingDetails ? "Saving..." : "Save Changes"}
+              </button>
+              <button onClick={() => setEditing(false)} className="px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-muted">
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div>
+              <p className="font-heading text-lg font-bold">{reservation.guest_name}</p>
+              <p className="font-body text-sm text-muted-foreground">{reservation.email}</p>
+              {reservation.phone && <p className="font-body text-sm text-muted-foreground">{reservation.phone}</p>}
+            </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 font-body text-sm">
-            <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
-            <span>{reservation.date} at {reservation.time}</span>
-          </div>
-          <div className="flex items-center gap-2 font-body text-sm">
-            <Users className="w-4 h-4 text-muted-foreground shrink-0" />
-            <span>{reservation.party_size} guest{reservation.party_size !== 1 ? "s" : ""}</span>
-          </div>
-        </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 font-body text-sm">
+                <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
+                <span>{reservation.date} at {reservation.time}</span>
+              </div>
+              <div className="flex items-center gap-2 font-body text-sm">
+                <Users className="w-4 h-4 text-muted-foreground shrink-0" />
+                <span>{reservation.party_size} guest{reservation.party_size !== 1 ? "s" : ""}</span>
+              </div>
+            </div>
 
-        {reservation.special_requests && (
-          <div className="bg-muted/50 rounded-xl p-3">
-            <p className="font-body text-xs text-muted-foreground font-semibold mb-1 uppercase tracking-wide">Special Requests</p>
-            <p className="font-body text-sm italic">{reservation.special_requests}</p>
-          </div>
+            {reservation.special_requests && (
+              <div className="bg-muted/50 rounded-xl p-3">
+                <p className="font-body text-xs text-muted-foreground font-semibold mb-1 uppercase tracking-wide">Special Requests</p>
+                <p className="font-body text-sm italic">{reservation.special_requests}</p>
+              </div>
+            )}
+          </>
         )}
 
         <div>
@@ -343,9 +442,23 @@ export default function ReservationsCalendarView({ reservations: initialReservat
     return current.toLocaleDateString("en-US", { month: "long", year: "numeric" });
   };
 
-  const handleUpdate = (id, newStatus) => {
-    setReservations(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
-    if (selected?.id === id) setSelected(prev => ({ ...prev, status: newStatus }));
+  const handleUpdate = (id, newStatus, details) => {
+    setReservations(prev => prev.map(r => {
+      if (r.id !== id) return r;
+      const updated = { ...r };
+      if (newStatus) updated.status = newStatus;
+      if (details) Object.assign(updated, details);
+      return updated;
+    }));
+    if (selected?.id === id) {
+      setSelected(prev => {
+        if (!prev || prev.id !== id) return prev;
+        const updated = { ...prev };
+        if (newStatus) updated.status = newStatus;
+        if (details) Object.assign(updated, details);
+        return updated;
+      });
+    }
   };
 
   const handleDayClick = (d) => {
