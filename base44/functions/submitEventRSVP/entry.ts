@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 export default async function(req) {
   try {
@@ -62,8 +63,12 @@ export default async function(req) {
             subject: `You're on the waitlist — ${promotion.title}`,
             body: buildWaitlistEmail(promotion, updated),
           });
-        } catch {
-          // email failure shouldn't fail the RSVP
+        } catch (err) {
+          // email failure shouldn't fail the RSVP, but surface it so staff can follow up
+          await notifyAdmins(base44, {
+            subject: 'Event waitlist email failed',
+            body: `A guest was waitlisted but the waitlist confirmation email could not be sent.<br><br><strong>Guest:</strong> ${invite.guest_name} &lt;${invite.guest_email}&gt;<br><strong>Event:</strong> ${promotion.title}<br><strong>Error:</strong> ${err?.message || err}`,
+          }).catch(() => {});
         }
       }
       return Response.json({ success: true, invite: updated, waitlisted: true });

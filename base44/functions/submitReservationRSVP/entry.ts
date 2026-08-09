@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 export default async function (req) {
   try {
@@ -57,7 +58,12 @@ export default async function (req) {
           subject: `Reservation Confirmed — ${formattedDate} at ${reservation.time}`,
           body,
           from_name: 'JTAP Kitchen',
-        }).catch(() => {});
+        }).catch(async (err) => {
+          await notifyAdmins(base44, {
+            subject: 'Reservation confirmation email failed',
+            body: `A guest confirmed their reservation but the confirmation email could not be sent.<br><br><strong>Guest:</strong> ${reservation.guest_name} &lt;${reservation.email}&gt;<br><strong>Date:</strong> ${formattedDate} ${reservation.time}<br><strong>Error:</strong> ${err?.message || err}`,
+          }).catch(() => {});
+        });
       }
 
       return Response.json({ success: true, reservation: updated });
@@ -120,7 +126,12 @@ export default async function (req) {
           subject,
           body,
           from_name: 'JTAP Kitchen',
-        }).catch(() => {});
+        }).catch(async (err) => {
+          await notifyAdmins(base44, {
+            subject: 'Companion RSVP notification email failed',
+            body: `A companion RSVP update could not be delivered to the reservation holder.<br><br><strong>Holder:</strong> ${reservation.guest_name} &lt;${reservation.email}&gt;<br><strong>Companion:</strong> ${invite.guest_name} (${invite.guest_email}) — ${action}<br><strong>Error:</strong> ${err?.message || err}`,
+          }).catch(() => {});
+        });
       }
 
       return Response.json({ success: true, invite: updated });
