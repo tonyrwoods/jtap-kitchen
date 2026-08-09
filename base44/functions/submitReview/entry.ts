@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 export default async function(req) {
   try {
@@ -12,6 +13,9 @@ export default async function(req) {
     if (Number(rating) < 1 || Number(rating) > 5) {
       return Response.json({ error: 'Rating must be between 1 and 5.' }, { status: 400 });
     }
+
+    const limited = await enforceRateLimit(req, base44, 'submitReview', (email || '').toLowerCase(), 5, 86400000);
+    if (limited) return limited;
 
     // Force moderation state server-side — public submitters cannot self-approve or feature.
     const review = await base44.asServiceRole.entities.Review.create({

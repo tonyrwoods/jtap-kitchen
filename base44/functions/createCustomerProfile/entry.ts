@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 export default async function(req) {
   try {
@@ -9,6 +10,9 @@ export default async function(req) {
     if (!name || !email) {
       return Response.json({ error: 'Name and email are required.' }, { status: 400 });
     }
+
+    const limited = await enforceRateLimit(req, base44, 'createCustomerProfile', email.toLowerCase(), 5, 3600000);
+    if (limited) return limited;
 
     // Loyalty stats and tier are forced to defaults — a user cannot inflate points/tier on signup.
     const profile = await base44.asServiceRole.entities.CustomerProfile.create({

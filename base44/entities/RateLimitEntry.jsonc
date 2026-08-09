@@ -1,0 +1,44 @@
+{
+  "name": "RateLimitEntry",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "title": "Rate Limit Key (action:scope:identity)"
+    },
+    "count": {
+      "type": "number",
+      "title": "Request Count in Current Window",
+      "default": 0
+    },
+    "window_start": {
+      "type": "string",
+      "title": "Window Start (ISO)"
+    }
+  },
+  "required": [
+    "key"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

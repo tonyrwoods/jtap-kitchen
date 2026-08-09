@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 const TIER_DEFAULTS = {
   'Regular': { private_room_access: false, free_rentals_remaining: 0, welcome_credit_issued: 0, welcome_credit_remaining: 0, annual_fee_amount: 0, is_founding_member: false, tier_earned_or_paid: 'Free' },
@@ -24,6 +25,9 @@ export default async function(req) {
     if (!TIER_DEFAULTS[tier]) {
       return Response.json({ error: 'Invalid membership tier.' }, { status: 400 });
     }
+
+    const limited = await enforceRateLimit(req, base44, 'signupTapRoomMember', email.toLowerCase(), 1, 3600000);
+    if (limited) return limited;
 
     const tierData = TIER_DEFAULTS[tier];
     const today = new Date().toISOString().split('T')[0];

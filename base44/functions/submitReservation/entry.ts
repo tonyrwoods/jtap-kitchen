@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 const OPENING_DATE = '2026-08-12';
 
@@ -11,6 +12,10 @@ export default async function(req) {
     if (!guest_name || !email || !date || !time || !party_size) {
       return Response.json({ error: 'Missing required fields.' }, { status: 400 });
     }
+
+    const limited = await enforceRateLimit(req, base44, 'submitReservation', email.toLowerCase(), 3, 600000);
+    if (limited) return limited;
+
     if (date < OPENING_DATE) {
       return Response.json({ error: 'Reservations open August 12, 2026. Please select a date on or after that.' }, { status: 400 });
     }
