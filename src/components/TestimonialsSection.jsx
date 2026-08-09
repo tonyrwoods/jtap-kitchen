@@ -54,7 +54,7 @@ function SubmitReviewForm({ onSubmitted }) {
     e.preventDefault();
     if (form.rating === 0) return;
     setSubmitting(true);
-    await base44.entities.Review.create({ ...form, status: "Pending" });
+    await base44.functions.invoke("submitReview", form);
     setSubmitting(false);
     onSubmitted();
   };

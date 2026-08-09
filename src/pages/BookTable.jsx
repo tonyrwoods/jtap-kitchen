@@ -140,44 +140,27 @@ export default function BookTable() {
     setLoading(true);
     try {
       const dateStr = date.toISOString().split("T")[0];
-      // Duplicate-booking guard: same email + date + time, not cancelled
-      const existing = await base44.entities.Reservation.filter({ email, date: dateStr, time });
-      if (existing.find(r => r.status !== "Cancelled")) {
-        toast.error("You already have a reservation for this date and time. Check your inbox for the confirmation link.");
-        setLoading(false);
-        return;
-      }
-      // Per-time-slot capacity check (not whole-day)
-      const appSettings = await base44.entities.AppSettings.list().then(data => data[0]);
-      const maxCapacity = appSettings?.max_capacity || 80;
-      const confirmed = await base44.entities.Reservation.filter({ date: dateStr, time, status: "Confirmed" });
-      const bookedPartySize = confirmed.reduce((sum, r) => sum + (r.party_size || 0), 0);
-      if (bookedPartySize + party > maxCapacity) {
-        toast.error("Sorry, we're fully booked for that time slot. Please choose a different time.");
-        setLoading(false);
-        return;
+      const res = await base44.functions.invoke("submitReservation", {
+        guest_name: name,
+        email,
+        phone,
+        date: dateStr,
+        time,
+        party_size: party,
+        special_requests: special,
+      });
+      if (res.data?.success) {
+        setReservationToken(res.data.reservation.confirm_token);
+        setReservationId(res.data.reservation.id);
+        base44.analytics.track({ eventName: "reservation_created", properties: { party_size: party, date: dateStr } });
+        setSubmitted(true);
+      } else {
+        toast.error(res.data?.error || "Unable to create reservation.");
       }
     } catch (error) {
       toast.error("Unable to verify availability. Please try again.");
-      setLoading(false);
-      return;
     }
-    const created = await base44.entities.Reservation.create({
-      guest_name: name,
-      email,
-      phone,
-      date: date?.toISOString().split("T")[0],
-      time,
-      party_size: party,
-      special_requests: special,
-      status: "Pending",
-      confirm_token: crypto.randomUUID(),
-    });
-    setReservationToken(created.confirm_token);
-    setReservationId(created.id);
-    base44.analytics.track({ eventName: "reservation_created", properties: { party_size: party, date: date?.toISOString().split("T")[0] } });
     setLoading(false);
-    setSubmitted(true);
   };
 
   const reset = () => {

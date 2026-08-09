@@ -76,31 +76,22 @@ export default function TapRoomSociety() {
     e.preventDefault();
     if (!form.guest_name || !form.email) { toast.error("Name and email are required."); return; }
     setSubmitting(true);
-    const tierData = {
-      "Regular": { private_room_access: false, free_rentals_remaining: 0, welcome_credit_issued: 0, welcome_credit_remaining: 0, annual_fee_amount: 0, is_founding_member: false, tier_earned_or_paid: "Free" },
-      "Reserve Member": { private_room_access: true, free_rentals_remaining: 1, welcome_credit_issued: 50, welcome_credit_remaining: 50, annual_fee_amount: 99, is_founding_member: false, tier_earned_or_paid: "Paid Annual Fee" },
-      "Founding Member": { private_room_access: true, free_rentals_remaining: 2, welcome_credit_issued: 100, welcome_credit_remaining: 100, annual_fee_amount: 249, is_founding_member: true, tier_earned_or_paid: "Paid Annual Fee" },
-    }[form.tier] || {};
-    await base44.entities.TapRoomMember.create({
-      ...form,
+    const res = await base44.functions.invoke("signupTapRoomMember", {
+      guest_name: form.guest_name,
+      email: form.email,
+      phone: form.phone,
+      birthday_month: form.birthday_month,
+      birthday_day: form.birthday_day,
+      how_heard: form.how_heard,
       tier: form.tier,
-      birthday_month: form.birthday_month ? parseInt(form.birthday_month) : undefined,
-      birthday_day: form.birthday_day ? parseInt(form.birthday_day) : undefined,
-      joined_date: TODAY,
-      status: "Active",
-      points_balance: 0,
-      total_visits: 0,
-      total_spend: 0,
-      referral_code: generateReferralCode(form.guest_name),
-      ...tierData,
+      referred_by_code: form.referred_by_code,
     });
-    await base44.integrations.Core.SendEmail({
-      to: form.email,
-      subject: "Welcome to The Tap Room Society — JTAP Kitchen",
-      body: `Hi ${form.guest_name},\n\nYou're officially in.\n\nWelcome to The Tap Room Society.\n\nYour tier: ${form.tier}\n${tierData.welcome_credit_issued > 0 ? `Welcome credit: $${tierData.welcome_credit_issued}\n` : ""}${tierData.private_room_access ? "Private Room Access: UNLOCKED\n" : ""}\nSee you at the table.\n\n— The JTAP Kitchen Team`
-    });
-    setSubmitted(true);
-    setTimeout(() => navigate("/my-membership"), 1500);
+    if (res.data?.success) {
+      setSubmitted(true);
+      setTimeout(() => navigate("/my-membership"), 1500);
+    } else {
+      toast.error(res.data?.error || "Unable to create membership.");
+    }
     setSubmitting(false);
   };
 

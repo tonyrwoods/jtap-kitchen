@@ -50,20 +50,19 @@ export default function CustomerLoyaltyPanel({ onCustomerLinked, orderTotal }) {
 
   const handleCreate = async () => {
     if (!newName.trim()) { toast.error("Name is required"); return; }
-    const profile = await base44.entities.CustomerProfile.create({
+    const res = await base44.functions.invoke("createCustomerProfile", {
       name: newName.trim(),
       email: email.trim().toLowerCase(),
       phone: newPhone.trim(),
-      total_visits: 0,
-      total_spend: 0,
-      loyalty_points: 0,
-      loyalty_tier: "Bronze",
-      order_history: [],
     });
-    setCustomer(profile);
-    onCustomerLinked(profile);
-    setShowCreate(false);
-    toast.success("Customer profile created!");
+    if (res.data?.success) {
+      setCustomer(res.data.profile);
+      onCustomerLinked(res.data.profile);
+      setShowCreate(false);
+      toast.success("Customer profile created!");
+    } else {
+      toast.error(res.data?.error || "Unable to create profile.");
+    }
   };
 
   const handleClear = () => {

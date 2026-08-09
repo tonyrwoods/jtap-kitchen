@@ -55,11 +55,13 @@ export default function SubmitReview() {
     if (!form.rating) { toast.error("Please select a star rating."); return; }
     if (!form.comment.trim()) { toast.error("Please write a review."); return; }
     setLoading(true);
-    await base44.entities.Review.create({
-      ...form,
-      status: "Pending",
-      is_featured: false,
-      ...(member ? { guest_name: `${form.guest_name} ⭐ ${member.tier}` } : {}),
+    const guestName = member ? `${form.guest_name} ⭐ ${member.tier}` : form.guest_name;
+    await base44.functions.invoke("submitReview", {
+      guest_name: guestName,
+      email: form.email,
+      rating: form.rating,
+      comment: form.comment,
+      visit_date: form.visit_date,
     });
     setSubmitted(true);
     setLoading(false);
