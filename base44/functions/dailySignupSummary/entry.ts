@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
 
   const results = await Promise.allSettled(
     admins.map(admin =>
-      sendEmailViaGmail(base44, {
+      sendTransactionalEmail(base44, {
         to: admin.email,
         subject: `Daily Signup Summary — ${newUsers.length} new signup${newUsers.length !== 1 ? 's' : ''} · ${today}`,
         body,

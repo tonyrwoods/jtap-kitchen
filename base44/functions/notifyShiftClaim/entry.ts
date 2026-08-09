@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     const claim = await base44.entities.ShiftClaim.get(claimId);
 
     // Notify original owner
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: claim.original_owner_email,
       subject: `Your Posted Shift - Claim from ${claim.claimed_by}`,
       body: `Hi ${claim.original_owner},\n\nYour posted shift for ${claim.shift_date} (${claim.shift_start_time} - ${claim.shift_end_time}) has been claimed by ${claim.claimed_by}.\n\nStatus: Pending Admin Approval\n\nThe administrator will review and finalize the swap.\n\nThanks,\nJTAP Kitchen`
@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     const admins = await base44.entities.User.list();
     for (const admin of admins) {
       if (admin.role === 'admin') {
-        await sendEmailViaGmail(base44, {
+        await sendTransactionalEmail(base44, {
           to: admin.email,
           subject: `[Admin] Shift Swap Claim - Review Required`,
           body: `Admin Alert,\n\nA shift swap claim requires your approval:\n\nOriginal Owner: ${claim.original_owner}\nClaimed By: ${claim.claimed_by}\nDate: ${claim.shift_date}\nTime: ${claim.shift_start_time} - ${claim.shift_end_time}\n\nPlease review and approve/reject in the admin dashboard.\n\nThanks,\nJTAP Kitchen`

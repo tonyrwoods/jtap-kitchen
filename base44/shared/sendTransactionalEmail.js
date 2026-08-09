@@ -8,7 +8,8 @@ import { sendEmailViaGmail } from './sendEmailViaGmail.js';
  *
  * @param {object} base44 - The base44 client (from createClientFromRequest)
  * @param {object} opts - { to, subject, body }
- * @returns {Promise<{ok: boolean, provider?: string, fallbackReason?: string, error?: string}>}
+ * @returns {Promise<{ok: boolean, provider?: string, fallbackReason?: string}>}
+ * @throws {Error} when both Outlook and Gmail fail (mirrors sendEmailViaGmail's throw-on-failure semantics)
  */
 export async function sendTransactionalEmail(base44, { to, subject, body }) {
   try {
@@ -19,10 +20,7 @@ export async function sendTransactionalEmail(base44, { to, subject, body }) {
       await sendEmailViaGmail(base44, { to, subject, body });
       return { ok: true, provider: 'gmail', fallbackReason: outlookErr.message };
     } catch (gmailErr) {
-      return {
-        ok: false,
-        error: `Outlook: ${outlookErr.message} | Gmail fallback: ${gmailErr.message}`,
-      };
+      throw new Error(`Outlook: ${outlookErr.message} | Gmail fallback: ${gmailErr.message}`);
     }
   }
 }

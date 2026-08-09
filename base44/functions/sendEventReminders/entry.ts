@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
 
     for (const invite of pendingReminders) {
       try {
-        await sendEmailViaGmail(base44, {
+        await sendTransactionalEmail(base44, {
           to: invite.guest_email,
           from_name: 'JTAP Kitchen',
           subject: `Reminder: ${promotion.title} is in 2 days!`,

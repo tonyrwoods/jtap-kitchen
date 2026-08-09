@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 const escapeHtml = (text) => String(text == null ? '' : text)
   .replace(/&/g, '&amp;')
@@ -23,7 +23,7 @@ export default async function(req) {
     const safeDate = preferred_date ? ` (${escapeHtml(preferred_date)})` : '';
     const safeGuests = escapeHtml(guest_count != null ? guest_count : '');
 
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: email,
       subject: 'Event Inquiry Received — JTAP Kitchen Event Center',
       body: `<div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; padding: 20px;">

@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
 `;
 
       try {
-        await sendEmailViaGmail(base44, {
+        await sendTransactionalEmail(base44, {
           to: staffMember.email,
           subject: `Shift Reminder: ${dateStr} - ${timeText}`,
           body: emailBody,

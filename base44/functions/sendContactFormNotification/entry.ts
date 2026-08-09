@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 export default async function(req) {
   try {
@@ -13,7 +13,7 @@ export default async function(req) {
     const escapeHtml = (text) => String(text || '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: 'info@jtapkitchen.com',
       subject: `New Contact Form: ${subject || 'General Inquiry'}`,
       body: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a;">

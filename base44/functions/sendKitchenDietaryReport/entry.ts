@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Recipient for the kitchen prep report. Change here to route elsewhere.
@@ -27,7 +27,7 @@ export default async function(req) {
       const attending = invites.filter((i) => i.rsvp_status === 'Attending');
       const withNotes = attending.filter((i) => (i.dietary_notes || '').trim());
 
-      await sendEmailViaGmail(base44, {
+      await sendTransactionalEmail(base44, {
         to: KITCHEN_EMAIL,
         subject: `Kitchen Prep — ${promo.title} (${today})`,
         body: buildReport(promo, attending, withNotes, today),

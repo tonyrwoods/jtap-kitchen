@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 export default async function(req) {
   try {
@@ -33,7 +33,7 @@ export default async function(req) {
 
     // Confirmation email to the submitter (external recipient → Gmail).
     try {
-      await sendEmailViaGmail(base44, {
+      await sendTransactionalEmail(base44, {
         to: email,
         subject: "You're on the Waitlist — JTAP Kitchen Event Center",
         body: `Hi ${contact_name},\n\nYou've been added to the JTAP Kitchen Event Center waitlist!\n\nWe'll notify you immediately if a spot opens up for ${preferred_date || preferred_day}. You'll have first priority to book before anyone else.\n\nIf you have questions in the meantime, reach us at events@jtapkitchen.com or (555) 012-3456.\n\n— The JTAP Kitchen Events Team`,

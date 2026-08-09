@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
   </div>`;
 
   for (const m of managers) {
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: m.email,
       from_name: 'JTAP Kitchen Staff',
       subject: 'Shift Swap Request: ' + swapReq.requester_staff_name + ' and ' + swapReq.target_staff_name,

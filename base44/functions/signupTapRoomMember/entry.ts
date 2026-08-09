@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 const TIER_DEFAULTS = {
@@ -60,7 +60,7 @@ export default async function(req) {
     // Welcome email — Gmail delivers to external (non-registered) addresses.
     const creditLine = tierData.welcome_credit_issued > 0 ? `Welcome credit: $${tierData.welcome_credit_issued}\n` : '';
     const accessLine = tierData.private_room_access ? 'Private Room Access: UNLOCKED\n' : '';
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: email,
       subject: 'Welcome to The Tap Room Society — JTAP Kitchen',
       body: `Hi ${guest_name},\n\nYou're officially in.\n\nWelcome to The Tap Room Society.\n\nYour tier: ${tier}\n${creditLine}${accessLine}\nSee you at the table.\n\n— The JTAP Kitchen Team`,

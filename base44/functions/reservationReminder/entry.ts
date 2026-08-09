@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Scheduled daily automation — scans for confirmed reservations happening
@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
   </div>
 </body></html>`;
       try {
-        await sendEmailViaGmail(base44, {
+        await sendTransactionalEmail(base44, {
           to: reservation.email,
           from_name: 'JTAP Kitchen',
           subject: `Action needed: Confirm your reservation tomorrow at ${reservation.time}`,
@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
     </div>`;
 
     try {
-      await sendEmailViaGmail(base44, {
+      await sendTransactionalEmail(base44, {
         to: reservation.email,
         from_name: 'JTAP Kitchen',
         subject: `Reminder: Your reservation tomorrow at ${reservation.time}`,

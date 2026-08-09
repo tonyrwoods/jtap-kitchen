@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 // Canonical reward catalog — the frontend sends only `rewardPoints`; the
 // server resolves the full reward from this list so a client can't redeem a
@@ -52,13 +52,13 @@ Deno.serve(async (req) => {
     // Confirm with the member + notify staff (best-effort; never block redemption).
     const settings = await base44.asServiceRole.entities.AppSettings.list().then((d) => d[0]);
     try {
-      await sendEmailViaGmail(base44, {
+      await sendTransactionalEmail(base44, {
         to: member.email,
         subject: `Reward Redeemed: ${reward.label}`,
         body: buildMemberEmail(member, reward, newBalance),
       });
       if (settings && settings.contact_email) {
-        await sendEmailViaGmail(base44, {
+        await sendTransactionalEmail(base44, {
           to: settings.contact_email,
           subject: `Loyalty Redemption — ${member.guest_name}`,
           body: buildStaffEmail(member, reward, newBalance),

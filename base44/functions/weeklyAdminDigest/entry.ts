@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
 
     // Send to all admins
     for (const admin of admins) {
-      await sendEmailViaGmail(base44, {
+      await sendTransactionalEmail(base44, {
         to: admin.email,
         subject: `JTAP Kitchen — Weekly Digest (${weekLabel})`,
         body,

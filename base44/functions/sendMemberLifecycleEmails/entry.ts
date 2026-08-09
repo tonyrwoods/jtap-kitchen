@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 function esc(s) {
@@ -91,7 +91,7 @@ export default async function(req) {
       // Birthday greeting — exact day match, once per calendar year
       if (active && m.birthday_month === currentMonth && m.birthday_day === currentDay && m.last_birthday_email_year !== currentYear) {
         try {
-          await sendEmailViaGmail(base44, {
+          await sendTransactionalEmail(base44, {
             to: m.email,
             subject: `Happy Birthday from JTAP Kitchen, ${(String(m.guest_name || 'there').trim().split(/\s+/)[0]) || 'there'}! 🎉`,
             body: buildBirthdayEmail(m),
@@ -109,7 +109,7 @@ export default async function(req) {
         const diffDays = Math.round((renewDate.getTime() - todayMid.getTime()) / 86400000);
         if (diffDays >= 0 && diffDays <= 14) {
           try {
-            await sendEmailViaGmail(base44, {
+            await sendTransactionalEmail(base44, {
               to: m.email,
               subject: `Your Tap Room membership renews ${formatDate(m.fee_renewal_date)}`,
               body: buildRenewalEmail(m),

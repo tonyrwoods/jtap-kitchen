@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
@@ -63,9 +63,9 @@ Deno.serve(async (req) => {
     </div>
   </div>
 </body></html>`;
-      await sendEmailViaGmail(base44, { to: reservation.email, subject, body: body_html, from_name: 'JTAP Kitchen' });
+      await sendTransactionalEmail(base44, { to: reservation.email, subject, body: body_html, from_name: 'JTAP Kitchen' });
       // Admin notification
-      await sendEmailViaGmail(base44, {
+      await sendTransactionalEmail(base44, {
         to: 'info@jtapkitchen.com',
         subject: `New Reservation — ${reservation.guest_name}, ${formattedDate} at ${reservation.time}`,
         body: `New reservation request:<br><br><strong>${reservation.guest_name}</strong> (${reservation.email})<br>Phone: ${reservation.phone || 'N/A'}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${reservation.special_requests || 'None'}<br><br><a href="${rsvpUrl}">View reservation</a>`,
@@ -117,14 +117,14 @@ Deno.serve(async (req) => {
       </div>
     `;
 
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: reservation.email,
       subject: subject,
       body: body_html,
       from_name: 'JTAP Kitchen'
     });
     // Admin notification
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: 'info@jtapkitchen.com',
       subject: `New Reservation — ${reservation.guest_name}, ${formattedDate} at ${reservation.time}`,
       body: `New reservation:<br><br><strong>${reservation.guest_name}</strong> (${reservation.email})<br>Phone: ${reservation.phone || 'N/A'}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${reservation.special_requests || 'None'}`,

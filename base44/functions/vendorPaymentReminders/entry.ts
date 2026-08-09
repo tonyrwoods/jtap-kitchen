@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -108,7 +108,7 @@ Do not reply to this email.`;
     // Send one email per admin
     for (const admin of adminUsers) {
       if (!admin.email) continue;
-      await sendEmailViaGmail(base44, {
+      await sendTransactionalEmail(base44, {
         to: admin.email,
         subject,
         body,

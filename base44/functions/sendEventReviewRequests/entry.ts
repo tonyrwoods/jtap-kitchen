@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Scheduled job: for events that occurred in the last week, email each
@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
       for (const inv of attending) {
         const reviewUrl = `${appUrl}/submit-review`;
         try {
-          await sendEmailViaGmail(base44, {
+          await sendTransactionalEmail(base44, {
             to: inv.guest_email,
             subject: `How was ${promo.title}? We'd love your review`,
             body: buildReviewEmail(promo, inv, reviewUrl),

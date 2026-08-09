@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Promotion not found' }, { status: 404 });
     }
 
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: invite.guest_email,
       subject: `RSVP Confirmed — ${promotion.title}`,
       body: buildConfirmationEmail(promotion, invite),

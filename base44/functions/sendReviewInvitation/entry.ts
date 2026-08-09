@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
 </html>
 `;
 
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: reservation.email,
       subject: `Share Your Feedback - ${reservation.guest_name}`,
       body: emailBody,

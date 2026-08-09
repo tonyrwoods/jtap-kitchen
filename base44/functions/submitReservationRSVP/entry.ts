@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 export default async function (req) {
   try {
@@ -48,7 +48,7 @@ export default async function (req) {
     </div>
   </div>
 </body></html>`;
-        await sendEmailViaGmail(base44, {
+        await sendTransactionalEmail(base44, {
           to: reservation.email,
           subject: `Reservation Confirmed — ${formattedDate} at ${reservation.time}`,
           body,
@@ -111,7 +111,7 @@ export default async function (req) {
     </div>
   </div>
 </body></html>`;
-        await sendEmailViaGmail(base44, {
+        await sendTransactionalEmail(base44, {
           to: reservation.email,
           subject,
           body,

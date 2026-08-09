@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 export default async function(req) {
   try {
@@ -53,7 +53,7 @@ export default async function(req) {
       // dedicated waitlist email here.
       if (invite.guest_email && promotion) {
         try {
-          await sendEmailViaGmail(base44, {
+          await sendTransactionalEmail(base44, {
             to: invite.guest_email,
             subject: `You're on the waitlist — ${promotion.title}`,
             body: buildWaitlistEmail(promotion, updated),

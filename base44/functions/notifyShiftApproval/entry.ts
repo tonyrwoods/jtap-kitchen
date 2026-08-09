@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -23,14 +23,14 @@ Deno.serve(async (req) => {
     const actionVerb = approved ? 'approved' : 'rejected';
 
     // Notify claimed-by staff
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: claim.claimed_by_email,
       subject: `Shift Swap ${status}`,
       body: `Hi ${claim.claimed_by},\n\nYour shift swap claim has been ${actionVerb}.\n\nOriginal Owner: ${claim.original_owner}\nDate: ${claim.shift_date}\nTime: ${claim.shift_start_time} - ${claim.shift_end_time}\n\n${approved ? 'The shift swap is now finalized. Please update your schedule accordingly.' : 'Your claim was not approved. You may try claiming another shift.'}\n\nThanks,\nJTAP Kitchen`
     });
 
     // Notify original owner
-    await sendEmailViaGmail(base44, {
+    await sendTransactionalEmail(base44, {
       to: claim.original_owner_email,
       subject: `Shift Swap ${status} - ${claim.claimed_by}`,
       body: `Hi ${claim.original_owner},\n\nYour shift swap request has been ${actionVerb}.\n\nClaimant: ${claim.claimed_by}\nDate: ${claim.shift_date}\nTime: ${claim.shift_start_time} - ${claim.shift_end_time}\n\n${approved ? `${claim.claimed_by} has been approved to take your shift.` : 'The swap was not approved. Your shift remains yours.'}\n\nThanks,\nJTAP Kitchen`
