@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 export default async function (req) {
   try {
@@ -6,6 +7,9 @@ export default async function (req) {
     const body = await req.json().catch(() => ({}));
     const token = body?.token;
     if (!token) return Response.json({ error: 'token required' }, { status: 400 });
+
+    const rl = await enforceRateLimit(req, base44, 'reservation-lookup', token, 20, 600000);
+    if (rl) return rl;
 
     // Try reservation holder (confirm_token)
     const reservations = await base44.asServiceRole.entities.Reservation.filter({ confirm_token: token });

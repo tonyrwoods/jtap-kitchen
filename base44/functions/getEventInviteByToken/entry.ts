@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 export default async function(req) {
   try {
@@ -8,6 +9,9 @@ export default async function(req) {
     if (!token) {
       return Response.json({ error: 'token required' }, { status: 400 });
     }
+
+    const rl = await enforceRateLimit(req, base44, 'event-invite-lookup', token, 20, 600000);
+    if (rl) return rl;
 
     const invites = await base44.asServiceRole.entities.EventInvite.filter({ invite_token: token });
     const invite = invites[0];
