@@ -59,31 +59,21 @@ export default function GiftCards() {
     }
     setLoading(true);
     try {
-      const code = generateCode();
-      const card = await base44.entities.GiftCard.create({
-        ...form,
+      const res = await base44.functions.invoke('submitGiftCardPurchase', {
+        purchaser_name: form.purchaser_name,
+        purchaser_email: form.purchaser_email,
+        recipient_name: form.recipient_name,
+        recipient_email: form.recipient_email,
+        message: form.message,
         amount: finalAmount,
-        code,
-        status: "Pending Payment",
       });
-
-      // Send email with gift card code
-      await base44.functions.invoke('sendGiftCardEmail', {
-        giftCard: {
-          id: card.id,
-          code,
-          amount: finalAmount,
-          purchaser_name: form.purchaser_name,
-          purchaser_email: form.purchaser_email,
-          recipient_name: form.recipient_name,
-          recipient_email: form.recipient_email,
-          message: form.message,
-        }
-      });
-
-      toast.success("Gift card created! Email sent to recipient.");
-      setSuccess({ code, amount: finalAmount });
-    } catch (error) {
+      if (res.data?.success) {
+        toast.success("Gift card created! Email sent to recipient.");
+        setSuccess({ code: res.data.code, amount: res.data.amount });
+      } else {
+        toast.error(res.data?.error || "Failed to create gift card. Please try again.");
+      }
+    } catch {
       toast.error("Failed to create gift card. Please try again.");
     }
     setLoading(false);

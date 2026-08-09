@@ -70,8 +70,16 @@ export default function BookPrivateRoom() {
   });
 
   const createBooking = useMutation({
-    mutationFn: (data) => base44.entities.PrivateRoomRental.create(data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["my-bookings"] }); setSubmitted(true); },
+    mutationFn: (data) => base44.functions.invoke('submitPrivateRoomBooking', data),
+    onSuccess: (res) => {
+      if (res.data?.success) {
+        qc.invalidateQueries({ queryKey: ["my-bookings"] });
+        setSubmitted(true);
+      } else {
+        toast.error(res.data?.error || "Booking failed.");
+      }
+    },
+    onError: () => toast.error("Booking failed. Please try again."),
   });
 
   const selectedDay = getDayOfWeek(form.event_date);
@@ -88,12 +96,7 @@ export default function BookPrivateRoom() {
     if (invalidDay) { toast.error("Please select a Sunday, Monday, or Tuesday."); return; }
     if (!form.event_date || !form.guest_count) { toast.error("Date and guest count are required."); return; }
     createBooking.mutate({
-      member_id: member.id,
-      member_name: member.guest_name,
-      member_email: member.email,
-      member_tier: tier,
       event_date: form.event_date,
-      day_of_week: selectedDay,
       start_time: form.start_time,
       end_time: form.end_time,
       event_type: form.event_type,
@@ -101,11 +104,7 @@ export default function BookPrivateRoom() {
       special_requests: form.special_requests,
       av_needed: form.av_needed,
       floral_needed: form.floral_needed,
-      is_free_rental: form.use_free_rental,
-      rental_rate: rentalRate,
-      deposit_amount: depositAmt,
-      min_fb_spend: fbMin,
-      status: "Inquiry",
+      use_free_rental: form.use_free_rental,
     });
   };
 

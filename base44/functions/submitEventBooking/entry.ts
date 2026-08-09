@@ -38,13 +38,19 @@ export default async function (req) {
       return Response.json({ error: `Only ${available} spot${available === 1 ? '' : 's'} available.` }, { status: 409 });
     }
 
-    // Decrement capacity server-side from the freshly-fetched value (the old
-    // client flow used a stale snapshot). A tiny check-then-update window
-    // remains, but re-fetching immediately before the update makes
-    // overbooking far less likely than the previous blind client decrement.
-    await base44.asServiceRole.entities.Event.update(event.id, {
-      spots_available: available - pSize,
-    });
+    // Atomic conditional decrement: only apply $inc to documents that still
+    // have enough spots, so two concurrent bookings can't both pass the check
+    // and overbook. If the filter matched nothing (another request took the
+    // remaining spots first), the value is unchanged and we reject.
+    await base44.asServiceRole.entities.Event.updateMany(
+      { id: event_id, spots_available: { $gte: pSize } },
+      { $inc: { spots_available: -pSize } }
+    );
+    const afterEvents = await base44.asServiceRole.entities.Event.filter({ id: event_id });
+    const after = afterEvents[0];
+    if (after && after.spots_available === available) {
+      return Response.json({ error: `Only ${after.spots_available} spot${after.spots_available === 1 ? '' : 's'} available.` }, { status: 409 });
+    }
 
     await base44.asServiceRole.entities.Reservation.create({
       guest_name,
