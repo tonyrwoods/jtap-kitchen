@@ -29,6 +29,7 @@ import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 import CareersTab from "../components/admin/CareersTab";
 import PromotionsTab from "../components/admin/PromotionsTab";
 import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
+import ReservationEditModal from "../components/admin/ReservationEditModal";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
@@ -158,6 +159,7 @@ export default function AdminDashboard() {
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [rsvpOpen, setRsvpOpen] = useState(null);
+  const [editingRes, setEditingRes] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -415,6 +417,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-3">
                       <StatusBadge status={r.status || "Pending"} />
                       <SelectDropdown value={r.status || "Pending"} onChange={v => updateResStatus(r.id, v)} options={STATUSES.map(s => ({ value: s, label: s }))} />
+                      <button onClick={() => setEditingRes(r)} className="p-1.5 hover:text-primary transition-colors shrink-0" aria-label="Edit reservation"><Pencil className="w-4 h-4" /></button>
                       <button onClick={() => setRsvpOpen(rsvpOpen === r.id ? null : r.id)} className="px-3 py-1.5 rounded-lg text-xs font-body font-medium border border-border hover:bg-muted transition-colors shrink-0">RSVP</button>
                       </div>
                       {rsvpOpen === r.id && <ReservationRsvpPanel reservation={r} />}
@@ -426,6 +429,17 @@ export default function AdminDashboard() {
                     <CalendarDays className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                     <p className="font-body text-muted-foreground">No reservations yet.</p>
                   </div>
+                )}
+                {editingRes && (
+                  <ReservationEditModal
+                    reservation={editingRes}
+                    onSaved={(updated) => {
+                      setReservations(prev => prev.map(r => r.id === updated.id ? updated : r));
+                      setEditingRes(null);
+                      toast.success("Reservation updated");
+                    }}
+                    onClose={() => setEditingRes(null)}
+                  />
                 )}
               </motion.div>
             )}
