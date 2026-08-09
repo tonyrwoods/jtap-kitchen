@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Scheduled job: when a referred Tap Room Society member "converts" (their
 // first real engagement — an event attendance or a recorded spend), award a
@@ -67,8 +68,18 @@ Deno.serve(async (req) => {
       }
     }
 
+    if (errors.length > 0) {
+      await notifyAdmins(base44, {
+        subject: `Referral bonus job: ${errors.length} failed`,
+        body: `The referral bonus job hit ${errors.length} error(s).<br><br>Rewards awarded: ${rewardsAwarded} · Points: ${totalPoints} · Checked: ${pending.length}<br><br><strong>Failed:</strong><br>${errors.map((e) => `${e.member} — ${e.error}`).join('<br>')}`,
+      }).catch(() => {});
+    }
     return Response.json({ success: true, checked: pending.length, rewardsAwarded, totalPoints, errors });
   } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Referral bonus job crashed',
+      body: `The referral bonus award job threw an uncaught error — bonuses may not have been awarded.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+    }).catch(() => {});
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

@@ -1,8 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
+  try {
 
   // Allow scheduled automations (no user) or admin manual trigger
   let user = null;
@@ -58,7 +60,7 @@ Deno.serve(async (req) => {
       </div>
     </div>`;
 
-  await Promise.all(
+  const results = await Promise.allSettled(
     admins.map(admin =>
       sendEmailViaGmail(base44, {
         to: admin.email,
@@ -67,6 +69,20 @@ Deno.serve(async (req) => {
       })
     )
   );
+  const failed = results.filter((r) => r.status === 'rejected').length;
+  if (failed > 0) {
+    await notifyAdmins(base44, {
+      subject: `Daily signup summary: ${failed}/${admins.length} admin email(s) failed`,
+      body: `The daily signup summary could not be delivered to ${failed} of ${admins.length} admin recipient(s).<br><br>New signups today: ${newUsers.length}`,
+    }).catch(() => {});
+  }
 
-  return Response.json({ sent: admins.length, new_signups: newUsers.length });
+  return Response.json({ sent: admins.length - failed, new_signups: newUsers.length });
+  } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Daily signup summary job crashed',
+      body: `The daily signup summary job threw an uncaught error.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+    }).catch(() => {});
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 });

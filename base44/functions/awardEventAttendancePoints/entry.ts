@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Scheduled job: after an event's date has passed, award loyalty points to
 // every Tap Room Society member who RSVP'd "Attending". Each promotion is
@@ -76,6 +77,10 @@ Deno.serve(async (req) => {
       totalAwarded,
     });
   } catch (error) {
+    await notifyAdmins(base44, {
+      subject: 'Event attendance points job crashed',
+      body: `The attendance points award job threw an uncaught error — points may not have been awarded.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+    }).catch(() => {});
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
