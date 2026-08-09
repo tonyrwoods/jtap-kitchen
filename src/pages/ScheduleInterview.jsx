@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, MapPin, CheckCircle2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
+import { toast } from "sonner";
 
 function groupSlotsByDate(slots) {
   return slots.reduce((acc, slot) => {
@@ -33,46 +34,37 @@ export default function ScheduleInterview() {
   useEffect(() => {
     if (!appId) { setError("Invalid link."); setLoading(false); return; }
 
-    Promise.all([
-      base44.entities.JobApplication.filter({ id: appId }),
-      base44.entities.InterviewSlot.filter({ is_booked: false }, "date", 100),
-    ]).then(([apps, openSlots]) => {
-      if (!apps[0]) { setError("Application not found."); setLoading(false); return; }
-      setApplication(apps[0]);
-      // Only show future slots
-      const today = new Date().toISOString().slice(0, 10);
-      setSlots(openSlots.filter(s => s.date >= today));
-      setLoading(false);
-    });
+    base44.functions.invoke("getInterviewBookingContext", { application_id: appId })
+      .then((res) => {
+        if (res.data?.error) { setError(res.data.error); setLoading(false); return; }
+        if (!res.data?.application) { setError("Application not found."); setLoading(false); return; }
+        setApplication(res.data.application);
+        setSlots(res.data.slots || []);
+        setLoading(false);
+      })
+      .catch(() => { setError("Could not load scheduling details."); setLoading(false); });
   }, [appId]);
 
   const handleBook = async () => {
     if (!selected) return;
     setBooking(true);
-
-    // Update slot as booked
-    await base44.entities.InterviewSlot.update(selected.id, {
-      is_booked: true,
-      booked_by_application_id: appId,
-      booked_by_name: application.applicant_name,
-    });
-
-    // Update application status
-    await base44.entities.JobApplication.update(appId, {
-      status: "Interview Scheduled",
-      interview_slot_id: selected.id,
-      interview_date: selected.date,
-      interview_time: selected.start_time,
-    });
-
-    // Send confirmation email to candidate
-    await base44.integrations.Core.SendEmail({
-      to: application.email,
-      subject: "Interview Confirmed — JTAP Kitchen",
-      body: `Hi ${application.applicant_name},\n\nYour interview for ${application.job_title} has been confirmed!\n\nDate: ${format(parseISO(selected.date), "EEEE, MMMM d, yyyy")}\nTime: ${selected.start_time} – ${selected.end_time}\nLocation: ${selected.location || "JTAP Kitchen – In Person"}\n\nWe look forward to meeting you!\n\n— The JTAP Kitchen Team`,
-    });
-
-    setBooked(true);
+    try {
+      const res = await base44.functions.invoke("bookInterviewSlot", {
+        application_id: appId,
+        slot_id: selected.id,
+      });
+      if (res.data?.success) {
+        setBooked(true);
+      } else {
+        toast.error(res.data?.error || "Could not book this slot.");
+        // Refresh available slots — the chosen one may have just been taken.
+        const r = await base44.functions.invoke("getInterviewBookingContext", { application_id: appId });
+        if (r.data?.slots) setSlots(r.data.slots);
+        setSelected(null);
+      }
+    } catch {
+      toast.error("Could not book this slot. Please try again.");
+    }
     setBooking(false);
   };
 

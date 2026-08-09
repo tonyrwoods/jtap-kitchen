@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 Deno.serve(async (req) => {
   try {
@@ -11,6 +12,9 @@ Deno.serve(async (req) => {
     }
     if (!email) return Response.json({ error: 'Email required' }, { status: 400 });
     const norm = email.trim().toLowerCase();
+
+    const rl = await enforceRateLimit(req, base44, 'unsubscribe', norm, 10, 600000);
+    if (rl) return rl;
 
     const existing = await base44.asServiceRole.entities.Newsletter.filter({ email: norm });
     if (existing.length > 0) {

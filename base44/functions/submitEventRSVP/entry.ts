@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 export default async function(req) {
   try {
@@ -12,6 +13,9 @@ export default async function(req) {
     if (!rsvp_status || !['Attending', 'Declined', 'Maybe'].includes(rsvp_status)) {
       return Response.json({ error: 'Valid rsvp_status required (Attending, Declined, or Maybe)' }, { status: 400 });
     }
+
+    const rl = await enforceRateLimit(req, base44, 'event-rsvp', token, 10, 600000);
+    if (rl) return rl;
 
     const invites = await base44.asServiceRole.entities.EventInvite.filter({ invite_token: token });
     const invite = invites[0];

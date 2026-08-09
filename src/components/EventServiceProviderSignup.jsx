@@ -42,16 +42,19 @@ export default function EventServiceProviderSignup() {
       return;
     }
     setSubmitting(true);
-    await base44.entities.EventServiceProvider.create({
-      ...form,
-      experience_years: parseFloat(form.experience_years) || 0,
-    });
-    await base44.integrations.Core.SendEmail({
-      to: form.email,
-      subject: "Application Received — JTAP Kitchen Event Center",
-      body: `Hi ${form.full_name},\n\nThank you for your interest in providing ${form.service_category} services at the JTAP Kitchen Event Center!\n\nWe've received your application and our team will review it shortly. If approved, we'll be in touch to discuss opportunities to work with us.\n\n— The JTAP Kitchen Events Team\nevents@jtapkitchen.com`,
-    });
-    setSubmitted(true);
+    try {
+      const res = await base44.functions.invoke("submitEventServiceProvider", {
+        ...form,
+        experience_years: parseFloat(form.experience_years) || 0,
+      });
+      if (res.data?.success) {
+        setSubmitted(true);
+      } else {
+        toast.error(res.data?.error || "Could not submit application. Please try again.");
+      }
+    } catch {
+      toast.error("Could not submit application. Please try again.");
+    }
     setSubmitting(false);
   };
 

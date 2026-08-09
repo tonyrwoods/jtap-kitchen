@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 export default async function (req) {
   try {
@@ -8,6 +9,9 @@ export default async function (req) {
     if (!token || !mode || !action) {
       return Response.json({ error: 'token, mode, action required' }, { status: 400 });
     }
+
+    const rl = await enforceRateLimit(req, base44, 'reservation-rsvp', token, 10, 600000);
+    if (rl) return rl;
 
     if (mode === 'holder') {
       if (!['confirm', 'decline'].includes(action)) {
