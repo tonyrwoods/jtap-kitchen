@@ -70,6 +70,11 @@
       "type": "number",
       "title": "Gift Card Expiry (months from purchase)",
       "default": 12
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "rls": {

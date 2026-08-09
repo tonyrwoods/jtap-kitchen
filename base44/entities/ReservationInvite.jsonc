@@ -35,6 +35,11 @@
     "rsvp_responded_at": {
       "type": "string",
       "title": "RSVP Responded At (ISO)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [

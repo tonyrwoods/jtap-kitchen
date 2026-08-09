@@ -57,6 +57,11 @@
     "member_since": {
       "type": "string",
       "title": "Member Since (YYYY-MM-DD)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [

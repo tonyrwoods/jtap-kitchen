@@ -33,6 +33,11 @@
     "og_image": {
       "type": "string",
       "title": "OG Image URL (Social Share Image)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [

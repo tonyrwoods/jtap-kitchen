@@ -13,6 +13,11 @@
       "title": "Cover Letter / Message",
       "type": "string"
     },
+    "description": {
+      "title": "Description",
+      "type": "string",
+      "maxLength": 1000
+    },
     "email": {
       "title": "Email",
       "type": "string"
