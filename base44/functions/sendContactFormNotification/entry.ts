@@ -1,14 +1,20 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
+import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 export default async function(req) {
+  let base44;
   try {
-    const base44 = createClientFromRequest(req);
+    base44 = createClientFromRequest(req);
     const { name, email, phone, subject, message } = await req.json();
 
     if (!name || !email || !message) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
+
+    const rl = await enforceRateLimit(req, base44, 'contact-form', String(email).toLowerCase(), 3, 3600000);
+    if (rl) return rl;
 
     const escapeHtml = (text) => String(text || '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -31,6 +37,12 @@ export default async function(req) {
 
     return Response.json({ success: true });
   } catch (error) {
+    if (base44) {
+      await notifyAdmins(base44, {
+        subject: 'Contact form notification failed',
+        body: `The sendContactFormNotification function threw an error.<br><br><strong>Error:</strong> ${error.message}<br><strong>Time:</strong> ${new Date().toISOString()}`,
+      }).catch(() => {});
+    }
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

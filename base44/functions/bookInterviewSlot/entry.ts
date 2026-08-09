@@ -53,7 +53,12 @@ export default async function (req) {
         to: application.email,
         subject: 'Interview Confirmed — JTAP Kitchen',
         body: buildEmail(application, slot),
-      }).catch(() => {});
+      }).catch(async (err) => {
+        await notifyAdmins(base44, {
+          subject: 'Interview confirmation email failed',
+          body: `An interview was booked but the confirmation email could not be sent to the candidate.<br><br><strong>Candidate:</strong> ${application.applicant_name} &lt;${application.email}&gt;<br><strong>Role:</strong> ${application.job_title || '(unknown)'}<br><strong>Slot:</strong> ${slot.date} ${slot.start_time}<br><strong>Error:</strong> ${err?.message || err}`,
+        }).catch(() => {});
+      });
     }
 
     return Response.json({ success: true });
