@@ -86,16 +86,36 @@ Deno.serve(async (req: Request) => {
     //   const product = (await base44.asServiceRole.entities.Product.filter({ id: productId }))[0];
     //   if (!product) return new Response(JSON.stringify({ error: "Unknown product" }), { status: 400 });
     //   const productName = product.name; const price = String(product.price); const currency = product.currency ?? "USD";
-    const productName = "Purchase"; // TODO: from your trusted product source
-    const price = "0.00";           // TODO: authoritative per-unit price (major units), resolved server-side
+    let productName = "Purchase";
+    let price = "0.00";
     const currency = "USD";
-    // For a SUBSCRIPTION set this to Wix's subscriptionInfo; leave null for a one-time payment.
-    const subscriptionInfo = null;
-    // Where Wix returns the buyer. Both MUST be real, PUBLICLY reachable routes in this app: the
-    // returning buyer is often anonymous, so a missing or login-gated route strands a paid customer.
-    // Match your router exactly — `/ThankYou`, not `/thank-you`.
+    let subscriptionInfo = null;
     const thankYouPath = "/ThankYou";
     const postFlowPath = "/";
+
+    // --- Gift card purchase ---
+    // productId "giftcard:{giftCardId}" → resolve the denomination from the GiftCard record
+    // created by submitGiftCardPurchase (server-authoritative; the client never sends a price).
+    if (productId.startsWith("giftcard:")) {
+      const giftCardId = productId.slice("giftcard:".length);
+      const card = await base44.asServiceRole.entities.GiftCard.get(giftCardId);
+      if (!card) {
+        return new Response(JSON.stringify({ error: "Gift card not found" }), { status: 400 });
+      }
+      if (card.status !== "Pending Payment") {
+        return new Response(JSON.stringify({ error: "This gift card is no longer eligible for checkout." }), { status: 400 });
+      }
+      if (!card.amount || card.amount < 0.5) {
+        return new Response(JSON.stringify({ error: "Invalid gift card amount" }), { status: 400 });
+      }
+      if (quantity !== 1) {
+        return new Response(JSON.stringify({ error: "Gift card quantity must be 1" }), { status: 400 });
+      }
+      productName = `JTAP Kitchen Gift Card ($${Number(card.amount).toFixed(0)})`;
+      price = Number(card.amount).toFixed(2);
+    } else {
+      return new Response(JSON.stringify({ error: "Unknown product" }), { status: 400 });
+    }
     // ===== END APP-SPECIFIC =====
 
     const total = parseFloat(price) * quantity;

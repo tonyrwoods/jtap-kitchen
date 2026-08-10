@@ -143,6 +143,21 @@ async function handleOrderApproved(db: any, eventData: any): Promise<Response> {
   const buyerEmail: string | null = purchase.buyerEmail ?? extractBuyerEmail(order);
 
   // ===== APP-SPECIFIC =====
+  // Gift card fulfillment: activate the gift card on payment. The status flip
+  // triggers the sendGiftCardConfirmation entity automation (Pending → Active),
+  // which emails the purchaser and recipient. Idempotent: only flip if still pending.
+  if (purchase.productId && purchase.productId.startsWith("giftcard:")) {
+    const giftCardId = purchase.productId.slice("giftcard:".length);
+    try {
+      const card = await db.entities.GiftCard.get(giftCardId);
+      if (card && card.status === "Pending Payment") {
+        await db.entities.GiftCard.update(giftCardId, { status: "Active" });
+      }
+    } catch (e) {
+      console.error("payments-webhook: gift card activation failed", e);
+      throw e; // re-throw so status stays pending and Wix retries the grant
+    }
+  }
   // Grant whatever the buyer paid for. This runs BEFORE we mark the purchase paid: if it
   // throws or times out, the status stays "pending", so Wix's retry re-runs the grant
   // rather than hitting the "already paid" short-circuit above and skipping it forever.

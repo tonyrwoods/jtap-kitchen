@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gift, CheckCircle, Search, CreditCard } from "lucide-react";
+import { Gift, Search, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 
 const AMOUNTS = [25, 50, 100, 150, 200];
@@ -42,7 +42,7 @@ export default function GiftCards() {
     recipient_name: "", recipient_email: "", message: ""
   });
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(null);
+  const [redirecting, setRedirecting] = useState(false);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const finalAmount = customAmount ? parseFloat(customAmount) : amount;
@@ -59,7 +59,8 @@ export default function GiftCards() {
     }
     setLoading(true);
     try {
-      const res = await base44.functions.invoke('submitGiftCardPurchase', {
+      // 1. Create the pending gift card (server-side, rate-limited).
+      const purchase = await base44.functions.invoke('submitGiftCardPurchase', {
         purchaser_name: form.purchaser_name,
         purchaser_email: form.purchaser_email,
         recipient_name: form.recipient_name,
@@ -67,19 +68,34 @@ export default function GiftCards() {
         message: form.message,
         amount: finalAmount,
       });
-      if (res.data?.success) {
-        toast.success("Gift card created! Email sent to recipient.");
-        setSuccess({ code: res.data.code, amount: res.data.amount });
-      } else {
-        toast.error(res.data?.error || "Failed to create gift card. Please try again.");
+      if (!purchase.data?.success || !purchase.data?.id) {
+        toast.error(purchase.data?.error || "Failed to create gift card. Please try again.");
+        setLoading(false);
+        return;
       }
+      // 2. Start a secure Wix checkout for the gift card denomination.
+      setRedirecting(true);
+      const checkout = await base44.functions.invoke('create-checkout', {
+        productId: `giftcard:${purchase.data.id}`,
+        quantity: 1,
+      });
+      const redirectUrl = checkout.data?.redirectUrl;
+      if (!redirectUrl) {
+        toast.error(checkout.data?.error || "Could not start checkout. Please try again.");
+        setRedirecting(false);
+        setLoading(false);
+        return;
+      }
+      // 3. Hand off to Wix's hosted payment page.
+      window.location.href = redirectUrl;
     } catch {
-      toast.error("Failed to create gift card. Please try again.");
+      toast.error("Failed to start checkout. Please try again.");
+      setRedirecting(false);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  if (success) {
+  if (redirecting) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-6 py-24">
         <motion.div
@@ -87,27 +103,11 @@ export default function GiftCards() {
           animate={{ opacity: 1, scale: 1 }}
           className="bg-card border border-border rounded-3xl p-10 max-w-md w-full text-center shadow-xl"
         >
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-primary" />
-          </div>
-          <h2 className="font-heading text-3xl font-bold text-foreground mb-2">Order Received!</h2>
-          <p className="font-body text-muted-foreground text-sm mb-6">
-            Your gift card request has been submitted. Please complete payment to activate it.
+          <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto mb-6" />
+          <h2 className="font-heading text-2xl font-bold text-foreground mb-2">Redirecting to secure checkout…</h2>
+          <p className="font-body text-muted-foreground text-sm">
+            Please don't close this window. You'll enter your payment details on our secure payment page.
           </p>
-          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 mb-6">
-            <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-1">Voucher Code</p>
-            <p className="font-heading text-2xl font-bold text-primary tracking-widest">{success.code}</p>
-            <p className="font-body text-sm text-muted-foreground mt-2">Value: <span className="font-semibold text-foreground">${success.amount}</span></p>
-          </div>
-          <p className="font-body text-xs text-muted-foreground mb-6">
-            To complete your purchase, please call us at <span className="text-foreground font-medium">901-554-4431</span> or email <span className="text-foreground font-medium">info@jtapkitchen.com</span> with your voucher code.
-          </p>
-          <button
-            onClick={() => { setSuccess(null); setForm({ purchaser_name: "", purchaser_email: "", recipient_name: "", recipient_email: "", message: "" }); setAmount(50); setCustomAmount(""); }}
-            className="px-8 py-3 border border-border rounded-full font-body text-sm font-medium hover:bg-secondary transition-colors"
-          >
-            Order Another
-          </button>
         </motion.div>
       </div>
     );

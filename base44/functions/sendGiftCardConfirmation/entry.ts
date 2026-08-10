@@ -12,7 +12,14 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const event = body.event || {};
 
-    if (event.type !== 'create') return Response.json({ skipped: true });
+    if (event.type !== 'update') return Response.json({ skipped: true });
+    // Only send on the Pending Payment → Active transition (i.e. once payment is confirmed).
+    // This is idempotent: re-updates while already Active are skipped.
+    const data = body.data || {};
+    const oldData = body.old_data || {};
+    if (data.status !== 'Active' || oldData.status === 'Active') {
+      return Response.json({ skipped: true });
+    }
 
     // Fetch the real gift card record from the DB — never trust the request body
     // (prevents arbitrary recipient / content injection via direct HTTP calls)
