@@ -15,7 +15,7 @@ export default function ThankYou() {
         </div>
         <h1 className="font-heading text-3xl font-bold text-foreground mb-3">Thank You!</h1>
         <p className="font-body text-muted-foreground text-sm mb-6">
-          Your payment was successful. Your gift card has been activated and a confirmation email is on its way.
+          Your payment was successful. A confirmation email with the details is on its way.
         </p>
         <div className="flex flex-col gap-3">
           <Link

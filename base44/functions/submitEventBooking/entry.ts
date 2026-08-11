@@ -52,6 +52,32 @@ export default async function (req) {
       return Response.json({ error: `Only ${after.spots_available} spot${after.spots_available === 1 ? '' : 's'} available.` }, { status: 409 });
     }
 
+    // Paid events hold seats as "Pending Payment" — confirmed + emailed by the payment
+    // webhook once the buyer pays. Free events confirm immediately as before.
+    const isPaid = Number(event.price_per_guest) > 0;
+
+    if (isPaid) {
+      const reservation = await base44.asServiceRole.entities.Reservation.create({
+        guest_name,
+        email,
+        phone: phone || '',
+        date: event.date,
+        time: event.time,
+        party_size: pSize,
+        special_requests: special_requests ? `[Event: ${event.title}] — ${special_requests}` : `[Event: ${event.title}]`,
+        event_id: event_id,
+        status: 'Pending Payment',
+      });
+      return Response.json({
+        success: true,
+        requires_payment: true,
+        reservation_id: reservation.id,
+        price_per_guest: Number(event.price_per_guest),
+        party_size: pSize,
+        spots_remaining: available - pSize,
+      });
+    }
+
     await base44.asServiceRole.entities.Reservation.create({
       guest_name,
       email,

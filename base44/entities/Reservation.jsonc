@@ -35,11 +35,16 @@
       "title": "Status",
       "enum": [
         "Pending",
+        "Pending Payment",
         "Confirmed",
         "Cancelled",
         "Completed"
       ],
       "default": "Pending"
+    },
+    "event_id": {
+      "type": "string",
+      "title": "Linked Event ID"
     },
     "admin_notes": {
       "type": "string",

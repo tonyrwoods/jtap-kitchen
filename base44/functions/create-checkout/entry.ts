@@ -113,6 +113,36 @@ Deno.serve(async (req: Request) => {
       }
       productName = `JTAP Kitchen Gift Card ($${Number(card.amount).toFixed(0)})`;
       price = Number(card.amount).toFixed(2);
+    } else if (productId.startsWith("event:")) {
+      // Paid event ticket — the seats are already held as a "Pending Payment" reservation by
+      // submitEventBooking. Resolve the price from the Event (server-authoritative); the
+      // quantity must match the held party size (tamper check).
+      const reservationId = productId.slice("event:".length);
+      const reservation = await base44.asServiceRole.entities.Reservation.get(reservationId);
+      if (!reservation) {
+        return new Response(JSON.stringify({ error: "Booking not found" }), { status: 400 });
+      }
+      if (reservation.status !== "Pending Payment") {
+        return new Response(JSON.stringify({ error: "This booking is no longer eligible for checkout." }), { status: 400 });
+      }
+      if (!reservation.event_id) {
+        return new Response(JSON.stringify({ error: "Booking is missing its event link." }), { status: 400 });
+      }
+      const evt = await base44.asServiceRole.entities.Event.get(reservation.event_id);
+      if (!evt) {
+        return new Response(JSON.stringify({ error: "Event not found" }), { status: 400 });
+      }
+      if (evt.is_published === false) {
+        return new Response(JSON.stringify({ error: "This event is no longer available." }), { status: 400 });
+      }
+      if (!evt.price_per_guest || evt.price_per_guest < 0.5) {
+        return new Response(JSON.stringify({ error: "This event does not require payment." }), { status: 400 });
+      }
+      if (quantity !== reservation.party_size) {
+        return new Response(JSON.stringify({ error: "Quantity does not match your booking." }), { status: 400 });
+      }
+      productName = `${evt.title} — ${quantity} guest${quantity !== 1 ? "s" : ""}`;
+      price = Number(evt.price_per_guest).toFixed(2);
     } else {
       return new Response(JSON.stringify({ error: "Unknown product" }), { status: 400 });
     }

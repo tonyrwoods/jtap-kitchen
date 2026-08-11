@@ -46,6 +46,25 @@ Deno.serve(async (req) => {
       confirmedUpdated = staleConfirmed.length;
     }
 
+    // Release seats held by abandoned "Pending Payment" event reservations (>24h old) and
+    // restore their spots so other guests can book. (Checkout sessions are short-lived, so a
+    // reservation still pending payment after 24h was abandoned.)
+    const pendingPaymentCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const abandonedPaid = allReservations.filter(
+      (r) => r.status === 'Pending Payment' && r.created_date && r.created_date < pendingPaymentCutoff
+    );
+    let pendingPaymentReleased = 0;
+    for (const r of abandonedPaid) {
+      await base44.asServiceRole.entities.Reservation.update(r.id, { status: 'Cancelled' });
+      if (r.event_id && r.party_size) {
+        await base44.asServiceRole.entities.Event.updateMany(
+          { id: r.event_id },
+          { $inc: { spots_available: r.party_size } }
+        );
+      }
+      pendingPaymentReleased++;
+    }
+
     // Mark stale pending companion invites as Declined (reservation date passed)
     const allInvites = await base44.asServiceRole.entities.ReservationInvite.list('-created_date', 500);
     const passedIds = new Set(allReservations.filter((r) => r.date && r.date < today).map((r) => r.id));
@@ -63,8 +82,9 @@ Deno.serve(async (req) => {
       success: true,
       pendingCancelled: pendingUpdated,
       confirmedCompleted: confirmedUpdated,
+      pendingPaymentReleased,
       invitesDeclined,
-      totalProcessed: pendingUpdated + confirmedUpdated + invitesDeclined,
+      totalProcessed: pendingUpdated + confirmedUpdated + invitesDeclined + pendingPaymentReleased,
     });
   } catch (error) {
     await notifyAdmins(base44, {

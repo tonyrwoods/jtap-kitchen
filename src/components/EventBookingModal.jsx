@@ -15,6 +15,7 @@ export default function EventBookingModal({ event, onClose, onWaitlist, onBookin
     special_requests: ""
   });
   const [submitting, setSubmitting] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
   const soldOut = event.spots_available <= 0;
 
@@ -35,15 +36,34 @@ export default function EventBookingModal({ event, onClose, onWaitlist, onBookin
         email: form.email,
         phone: form.phone,
         party_size: guestCount,
-        special_requests: form.special_requests || `Event: ${event.title}`,
+        special_requests: form.special_requests || "",
       });
-      if (res.data?.success) {
-        toast.success("Booking submitted! Check your email for confirmation.");
-        onBookingComplete();
-        onClose();
-      } else {
+      if (!res.data?.success) {
         toast.error(res.data?.error || "Booking failed. Please try again.");
+        setSubmitting(false);
+        return;
       }
+      onBookingComplete();
+      if (res.data.requires_payment) {
+        // Paid event → hand off to secure checkout. Seats are already held.
+        setRedirecting(true);
+        const checkout = await base44.functions.invoke("create-checkout", {
+          productId: `event:${res.data.reservation_id}`,
+          quantity: guestCount,
+        });
+        const redirectUrl = checkout.data?.redirectUrl;
+        if (!redirectUrl) {
+          toast.error(checkout.data?.error || "Could not start checkout. Please try again.");
+          setRedirecting(false);
+          setSubmitting(false);
+          return;
+        }
+        window.location.href = redirectUrl;
+        return;
+      }
+      // Free event → confirmed immediately.
+      toast.success("Booking confirmed! Check your email for confirmation.");
+      onClose();
     } catch {
       toast.error("Booking failed. Please try again.");
     }
@@ -229,7 +249,7 @@ export default function EventBookingModal({ event, onClose, onWaitlist, onBookin
                     disabled={submitting || guestCount > event.spots_available}
                     className="flex-1 px-5 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
-                    {submitting ? "Booking..." : "Book Now"}
+                    {submitting ? (redirecting ? "Redirecting to checkout…" : "Booking...") : (event.price_per_guest > 0 ? `Pay & Book — $${totalPrice.toFixed(2)}` : "Book Now")}
                   </button>
                 </div>
               </form>

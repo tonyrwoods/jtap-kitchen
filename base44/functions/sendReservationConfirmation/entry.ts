@@ -27,6 +27,11 @@ Deno.serve(async (req) => {
       if (!reservation) return Response.json({ error: 'Missing reservation data' }, { status: 400 });
     }
 
+    // Paid event seats are held as "Pending Payment" — don't email until payment confirms.
+    if (reservation.status === 'Pending Payment') {
+      return Response.json({ skipped: true });
+    }
+
     if (!reservation.email || !reservation.guest_name) {
       return Response.json({ error: 'Missing email or name' }, { status: 400 });
     }
