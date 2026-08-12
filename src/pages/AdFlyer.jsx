@@ -245,10 +245,13 @@ export default function AdFlyer() {
                 <MapPin className="w-4 h-4" />
                 <h3 className="font-heading text-sm font-bold uppercase tracking-wide">Visit Us</h3>
               </div>
-              <p className="font-body text-xs text-muted-foreground">{address}</p>
+              <p className="font-body text-xs font-semibold text-foreground">JTAP Kitchen</p>
+              <p className="font-body text-xs text-muted-foreground">3397 Summer Ave, Memphis, TN 38122</p>
               <p className="font-body text-xs text-muted-foreground">
-                Hours: Wed–Thu 5:00pm–10:00pm · Fri–Sat 5:00pm–11:00pm · Sunday Brunch 10:00am–3:00pm
+                Hours: Wed–Thu 5:00pm–10:00pm · Fri–Sat 5:00pm–11:00pm · Sun Brunch 10:00am–3:00pm
               </p>
+              <p className="font-body text-xs text-muted-foreground">901-213-8085</p>
+              <p className="font-body text-xs text-primary font-semibold">www.jtapkitchen.com</p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-primary">

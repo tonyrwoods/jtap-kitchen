@@ -183,11 +183,12 @@ Deno.serve(async (req) => {
     const qrX = W - M - qrSize;
     doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('JTAP Kitchen', M, y);
+    y += 16;
     doc.setFontSize(11);
-    doc.text(address, M, y);
-    y += 17;
-    if (phone) { doc.text(phone, M, y); y += 17; }
-    if (email) { doc.text(email, M, y); y += 17; }
+    doc.text('3397 Summer Ave, Memphis, TN 38122', M, y);
+    y += 16;
     if (hours) {
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(...MUTED);
@@ -195,9 +196,13 @@ Deno.serve(async (req) => {
       doc.text(hoursLines, M, y);
       y += hoursLines.length * 14 + 3;
     }
-    doc.setTextColor(...GOLD);
+    doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'bold');
-    doc.text(appUrl.replace(/^https?:\/\//, ''), M, y);
+    doc.setFontSize(11);
+    doc.text('901-213-8085', M, y);
+    y += 16;
+    doc.setTextColor(...GOLD);
+    doc.text('www.jtapkitchen.com', M, y);
 
     if (qrDataUrl) {
       // Solid white backing so the QR stays high-contrast over any background image
