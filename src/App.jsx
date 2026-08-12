@@ -44,6 +44,7 @@ import EventAnnouncement from './pages/EventAnnouncement';
 import ReservationConfirm from './pages/ReservationConfirm';
 import ThankYou from './pages/ThankYou';
 import AdFlyer from './pages/AdFlyer';
+import TableNumberPlaques from './pages/TableNumberPlaques';
 const AdminMemberships = lazy(() => import('./pages/AdminMemberships'));
 const AdminPrivateRoom = lazy(() => import('./pages/AdminPrivateRoom'));
 const AdminPointsAnalytics = lazy(() => import('./pages/AdminPointsAnalytics'));
@@ -150,6 +151,7 @@ const AuthenticatedApp = () => {
         <Route path="/reserve/:token" element={<ReservationConfirm />} />
         <Route path="/ThankYou" element={<ThankYou />} />
         <Route path="/admin/flyer" element={<AdFlyer />} />
+        <Route path="/admin/table-plaques" element={<TableNumberPlaques />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
