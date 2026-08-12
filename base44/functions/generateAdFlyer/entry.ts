@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     let qrDataUrl: string | null = null;
     try {
       qrDataUrl = await QRCode.toDataURL(menuUrl, {
-        margin: 1,
+        margin: 2,
         width: 300,
         color: { dark: '#1a1a1a', light: '#ffffff' },
       });
@@ -81,6 +81,8 @@ Deno.serve(async (req) => {
         console.error('Background image embed failed:', imgErr.message);
       }
     }
+    // Always restore full opacity before drawing any content (banner, text, QR)
+    try { doc.setGState(new doc.GState({ opacity: 1 })); } catch (_) {}
 
     // Top gold banner
     doc.setFillColor(...GOLD);
@@ -197,6 +199,10 @@ Deno.serve(async (req) => {
     doc.text(appUrl.replace(/^https?:\/\//, ''), M, y);
 
     if (qrDataUrl) {
+      // Solid white backing so the QR stays high-contrast over any background image
+      const pad = 6;
+      doc.setFillColor(255, 255, 255);
+      doc.roundedRect(qrX - pad, contactStartY - pad, qrSize + pad * 2, qrSize + pad * 2, 6, 6, 'F');
       doc.addImage(qrDataUrl, 'PNG', qrX, contactStartY, qrSize, qrSize);
       doc.setTextColor(...MUTED);
       doc.setFont('helvetica', 'normal');

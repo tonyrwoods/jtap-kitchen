@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Download, FileText, UtensilsCrossed, MapPin, QrCode, ImagePlus, Upload, X } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 
 // Reads a file, downscales it to fit maxDim, and returns a data URL + dimensions.
@@ -121,6 +122,7 @@ export default function AdFlyer() {
 
   const name = settings?.restaurant_name || "JTAP Kitchen";
   const address = settings?.address || "Memphis, TN";
+  const menuUrl = `${window.location.origin}/menu`;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
@@ -255,8 +257,8 @@ export default function AdFlyer() {
                 <QrCode className="w-4 h-4" />
                 <h3 className="font-heading text-sm font-bold uppercase tracking-wide">Scan to View Menu</h3>
               </div>
-              <div className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex items-center justify-center">
-                <QrCode className="w-10 h-10 text-muted-foreground/40" />
+              <div className="w-24 h-24 rounded-lg overflow-hidden bg-white p-1">
+                <QRCodeSVG value={menuUrl} size={80} level="M" />
               </div>
             </div>
           </div>
