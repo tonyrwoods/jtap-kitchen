@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Download, FileText, UtensilsCrossed, MapPin, QrCode, ImagePlus, Upload, X } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 
 // Reads a file, downscales it to fit maxDim, and returns a data URL + dimensions.
@@ -262,7 +261,11 @@ export default function AdFlyer() {
                 <h3 className="font-heading text-sm font-bold uppercase tracking-wide">Scan to View Menu</h3>
               </div>
               <div className="w-40 h-40 rounded-lg overflow-hidden bg-white p-2">
-                <QRCodeSVG value={menuUrl} size={144} level="H" marginSize={2} />
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=2&ecc=H&data=${encodeURIComponent(menuUrl)}`}
+                  alt="Scan to view menu"
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
           </div>
