@@ -261,8 +261,8 @@ export default function AdFlyer() {
                 <QrCode className="w-4 h-4" />
                 <h3 className="font-heading text-sm font-bold uppercase tracking-wide">Scan to View Menu</h3>
               </div>
-              <div className="w-24 h-24 rounded-lg overflow-hidden bg-white p-1">
-                <QRCodeSVG value={menuUrl} size={80} level="M" />
+              <div className="w-40 h-40 rounded-lg overflow-hidden bg-white p-2">
+                <QRCodeSVG value={menuUrl} size={144} level="H" marginSize={2} />
               </div>
             </div>
           </div>
