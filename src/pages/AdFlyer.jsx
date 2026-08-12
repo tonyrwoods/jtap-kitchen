@@ -37,8 +37,10 @@ export default function AdFlyer() {
   const [generating, setGenerating] = useState(false);
   const [logo, setLogo] = useState(null); // { dataUrl, w, h }
   const [bg, setBg] = useState(null); // { dataUrl, w, h }
+  const [qr, setQr] = useState(null); // { dataUrl, w, h }
   const logoInputRef = useRef(null);
   const bgInputRef = useRef(null);
+  const qrInputRef = useRef(null);
 
   useEffect(() => {
     Promise.all([
@@ -81,6 +83,20 @@ export default function AdFlyer() {
     }
   };
 
+  const onQr = async (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    try {
+      const res = await processImage(f, 600, true);
+      setQr(res);
+      toast.success("QR code added");
+    } catch {
+      toast.error("Could not read QR image");
+    } finally {
+      if (qrInputRef.current) qrInputRef.current.value = "";
+    }
+  };
+
   const handleDownload = async () => {
     setGenerating(true);
     try {
@@ -91,6 +107,9 @@ export default function AdFlyer() {
         background: bg?.dataUrl || null,
         bg_w: bg?.w || 0,
         bg_h: bg?.h || 0,
+        qr: qr?.dataUrl || null,
+        qr_w: qr?.w || 0,
+        qr_h: qr?.h || 0,
       });
       if (response.data) {
         const blob = new Blob([response.data], { type: "application/pdf" });
@@ -137,7 +156,7 @@ export default function AdFlyer() {
       </div>
 
       {/* Upload controls */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Logo upload */}
         <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
           <div className="flex items-center gap-2 text-primary">
@@ -196,6 +215,36 @@ export default function AdFlyer() {
             </button>
           )}
           <input ref={bgInputRef} type="file" accept="image/*" onChange={onBg} className="hidden" />
+        </div>
+
+        {/* QR code upload */}
+        <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-primary">
+            <QrCode className="w-4 h-4" />
+            <h3 className="font-heading text-sm font-bold uppercase tracking-wide">QR Code</h3>
+          </div>
+          {qr ? (
+            <div className="flex items-center gap-3">
+              <div className="w-16 h-16 border border-border rounded-lg overflow-hidden flex items-center justify-center bg-white">
+                <img src={qr.dataUrl} alt="QR preview" className="max-w-full max-h-full object-contain" />
+              </div>
+              <button
+                onClick={() => setQr(null)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+              >
+                <X className="w-3 h-3" /> Remove
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => qrInputRef.current?.click()}
+              className="w-full flex flex-col items-center gap-1 py-4 border-2 border-dashed border-border rounded-lg text-muted-foreground hover:bg-muted/40 transition-colors"
+            >
+              <Upload className="w-5 h-5" />
+              <span className="font-body text-xs">Upload QR code (PNG)</span>
+            </button>
+          )}
+          <input ref={qrInputRef} type="file" accept="image/*" onChange={onQr} className="hidden" />
         </div>
       </div>
 
@@ -262,7 +311,7 @@ export default function AdFlyer() {
               </div>
               <div className="w-40 h-40 rounded-lg overflow-hidden bg-white p-2">
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=2&ecc=H&data=${encodeURIComponent(menuUrl)}`}
+                  src={qr?.dataUrl || `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=2&ecc=H&data=${encodeURIComponent(menuUrl)}`}
                   alt="Scan to view menu"
                   className="w-full h-full object-contain"
                 />

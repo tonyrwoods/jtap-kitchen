@@ -20,6 +20,9 @@ Deno.serve(async (req) => {
     const background = body.background || null;
     const bgW = Number(body.bg_w) || 0;
     const bgH = Number(body.bg_h) || 0;
+    const qr = body.qr || null;
+    const qrW = Number(body.qr_w) || 0;
+    const qrH = Number(body.qr_h) || 0;
 
     const [settings, dishes] = await Promise.all([
       base44.asServiceRole.entities.AppSettings.list('-updated_date', 5),
@@ -208,12 +211,13 @@ Deno.serve(async (req) => {
     doc.setTextColor(...GOLD);
     doc.text('www.jtapkitchen.com', M, y);
 
-    if (qrDataUrl) {
+    const qrImg = qr || qrDataUrl;
+    if (qrImg) {
       // Solid white backing so the QR stays high-contrast over any background image
       const pad = 6;
       doc.setFillColor(255, 255, 255);
       doc.roundedRect(qrX - pad, contactStartY - pad, qrSize + pad * 2, qrSize + pad * 2, 6, 6, 'F');
-      doc.addImage(qrDataUrl, 'PNG', qrX, contactStartY, qrSize, qrSize);
+      doc.addImage(qrImg, 'PNG', qrX, contactStartY, qrSize, qrSize);
       doc.setTextColor(...MUTED);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
