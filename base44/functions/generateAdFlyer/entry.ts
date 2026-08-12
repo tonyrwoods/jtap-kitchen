@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     const address = s.address || 'Memphis, TN';
     const phone = s.contact_phone || '';
     const email = s.contact_email || '';
-    const hours = s.opening_time && s.closing_time ? `${s.opening_time}\u2013${s.closing_time}` : '';
+    const hours = 'Wed\u2013Thu 5:00pm\u201310:00pm  \u00b7  Fri\u2013Sat 5:00pm\u201311:00pm  \u00b7  Sun Brunch 10:00am\u20133:00pm';
     const appUrl = (Deno.env.get('APP_URL') || 'https://jtapkitchen.com').replace(/\/$/, '');
     const menuUrl = `${appUrl}/menu`;
 
@@ -191,8 +191,9 @@ Deno.serve(async (req) => {
     if (hours) {
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(...MUTED);
-      doc.text(`Hours: ${hours}`, M, y);
-      y += 17;
+      const hoursLines = doc.splitTextToSize(`Hours: ${hours}`, 400);
+      doc.text(hoursLines, M, y);
+      y += hoursLines.length * 14 + 3;
     }
     doc.setTextColor(...GOLD);
     doc.setFont('helvetica', 'bold');

@@ -246,11 +246,9 @@ export default function AdFlyer() {
                 <h3 className="font-heading text-sm font-bold uppercase tracking-wide">Visit Us</h3>
               </div>
               <p className="font-body text-xs text-muted-foreground">{address}</p>
-              {settings?.opening_time && settings?.closing_time && (
-                <p className="font-body text-xs text-muted-foreground">
-                  Hours: {settings.opening_time}–{settings.closing_time}
-                </p>
-              )}
+              <p className="font-body text-xs text-muted-foreground">
+                Hours: Wed–Thu 5:00pm–10:00pm · Fri–Sat 5:00pm–11:00pm · Sunday Brunch 10:00am–3:00pm
+              </p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-primary">
