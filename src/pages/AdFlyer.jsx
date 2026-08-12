@@ -1,13 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Download, FileText, UtensilsCrossed, MapPin, QrCode } from "lucide-react";
+import { Download, FileText, UtensilsCrossed, MapPin, QrCode, ImagePlus, Upload, X } from "lucide-react";
 import { toast } from "sonner";
+
+// Reads a file, downscales it to fit maxDim, and returns a data URL + dimensions.
+// Logos are kept as PNG (transparency); backgrounds as JPEG (smaller payload).
+async function processImage(file, maxDim, asPng) {
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = reject;
+    i.src = dataUrl;
+  });
+  const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+  const w = Math.max(1, Math.round(img.width * scale));
+  const h = Math.max(1, Math.round(img.height * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, w, h);
+  const out = asPng ? canvas.toDataURL("image/png") : canvas.toDataURL("image/jpeg", 0.85);
+  return { dataUrl: out, w, h };
+}
 
 export default function AdFlyer() {
   const [settings, setSettings] = useState(null);
   const [dishCount, setDishCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [logo, setLogo] = useState(null); // { dataUrl, w, h }
+  const [bg, setBg] = useState(null); // { dataUrl, w, h }
+  const logoInputRef = useRef(null);
+  const bgInputRef = useRef(null);
 
   useEffect(() => {
     Promise.all([
@@ -22,10 +53,45 @@ export default function AdFlyer() {
       .finally(() => setLoading(false));
   }, []);
 
+  const onLogo = async (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    try {
+      const res = await processImage(f, 400, true);
+      setLogo(res);
+      toast.success("Logo added");
+    } catch {
+      toast.error("Could not read logo");
+    } finally {
+      if (logoInputRef.current) logoInputRef.current.value = "";
+    }
+  };
+
+  const onBg = async (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    try {
+      const res = await processImage(f, 1400, false);
+      setBg(res);
+      toast.success("Background image added");
+    } catch {
+      toast.error("Could not read image");
+    } finally {
+      if (bgInputRef.current) bgInputRef.current.value = "";
+    }
+  };
+
   const handleDownload = async () => {
     setGenerating(true);
     try {
-      const response = await base44.functions.invoke("generateAdFlyer", {});
+      const response = await base44.functions.invoke("generateAdFlyer", {
+        logo: logo?.dataUrl || null,
+        logo_w: logo?.w || 0,
+        logo_h: logo?.h || 0,
+        background: bg?.dataUrl || null,
+        bg_w: bg?.w || 0,
+        bg_h: bg?.h || 0,
+      });
       if (response.data) {
         const blob = new Blob([response.data], { type: "application/pdf" });
         const url = window.URL.createObjectURL(blob);
@@ -65,18 +131,93 @@ export default function AdFlyer() {
         <h1 className="font-heading text-3xl font-bold text-foreground">Advertisement Flyer</h1>
         <p className="font-body text-muted-foreground max-w-xl mx-auto">
           A printable brand flyer for {name}. It pulls your featured dishes and contact details live, so it's always
-          up to date. Download the PDF and share it in print or online.
+          up to date. Add your logo and a background image, then download the PDF.
         </p>
+      </div>
+
+      {/* Upload controls */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Logo upload */}
+        <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-primary">
+            <ImagePlus className="w-4 h-4" />
+            <h3 className="font-heading text-sm font-bold uppercase tracking-wide">Logo</h3>
+          </div>
+          {logo ? (
+            <div className="flex items-center gap-3">
+              <div className="w-16 h-16 border border-border rounded-lg overflow-hidden flex items-center justify-center bg-muted/40">
+                <img src={logo.dataUrl} alt="Logo preview" className="max-w-full max-h-full object-contain" />
+              </div>
+              <button
+                onClick={() => setLogo(null)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+              >
+                <X className="w-3 h-3" /> Remove
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => logoInputRef.current?.click()}
+              className="w-full flex flex-col items-center gap-1 py-4 border-2 border-dashed border-border rounded-lg text-muted-foreground hover:bg-muted/40 transition-colors"
+            >
+              <Upload className="w-5 h-5" />
+              <span className="font-body text-xs">Upload logo (PNG)</span>
+            </button>
+          )}
+          <input ref={logoInputRef} type="file" accept="image/*" onChange={onLogo} className="hidden" />
+        </div>
+
+        {/* Background upload */}
+        <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-primary">
+            <ImagePlus className="w-4 h-4" />
+            <h3 className="font-heading text-sm font-bold uppercase tracking-wide">Background Image</h3>
+          </div>
+          {bg ? (
+            <div className="flex items-center gap-3">
+              <div className="w-16 h-16 border border-border rounded-lg overflow-hidden">
+                <img src={bg.dataUrl} alt="Background preview" className="w-full h-full object-cover" />
+              </div>
+              <button
+                onClick={() => setBg(null)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+              >
+                <X className="w-3 h-3" /> Remove
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => bgInputRef.current?.click()}
+              className="w-full flex flex-col items-center gap-1 py-4 border-2 border-dashed border-border rounded-lg text-muted-foreground hover:bg-muted/40 transition-colors"
+            >
+              <Upload className="w-5 h-5" />
+              <span className="font-body text-xs">Upload background (JPG)</span>
+            </button>
+          )}
+          <input ref={bgInputRef} type="file" accept="image/*" onChange={onBg} className="hidden" />
+        </div>
       </div>
 
       {/* Flyer preview card */}
       <div className="rounded-2xl overflow-hidden border border-border shadow-sm bg-card">
-        {/* Gold banner */}
+        {/* Gold banner with logo or name */}
         <div className="bg-primary px-6 py-8 text-center">
-          <h2 className="font-heading text-2xl font-bold text-primary-foreground tracking-wider">
-            {name.toUpperCase()}
-          </h2>
+          {logo ? (
+            <img src={logo.dataUrl} alt={name} className="h-14 mx-auto object-contain" />
+          ) : (
+            <h2 className="font-heading text-2xl font-bold text-primary-foreground tracking-wider">
+              {name.toUpperCase()}
+            </h2>
+          )}
         </div>
+
+        {/* Optional background hero strip */}
+        {bg && (
+          <div className="h-32 w-full overflow-hidden">
+            <img src={bg.dataUrl} alt="Background" className="w-full h-full object-cover" />
+          </div>
+        )}
+
         <div className="p-6 space-y-5">
           <p className="text-center font-body text-sm text-muted-foreground">
             Seasonal Small Plates · Craft Cocktails · {address}

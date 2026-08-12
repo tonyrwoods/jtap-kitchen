@@ -13,6 +13,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Admin access required' }, { status: 403 });
     }
 
+    const body = await req.json().catch(() => ({}));
+    const logo = body.logo || null;
+    const logoW = Number(body.logo_w) || 0;
+    const logoH = Number(body.logo_h) || 0;
+    const background = body.background || null;
+    const bgW = Number(body.bg_w) || 0;
+    const bgH = Number(body.bg_h) || 0;
+
     const [settings, dishes] = await Promise.all([
       base44.asServiceRole.entities.AppSettings.list('-updated_date', 5),
       base44.asServiceRole.entities.FeaturedDish.filter({ is_active: true }, 'sort_order', 8),
@@ -50,19 +58,54 @@ Deno.serve(async (req) => {
     const H = doc.internal.pageSize.getHeight();
     const M = 44;
 
-    // Cream background
+    // Cream background (base)
     doc.setFillColor(...CREAM);
     doc.rect(0, 0, W, H, 'F');
+
+    // Optional full-page background image (cover) with a cream overlay for readability
+    if (background && bgW > 0 && bgH > 0) {
+      try {
+        const scale = Math.max(W / bgW, H / bgH);
+        const dw = bgW * scale;
+        const dh = bgH * scale;
+        doc.addImage(background, 'JPEG', (W - dw) / 2, (H - dh) / 2, dw, dh);
+        try {
+          doc.setGState(new doc.GState({ opacity: 0.84 }));
+          doc.setFillColor(...CREAM);
+          doc.rect(0, 0, W, H, 'F');
+          doc.setGState(new doc.GState({ opacity: 1 }));
+        } catch (gsErr) {
+          console.error('GState overlay failed:', gsErr.message);
+        }
+      } catch (imgErr) {
+        console.error('Background image embed failed:', imgErr.message);
+      }
+    }
 
     // Top gold banner
     doc.setFillColor(...GOLD);
     doc.rect(0, 0, W, 96, 'F');
 
-    // Restaurant name
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(36);
-    doc.text(restaurantName.toUpperCase(), W / 2, 60, { align: 'center' });
+    // Logo (if provided) centered in the banner; otherwise the restaurant name
+    if (logo && logoW > 0 && logoH > 0) {
+      const maxH = 64, maxW = 260;
+      const sc = Math.min(maxH / logoH, maxW / logoW);
+      const lw = logoW * sc, lh = logoH * sc;
+      try {
+        doc.addImage(logo, 'PNG', (W - lw) / 2, (96 - lh) / 2, lw, lh);
+      } catch (logoErr) {
+        console.error('Logo embed failed:', logoErr.message);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(36);
+        doc.text(restaurantName.toUpperCase(), W / 2, 60, { align: 'center' });
+      }
+    } else {
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(36);
+      doc.text(restaurantName.toUpperCase(), W / 2, 60, { align: 'center' });
+    }
 
     // Tagline
     doc.setTextColor(...DARK);
