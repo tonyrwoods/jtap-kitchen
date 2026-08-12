@@ -110,12 +110,16 @@ Deno.serve(async (req) => {
     }
 
     // Tagline
+    doc.setTextColor(...GOLD);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(15);
+    doc.text('Where Every Bite Tells a Story', W / 2, 122, { align: 'center' });
     doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    doc.text('Seasonal Small Plates  \u00b7  Craft Cocktails  \u00b7  Memphis, TN', W / 2, 122, { align: 'center' });
+    doc.text('Seasonal Small Plates  \u00b7  Craft Cocktails  \u00b7  Memphis, TN', W / 2, 140, { align: 'center' });
 
-    let y = 158;
+    let y = 172;
 
     // Brand statement
     doc.setFont('helvetica', 'italic');

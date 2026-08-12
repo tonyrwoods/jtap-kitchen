@@ -221,6 +221,9 @@ export default function AdFlyer() {
         )}
 
         <div className="p-6 space-y-5">
+          <p className="text-center font-heading text-lg italic text-primary">
+            "Where Every Bite Tells a Story"
+          </p>
           <p className="text-center font-body text-sm text-muted-foreground">
             Seasonal Small Plates · Craft Cocktails · {address}
           </p>
