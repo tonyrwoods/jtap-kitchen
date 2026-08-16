@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+const JTAPLEDGER_APP_ID = Deno.env.get('JTAPLEDGER_APP_ID');
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -20,26 +22,24 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Inventory item not found' }, { status: 404 });
     }
 
-    const ledgerData = {
-      source_app: 'kitchen',
-      source_entity: 'InventoryItem',
+    const inventoryPayload = {
       source_id: item.id,
       name: item.name,
       category: item.category,
       unit: item.unit,
       current_stock: item.current_stock,
       cost_per_unit: item.cost_per_unit,
-      inventory_value: item.current_stock * item.cost_per_unit,
       min_stock_level: item.min_stock_level,
       supplier: item.supplier,
-      last_restock_date: item.last_restock_date,
       expiry_date: item.expiry_date,
-      sync_status: 'synced'
     };
 
-    console.log('Syncing inventory cost to Ledger:', ledgerData);
+    const result = await base44.asServiceRole.functions.invoke('syncInventoryItemFromJtapKitchen', {
+      app_id: JTAPLEDGER_APP_ID,
+      inventory_item: inventoryPayload,
+    });
 
-    return Response.json({ success: true, data: ledgerData });
+    return Response.json({ success: true, result });
   } catch (error) {
     console.error('Inventory sync error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
