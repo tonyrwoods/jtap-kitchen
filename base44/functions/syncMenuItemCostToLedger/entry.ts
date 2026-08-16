@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+const JTAPLEDGER_APP_ID = Deno.env.get('JTAPLEDGER_APP_ID');
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -20,24 +22,22 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Menu item not found' }, { status: 404 });
     }
 
-    const ledgerData = {
-      source_app: 'kitchen',
-      source_entity: 'MenuItem',
+    const menuItemPayload = {
       source_id: item.id,
       name: item.name,
       category: item.category,
       description: item.description,
       price: item.price,
       cost: item.cost,
-      gross_margin: item.cost ? ((item.price - item.cost) / item.price * 100).toFixed(2) : null,
-      is_featured: item.is_featured,
-      dietary_tags: item.dietary_tags,
-      sync_status: 'synced'
+      is_active: item.is_active !== false,
     };
 
-    console.log('Syncing menu item cost to Ledger:', ledgerData);
+    const result = await base44.asServiceRole.functions.invoke('syncMenuItemFromJtapKitchen', {
+      app_id: JTAPLEDGER_APP_ID,
+      menu_item: menuItemPayload,
+    });
 
-    return Response.json({ success: true, data: ledgerData });
+    return Response.json({ success: true, result });
   } catch (error) {
     console.error('Menu item sync error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
