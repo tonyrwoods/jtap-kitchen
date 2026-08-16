@@ -1,0 +1,34 @@
+{
+  "name": "Notify on Shift Approval/Rejection",
+  "description": "",
+  "trigger": {
+    "condition": "${ (.trigger.changed_fields | index(\"status\") != null) }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "update"
+      ],
+      "entity_name": "ShiftClaim"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "notify_on_shift_approval_rejection",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyShiftApproval",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "Notify Event Waitlist on Cancellation",
+  "description": "When an EventCenterInquiry is marked Declined (booking cancelled), notify waitlisted guests for that date/day.",
+  "trigger": {
+    "condition": "${ ((.trigger.changed_fields | index(\"status\") != null) and (.trigger.data.status == \"Declined\")) }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "update"
+      ],
+      "entity_name": "EventCenterInquiry"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "notify_event_waitlist_on_cancellation",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyEventWaitlist",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

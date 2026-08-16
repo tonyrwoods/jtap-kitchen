@@ -1,0 +1,35 @@
+{
+  "name": "Sync Bank Transactions to Ledger",
+  "description": "",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create",
+        "update"
+      ],
+      "entity_name": "BankTransaction"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "sync_bank_transactions_to_ledger",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncBankTransactionToLedger",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

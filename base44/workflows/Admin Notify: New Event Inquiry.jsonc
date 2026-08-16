@@ -1,0 +1,34 @@
+{
+  "name": "Admin Notify: New Event Inquiry",
+  "description": "Notifies admin when a new event center inquiry is submitted by a guest.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "EventCenterInquiry"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "admin_notify_new_event_inquiry",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyAdminSubmission",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

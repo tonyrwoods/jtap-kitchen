@@ -1,0 +1,34 @@
+{
+  "name": "Send Vendor Invoice Email",
+  "description": "Email invoice summary to vendor via Gmail when vendor invoice is created",
+  "trigger": {
+    "condition": "${ (.trigger.data.is_vendor_invoice == true) }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Invoice"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "send_vendor_invoice_email",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendInvoiceToVendor",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

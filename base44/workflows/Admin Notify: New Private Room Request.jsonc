@@ -1,0 +1,34 @@
+{
+  "name": "Admin Notify: New Private Room Request",
+  "description": "Notifies admin when a member submits a new private room booking request.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "PrivateRoomRental"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "admin_notify_new_private_room_request",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyAdminSubmission",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

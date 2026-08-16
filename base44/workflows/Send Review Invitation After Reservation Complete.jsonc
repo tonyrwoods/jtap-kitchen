@@ -1,0 +1,36 @@
+{
+  "name": "Send Review Invitation After Reservation Complete",
+  "description": "Automatically sends a review invitation email to customers 2 hours after their reservation is marked as completed",
+  "trigger": {
+    "condition": "${ ((.trigger.changed_fields | index(\"status\") != null) and (.trigger.data.status == \"Completed\")) }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "update"
+      ],
+      "entity_name": "Reservation"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "send_review_invitation_after_reservation_complete",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendReviewInvitation",
+            "args": {
+              "reservation_id": "{{entity_id}}"
+            }
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

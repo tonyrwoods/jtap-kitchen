@@ -1,0 +1,34 @@
+{
+  "name": "Add Confirmed RSVP to Google Calendar",
+  "description": "",
+  "trigger": {
+    "condition": "${ ((.trigger.data.rsvp_status == \"Attending\") and (.trigger.data.calendar_event_id == null or .trigger.data.calendar_event_id == \"\" or .trigger.data.calendar_event_id == [] or .trigger.data.calendar_event_id == {})) }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "update"
+      ],
+      "entity_name": "EventInvite"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "add_confirmed_rsvp_to_google_calendar",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "addRsvpToCalendar",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

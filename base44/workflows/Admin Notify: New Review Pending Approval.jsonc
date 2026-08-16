@@ -1,0 +1,34 @@
+{
+  "name": "Admin Notify: New Review Pending Approval",
+  "description": "Notifies admin when a new review is submitted and pending approval.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Review"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "admin_notify_new_review_pending_approval",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyAdminSubmission",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

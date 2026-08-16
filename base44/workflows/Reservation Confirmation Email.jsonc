@@ -1,0 +1,34 @@
+{
+  "name": "Reservation Confirmation Email",
+  "description": "Triggers sendReservationConfirmation when a new Reservation is created, sending the guest a confirmation link email and notifying admin staff.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Reservation"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "reservation_confirmation_email",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendReservationConfirmation",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

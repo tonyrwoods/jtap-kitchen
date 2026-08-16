@@ -1,0 +1,34 @@
+{
+  "name": "Send Gift Card Confirmation Email",
+  "description": "",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "update"
+      ],
+      "entity_name": "GiftCard"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "send_gift_card_confirmation_email",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendGiftCardConfirmation",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}
