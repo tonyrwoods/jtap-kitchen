@@ -1,10 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+const JTAPLEDGER_APP_ID = Deno.env.get('JTAPLEDGER_APP_ID');
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-    
+
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -25,22 +27,22 @@ Deno.serve(async (req) => {
       return Response.json({ skipped: 'Gift card not redeemed yet' });
     }
 
-    const ledgerData = {
-      transaction_type: 'revenue',
-      source_app: 'kitchen',
-      source_entity: 'GiftCard',
+    const giftCardPayload = {
       source_id: giftCard.id,
-      date: giftCard.redeemed_at || new Date().toISOString().split('T')[0],
-      description: `Gift Card Redemption - Code ${giftCard.code}`,
+      code: giftCard.code,
       amount: giftCard.amount,
+      date: giftCard.redeemed_at || new Date().toISOString(),
       purchaser_name: giftCard.purchaser_name,
       recipient_name: giftCard.recipient_name,
-      sync_status: 'synced'
     };
 
-    console.log('Syncing gift card to Ledger:', ledgerData);
+    const result = await base44.asServiceRole.functions.invoke('syncGiftCardFromJtapKitchen', {
+      app_id: JTAPLEDGER_APP_ID,
+      gift_card: giftCardPayload,
+      event_type: event.type,
+    });
 
-    return Response.json({ success: true, data: ledgerData });
+    return Response.json({ success: true, result });
   } catch (error) {
     console.error('Gift card sync error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
