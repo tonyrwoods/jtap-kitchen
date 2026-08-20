@@ -137,7 +137,7 @@ export default function Footer({ onBookTable }) {
               {[
                 { day: "Wed – Thu", time: "5:30 PM – 10:00 PM" },
                 { day: "Fri – Sat", time: "5:30 PM – 11:00 PM" },
-                { day: "Sunday Brunch", time: "10:00 AM – 3:00 PM" },
+                { day: "Sunday Brunch", time: "Coming Soon" },
                 { day: "Sunday Dinner", time: "5:00 PM – 10:00 PM" },
                 { day: "Mon – Tue", time: "Closed" },
               ].map(({ day, time }) => (

@@ -147,10 +147,6 @@ export default function Menu() {
     ? items
     : items.filter(item => item.category === activeCategory);
 
-    const filteredItems = selectedCategory === "All"
-  ? menuItems
-  : menuItems.filter(item => item.category === selectedCategory);
-
   const groupedByCategory = SECTION_ORDER.reduce((acc, cat) => {
     acc[cat] = filtered.filter(i => i.category === cat);
     return acc;
