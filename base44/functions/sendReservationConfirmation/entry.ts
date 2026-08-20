@@ -41,8 +41,9 @@ Deno.serve(async (req) => {
     const dateObj = new Date(reservation.date);
     const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-    // Regular reservations with a confirm token: send a "please confirm" RSVP email
-    if (!isEventBooking && reservation.confirm_token) {
+    // Regular reservations still pending confirmation: send a "please confirm" RSVP email.
+    // Auto-confirmed reservations (status === 'Confirmed') skip this and get a confirmation email below.
+    if (!isEventBooking && reservation.confirm_token && reservation.status === 'Pending') {
       const rsvpUrl = `${origin}/reserve/${reservation.confirm_token}`;
       const subject = `Please Confirm Your Reservation — ${formattedDate}`;
       const body_html = `<!DOCTYPE html>

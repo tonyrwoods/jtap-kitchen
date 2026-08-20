@@ -44,7 +44,8 @@ export default async function(req) {
       time,
       party_size: Number(party_size),
       special_requests: special_requests || '',
-      status: 'Pending',
+      status: 'Confirmed',
+      confirmed_at: new Date().toISOString(),
       confirm_token,
     });
 
