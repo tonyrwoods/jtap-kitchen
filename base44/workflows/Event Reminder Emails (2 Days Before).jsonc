@@ -31,7 +31,9 @@
           "call": "invoke_backend_function",
           "with": {
             "function_name": "sendEventReminders",
-            "args": {}
+            "args": {
+              "secret": "jA3AAZkUabWEeRrJsAqEoltTrl40QfaubK920wgqiF4"
+            }
           },
           "then": "end"
         }
