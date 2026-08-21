@@ -512,62 +512,6 @@ export default function AdminDashboard() {
               </motion.div>
             )}
 
-            {tab === "Reviews" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                  {[
-                    { label: "Total Reviews", value: reviews.length, color: "bg-primary" },
-                    { label: "Pending", value: reviews.filter(r => r.status === "Pending").length, color: "bg-yellow-500" },
-                    { label: "Featured", value: reviews.filter(r => r.is_featured).length, color: "bg-green-500" },
-                  ].map(s => <StatCard key={s.label} icon={CheckCircle} {...s} />)}
-                </div>
-                {reviews.map(rv => (
-                  <div key={rv.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="font-body font-semibold">{rv.guest_name}</span>
-                        <span className="font-body text-xs text-yellow-500">{"★".repeat(rv.rating)}{"☆".repeat(5 - rv.rating)}</span>
-                        <StatusBadge status={rv.status || "Pending"} />
-                        {rv.is_featured && <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">Featured</span>}
-                      </div>
-                      <p className="font-body text-sm text-muted-foreground italic mb-1">"{rv.comment}"</p>
-                      {rv.visit_date && <p className="font-body text-xs text-muted-foreground">Visited: {rv.visit_date}</p>}
-                    </div>
-                    <div className="flex flex-col gap-2 shrink-0">
-                      <SelectDropdown
-                        value={rv.status || "Pending"}
-                        onChange={async v => {
-                          await base44.entities.Review.update(rv.id, { status: v });
-                          setReviews(prev => prev.map(r => r.id === rv.id ? { ...r, status: v } : r));
-                        }}
-                        options={["Pending", "Approved", "Rejected"].map(s => ({ value: s, label: s }))}
-                      />
-                      {rv.status === "Approved" && (
-                        <button
-                          onClick={async () => {
-                            const updated = { is_featured: !rv.is_featured };
-                            await base44.entities.Review.update(rv.id, updated);
-                            setReviews(prev => prev.map(r => r.id === rv.id ? { ...r, ...updated } : r));
-                          }}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-body font-medium border transition-colors ${
-                            rv.is_featured ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"
-                          }`}
-                        >
-                          {rv.is_featured ? "★ Featured" : "Feature"}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                {reviews.length === 0 && (
-                  <div className="text-center py-20">
-                    <p className="font-body text-muted-foreground">No reviews yet.</p>
-                    <a href="/submit-review" className="font-body text-sm text-primary hover:underline mt-2 block">View review submission page →</a>
-                  </div>
-                )}
-              </motion.div>
-            )}
-
             {tab === "Loyalty" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <LoyaltyAdminTab />
