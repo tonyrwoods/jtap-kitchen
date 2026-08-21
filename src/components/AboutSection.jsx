@@ -6,13 +6,13 @@ export default function AboutSection() {
           {/* Image */}
           <div className="relative">
             <div className="relative overflow-hidden rounded-3xl">
-              <img
-                src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/69593e5e6_generated_103ea6e4.png"
-                alt="Luxurious restaurant interior with warm lighting"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-[400px] md:h-[550px] object-cover"
-              />
+              <img src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/b6806f7a8_JK-Street_View_sm.png"
+
+              alt="Luxurious restaurant interior with warm lighting"
+              loading="lazy"
+              decoding="async"
+              className="w-full h-[400px] md:h-[550px] object-cover" />
+              
             </div>
             {/* Floating Stats Card */}
             <div className="absolute -bottom-6 -right-4 md:right-8 bg-card shadow-2xl rounded-2xl px-8 py-6 border border-border">
@@ -48,11 +48,11 @@ export default function AboutSection() {
             {/* Stats Row */}
             <div className="grid grid-cols-3 gap-6 border-t border-border pt-8">
               {[
-                { number: "50K+", label: "Guests Served" },
-                { number: "4.9", label: "Average Rating" },
-                { number: "120+", label: "Wine Selections" },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
+              { number: "50K+", label: "Guests Served" },
+              { number: "4.9", label: "Average Rating" },
+              { number: "120+", label: "Wine Selections" }].
+              map((stat) =>
+              <div key={stat.label} className="text-center">
                   <span className="font-heading text-2xl md:text-3xl font-bold text-foreground">
                     {stat.number}
                   </span>
@@ -60,11 +60,11 @@ export default function AboutSection() {
                     {stat.label}
                   </p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
