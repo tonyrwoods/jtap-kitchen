@@ -38,7 +38,7 @@ const TAB_GROUPS = [
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
-  { label: "Guests", tabs: ["Gift Cards", "Reviews", "Feedback", "Loyalty"] },
+  { label: "Guests", tabs: ["Gift Cards", "Feedback", "Loyalty"] },
   { label: "Marketing", tabs: ["Gallery", "Team Members", "LinkedIn", "Promotions", "SEO"] },
   { label: "Careers", tabs: ["Job Listings"] },
   { label: "Account", tabs: ["Profile"] },
