@@ -6,11 +6,25 @@ Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   try {
 
-  // Allow scheduled automation (no user) or admin manual trigger
+  // Only two callers are allowed to run this job:
+  //  1. The scheduled workflow, which authenticates with a shared secret (no user context).
+  //  2. An admin manually triggering it from the app (authenticated session).
+  // Any other caller — including an unauthenticated request with no secret — is rejected.
+  const body = await req.json().catch(() => ({}));
+  const providedSecret = body?.secret;
+  const expectedSecret = Deno.env.get('SCHEDULED_JOB_SECRET');
+  const isValidScheduledCall = Boolean(expectedSecret) && providedSecret === expectedSecret;
+
   let user = null;
   try { user = await base44.auth.me(); } catch (_) {}
-  if (user && user.role !== 'admin') {
-    return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+
+  if (!isValidScheduledCall) {
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
   }
 
   // Compute target date: 2 days from today (YYYY-MM-DD)
