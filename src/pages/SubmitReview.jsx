@@ -19,6 +19,12 @@ function ReviewCard({ review }) {
         <span className="font-body text-sm font-semibold text-foreground">{review.guest_name}</span>
         {review.visit_date && <span className="font-body text-xs text-muted-foreground">{review.visit_date}</span>}
       </div>
+      {review.manager_response && (
+        <div className="pt-2 border-t border-border">
+          <p className="font-body text-xs font-semibold text-primary mb-1">Response from JTAP Kitchen</p>
+          <p className="font-body text-xs text-muted-foreground leading-relaxed">{review.manager_response}</p>
+        </div>
+      )}
     </div>
   );
 }
