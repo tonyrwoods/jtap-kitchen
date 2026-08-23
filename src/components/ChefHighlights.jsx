@@ -7,10 +7,20 @@ export default function ChefHighlights() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    base44.entities.FeaturedDish.filter({ is_active: true }).then(data => {
-      setDishes(data.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)));
+    base44.entities.MenuItem.filter({ is_featured: true }).then(data => {
+      // Stable display order: category then name
+      const sorted = [...data].sort((a, b) => {
+        const c = (a.category || "").localeCompare(b.category || "");
+        return c !== 0 ? c : (a.name || "").localeCompare(b.name || "");
+      });
+      setDishes(sorted);
     });
   }, []);
+
+  // Keep the active slide valid if the dataset shrinks
+  useEffect(() => {
+    if (index > 0 && index >= dishes.length) setIndex(0);
+  }, [dishes.length, index]);
 
   if (dishes.length === 0) return null;
 
@@ -37,9 +47,9 @@ export default function ChefHighlights() {
               decoding="async"
               className="w-full h-full object-cover transition-opacity duration-500"
             />
-            {dish.season && (
+            {dish.category && (
               <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-xs font-body font-semibold px-3 py-1 rounded-full">
-                {dish.season}
+                {dish.category}
               </span>
             )}
           </div>
@@ -49,11 +59,6 @@ export default function ChefHighlights() {
             <h3 className="font-heading text-3xl font-bold mb-4">{dish.name}</h3>
             {dish.description && (
               <p className="font-body text-background/70 leading-relaxed mb-5">{dish.description}</p>
-            )}
-            {dish.chef_note && (
-              <blockquote className="border-l-2 border-primary pl-4 mb-6 italic font-body text-background/60 text-sm">
-                "{dish.chef_note}"
-              </blockquote>
             )}
             {dish.price && (
               <p className="font-heading text-2xl font-bold text-primary mb-6">${Number(dish.price).toFixed(2)}</p>
