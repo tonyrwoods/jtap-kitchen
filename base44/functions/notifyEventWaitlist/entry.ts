@@ -4,27 +4,30 @@ import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+
+    // Admin-only: this automation fires when an admin declines an inquiry, so the
+    // caller is always an admin. Require it explicitly to block unauthenticated or
+    // non-admin callers from triggering waitlist emails and status mutations.
+    let user;
+    try { user = await base44.auth.me(); } catch (_) { user = null; }
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
     const body = await req.json().catch(() => ({}));
     const event = body.event || {};
 
-    // Support both manual invocation and entity automation trigger
     let preferred_date, preferred_day;
 
-    if (event.type === 'update' && event.entity_id) {
-      // Automation path: fetch the real inquiry and verify it was actually
-      // declined (only admins can decline — prevents spoofing the trigger).
+    if (event.entity_id) {
+      // Automation path: fetch the authoritative inquiry from the database
+      // (never trust request-body data) and verify it was actually declined.
       const inquiry = await base44.asServiceRole.entities.EventCenterInquiry.get(event.entity_id);
       if (!inquiry) return Response.json({ error: 'Inquiry not found' }, { status: 404 });
       if (inquiry.status !== 'Declined') return Response.json({ skipped: 'Inquiry not declined' });
       preferred_date = inquiry.preferred_date;
       preferred_day = inquiry.preferred_day;
     } else {
-      // Manual invocation — requires admin (reject unauthenticated calls)
-      let user;
-      try { user = await base44.auth.me(); } catch (_) { user = null; }
-      if (!user || user.role !== 'admin') {
-        return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-      }
       preferred_date = body.preferred_date;
       preferred_day = body.preferred_day;
     }

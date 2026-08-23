@@ -5,25 +5,29 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-    
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await req.json();
-
-    // Allow entity automation triggers (have an event.type field) or admin users
-    const isAutomation = !!payload?.event?.type;
-    if (!isAutomation && user.role !== 'admin') {
+    if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
+    const payload = await req.json().catch(() => ({}));
     const event = payload.event || {};
-    const data = payload.data || {};
 
-    // Get shift and staff details
-    const shift = data;
-    const staffMember = await base44.entities.Staff.list("-created_date", 100);
+    // Escape user-supplied text before interpolating into HTML email
+    const escapeHtml = (s) => String(s ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    // Resolve the shift from the authoritative database record, never from
+    // request-body data, to prevent spoofed shift notifications.
+    let shift;
+    if (event.entity_id) {
+      shift = await base44.asServiceRole.entities.Shift.get(event.entity_id);
+      if (!shift) return Response.json({ error: 'Shift not found' }, { status: 404 });
+    } else {
+      shift = payload.data || {};
+    }
+
+    const staffMember = await base44.asServiceRole.entities.Staff.list("-created_date", 100);
     const staff = staffMember.find(s => s.id === shift.staff_id);
 
     if (!staff || !staff.email) {
@@ -48,13 +52,13 @@ Deno.serve(async (req) => {
           </div>
           <div style="padding: 32px; background: #faf9f7;">
             <h2 style="color: #1a1a1a; margin-top: 0;">New Shift Assignment</h2>
-            <p>Hi <strong>${staff.name}</strong>,</p>
+            <p>Hi <strong>${escapeHtml(staff.name)}</strong>,</p>
             <p>You have been assigned a new shift:</p>
             <div style="background: white; border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin: 20px 0;">
               <p style="margin: 8px 0;"><strong>Date:</strong> ${new Date(shift.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-              <p style="margin: 8px 0;"><strong>Time:</strong> ${shift.time_block}</p>
-              <p style="margin: 8px 0;"><strong>Role:</strong> ${shift.role || 'TBD'}</p>
-              ${shift.notes ? `<p style="margin: 8px 0;"><strong>Notes:</strong> ${shift.notes}</p>` : ''}
+              <p style="margin: 8px 0;"><strong>Time:</strong> ${escapeHtml(shift.time_block)}</p>
+              <p style="margin: 8px 0;"><strong>Role:</strong> ${escapeHtml(shift.role || 'TBD')}</p>
+              ${shift.notes ? `<p style="margin: 8px 0;"><strong>Notes:</strong> ${escapeHtml(shift.notes)}</p>` : ''}
             </div>
             <p>Please confirm your availability and let management know if you have any conflicts.</p>
           </div>
@@ -72,7 +76,7 @@ Deno.serve(async (req) => {
           </div>
           <div style="padding: 32px; background: #faf9f7;">
             <h2 style="color: #1a1a1a; margin-top: 0;">Shift Change Notification</h2>
-            <p>Hi <strong>${staff.name}</strong>,</p>
+            <p>Hi <strong>${escapeHtml(staff.name)}</strong>,</p>
             <p>Your shift has been modified:</p>
             <div style="background: white; border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin: 20px 0;">
               ${dateChanged ? `
@@ -80,10 +84,10 @@ Deno.serve(async (req) => {
                 <p style="margin: 8px 0;"><strong>New Date:</strong> ${new Date(shift.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
               ` : `<p style="margin: 8px 0;"><strong>Date:</strong> ${new Date(shift.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>`}
               ${blockChanged ? `
-                <p style="margin: 8px 0;"><strong>Previous Time:</strong> <strike>${oldData.time_block}</strike></p>
-                <p style="margin: 8px 0;"><strong>New Time:</strong> ${shift.time_block}</p>
-              ` : `<p style="margin: 8px 0;"><strong>Time:</strong> ${shift.time_block}</p>`}
-              <p style="margin: 8px 0;"><strong>Role:</strong> ${shift.role || 'TBD'}</p>
+                <p style="margin: 8px 0;"><strong>Previous Time:</strong> <strike>${escapeHtml(oldData.time_block)}</strike></p>
+                <p style="margin: 8px 0;"><strong>New Time:</strong> ${escapeHtml(shift.time_block)}</p>
+              ` : `<p style="margin: 8px 0;"><strong>Time:</strong> ${escapeHtml(shift.time_block)}</p>`}
+              <p style="margin: 8px 0;"><strong>Role:</strong> ${escapeHtml(shift.role || 'TBD')}</p>
             </div>
             <p>If you have any concerns about this change, please contact management immediately.</p>
           </div>
