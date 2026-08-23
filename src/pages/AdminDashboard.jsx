@@ -21,6 +21,7 @@ import TeamMembersTab from "../components/admin/TeamMembersTab";
 import WaitlistAdminTab from "../components/admin/WaitlistAdminTab";
 import PricingStrategyTab from "../components/admin/PricingStrategyTab";
 import GalleryAdminTab from "../components/admin/GalleryAdminTab";
+import InstagramPostsTab from "../components/admin/InstagramPostsTab";
 import EventWaitlistTab from "../components/admin/EventWaitlistTab";
 import LinkedInEventsTab from "../components/admin/LinkedInEventsTab";
 import OpeningChecklistTab from "../components/admin/OpeningChecklistTab";
@@ -39,7 +40,7 @@ const TAB_GROUPS = [
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
   { label: "Guests", tabs: ["Gift Cards", "Feedback", "Loyalty"] },
-  { label: "Marketing", tabs: ["Gallery", "Team Members", "LinkedIn", "Promotions", "SEO"] },
+  { label: "Marketing", tabs: ["Gallery", "Follow Along", "Team Members", "LinkedIn", "Promotions", "SEO"] },
   { label: "Careers", tabs: ["Job Listings"] },
   { label: "Account", tabs: ["Profile"] },
 ];
@@ -533,6 +534,12 @@ export default function AdminDashboard() {
             {tab === "Gallery" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <GalleryAdminTab />
+              </motion.div>
+            )}
+
+            {tab === "Follow Along" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <InstagramPostsTab />
               </motion.div>
             )}
 
