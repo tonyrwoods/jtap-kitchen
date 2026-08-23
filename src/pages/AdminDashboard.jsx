@@ -252,7 +252,7 @@ export default function AdminDashboard() {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8">
         <div className="mb-8 overflow-x-auto scrollbar-hide">
-          <div className="flex items-end gap-1 border-b border-border min-w-max">
+          <div className="flex flex-wrap items-end gap-1 border-b border-border">
             {TAB_GROUPS.map((group, gi) => (
               <div key={group.label} className="flex items-end">
                 {gi > 0 && <div className="w-px h-5 bg-border mx-1 mb-3 shrink-0" />}
