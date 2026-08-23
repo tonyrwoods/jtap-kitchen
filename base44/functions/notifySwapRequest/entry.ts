@@ -4,17 +4,22 @@ import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
-  // Allow entity automations (no user) or admin manual trigger
-  let user = null;
-  try { user = await base44.auth.me(); } catch (_) {}
-  if (user && user.role !== 'admin') {
-    return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+  // Require an authenticated caller — the swap-request automation fires as the
+  // staff member who created it. Reject anonymous requests entirely.
+  let user;
+  try { user = await base44.auth.me(); } catch (_) { user = null; }
+  if (!user) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const payload = await req.json();
+  const payload = await req.json().catch(() => ({}));
 
   const requestId = payload?.event?.entity_id;
   if (!requestId) {
+    // Manual (non-automation) invocation requires admin
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
     return Response.json({ error: 'No entity_id' }, { status: 400 });
   }
 

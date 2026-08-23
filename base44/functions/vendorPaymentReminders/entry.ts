@@ -4,15 +4,10 @@ import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
-  // Allow both scheduled (no user) and manual admin triggers
-  let user = null;
-  try {
-    user = await base44.auth.me();
-    if (user && user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-    }
-  } catch (_) {
-    // Called from a scheduled automation — no user context, proceed
+  // Admin-only: scheduled runs execute as the workflow owner (admin).
+  const user = await base44.auth.me();
+  if (!user || user.role !== 'admin') {
+    return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
   }
 
   const today = new Date();

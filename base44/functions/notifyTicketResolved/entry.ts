@@ -10,21 +10,23 @@ Deno.serve(async (req) => {
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
+    // Admin-only: ticket resolution is an admin action, so the entity-automation
+    // trigger and manual calls both carry an admin. Block everyone else.
+    let user;
+    try { user = await base44.auth.me(); } catch (_) { user = null; }
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
     const body = await req.json().catch(() => ({}));
     const event = body.event || {};
 
-    // Automation path: fetch the real ticket (don't trust attacker-controlled body.data)
+    // Fetch the authoritative ticket from the database (never trust body.data).
     let ticket;
-    if (event.type && event.entity_id) {
+    if (event.entity_id) {
       ticket = await base44.asServiceRole.entities.SupportTicket.get(event.entity_id);
       if (!ticket) return Response.json({ error: 'Ticket not found' }, { status: 404 });
     } else {
-      // Manual path: require admin (reject unauthenticated calls)
-      let user;
-      try { user = await base44.auth.me(); } catch (_) { user = null; }
-      if (!user || user.role !== 'admin') {
-        return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-      }
       ticket = body.data;
     }
 

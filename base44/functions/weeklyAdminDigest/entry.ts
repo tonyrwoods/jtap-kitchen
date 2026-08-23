@@ -5,10 +5,9 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Allow scheduled automations (no user) or admin manual trigger
-    let user = null;
-    try { user = await base44.auth.me(); } catch (_) {}
-    if (user && user.role !== 'admin') {
+    // Admin-only: scheduled runs execute as the workflow owner (admin).
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
