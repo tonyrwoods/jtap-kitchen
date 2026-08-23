@@ -40,7 +40,7 @@ const TAB_GROUPS = [
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
   { label: "Guests", tabs: ["Gift Cards", "Feedback", "Loyalty"] },
-  { label: "Marketing", tabs: ["Gallery", "Follow Along", "Team Members", "LinkedIn", "Promotions", "SEO"] },
+  { label: "Marketing", tabs: ["Gallery", "Instagram", "Team Members", "LinkedIn", "Promotions", "SEO"] },
   { label: "Careers", tabs: ["Job Listings"] },
   { label: "Account", tabs: ["Profile"] },
 ];
@@ -537,7 +537,7 @@ export default function AdminDashboard() {
               </motion.div>
             )}
 
-            {tab === "Follow Along" && (
+            {tab === "Instagram" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <InstagramPostsTab />
               </motion.div>
