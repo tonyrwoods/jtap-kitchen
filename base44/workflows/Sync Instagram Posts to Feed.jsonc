@@ -1,0 +1,45 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "sync_instagram_posts",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_posts": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncInstagramPosts",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync Instagram posts",
+            "description": "Pull latest posts into the feed"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Polls the connected Instagram Business account every 2 hours and upserts the latest posts into the InstagramPost feed shown on the homepage.",
+  "name": "Sync Instagram Posts to Feed",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 */2 * * *",
+      "one_time_date": null,
+      "timezone": "America/Chicago",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}

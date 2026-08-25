@@ -19,6 +19,19 @@
       "type": "boolean",
       "title": "Show on Homepage",
       "default": true
+    },
+    "instagram_media_id": {
+      "type": "string",
+      "title": "Instagram Media ID (sync source)"
+    },
+    "permalink": {
+      "type": "string",
+      "title": "Instagram Post Permalink"
+    },
+    "is_synced": {
+      "type": "boolean",
+      "title": "Auto-Synced from Instagram",
+      "default": false
     }
   },
   "required": [

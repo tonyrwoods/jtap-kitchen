@@ -68,13 +68,25 @@ export default function InstagramSection() {
 
                 {/* Image */}
                 <div className="relative overflow-hidden aspect-square">
-                  <img
-                    src={post.image_url}
-                    alt={post.caption || "JTAP Kitchen post"}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+                  {post.permalink ? (
+                    <a href={post.permalink} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={post.image_url}
+                        alt={post.caption || "JTAP Kitchen post"}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </a>
+                  ) : (
+                    <img
+                      src={post.image_url}
+                      alt={post.caption || "JTAP Kitchen post"}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  )}
                 </div>
 
                 {/* Caption */}
