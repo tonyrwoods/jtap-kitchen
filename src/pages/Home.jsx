@@ -8,6 +8,7 @@ import TeamSection from "../components/TeamSection";
 import MenuSection from "../components/MenuSection";
 import AboutSection from "../components/AboutSection";
 import FeaturedPress from "../components/FeaturedPress";
+import FaqSection from "../components/FaqSection";
 import TestimonialsSection from "../components/TestimonialsSection";
 import ChefHighlights from "../components/ChefHighlights.jsx";
 import AvailabilityChecker from "../components/AvailabilityChecker";
@@ -37,6 +38,7 @@ export default function Home() {
       <TeamSection />
       <GallerySectionCMS />
       <InstagramSection />
+      <FaqSection />
       <TestimonialsSection />
       <ReservationModal open={modalOpen} onClose={() => { setModalOpen(false); setPrefill(null); }} prefill={prefill} />
     </>

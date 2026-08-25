@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, Phone } from "lucide-react";
 import SmartImage from "@/components/SmartImage";
 
 export default function HeroSection() {
@@ -47,20 +47,31 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.1] mb-8">
           
-          Where Every Bite
+          Memphis&rsquo; Best
           <br />
-          <span className="italic font-normal text-amber-300/90">Tells a Story</span>
+          <span className="italic font-normal text-amber-300/90">Fine Dining Restaurant</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="font-body text-base md:text-lg text-white/75 max-w-xl mx-auto mb-12 leading-relaxed">
+          className="font-body text-base md:text-lg text-white/75 max-w-xl mx-auto mb-6 leading-relaxed">
           
-          Bold flavors. Real hospitality. No pretense.
-          Come hungry, leave obsessed.
+          Bold American comfort food. Real hospitality. No pretense.
+          Memphis, TN's freshest dining experience — come hungry, leave obsessed.
         </motion.p>
+
+        <motion.a
+          href="tel:+19012138085"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.75 }}
+          className="inline-flex items-center gap-2 mb-8 font-body text-sm text-white/60 hover:text-primary transition-colors"
+        >
+          <Phone className="w-4 h-4" />
+          (901) 213-8085
+        </motion.a>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -71,7 +82,7 @@ export default function HeroSection() {
           <a
             href="#reserve"
             className="px-10 py-4 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/25">
-            Reserve Your Table
+            Reserve Your Table — Book Direct &amp; Save
           </a>
           <a
             href="#menu"

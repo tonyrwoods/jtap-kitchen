@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Phone, Mail, Instagram, Clock, Send, CheckCircle2 } from "lucide-react";
+import { MapPin, Phone, Mail, Instagram, Clock, Send, CheckCircle2, Facebook } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -117,12 +117,16 @@ export default function Footer({ onBookTable }) {
             <div className="space-y-4">
               {[
                 { icon: MapPin, text: "3397 Summer Ave., Memphis TN 38122" },
-                { icon: Phone, text: "(901) 213-8085" },
+                { icon: Phone, text: "(901) 213-8085", href: "tel:+19012138085" },
                 { icon: Mail, text: "info@jtapkitchen.com" },
-              ].map(({ icon: Icon, text }) => (
+              ].map(({ icon: Icon, text, href }) => (
                 <div key={text} className="flex items-start gap-3">
                   <Icon className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                  <span className="font-body text-sm text-background/70">{text}</span>
+                  {href ? (
+                    <a href={href} className="font-body text-sm text-background/70 hover:text-primary transition-colors">{text}</a>
+                  ) : (
+                    <span className="font-body text-sm text-background/70">{text}</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -193,15 +197,28 @@ export default function Footer({ onBookTable }) {
             <h4 className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-background/40 mb-5">
               Follow Us
             </h4>
-            <a
-              href="https://www.instagram.com/jtapkitchen"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-4 py-2.5 rounded-full bg-background/10 hover:bg-primary/80 transition-colors duration-300"
-            >
-              <Instagram className="w-4 h-4 text-background/70" />
-              <span className="font-body text-sm text-background/60">@jtapkitchen</span>
-            </a>
+            <div className="flex flex-col gap-3">
+              <a
+                href="https://www.instagram.com/jtapkitchen"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="JTAP Kitchen on Instagram"
+                className="inline-flex items-center gap-3 px-4 py-2.5 rounded-full bg-background/10 hover:bg-primary/80 transition-colors duration-300"
+              >
+                <Instagram className="w-4 h-4 text-background/70" />
+                <span className="font-body text-sm text-background/60">@jtapkitchen</span>
+              </a>
+              <a
+                href="https://www.facebook.com/jtapkitchen"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="JTAP Kitchen on Facebook"
+                className="inline-flex items-center gap-3 px-4 py-2.5 rounded-full bg-background/10 hover:bg-primary/80 transition-colors duration-300"
+              >
+                <Facebook className="w-4 h-4 text-background/70" />
+                <span className="font-body text-sm text-background/60">Facebook</span>
+              </a>
+            </div>
           </div>
         </div>
 
