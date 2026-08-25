@@ -7,6 +7,7 @@ import InstagramSection from "../components/InstagramSection";
 import TeamSection from "../components/TeamSection";
 import MenuSection from "../components/MenuSection";
 import AboutSection from "../components/AboutSection";
+import FeaturedPress from "../components/FeaturedPress";
 import TestimonialsSection from "../components/TestimonialsSection";
 import ChefHighlights from "../components/ChefHighlights.jsx";
 import AvailabilityChecker from "../components/AvailabilityChecker";
@@ -32,6 +33,7 @@ export default function Home() {
       <ChefHighlights />
       <MenuSection />
       <AboutSection />
+      <FeaturedPress />
       <TeamSection />
       <GallerySectionCMS />
       <InstagramSection />
