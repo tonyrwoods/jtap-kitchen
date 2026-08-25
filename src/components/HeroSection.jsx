@@ -37,7 +37,7 @@ export default function HeroSection() {
           
           Memphis&rsquo; Best
           <br />
-          <span className="italic font-normal text-amber-300/90">Fine Dining Restaurant</span>
+          <span className="italic font-normal text-amber-300/90">High-End Dining Restaurant</span>
         </motion.h1>
 
         <motion.p
