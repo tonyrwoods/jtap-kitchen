@@ -55,8 +55,8 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.75 }}
-          className="inline-flex items-center gap-2 mb-8 font-body text-sm text-white/60 hover:text-primary transition-colors"
-        >
+          className="inline-flex items-center gap-2 mb-8 font-body text-white/60 hover:text-primary transition-colors text-2xl">
+          
           <Phone className="w-4 h-4" />
           (901) 213-8085
         </motion.a>
