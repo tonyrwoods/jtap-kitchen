@@ -7,7 +7,7 @@ export default function ChefHighlights() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    base44.entities.MenuItem.filter({ is_featured: true }).then(data => {
+    base44.entities.MenuItem.filter({ is_featured: true }).then((data) => {
       // Stable display order: category then name
       const sorted = [...data].sort((a, b) => {
         const c = (a.category || "").localeCompare(b.category || "");
@@ -25,8 +25,8 @@ export default function ChefHighlights() {
   if (dishes.length === 0) return null;
 
   const dish = dishes[index];
-  const prev = () => setIndex(i => (i - 1 + dishes.length) % dishes.length);
-  const next = () => setIndex(i => (i + 1) % dishes.length);
+  const prev = () => setIndex((i) => (i - 1 + dishes.length) % dishes.length);
+  const next = () => setIndex((i) => (i + 1) % dishes.length);
 
   return (
     <section className="py-20 px-6 bg-foreground text-background overflow-hidden">
@@ -40,52 +40,52 @@ export default function ChefHighlights() {
           {/* Image */}
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
             <img
-              key={dish.id}
-              src={dish.image_url}
+              key={dish.id} src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/dd9e260cf_Grilled_Ribeye_Steak_DJ.jpg"
+
               alt={dish.name}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover transition-opacity duration-500"
-            />
-            {dish.category && (
-              <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-xs font-body font-semibold px-3 py-1 rounded-full">
+              className="w-full h-full object-cover transition-opacity duration-500" />
+            
+            {dish.category &&
+            <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-xs font-body font-semibold px-3 py-1 rounded-full">
                 {dish.category}
               </span>
-            )}
+            }
           </div>
 
           {/* Content */}
           <div className="flex flex-col justify-center">
             <h3 className="font-heading text-3xl font-bold mb-4">{dish.name}</h3>
-            {dish.description && (
-              <p className="font-body text-background/70 leading-relaxed mb-5">{dish.description}</p>
-            )}
-            {dish.price && (
-              <p className="font-heading text-2xl font-bold text-primary mb-6">${Number(dish.price).toFixed(2)}</p>
-            )}
+            {dish.description &&
+            <p className="font-body text-background/70 leading-relaxed mb-5">{dish.description}</p>
+            }
+            {dish.price &&
+            <p className="font-heading text-2xl font-bold text-primary mb-6">${Number(dish.price).toFixed(2)}</p>
+            }
 
             {/* Nav */}
-            {dishes.length > 1 && (
-              <div className="flex items-center gap-4">
+            {dishes.length > 1 &&
+            <div className="flex items-center gap-4">
                 <button onClick={prev}
-                  className="w-10 h-10 rounded-full border border-background/30 flex items-center justify-center hover:bg-background/10 transition-colors">
+              className="w-10 h-10 rounded-full border border-background/30 flex items-center justify-center hover:bg-background/10 transition-colors">
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <div className="flex gap-2">
-                  {dishes.map((_, i) => (
-                    <button key={i} onClick={() => setIndex(i)}
-                      className={`w-2 h-2 rounded-full transition-all ${i === index ? "bg-primary w-5" : "bg-background/30"}`} />
-                  ))}
+                  {dishes.map((_, i) =>
+                <button key={i} onClick={() => setIndex(i)}
+                className={`w-2 h-2 rounded-full transition-all ${i === index ? "bg-primary w-5" : "bg-background/30"}`} />
+                )}
                 </div>
                 <button onClick={next}
-                  className="w-10 h-10 rounded-full border border-background/30 flex items-center justify-center hover:bg-background/10 transition-colors">
+              className="w-10 h-10 rounded-full border border-background/30 flex items-center justify-center hover:bg-background/10 transition-colors">
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
-            )}
+            }
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
