@@ -4,6 +4,18 @@ import { enforceRateLimit } from '../../shared/rateLimit.js';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+
+    // Require an authenticated staff/admin caller — customer profile creation
+    // is a POS operation, not a public self-signup.
+    let user;
+    try { user = await base44.auth.me(); } catch (_) { user = null; }
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (user.role !== 'admin' && user.role !== 'staff') {
+      return Response.json({ error: 'Forbidden: Staff access required' }, { status: 403 });
+    }
+
     const body = await req.json();
     const { name, email, phone } = body;
 
