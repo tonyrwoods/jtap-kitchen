@@ -2,6 +2,12 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -54,13 +60,13 @@ Deno.serve(async (req) => {
       <p style="color:#999;font-size:13px;margin:8px 0 0;letter-spacing:2px;text-transform:uppercase;">Confirm Your Reservation</p>
     </div>
     <div style="padding:40px 36px;">
-      <h2 style="font-size:22px;margin:0 0 8px;">Hi ${reservation.guest_name},</h2>
+      <h2 style="font-size:22px;margin:0 0 8px;">Hi ${esc(reservation.guest_name)},</h2>
       <p style="color:#555;line-height:1.7;margin:0 0 24px;">Thank you for requesting a table at JTAP Kitchen. Please confirm your reservation below so we can hold your table.</p>
       <div style="background:#f5f3f0;border-radius:12px;padding:20px;margin:0 0 28px;">
         <p style="margin:0 0 8px;font-size:14px;"><strong>Date:</strong> ${formattedDate}</p>
         <p style="margin:0 0 8px;font-size:14px;"><strong>Time:</strong> ${reservation.time}</p>
         <p style="margin:0;font-size:14px;"><strong>Party size:</strong> ${reservation.party_size} guest${reservation.party_size !== 1 ? 's' : ''}</p>
-        ${reservation.special_requests ? `<p style="margin:12px 0 0;font-size:13px;color:#777;font-style:italic;"><strong>Requests:</strong> ${reservation.special_requests}</p>` : ''}
+        ${reservation.special_requests ? `<p style="margin:12px 0 0;font-size:13px;color:#777;font-style:italic;"><strong>Requests:</strong> ${esc(reservation.special_requests)}</p>` : ''}
       </div>
       <div style="text-align:center;margin-bottom:28px;">
         <a href="${rsvpUrl}" style="display:inline-block;background:#C89B4F;color:#fff;text-decoration:none;padding:14px 40px;border-radius:50px;font-family:Inter,sans-serif;font-size:15px;font-weight:600;">Confirm Your Reservation &rarr;</a>
@@ -74,7 +80,7 @@ Deno.serve(async (req) => {
       await sendTransactionalEmail(base44, {
         to: 'info@jtapkitchen.com',
         subject: `New Reservation — ${reservation.guest_name}, ${formattedDate} at ${reservation.time}`,
-        body: `New reservation request:<br><br><strong>${reservation.guest_name}</strong> (${reservation.email})<br>Phone: ${reservation.phone || 'N/A'}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${reservation.special_requests || 'None'}<br><br><a href="${rsvpUrl}">View reservation</a>`,
+        body: `New reservation request:<br><br><strong>${esc(reservation.guest_name)}</strong> (${esc(reservation.email)})<br>Phone: ${esc(reservation.phone || 'N/A')}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${esc(reservation.special_requests || 'None')}<br><br><a href="${rsvpUrl}">View reservation</a>`,
         from_name: 'JTAP Kitchen Reservations',
       }).catch(() => {});
       return Response.json({ sent: true, email: reservation.email, type: 'rsvp_confirm' });
@@ -93,7 +99,7 @@ Deno.serve(async (req) => {
           </h1>
         </div>
         <div style="background: #f9f9f9; padding: 40px 20px; border-radius: 0 0 12px 12px;">
-          <p style="margin: 0 0 20px; font-size: 16px;">Hi <strong>${reservation.guest_name}</strong>,</p>
+          <p style="margin: 0 0 20px; font-size: 16px;">Hi <strong>${esc(reservation.guest_name)}</strong>,</p>
           <p style="margin: 0 0 30px; font-size: 14px; line-height: 1.6; color: #666;">
             ${isEventBooking ? 'Thank you for booking our special event! We\'re excited to welcome you.' : 'Thank you for your reservation! We look forward to hosting you.'}
           </p>
@@ -114,7 +120,7 @@ Deno.serve(async (req) => {
             ${reservation.special_requests ? `
               <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e0e0e0;">
                 <p style="margin: 0 0 5px; font-size: 12px; color: #999; text-transform: uppercase;">Special Requests</p>
-                <p style="margin: 0; font-size: 14px; font-style: italic;">${reservation.special_requests}</p>
+                <p style="margin: 0; font-size: 14px; font-style: italic;">${esc(reservation.special_requests)}</p>
               </div>` : ''}
           </div>
           <p style="margin: 0 0 10px; font-size: 14px; color: #666;">If you need to cancel or modify your reservation, please contact us as soon as possible.</p>
@@ -133,7 +139,7 @@ Deno.serve(async (req) => {
     await sendTransactionalEmail(base44, {
       to: 'info@jtapkitchen.com',
       subject: `New Reservation — ${reservation.guest_name}, ${formattedDate} at ${reservation.time}`,
-      body: `New reservation:<br><br><strong>${reservation.guest_name}</strong> (${reservation.email})<br>Phone: ${reservation.phone || 'N/A'}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${reservation.special_requests || 'None'}`,
+      body: `New reservation:<br><br><strong>${esc(reservation.guest_name)}</strong> (${esc(reservation.email)})<br>Phone: ${esc(reservation.phone || 'N/A')}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${esc(reservation.special_requests || 'None')}`,
       from_name: 'JTAP Kitchen Reservations',
     }).catch(() => {});
 

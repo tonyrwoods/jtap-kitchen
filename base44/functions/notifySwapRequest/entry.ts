@@ -1,6 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
@@ -44,11 +50,11 @@ Deno.serve(async (req) => {
       <p style="color:#666;font-size:14px;margin:0 0 24px;">A staff member has submitted a shift swap request that needs your approval.</p>
       <div style="background:#fff;border:1px solid #e8e0d4;border-radius:12px;padding:24px;margin-bottom:20px;">
         <table style="width:100%;font-size:14px;border-collapse:collapse;">
-          <tr><td style="padding:8px 0;color:#888;width:140px;">Requested by</td><td style="padding:8px 0;font-weight:600;">${swapReq.requester_staff_name}</td></tr>
+          <tr><td style="padding:8px 0;color:#888;width:140px;">Requested by</td><td style="padding:8px 0;font-weight:600;">${esc(swapReq.requester_staff_name)}</td></tr>
           <tr><td style="padding:8px 0;color:#888;">Their shift</td><td style="padding:8px 0;">${swapReq.requester_shift_date} &middot; ${swapReq.requester_shift_block}</td></tr>
-          <tr><td style="padding:8px 0;color:#888;">Swap with</td><td style="padding:8px 0;font-weight:600;">${swapReq.target_staff_name}</td></tr>
+          <tr><td style="padding:8px 0;color:#888;">Swap with</td><td style="padding:8px 0;font-weight:600;">${esc(swapReq.target_staff_name)}</td></tr>
           <tr><td style="padding:8px 0;color:#888;">Their shift</td><td style="padding:8px 0;">${swapReq.target_shift_date} &middot; ${swapReq.target_shift_block}</td></tr>
-          ${swapReq.reason ? '<tr><td style="padding:8px 0;color:#888;vertical-align:top;">Reason</td><td style="padding:8px 0;color:#555;font-style:italic;">' + swapReq.reason + '</td></tr>' : ''}
+          ${swapReq.reason ? '<tr><td style="padding:8px 0;color:#888;vertical-align:top;">Reason</td><td style="padding:8px 0;color:#555;font-style:italic;">' + esc(swapReq.reason) + '</td></tr>' : ''}
         </table>
       </div>
       <p style="font-size:13px;color:#888;">Log in to the Kitchen Dashboard to approve or deny this request.</p>

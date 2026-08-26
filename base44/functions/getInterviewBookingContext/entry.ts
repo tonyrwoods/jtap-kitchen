@@ -20,9 +20,18 @@ export default async function (req) {
     const rl = await enforceRateLimit(req, base44, 'interview-context', application_id, 20, 600000);
     if (rl) return rl;
 
+    // Require authentication — only the candidate themselves or an admin may view PII
+    let user;
+    try { user = await base44.auth.me(); } catch (_) { user = null; }
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
     const apps = await base44.asServiceRole.entities.JobApplication.filter({ id: application_id });
     const application = apps[0];
     if (!application) return Response.json({ error: 'Application not found' }, { status: 404 });
+
+    if (user.role !== 'admin' && application.email !== user.email) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     const allSlots = await base44.asServiceRole.entities.InterviewSlot.filter({ is_booked: false }, 'date', 100);
     const today = new Date().toISOString().slice(0, 10);

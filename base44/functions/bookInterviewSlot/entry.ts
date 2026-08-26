@@ -28,9 +28,18 @@ export default async function (req) {
     const rl = await enforceRateLimit(req, base44, 'interview-booking', application_id, 5, 600000);
     if (rl) return rl;
 
+    // Require authentication — only the candidate themselves or an admin may book
+    let user;
+    try { user = await base44.auth.me(); } catch (_) { user = null; }
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
     const apps = await base44.asServiceRole.entities.JobApplication.filter({ id: application_id });
     const application = apps[0];
     if (!application) return Response.json({ error: 'Application not found' }, { status: 404 });
+
+    if (user.role !== 'admin' && application.email !== user.email) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     const slots = await base44.asServiceRole.entities.InterviewSlot.filter({ id: slot_id });
     const slot = slots[0];
