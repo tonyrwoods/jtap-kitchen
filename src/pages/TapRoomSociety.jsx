@@ -49,9 +49,9 @@ function generateReferralCode(name) {
 
 export default function TapRoomSociety() {
   useEffect(() => {
-    document.title = "Tap Room Society — Membership tiers at JTAP Kitchen";
+    document.title = "JTAP Room Society — Membership tiers at JTAP Kitchen";
     const desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute("content", "Join the JTAP Kitchen Tap Room Society. Member tiers with dining discounts, private room access, birthday rewards, and exclusive events.");
+    if (desc) desc.setAttribute("content", "Join the JTAP Kitchen JTAP Room Society. Member tiers with dining discounts, private room access, birthday rewards, and exclusive events.");
   }, []);
   const joinRef = useRef(null);
   const navigate = useNavigate();
@@ -130,7 +130,7 @@ export default function TapRoomSociety() {
         </motion.div>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
           className="font-body text-sm" style={{ color: "rgba(255,255,255,0.35)" }}>
-          Introducing The Tap Room Society — JTap Kitchen&apos;s members-only loyalty program.
+          Introducing The JTAP Room Society — JTap Kitchen&apos;s members-only loyalty program.
         </motion.p>
       </section>
 
@@ -145,7 +145,7 @@ export default function TapRoomSociety() {
             <p className="font-body text-xs uppercase tracking-widest mb-4" style={{ color: GOLD }}>The Philosophy</p>
             <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6">This isn&apos;t a punch card.</h2>
             <p className="font-body text-lg leading-relaxed mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
-              The Tap Room Society is built for people who actually show up. Earn real rewards. Unlock real access.
+              The JTAP Room Society is built for people who actually show up. Earn real rewards. Unlock real access.
               The more you visit, the more JTap Kitchen becomes yours.
             </p>
             <button onClick={scrollToJoin}
@@ -298,14 +298,14 @@ export default function TapRoomSociety() {
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
             <p className="font-body text-xs uppercase tracking-widest mb-3" style={{ color: GOLD }}>Get Started</p>
-            <h2 className="font-heading text-4xl font-bold">JOIN THE TAP ROOM SOCIETY.</h2>
+            <h2 className="font-heading text-4xl font-bold">JOIN THE JTAP ROOM SOCIETY.</h2>
             <p className="font-body text-sm text-gray-500 mt-2">It&apos;s free to join. Upgrade any time.</p>
           </div>
           {submitted ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
               className="text-center py-16 rounded-2xl" style={{ background: "#0d0d0d" }}>
               <Crown className="w-14 h-14 mx-auto mb-5" style={{ color: GOLD }} />
-              <h3 className="font-heading text-2xl font-bold text-white mb-3">Welcome to The Tap Room Society!</h3>
+              <h3 className="font-heading text-2xl font-bold text-white mb-3">Welcome to The JTAP Room Society!</h3>
               <p className="font-body mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>Check your email for next steps.</p>
               <Link to="/my-membership"
                 className="inline-block px-8 py-3 rounded-full font-body font-bold text-sm"

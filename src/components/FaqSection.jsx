@@ -32,7 +32,7 @@ const FAQS = [
   },
   {
     q: "Do you have a loyalty program?",
-    a: "Yes! Join the Tap Room Society to earn points, unlock exclusive member perks, and get early access to events. Sign up on our website."
+    a: "Yes! Join the JTAP Room Society to earn points, unlock exclusive member perks, and get early access to events. Sign up on our website."
   },
 ];
 

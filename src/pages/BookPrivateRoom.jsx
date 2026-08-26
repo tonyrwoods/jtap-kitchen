@@ -42,7 +42,7 @@ export default function BookPrivateRoom() {
   useEffect(() => {
     document.title = "Book Private Room — JTAP Kitchen";
     const desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute("content", "Book the JTAP Kitchen private room for your event. Exclusive dining space available Sunday through Tuesday for Tap Room Society members.");
+    if (desc) desc.setAttribute("content", "Book the JTAP Kitchen private room for your event. Exclusive dining space available Sunday through Tuesday for JTAP Room Society members.");
   }, []);
   const qc = useQueryClient();
   const today = new Date().toISOString().split("T")[0];

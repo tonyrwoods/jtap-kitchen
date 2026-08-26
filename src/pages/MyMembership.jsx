@@ -95,7 +95,7 @@ export default function MyMembership() {
         <div className="text-center max-w-md px-6">
           <Crown className="w-12 h-12 mx-auto mb-4" style={{ color: GOLD }} />
           <p className="font-heading text-2xl text-white mb-3">You&apos;re not a member yet</p>
-          <p className="font-body text-white/50 mb-6">Join The Tap Room Society to access your member dashboard.</p>
+          <p className="font-body text-white/50 mb-6">Join The JTAP Room Society to access your member dashboard.</p>
           <Link to="/tap-room-society#join"
             className="inline-block px-8 py-3 rounded-full font-body font-bold text-sm" style={{ background: GOLD, color: "#0a0a0a" }}>
             Join The Society
@@ -121,7 +121,7 @@ export default function MyMembership() {
           )}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <p className="font-body text-xs uppercase tracking-widest mb-2" style={{ color: GOLD }}>The Tap Room Society</p>
+              <p className="font-body text-xs uppercase tracking-widest mb-2" style={{ color: GOLD }}>The JTAP Room Society</p>
               <h1 className="font-heading text-3xl md:text-4xl font-bold text-white">{member.guest_name}</h1>
               <div className="flex items-center gap-3 mt-3">
                 <span className="px-3 py-1 rounded-full font-body text-xs font-bold uppercase tracking-wider"

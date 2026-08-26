@@ -44,7 +44,7 @@ export default async function (req) {
     // Identity from the authenticated user — never trust client-supplied member info.
     const members = await base44.asServiceRole.entities.TapRoomMember.filter({ email: user.email });
     const member = members[0];
-    if (!member) return Response.json({ error: 'No Tap Room Society membership found for your account.' }, { status: 403 });
+    if (!member) return Response.json({ error: 'No JTAP Room Society membership found for your account.' }, { status: 403 });
     if (!member.private_room_access) {
       return Response.json({ error: 'Your membership tier does not include private room access.' }, { status: 403 });
     }

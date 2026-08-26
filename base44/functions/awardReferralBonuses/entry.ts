@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
-// Scheduled job: when a referred Tap Room Society member "converts" (their
+// Scheduled job: when a referred JTAP Room Society member "converts" (their
 // first real engagement — an event attendance or a recorded spend), award a
 // one-time referral bonus to the member who referred them. Each referred
 // member is processed exactly once, guarded by `referral_reward_awarded`

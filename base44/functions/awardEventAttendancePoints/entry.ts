@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
 // Scheduled job: after an event's date has passed, award loyalty points to
-// every Tap Room Society member who RSVP'd "Attending". Each promotion is
+// every JTAP Room Society member who RSVP'd "Attending". Each promotion is
 // processed exactly once (guarded by `attendance_points_awarded` on the
 // EventPromotion) so re-runs never double-award.
 
@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
       for (const inv of attending) {
         if (!inv.guest_email) continue;
         const member = memberByEmail.get(inv.guest_email.toLowerCase());
-        if (!member) continue; // only Tap Room Society members earn points
+        if (!member) continue; // only JTAP Room Society members earn points
 
         const newBalance = (member.points_balance || 0) + pointsPerAttendance;
         await base44.asServiceRole.entities.TapRoomMember.update(member.id, {

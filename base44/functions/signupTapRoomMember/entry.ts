@@ -72,8 +72,8 @@ export default async function(req) {
     const accessLine = tierData.private_room_access ? 'Private Room Access: UNLOCKED\n' : '';
     await sendTransactionalEmail(base44, {
       to: email,
-      subject: 'Welcome to The Tap Room Society — JTAP Kitchen',
-      body: `Hi ${guest_name},\n\nYou're officially in.\n\nWelcome to The Tap Room Society.\n\nYour tier: ${tier}\n${creditLine}${accessLine}\nSee you at the table.\n\n— The JTAP Kitchen Team`,
+      subject: 'Welcome to The JTAP Room Society — JTAP Kitchen',
+      body: `Hi ${guest_name},\n\nYou're officially in.\n\nWelcome to The JTAP Room Society.\n\nYour tier: ${tier}\n${creditLine}${accessLine}\nSee you at the table.\n\n— The JTAP Kitchen Team`,
     });
 
     return Response.json({ success: true, member });

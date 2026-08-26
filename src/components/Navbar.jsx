@@ -19,7 +19,7 @@ const MORE_LINKS = [
   { label: "Our Story", href: "/#about" },
   { label: "Reviews", href: "/submit-review" },
   { label: "Careers", href: "/careers" },
-  { label: "Tap Room Society", href: "/tap-room-society" },
+  { label: "JTAP Room Society", href: "/tap-room-society" },
   { label: "My Membership", href: "/my-membership" },
   { label: "Founders Wall", href: "/founders" },
 ];

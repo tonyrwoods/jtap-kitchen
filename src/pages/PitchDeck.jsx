@@ -59,7 +59,7 @@ const slides = [
     stats: [
       { value: "Dine-In", label: "Primary restaurant revenue" },
       { value: "Events", label: "Private room & full buyout rentals" },
-      { value: "Loyalty", label: "Tap Room Society membership program" },
+      { value: "Loyalty", label: "JTAP Room Society membership program" },
       { value: "Gift Cards", label: "Digital gift card program" },
     ],
     bg: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=1600&q=80",

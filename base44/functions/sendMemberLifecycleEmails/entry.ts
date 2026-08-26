@@ -27,7 +27,7 @@ function buildBirthdayEmail(m) {
     </div>
     <div style="padding: 40px 36px;">
       <h2 style="font-size: 22px; margin: 0 0 12px;">Happy Birthday, ${first}! 🎉</h2>
-      <p style="color: #555; line-height: 1.7; margin: 0 0 20px;">From all of us at JTAP Kitchen, we hope your special day is filled with great food and even better company. As a thank-you for being part of the Tap Room Society, we'd love to treat you this birthday month.</p>
+      <p style="color: #555; line-height: 1.7; margin: 0 0 20px;">From all of us at JTAP Kitchen, we hope your special day is filled with great food and even better company. As a thank-you for being part of the JTAP Room Society, we'd love to treat you this birthday month.</p>
       <div style="background: #f5f3f0; border-radius: 12px; padding: 20px; margin: 0 0 24px; text-align: center;">
         <p style="margin: 0; font-size: 15px; color: #1a1a1a;"><strong>Visit us during your birthday month</strong> and let your server know — a little something sweet is on us.</p>
       </div>
@@ -55,7 +55,7 @@ function buildRenewalEmail(m) {
     </div>
     <div style="padding: 40px 36px;">
       <h2 style="font-size: 22px; margin: 0 0 12px;">Your Membership Renews Soon, ${first}</h2>
-      <p style="color: #555; line-height: 1.7; margin: 0 0 20px;">This is a friendly reminder that your annual Tap Room Society membership${m.tier ? ' (' + esc(m.tier) + ')' : ''} is set to renew on <strong>${renewStr}</strong>.</p>
+      <p style="color: #555; line-height: 1.7; margin: 0 0 20px;">This is a friendly reminder that your annual JTAP Room Society membership${m.tier ? ' (' + esc(m.tier) + ')' : ''} is set to renew on <strong>${renewStr}</strong>.</p>
       <div style="background: #f5f3f0; border-radius: 12px; padding: 20px; margin: 0 0 24px;">
         <p style="margin: 0; font-size: 14px; color: #1a1a1a;">To keep your benefits — loyalty points, member events, and more — please make sure your renewal is taken care of before the renewal date.</p>
       </div>

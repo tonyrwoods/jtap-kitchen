@@ -42,7 +42,7 @@ export default function SubmitReview() {
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute("content", "Share your dining experience at JTAP Kitchen. Leave a review and read what other guests have to say about their visits.");
     base44.entities.Review.filter({ status: "Approved" }, "-created_date", 6).then(setApprovedReviews);
-    // Check if logged-in user is a Tap Room Society member
+    // Check if logged-in user is a JTAP Room Society member
     base44.auth.isAuthenticated().then(async (authed) => {
       if (!authed) return;
       const user = await base44.auth.me();
@@ -119,7 +119,7 @@ export default function SubmitReview() {
             style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}40` }}>
             <Crown className="w-5 h-5 shrink-0" style={{ color: GOLD }} />
             <div>
-              <p className="font-body text-sm font-bold" style={{ color: GOLD }}>Tap Room Society Member — {member.tier}</p>
+              <p className="font-body text-sm font-bold" style={{ color: GOLD }}>JTAP Room Society Member — {member.tier}</p>
               <p className="font-body text-xs" style={{ color: "rgba(0,0,0,0.5)" }}>Your info is pre-filled. Your tier will be noted on your review.</p>
             </div>
           </motion.div>

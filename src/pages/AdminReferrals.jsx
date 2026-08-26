@@ -44,7 +44,7 @@ export default function AdminReferrals() {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="font-heading text-2xl font-bold">Referral Dashboard</h1>
-            <p className="font-body text-sm text-muted-foreground mt-1">Track Tap Room Society member referrals</p>
+            <p className="font-body text-sm text-muted-foreground mt-1">Track JTAP Room Society member referrals</p>
           </div>
           <Link to="/admin" className="font-body text-sm text-primary hover:underline">← Admin</Link>
         </div>
