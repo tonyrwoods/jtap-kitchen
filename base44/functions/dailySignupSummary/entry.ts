@@ -2,6 +2,12 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   try {
@@ -30,7 +36,7 @@ Deno.serve(async (req) => {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   const userRows = newUsers.length > 0
-    ? newUsers.map(u => `<tr><td style="padding:8px 12px;border-bottom:1px solid #eee;">${u.full_name || '—'}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;">${u.email}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;">${u.role || 'user'}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;">${new Date(u.created_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</td></tr>`).join('')
+    ? newUsers.map(u => `<tr><td style="padding:8px 12px;border-bottom:1px solid #eee;">${esc(u.full_name || '—')}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;">${esc(u.email)}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;">${esc(u.role || 'user')}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;">${new Date(u.created_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</td></tr>`).join('')
     : `<tr><td colspan="4" style="padding:16px;text-align:center;color:#888;">No new signups in the last 24 hours.</td></tr>`;
 
   const body = `

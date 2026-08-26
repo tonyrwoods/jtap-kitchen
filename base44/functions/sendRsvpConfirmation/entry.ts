@@ -1,6 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -81,14 +87,14 @@ function buildConfirmationEmail(promotion, invite) {
       <p style="color: #999; font-size: 13px; margin: 8px 0 0; letter-spacing: 2px; text-transform: uppercase;">RSVP Confirmed</p>
     </div>
     <div style="padding: 40px 36px;">
-      <h2 style="font-size: 22px; margin: 0 0 12px;">Hi ${invite.guest_name},</h2>
+      <h2 style="font-size: 22px; margin: 0 0 12px;">Hi ${esc(invite.guest_name)},</h2>
       <p style="color: #555; line-height: 1.7; margin: 0 0 24px;">${statusMessages[invite.rsvp_status]}</p>
       <div style="background: #f5f3f0; border-radius: 12px; padding: 20px; margin: 0 0 28px;">
         <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
           ${detailsRows}
         </table>
       </div>
-      ${invite.rsvp_status === 'Attending' && invite.dietary_notes ? `<div style="background: #fffbf0; border-left: 4px solid #C89B4F; padding: 15px; border-radius: 4px; margin: 0 0 24px;"><p style="margin: 0; font-size: 13px; color: #666;"><strong>Dietary Notes:</strong> ${invite.dietary_notes}</p></div>` : ''}
+      ${invite.rsvp_status === 'Attending' && invite.dietary_notes ? `<div style="background: #fffbf0; border-left: 4px solid #C89B4F; padding: 15px; border-radius: 4px; margin: 0 0 24px;"><p style="margin: 0; font-size: 13px; color: #666;"><strong>Dietary Notes:</strong> ${esc(invite.dietary_notes)}</p></div>` : ''}
       <p style="color: #999; font-size: 13px; line-height: 1.6; margin: 0; border-top: 1px solid #eee; padding-top: 16px;">
         Need to update your response? Visit your <a href="https://jtapkitchen.com/event-invite/${invite.invite_token}" style="color: #C89B4F;">RSVP link</a> anytime.<br/>
         JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-554-4431

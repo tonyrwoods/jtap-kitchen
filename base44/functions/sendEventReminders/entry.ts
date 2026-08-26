@@ -2,6 +2,12 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   try {
@@ -103,7 +109,7 @@ function buildReminderEmail(promotion, invite) {
       <p style="color: #999; font-size: 13px; margin: 8px 0 0; letter-spacing: 2px; text-transform: uppercase;">Event Reminder</p>
     </div>
     <div style="padding: 40px 36px;">
-      <h2 style="font-size: 22px; margin: 0 0 12px;">Hi ${invite.guest_name},</h2>
+      <h2 style="font-size: 22px; margin: 0 0 12px;">Hi ${esc(invite.guest_name)},</h2>
       <p style="color: #555; line-height: 1.7; margin: 0 0 24px;">
         We're looking forward to seeing you in <strong>2 days</strong> at <strong>${promotion.title}</strong>! Here's a quick reminder with all the details.
       </p>
