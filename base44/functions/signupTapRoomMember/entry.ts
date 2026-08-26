@@ -26,6 +26,16 @@ export default async function(req) {
       return Response.json({ error: 'Invalid membership tier.' }, { status: 400 });
     }
 
+    // Paid tiers (Reserve/Founding) grant credits and private room access —
+    // only admins may assign those. Public self-signup is limited to Regular.
+    if (tier !== 'Regular') {
+      let user;
+      try { user = await base44.auth.me(); } catch (_) { user = null; }
+      if (!user || user.role !== 'admin') {
+        return Response.json({ error: 'That tier requires admin approval. Please sign up as a Regular member or contact us.' }, { status: 403 });
+      }
+    }
+
     const limited = await enforceRateLimit(req, base44, 'signupTapRoomMember', email.toLowerCase(), 1, 3600000);
     if (limited) return limited;
 
