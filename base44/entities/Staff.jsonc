@@ -46,8 +46,7 @@
     }
   },
   "required": [
-    "name",
-    "role"
+    "name"
   ],
   "rls": {
     "create": {
