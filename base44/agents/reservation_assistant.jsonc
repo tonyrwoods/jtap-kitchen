@@ -25,10 +25,9 @@
       ]
     },
     {
-      "entity_name": "LoyaltyMember",
+      "entity_name": "TapRoomMember",
       "allowed_operations": [
-        "read",
-        "create"
+        "read"
       ]
     },
     {
