@@ -155,7 +155,7 @@ export default function AdminDashboard() {
   const [reservations, setReservations] = useState([]);
   const [giftCards, setGiftCards] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [customerProfiles, setCustomerProfiles] = useState([]);
+  const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -168,13 +168,13 @@ export default function AdminDashboard() {
       base44.entities.Reservation.list("-created_date", 100),
       base44.entities.GiftCard.list("-created_date", 100),
       base44.entities.Review.list("-created_date", 100),
-      base44.entities.CustomerProfile.list("-created_date", 200),
+      base44.entities.TapRoomMember.list("-created_date", 200),
     ]).then(([m, r, g, rv, cp]) => {
       setMenuItems(m);
       setReservations(r);
       setGiftCards(g);
       setReviews(rv);
-      setCustomerProfiles(cp);
+      setMembers(cp);
       setLoading(false);
     });
   }, []);
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
 
   const GIFT_STATUSES = ["Pending Payment", "Active", "Redeemed", "Expired"];
 
-  const profileByEmail = new Map(customerProfiles.map(p => [p.email?.toLowerCase(), p]));
+  const profileByEmail = new Map(members.map(p => [p.email?.toLowerCase(), p]));
   const getGuestProfile = (email) => email ? profileByEmail.get(email.toLowerCase()) : null;
 
   const stats = [
