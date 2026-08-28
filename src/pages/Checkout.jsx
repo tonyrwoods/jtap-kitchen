@@ -18,13 +18,6 @@ const initTaxRate = async () => {
 
 initTaxRate();
 
-function calcCustomerTier(totalSpend) {
-  if (totalSpend >= 5000) return "Platinum";
-  if (totalSpend >= 1500) return "Gold";
-  if (totalSpend >= 500)  return "Silver";
-  return "Bronze";
-}
-
 function genReceiptNumber() {
   return "RCP-" + Date.now().toString(36).toUpperCase();
 }
@@ -218,29 +211,33 @@ export default function Checkout() {
 
     const saved = await base44.entities.Invoice.create(invoiceData);
 
-    // Update customer profile if linked
+    // Award loyalty points to the linked TapRoomMember
     if (linkedCustomer) {
       const pointsEarned = Math.floor(total);
-      const newHistory = [
-        ...(linkedCustomer.order_history || []),
-        {
-          invoice_id: saved.id,
-          receipt_number: saved.receipt_number,
-          date: new Date().toISOString(),
-          total,
-          items_count: selectedItems.length,
-        },
-      ];
       const newSpend = (linkedCustomer.total_spend || 0) + total;
       const newVisits = (linkedCustomer.total_visits || 0) + 1;
-      const newPoints = (linkedCustomer.loyalty_points || 0) + pointsEarned;
-      const newTier = calcCustomerTier(newSpend);
-      await base44.entities.CustomerProfile.update(linkedCustomer.id, {
+      const newPoints = (linkedCustomer.points_balance || 0) + pointsEarned;
+      const today = new Date().toISOString().split('T')[0];
+      await base44.entities.TapRoomMember.update(linkedCustomer.id, {
         total_spend: newSpend,
+        current_year_spend: (linkedCustomer.current_year_spend || 0) + total,
         total_visits: newVisits,
-        loyalty_points: newPoints,
-        loyalty_tier: newTier,
-        order_history: newHistory,
+        points_balance: newPoints,
+        total_points_earned: (linkedCustomer.total_points_earned || 0) + pointsEarned,
+        last_visit_date: today,
+      });
+      await base44.entities.PointsActivity.create({
+        member_id: linkedCustomer.id,
+        member_name: linkedCustomer.guest_name,
+        member_email: linkedCustomer.email,
+        transaction_type: 'Earn',
+        points: pointsEarned,
+        balance_after: newPoints,
+        trigger: 'purchase',
+        spend_amount: total,
+        invoice_id: saved.id,
+        description: `Purchase — Receipt ${saved.receipt_number}`,
+        transaction_date: today,
       });
     }
 
