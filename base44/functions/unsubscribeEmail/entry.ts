@@ -16,11 +16,13 @@ Deno.serve(async (req) => {
     const rl = await enforceRateLimit(req, base44, 'unsubscribe', norm, 10, 600000);
     if (rl) return rl;
 
-    const existing = await base44.asServiceRole.entities.Newsletter.filter({ email: norm });
+    // Unsubscribe = mark the Subscriber record inactive. If the email isn't a
+    // subscriber yet, create an inactive record so the preference is preserved.
+    const existing = await base44.asServiceRole.entities.Subscriber.filter({ email: norm });
     if (existing.length > 0) {
-      await base44.asServiceRole.entities.Newsletter.update(existing[0].id, { is_unsubscribed: true });
+      await base44.asServiceRole.entities.Subscriber.update(existing[0].id, { is_active: false });
     } else {
-      await base44.asServiceRole.entities.Newsletter.create({ email: norm, is_unsubscribed: true });
+      await base44.asServiceRole.entities.Subscriber.create({ email: norm, is_active: false });
     }
 
     return Response.json({ success: true });

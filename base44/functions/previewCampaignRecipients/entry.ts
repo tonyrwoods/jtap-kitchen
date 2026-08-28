@@ -13,8 +13,8 @@ Deno.serve(async (req) => {
     let emails = [];
 
     if (segment === "All Subscribers") {
-      const subs = await base44.asServiceRole.entities.Newsletter.list();
-      emails = subs.map(s => ({ email: s.email, name: "" }));
+      const subs = await base44.asServiceRole.entities.Subscriber.list();
+      emails = subs.filter(s => s.is_active !== false).map(s => ({ email: s.email, name: s.name || "" }));
     } else if (segment === "Completed Guests") {
       const res = await base44.asServiceRole.entities.Reservation.filter({ status: "Completed" });
       emails = res.map(r => ({ email: r.email, name: r.guest_name }));

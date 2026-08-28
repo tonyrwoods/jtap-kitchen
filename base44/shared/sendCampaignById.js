@@ -13,8 +13,8 @@ export async function sendCampaignById(base44, campaignId) {
   const segment = campaign.segment;
 
   if (segment === "All Subscribers") {
-    const subs = await base44.asServiceRole.entities.Newsletter.list();
-    emails = subs.map(s => ({ email: s.email, name: "" }));
+    const subs = await base44.asServiceRole.entities.Subscriber.list();
+    emails = subs.filter(s => s.is_active !== false).map(s => ({ email: s.email, name: s.name || "" }));
   } else if (segment === "Completed Guests") {
     const res = await base44.asServiceRole.entities.Reservation.filter({ status: "Completed" });
     emails = res.map(r => ({ email: r.email, name: r.guest_name }));
@@ -41,8 +41,8 @@ export async function sendCampaignById(base44, campaignId) {
   });
 
   // Exclude unsubscribed recipients (CAN-SPAM compliance)
-  const allSubs = await base44.asServiceRole.entities.Newsletter.list();
-  const unsubscribed = new Set(allSubs.filter(s => s.is_unsubscribed).map(s => (s.email || '').toLowerCase()));
+  const allSubs = await base44.asServiceRole.entities.Subscriber.list();
+  const unsubscribed = new Set(allSubs.filter(s => s.is_active === false).map(s => (s.email || '').toLowerCase()));
   const recipients = unique.filter(r => !unsubscribed.has((r.email || '').toLowerCase()));
 
   const appUrl = Deno.env.get('APP_URL') || 'https://jtapkitchen.com';
