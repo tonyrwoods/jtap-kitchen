@@ -44,9 +44,11 @@ export default function PromotionForm({ promotion, onSave, onCancel }) {
   const sendToLoyaltyMembers = async (promo) => {
     try {
       const members = await base44.entities.TapRoomMember.list("-created_date", 500);
+      const existing = await base44.entities.EventInvite.filter({ promotion_id: promo.id });
+      const existingEmails = new Set(existing.map((i) => (i.guest_email || "").toLowerCase()));
       const discount = parseFloat(form.default_discount_amount) || 0;
       const records = members
-        .filter((m) => m.email && m.status !== "Inactive")
+        .filter((m) => m.email && m.status !== "Inactive" && !existingEmails.has(m.email.toLowerCase()))
         .map((m) => ({
           promotion_id: promo.id,
           promotion_title: promo.title,
@@ -58,7 +60,7 @@ export default function PromotionForm({ promotion, onSave, onCancel }) {
           discount_amount: discount,
         }));
       if (records.length === 0) {
-        toast.info("No active loyalty members to invite");
+        toast.info("All loyalty members are already invited");
         return;
       }
       await base44.entities.EventInvite.bulkCreate(records);
@@ -82,15 +84,21 @@ export default function PromotionForm({ promotion, onSave, onCancel }) {
       if (!promotion?.id) {
         data.share_slug = generateSlug(form.title);
       }
+      let promoId;
+      let promoTitle;
       if (promotion?.id) {
         await base44.entities.EventPromotion.update(promotion.id, data);
         toast.success("Promotion updated");
+        promoId = promotion.id;
+        promoTitle = data.title;
       } else {
         const saved = await base44.entities.EventPromotion.create(data);
         toast.success("Promotion created");
-        if (sendToLoyalty) {
-          await sendToLoyaltyMembers(saved);
-        }
+        promoId = saved.id;
+        promoTitle = saved.title;
+      }
+      if (sendToLoyalty && promoId) {
+        await sendToLoyaltyMembers({ id: promoId, title: promoTitle });
       }
       onSave();
     } catch (err) {
@@ -188,15 +196,13 @@ export default function PromotionForm({ promotion, onSave, onCancel }) {
                 <span className="font-body text-sm">Active (visible on website & eligible for invites)</span>
               </label>
             </div>
-            {!promotion?.id && (
-              <div className="sm:col-span-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={sendToLoyalty} onChange={(e) => setSendToLoyalty(e.target.checked)} className="w-4 h-4" />
-                  <span className="font-body text-sm">Send invites to all loyalty members now</span>
-                </label>
-                {sendToLoyalty && <p className="font-body text-xs text-muted-foreground mt-1 ml-6">Creates a pending invite (with the discount above) for every active Tap Room member and emails them immediately.</p>}
-              </div>
-            )}
+            <div className="sm:col-span-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={sendToLoyalty} onChange={(e) => setSendToLoyalty(e.target.checked)} className="w-4 h-4" />
+                <span className="font-body text-sm">Send invites to all loyalty members now</span>
+              </label>
+              {sendToLoyalty && <p className="font-body text-xs text-muted-foreground mt-1 ml-6">Creates a pending invite (with the discount above) for every active Tap Room member and emails them immediately. Members already invited are skipped.</p>}
+            </div>
           </div>
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-primary text-primary-foreground rounded-lg font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50">
