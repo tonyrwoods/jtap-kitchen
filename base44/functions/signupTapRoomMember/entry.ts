@@ -1,5 +1,4 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 const TIER_DEFAULTS = {
@@ -73,15 +72,8 @@ export default async function(req) {
       fee_renewal_date: renewalDate,
     });
 
-    // Welcome email — Gmail delivers to external (non-registered) addresses.
-    const creditLine = tierData.welcome_credit_issued > 0 ? `Welcome credit: $${tierData.welcome_credit_issued}\n` : '';
-    const accessLine = tierData.private_room_access ? 'Private Room Access: UNLOCKED\n' : '';
-    await sendTransactionalEmail(base44, {
-      to: email,
-      subject: 'Welcome to The JTAP Room Society — JTAP Kitchen',
-      body: `Hi ${guest_name},\n\nYou're officially in.\n\nWelcome to The JTAP Room Society.\n\nYour tier: ${tier}\n${creditLine}${accessLine}\nSee you at the table.\n\n— The JTAP Kitchen Team`,
-    });
-
+    // Welcome email is now sent automatically by the
+    // "New Tap Room Member Welcome Email" workflow on TapRoomMember create.
     return Response.json({ success: true, member });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

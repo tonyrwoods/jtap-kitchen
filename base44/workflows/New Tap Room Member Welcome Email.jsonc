@@ -1,0 +1,40 @@
+{
+  "description": "Sends a branded welcome email with loyalty details whenever a new Tap Room member is created.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "TapRoomMember"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "tap_room_welcome_email",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_welcome": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendTapRoomWelcomeEmail",
+            "args": {
+              "member_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send welcome email",
+            "description": "Loyalty details to the new member"
+          }
+        }
+      }
+    ]
+  },
+  "name": "New Tap Room Member Welcome Email"
+}
