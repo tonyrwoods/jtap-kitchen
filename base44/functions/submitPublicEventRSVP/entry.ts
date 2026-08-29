@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
-import { buildWaitlistEmail, autoPromoteWaitlist } from '../../shared/eventRsvp.js';
+import { buildWaitlistEmail, autoPromoteWaitlist, buildConfirmationEmail } from '../../shared/eventRsvp.js';
 
 function esc(text) {
   return String(text == null ? '' : text)
@@ -122,6 +122,20 @@ export default async function(req) {
     // When someone declines, auto-promote waitlisted guests into freed capacity.
     if (rsvp_status === 'Declined' && promotion.max_guests) {
       await autoPromoteWaitlist(base44, promotion.id, promotion);
+    }
+
+    // Send the guest an immediate confirmation reply for their response.
+    try {
+      await sendTransactionalEmail(base44, {
+        to: email,
+        subject: `RSVP Confirmed — ${promotion.title}`,
+        body: buildConfirmationEmail(promotion, updated),
+      });
+    } catch (err) {
+      await notifyAdmins(base44, {
+        subject: 'RSVP confirmation email failed',
+        body: `A guest submitted their RSVP but the confirmation email could not be sent.<br><br><strong>Guest:</strong> ${esc(guest_name)} &lt;${esc(email)}&gt;<br><strong>Event:</strong> ${esc(promotion.title)}<br><strong>Error:</strong> ${esc(err?.message || err)}`,
+      }).catch(() => {});
     }
 
     return Response.json({ success: true, invite: updated });
