@@ -240,7 +240,7 @@ export default function EventAnnouncement() {
             <h2 className="font-heading text-2xl font-bold mb-2">RSVP Has Closed</h2>
             <p className="font-body text-muted-foreground mb-4">The RSVP deadline for <strong>{promo.title}</strong> has passed. Please reach out if you have any questions.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="tel:9015544431" className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90">Call Us</a>
+              <a href="tel:9012334060" className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90">Call Us</a>
               <a href="mailto:info@jtapkitchen.com" className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-semibold hover:bg-muted inline-flex items-center gap-2 justify-center"><Mail className="w-4 h-4" /> Email Us</a>
             </div>
           </div>
