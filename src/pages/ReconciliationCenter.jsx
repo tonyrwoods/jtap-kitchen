@@ -7,8 +7,13 @@ import { autoMatch } from "../components/reconciliation/useAutoMatch";
 import ImportTransactionsModal from "../components/reconciliation/ImportTransactionsModal";
 import TransactionRow from "../components/reconciliation/TransactionRow";
 import ReconciliationSummaryBar from "../components/reconciliation/ReconciliationSummaryBar";
+import DiscountCodeDashboard from "../components/reconciliation/DiscountCodeDashboard";
 
 const STATUS_FILTERS = ["All", "Unmatched", "Auto-Matched", "Confirmed", "Dismissed"];
+const VIEWS = [
+  { id: "reconciliation", label: "Reconciliation" },
+  { id: "discounts", label: "Discount Codes" },
+];
 
 export default function ReconciliationCenter() {
   useRobotsNoindex();
@@ -22,6 +27,7 @@ export default function ReconciliationCenter() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [accountFilter, setAccountFilter] = useState("All");
   const [autoRunning, setAutoRunning] = useState(false);
+  const [view, setView] = useState("reconciliation");
 
   const loadAll = useCallback(async () => {
     setLoading(true);
@@ -86,7 +92,11 @@ export default function ReconciliationCenter() {
       <div className="border-b border-border bg-card px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="font-heading text-xl font-bold">Reconciliation Center</h1>
-          <p className="font-body text-xs text-muted-foreground mt-0.5">Match bank transactions to vendor payments & invoices</p>
+          <p className="font-body text-xs text-muted-foreground mt-0.5">
+            {view === "discounts"
+              ? "Track loyalty discount code usage across promotions"
+              : "Match bank transactions to vendor payments & invoices"}
+          </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <button onClick={runAutoMatch} disabled={autoRunning || loading}
@@ -106,6 +116,20 @@ export default function ReconciliationCenter() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-6 space-y-6">
+        {/* View toggle */}
+        <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
+          {VIEWS.map((v) => (
+            <button key={v.id} onClick={() => setView(v.id)}
+              className={`px-4 py-1.5 rounded-md font-body text-sm font-medium transition-all ${view === v.id ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+              {v.label}
+            </button>
+          ))}
+        </div>
+
+        {view === "discounts" ? (
+          <DiscountCodeDashboard />
+        ) : (
+          <>
         {/* Summary */}
         <ReconciliationSummaryBar transactions={transactions} />
 
@@ -174,6 +198,8 @@ export default function ReconciliationCenter() {
               <TransactionRow key={txnData.txn.id} txnData={txnData} onUpdated={loadAll} />
             ))}
           </div>
+        )}
+          </>
         )}
       </div>
 
