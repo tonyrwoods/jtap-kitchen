@@ -78,11 +78,18 @@ function EventDetailCard({ item }) {
   );
 }
 
+const FILTERS = [
+  { id: "all", label: "All Events" },
+  { id: "events", label: "Tasting Menus & Experiences" },
+  { id: "promo", label: "Private Events" },
+];
+
 export default function EventCalendarPage() {
   useSeoMeta("events");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     document.title = "Event Calendar — JTAP Kitchen";
@@ -138,10 +145,12 @@ export default function EventCalendarPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const filteredItems = filter === "all" ? items : items.filter((i) => i.kind === filter);
+
   // Categories present (for legend)
   const legend = [];
   const seen = new Set();
-  items.forEach((item) => {
+  filteredItems.forEach((item) => {
     const cat = categoryFor(item);
     if (!seen.has(cat.label)) {
       seen.add(cat.label);
@@ -151,7 +160,7 @@ export default function EventCalendarPage() {
 
   const selectedStr = selectedDate ? new Date(selectedDate).toISOString().split("T")[0] : null;
   const dayItems = selectedStr
-    ? items.filter((i) => i.date === selectedStr).sort((a, b) => (a.time || "99").localeCompare(b.time || "99"))
+    ? filteredItems.filter((i) => i.date === selectedStr).sort((a, b) => (a.time || "99").localeCompare(b.time || "99"))
     : [];
 
   const selectedLabel = selectedDate
@@ -172,16 +181,31 @@ export default function EventCalendarPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-10 space-y-6">
-        {/* Legend */}
-        {legend.length > 0 && (
-          <div className="flex flex-wrap items-center gap-3">
-            {legend.map((cat) => (
-              <span key={cat.label} className="inline-flex items-center gap-1.5 font-body text-xs text-muted-foreground">
-                <span className={`w-2.5 h-2.5 rounded-full ${cat.dot}`} /> {cat.label}
-              </span>
+        {/* Filter + Legend */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-wrap gap-2">
+            {FILTERS.map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setFilter(f.id)}
+                className={`px-4 py-2 rounded-full font-body text-sm font-medium transition-all ${
+                  filter === f.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                {f.label}
+              </button>
             ))}
           </div>
-        )}
+          {legend.length > 0 && (
+            <div className="flex flex-wrap items-center gap-3">
+              {legend.map((cat) => (
+                <span key={cat.label} className="inline-flex items-center gap-1.5 font-body text-xs text-muted-foreground">
+                  <span className={`w-2.5 h-2.5 rounded-full ${cat.dot}`} /> {cat.label}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
         {loading ? (
           <div className="flex justify-center py-20">
@@ -189,7 +213,7 @@ export default function EventCalendarPage() {
           </div>
         ) : (
           <>
-            <FullEventCalendar items={items} selectedDate={selectedDate} onDaySelect={setSelectedDate} />
+            <FullEventCalendar items={filteredItems} selectedDate={selectedDate} onDaySelect={setSelectedDate} />
 
             {/* Selected day details */}
             <div className="space-y-3">
