@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { UserPlus, Send, Mail, Check, Trash2, Users, FolderOpen } from "lucide-react";
+import { UserPlus, Send, Mail, Check, Trash2, Users, FolderOpen, Crown } from "lucide-react";
 
 export default function InviteeManager({ promotion }) {
   const [invitees, setInvitees] = useState([]);
@@ -16,6 +16,9 @@ export default function InviteeManager({ promotion }) {
   const [groupPicker, setGroupPicker] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("");
   const [importing, setImporting] = useState(false);
+  const [loyaltyPicker, setLoyaltyPicker] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [importingLoyalty, setImportingLoyalty] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -56,6 +59,38 @@ export default function InviteeManager({ promotion }) {
       load();
     } catch { toast.error("Failed to import group"); }
     setImporting(false);
+  };
+
+  const importLoyaltyMembers = async () => {
+    setImportingLoyalty(true);
+    try {
+      const members = await base44.entities.TapRoomMember.list("-created_date", 500);
+      const existing = new Set(invitees.map((i) => (i.guest_email || "").toLowerCase()));
+      const discount = parseFloat(discountAmount) || 0;
+      const records = members
+        .filter((m) => m.email && m.status !== "Inactive" && !existing.has(m.email.toLowerCase()))
+        .map((m) => ({
+          promotion_id: promotion.id,
+          promotion_title: promotion.title,
+          guest_name: m.guest_name,
+          guest_email: m.email.toLowerCase(),
+          invite_token: crypto.randomUUID(),
+          rsvp_status: "Pending",
+          party_size: 1,
+          discount_amount: discount,
+        }));
+      if (records.length === 0) {
+        toast.info("All loyalty members are already invitees");
+      } else {
+        await base44.entities.EventInvite.bulkCreate(records);
+        toast.success(`Added ${records.length} loyalty member${records.length !== 1 ? "s" : ""}${discount > 0 ? ` ($${discount.toFixed(2)} discount each)` : ""}`);
+        setLoyaltyPicker(false);
+        load();
+      }
+    } catch {
+      toast.error("Failed to import loyalty members");
+    }
+    setImportingLoyalty(false);
   };
 
   const addInvitee = async (e) => {
@@ -174,6 +209,20 @@ export default function InviteeManager({ promotion }) {
       <button onClick={() => setShowBulk(!showBulk)} className="text-xs text-primary hover:underline mb-3">{showBulk ? "← Single add" : "Bulk add (paste list)"}</button>
 
       <button onClick={() => setGroupPicker(!groupPicker)} className="text-xs text-primary hover:underline mb-3 ml-2 inline-flex items-center gap-1"><FolderOpen className="w-3 h-3" /> {groupPicker ? "← Hide groups" : "Import saved group"}</button>
+
+      <button onClick={() => setLoyaltyPicker(!loyaltyPicker)} className="text-xs text-primary hover:underline mb-3 ml-2 inline-flex items-center gap-1"><Crown className="w-3 h-3" /> {loyaltyPicker ? "← Hide" : "Add all loyalty members"}</button>
+      {loyaltyPicker && (
+        <div className="mb-3 p-3 rounded-lg bg-muted/40 border border-border space-y-2">
+          <label className="font-body text-xs text-muted-foreground block">Discount amount per guest ($ off the regular price)</label>
+          <div className="flex gap-2">
+            <input type="number" step="0.01" min="0" className="flex-1 border border-border rounded-lg px-3 py-1.5 text-sm bg-background font-body" value={discountAmount} onChange={(e) => setDiscountAmount(e.target.value)} placeholder="0.00" />
+            <button onClick={importLoyaltyMembers} disabled={importingLoyalty} className="px-4 py-1.5 bg-foreground text-background rounded-lg font-body text-sm font-medium hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5">
+              {importingLoyalty ? "Importing…" : "Add All Members"}
+            </button>
+          </div>
+          <p className="font-body text-xs text-muted-foreground">Adds every active Tap Room member as a pending invitee. Duplicates are skipped.</p>
+        </div>
+      )}
       {groupPicker && (
         <div className="flex gap-2 mb-3 p-3 rounded-lg bg-muted/40 border border-border">
           <select value={selectedGroup} onChange={(e) => setSelectedGroup(e.target.value)} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-sm bg-background font-body">

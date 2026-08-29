@@ -43,6 +43,11 @@
       "type": "string",
       "title": "Dietary Notes / Special Requests"
     },
+    "discount_amount": {
+      "type": "number",
+      "title": "Discount Amount ($)",
+      "default": 0
+    },
     "invite_token": {
       "type": "string",
       "title": "Invite Token (unique RSVP link)"

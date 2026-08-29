@@ -172,7 +172,18 @@ export default function EventAnnouncement() {
           <div className="bg-card border border-border rounded-xl p-3 text-center">
             <Ticket className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="font-body text-xs text-muted-foreground">Admission</p>
-            <p className="font-body text-sm font-semibold">{promo.price_per_guest > 0 ? `$${Number(promo.price_per_guest).toFixed(0)}/guest` : "Complimentary"}</p>
+            {promo.price_per_guest > 0 ? (
+              isInviteMode && invite?.discount_amount > 0 ? (
+                <p className="font-body text-sm font-semibold">
+                  <span className="line-through text-muted-foreground mr-1">${Number(promo.price_per_guest).toFixed(0)}</span>
+                  <span className="text-green-600">${Math.max(0, Number(promo.price_per_guest) - Number(invite.discount_amount)).toFixed(0)}/guest</span>
+                </p>
+              ) : (
+                <p className="font-body text-sm font-semibold">${Number(promo.price_per_guest).toFixed(0)}/guest</p>
+              )
+            ) : (
+              <p className="font-body text-sm font-semibold">Complimentary</p>
+            )}
           </div>
         </div>
 
