@@ -30,8 +30,9 @@ export default function PromotionsTab() {
     load();
   };
 
+  const PROD_ORIGIN = "https://jtapkitchen.com";
   const copyLink = (slug) => {
-    const url = `${window.location.origin}/event-announce/${slug}`;
+    const url = `${PROD_ORIGIN}/event-announce/${slug}`;
     navigator.clipboard.writeText(url);
     toast.success("Announcement link copied");
   };

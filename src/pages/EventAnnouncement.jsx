@@ -35,6 +35,8 @@ export default function EventAnnouncement() {
   const [dietary, setDietary] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [guestName, setGuestName] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -70,16 +72,28 @@ export default function EventAnnouncement() {
   const submitRSVP = async (e) => {
     e.preventDefault();
     if (!rsvpStatus) { toast.error("Please select a response"); return; }
+    if (!isInviteMode && (!guestName.trim() || !guestEmail.trim())) {
+      toast.error("Please enter your name and email");
+      return;
+    }
     setSubmitting(true);
     try {
-      const res = await base44.functions.invoke("submitEventRSVP", {
-        token, rsvp_status: rsvpStatus,
-        party_size: partySize, plus_ones: plusOnes, dietary_notes: dietary,
-      });
+      let res;
+      if (isInviteMode) {
+        res = await base44.functions.invoke("submitEventRSVP", {
+          token, rsvp_status: rsvpStatus,
+          party_size: partySize, plus_ones: plusOnes, dietary_notes: dietary,
+        });
+      } else {
+        res = await base44.functions.invoke("submitPublicEventRSVP", {
+          share_slug: slug, guest_name: guestName.trim(), guest_email: guestEmail.trim().toLowerCase(),
+          rsvp_status: rsvpStatus, party_size: partySize, plus_ones: plusOnes, dietary_notes: dietary,
+        });
+      }
       if (res.data?.success) {
         setInvite(res.data.invite);
         setSubmitted(true);
-        toast.success(rsvpStatus === "Attending" ? "See you there!" : "Thanks for your response");
+        toast.success(res.data.waitlisted ? "You're on the waitlist" : (rsvpStatus === "Attending" ? "See you there!" : "Thanks for your response"));
       } else {
         toast.error(res.data?.error || "Failed to submit RSVP");
       }
@@ -185,112 +199,111 @@ export default function EventAnnouncement() {
         )}
 
         {/* RSVP Section */}
-        {isInviteMode ? (
-          submitted ? (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card border border-border rounded-2xl p-8 text-center">
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${invite?.rsvp_status === "Waitlisted" ? "bg-amber-100" : "bg-green-100"}`}>
-                {invite?.rsvp_status === "Waitlisted"
-                  ? <CalendarClock className="w-8 h-8 text-amber-600" />
-                  : <CheckCircle2 className="w-8 h-8 text-green-600" />}
-              </div>
-              <h2 className="font-heading text-2xl font-bold mb-2">
-                {invite?.rsvp_status === "Attending" ? "You're In!" : invite?.rsvp_status === "Waitlisted" ? "You're on the Waitlist" : invite?.rsvp_status === "Declined" ? "Response Received" : "Thanks for Responding!"}
-              </h2>
-              <p className="font-body text-muted-foreground mb-4">
-                {invite?.rsvp_status === "Attending"
-                  ? `See you at ${promo.title}! ${invite?.party_size > 1 ? `Party of ${invite.party_size}.` : ""}`
-                  : invite?.rsvp_status === "Waitlisted"
-                    ? `This event is at capacity. You're on the waitlist for ${promo.title} (party of ${invite?.party_size || 1}). If a spot opens up, we'll automatically confirm you and email you.`
-                    : `Your response (${invite?.rsvp_status}) has been recorded.`}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                {!rsvpClosed && (
-                  <button onClick={() => setSubmitted(false)} className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted">
-                    Update Response
-                  </button>
-                )}
-                {invite?.rsvp_status === "Attending" && (
-                  <button
-                    onClick={() => downloadIcs(`${promo.title}.ics`, buildEventIcs(promo))}
-                    className="px-6 py-2.5 bg-primary/10 border border-primary/30 text-primary rounded-full font-body text-sm font-medium hover:bg-primary/15 inline-flex items-center gap-2 justify-center"
-                  >
-                    <CalendarPlus className="w-4 h-4" /> Add to Calendar
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          ) : rsvpClosed ? (
-            <div className="bg-card border border-border rounded-2xl p-8 text-center">
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CalendarClock className="w-8 h-8 text-amber-600" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold mb-2">RSVP Has Closed</h2>
-              <p className="font-body text-muted-foreground mb-4">The RSVP deadline for <strong>{promo.title}</strong> has passed. Please reach out if you have any questions.</p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="tel:9015544431" className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90">Call Us</a>
-                <a href="mailto:info@jtapkitchen.com" className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-semibold hover:bg-muted inline-flex items-center gap-2 justify-center"><Mail className="w-4 h-4" /> Email Us</a>
-              </div>
+        {submitted ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card border border-border rounded-2xl p-8 text-center">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${invite?.rsvp_status === "Waitlisted" ? "bg-amber-100" : "bg-green-100"}`}>
+              {invite?.rsvp_status === "Waitlisted"
+                ? <CalendarClock className="w-8 h-8 text-amber-600" />
+                : <CheckCircle2 className="w-8 h-8 text-green-600" />}
             </div>
-          ) : (
-            <motion.form initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={submitRSVP} className="bg-card border border-border rounded-2xl p-6 md:p-8">
-              <h2 className="font-heading text-xl font-bold mb-1">RSVP — {invite?.guest_name}</h2>
-              <p className="font-body text-sm text-muted-foreground mb-5">Will you be attending {promo.title}?</p>
-
-              <div className="grid grid-cols-3 gap-2 mb-5">
-                {["Attending", "Maybe", "Declined"].map((opt) => (
-                  <button key={opt} type="button" onClick={() => setRsvpStatus(opt)}
-                    className={`py-3 rounded-xl font-body text-sm font-semibold border-2 transition-all ${
-                      rsvpStatus === opt
-                        ? opt === "Attending" ? "border-green-500 bg-green-50 text-green-700"
-                          : opt === "Declined" ? "border-red-500 bg-red-50 text-red-700"
-                          : "border-amber-500 bg-amber-50 text-amber-700"
-                        : "border-border text-muted-foreground hover:border-foreground"
-                    }`}>
-                    {opt}
-                  </button>
-                ))}
-              </div>
-
-              {rsvpStatus === "Attending" && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-4">
-                  <div>
-                    <label className="font-body text-sm font-semibold mb-1.5 block">Party Size (including you)</label>
-                    <div className="flex items-center gap-3">
-                      <button type="button" onClick={() => setPartySize(Math.max(1, partySize - 1))} className="w-10 h-10 rounded-full border border-border font-bold hover:bg-muted">−</button>
-                      <span className="font-heading text-2xl font-bold w-8 text-center">{partySize}</span>
-                      <button type="button" onClick={() => setPartySize(Math.min(promo.max_guests || 99, partySize + 1))} className="w-10 h-10 rounded-full border border-border font-bold hover:bg-muted">+</button>
-                    </div>
-                  </div>
-                  {partySize > 1 && (
-                    <div>
-                      <label className="font-body text-sm font-semibold mb-1.5 block">Guest Names</label>
-                      <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={plusOnes} onChange={(e) => setPlusOnes(e.target.value)} placeholder="Names of your guests" />
-                    </div>
-                  )}
-                  <div>
-                    <label className="font-body text-sm font-semibold mb-1.5 block">Dietary Notes / Special Requests</label>
-                    <textarea rows={2} className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background resize-none" value={dietary} onChange={(e) => setDietary(e.target.value)} placeholder="Allergies, accessibility needs, etc." />
-                  </div>
-                </motion.div>
-              )}
-
-              <button type="submit" disabled={submitting || !rsvpStatus} className="w-full mt-5 py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50">
-                {submitting ? "Submitting..." : "Submit RSVP"}
-              </button>
-            </motion.form>
-          )
-        ) : (
-          <div className="bg-card border border-border rounded-2xl p-6 text-center">
-            <Users className="w-10 h-10 text-primary mx-auto mb-3" />
-            <h2 className="font-heading text-xl font-bold mb-2">Want to Attend?</h2>
-            <p className="font-body text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-              {promo.max_guests ? `Limited to ${promo.max_guests} guests. ` : ""}Contact us to reserve your spot{promo.host_name ? ` or reach out to ${promo.host_name}` : ""}.
+            <h2 className="font-heading text-2xl font-bold mb-2">
+              {invite?.rsvp_status === "Attending" ? "You're In!" : invite?.rsvp_status === "Waitlisted" ? "You're on the Waitlist" : invite?.rsvp_status === "Declined" ? "Response Received" : "Thanks for Responding!"}
+            </h2>
+            <p className="font-body text-muted-foreground mb-4">
+              {invite?.rsvp_status === "Attending"
+                ? `See you at ${promo.title}! ${invite?.party_size > 1 ? `Party of ${invite.party_size}.` : ""}`
+                : invite?.rsvp_status === "Waitlisted"
+                  ? `This event is at capacity. You're on the waitlist for ${promo.title} (party of ${invite?.party_size || 1}). If a spot opens up, we'll automatically confirm you and email you.`
+                  : `Your response (${invite?.rsvp_status}) has been recorded.`}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="tel:9015544431" className="px-6 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90">Call to Reserve</a>
-              <a href="mailto:info@jtapkitchen.com" className="px-6 py-3 border border-border rounded-full font-body text-sm font-semibold hover:bg-muted inline-flex items-center gap-2 justify-center"><Mail className="w-4 h-4" /> Email Us</a>
+              {!rsvpClosed && (
+                <button onClick={() => setSubmitted(false)} className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted">
+                  Update Response
+                </button>
+              )}
+              {invite?.rsvp_status === "Attending" && (
+                <button
+                  onClick={() => downloadIcs(`${promo.title}.ics`, buildEventIcs(promo))}
+                  className="px-6 py-2.5 bg-primary/10 border border-primary/30 text-primary rounded-full font-body text-sm font-medium hover:bg-primary/15 inline-flex items-center gap-2 justify-center"
+                >
+                  <CalendarPlus className="w-4 h-4" /> Add to Calendar
+                </button>
+              )}
+            </div>
+          </motion.div>
+        ) : rsvpClosed ? (
+          <div className="bg-card border border-border rounded-2xl p-8 text-center">
+            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CalendarClock className="w-8 h-8 text-amber-600" />
+            </div>
+            <h2 className="font-heading text-2xl font-bold mb-2">RSVP Has Closed</h2>
+            <p className="font-body text-muted-foreground mb-4">The RSVP deadline for <strong>{promo.title}</strong> has passed. Please reach out if you have any questions.</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="tel:9015544431" className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90">Call Us</a>
+              <a href="mailto:info@jtapkitchen.com" className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-semibold hover:bg-muted inline-flex items-center gap-2 justify-center"><Mail className="w-4 h-4" /> Email Us</a>
             </div>
           </div>
+        ) : (
+          <motion.form initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={submitRSVP} className="bg-card border border-border rounded-2xl p-6 md:p-8">
+            <h2 className="font-heading text-xl font-bold mb-1">{isInviteMode ? `RSVP — ${invite?.guest_name}` : "RSVP to This Event"}</h2>
+            <p className="font-body text-sm text-muted-foreground mb-5">{isInviteMode ? `Will you be attending ${promo.title}?` : `Let us know if you'll be attending ${promo.title}.`}</p>
+
+            {!isInviteMode && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1.5 block">Full Name</label>
+                  <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={guestName} onChange={(e) => setGuestName(e.target.value)} placeholder="Your name" required />
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1.5 block">Email</label>
+                  <input type="email" className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} placeholder="you@email.com" required />
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-3 gap-2 mb-5">
+              {["Attending", "Maybe", "Declined"].map((opt) => (
+                <button key={opt} type="button" onClick={() => setRsvpStatus(opt)}
+                  className={`py-3 rounded-xl font-body text-sm font-semibold border-2 transition-all ${
+                    rsvpStatus === opt
+                      ? opt === "Attending" ? "border-green-500 bg-green-50 text-green-700"
+                        : opt === "Declined" ? "border-red-500 bg-red-50 text-red-700"
+                        : "border-amber-500 bg-amber-50 text-amber-700"
+                      : "border-border text-muted-foreground hover:border-foreground"
+                  }`}>
+                  {opt}
+                </button>
+              ))}
+            </div>
+
+            {rsvpStatus === "Attending" && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-4">
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1.5 block">Party Size (including you)</label>
+                  <div className="flex items-center gap-3">
+                    <button type="button" onClick={() => setPartySize(Math.max(1, partySize - 1))} className="w-10 h-10 rounded-full border border-border font-bold hover:bg-muted">−</button>
+                    <span className="font-heading text-2xl font-bold w-8 text-center">{partySize}</span>
+                    <button type="button" onClick={() => setPartySize(Math.min(promo.max_guests || 99, partySize + 1))} className="w-10 h-10 rounded-full border border-border font-bold hover:bg-muted">+</button>
+                  </div>
+                </div>
+                {partySize > 1 && (
+                  <div>
+                    <label className="font-body text-sm font-semibold mb-1.5 block">Guest Names</label>
+                    <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background" value={plusOnes} onChange={(e) => setPlusOnes(e.target.value)} placeholder="Names of your guests" />
+                  </div>
+                )}
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1.5 block">Dietary Notes / Special Requests</label>
+                  <textarea rows={2} className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background resize-none" value={dietary} onChange={(e) => setDietary(e.target.value)} placeholder="Allergies, accessibility needs, etc." />
+                </div>
+              </motion.div>
+            )}
+
+            <button type="submit" disabled={submitting || !rsvpStatus} className="w-full mt-5 py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50">
+              {submitting ? "Submitting..." : "Submit RSVP"}
+            </button>
+          </motion.form>
         )}
       </div>
     </div>
