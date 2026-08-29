@@ -78,12 +78,14 @@
         "type": "string",
         "enum": [
           "instagram",
-          "facebook"
+          "facebook",
+          "linkedin"
         ]
       },
       "default": [
         "instagram",
-        "facebook"
+        "facebook",
+        "linkedin"
       ],
       "description": "Platforms that receive an automatic post when a new promotion is created"
     },

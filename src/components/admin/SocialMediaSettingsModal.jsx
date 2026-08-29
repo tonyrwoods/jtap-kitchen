@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Save, Instagram, Facebook } from "lucide-react";
+import { X, Save, Instagram, Facebook, Linkedin } from "lucide-react";
 import { toast } from "sonner";
 
 const PLACEHOLDERS = "{title} {subtitle} {date} {time} {endtime} {location} {price} {discount} {description} {rsvp_deadline} {link}";
@@ -64,6 +64,9 @@ export default function SocialMediaSettingsModal({ onClose }) {
                 </button>
                 <button type="button" onClick={() => toggle("facebook")} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 font-body text-sm font-medium transition-all ${platforms.includes("facebook") ? "border-blue-500 bg-blue-50 text-blue-700" : "border-border text-muted-foreground"}`}>
                   <Facebook className="w-4 h-4" /> Facebook
+                </button>
+                <button type="button" onClick={() => toggle("linkedin")} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 font-body text-sm font-medium transition-all ${platforms.includes("linkedin") ? "border-sky-600 bg-sky-50 text-sky-700" : "border-border text-muted-foreground"}`}>
+                  <Linkedin className="w-4 h-4" /> LinkedIn
                 </button>
               </div>
             </div>

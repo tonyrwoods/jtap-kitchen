@@ -122,6 +122,37 @@ async function postToFacebook(userAccessToken, imageUrl, message) {
   return post.id || post.post_id;
 }
 
+async function postToLinkedIn(accessToken, text) {
+  const profileRes = await fetch('https://api.linkedin.com/v2/userinfo', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  const profile = await profileRes.json();
+  if (!profile.sub) throw new Error(`LinkedIn profile lookup failed: ${JSON.stringify(profile.error || profile)}`);
+  const authorUrn = `urn:li:person:${profile.sub}`;
+  const postRes = await fetch('https://api.linkedin.com/v2/ugcPosts', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'X-Restli-Protocol-Version': '2.0.0',
+    },
+    body: JSON.stringify({
+      author: authorUrn,
+      lifecycleState: 'PUBLISHED',
+      specificContent: {
+        'com.linkedin.ugc.ShareContent': {
+          shareCommentary: { text },
+          shareMediaCategory: 'NONE',
+        },
+      },
+      visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' },
+    }),
+  });
+  const result = await postRes.json();
+  if (!postRes.ok || !result.id) throw new Error(`LinkedIn post failed: ${JSON.stringify(result)}`);
+  return result.id;
+}
+
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -169,6 +200,17 @@ export default async function (req) {
       } catch (e) {
         console.error('Facebook post error:', e.message);
         results.facebook = { success: false, error: e.message };
+      }
+    }
+
+    if (platforms.includes('linkedin')) {
+      try {
+        const { accessToken } = await base44.asServiceRole.connectors.getConnection('linkedin');
+        const postId = await postToLinkedIn(accessToken, caption);
+        results.linkedin = { success: true, post_id: postId };
+      } catch (e) {
+        console.error('LinkedIn post error:', e.message);
+        results.linkedin = { success: false, error: e.message };
       }
     }
 
