@@ -71,6 +71,11 @@
       "title": "Price per Guest (USD, 0 = free)",
       "default": 0
     },
+    "default_discount_amount": {
+      "type": "number",
+      "title": "Default Discount per Guest (USD)",
+      "default": 0
+    },
     "host_name": {
       "type": "string",
       "title": "Host Name"

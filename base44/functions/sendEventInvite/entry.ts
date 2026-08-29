@@ -102,6 +102,7 @@ function buildInviteEmail(promotion, invite, rsvpUrl) {
         <p style="margin: 0 0 8px; color: #1a1a1a; font-size: 14px;"><strong>&#128197;</strong> ${dateStr}${timeStr ? ' at ' + timeStr : ''}</p>
         <p style="margin: 0 0 8px; color: #1a1a1a; font-size: 14px;"><strong>&#128205;</strong> ${promotion.location_label || 'JTAP Kitchen — Memphis, TN'}</p>
         <p style="margin: 0; color: #1a1a1a; font-size: 14px;"><strong>&#127903;</strong> ${priceLine}</p>
+        ${invite.discount_amount > 0 ? `<p style="margin: 8px 0 0; color: #1a6b3a; font-size: 14px;"><strong>&#127873;</strong> Your member discount: $${Number(invite.discount_amount).toFixed(0)} off</p>` : ''}
       </div>
       <div style="text-align: center; margin-bottom: 28px;">
         <a href="${rsvpUrl}" style="display: inline-block; background: #C89B4F; color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 50px; font-family: Inter, sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.3px;">
@@ -110,7 +111,7 @@ function buildInviteEmail(promotion, invite, rsvpUrl) {
       </div>
       ${deadlineStr ? `<p style="color: #999; font-size: 13px; text-align: center; margin: 0 0 16px;">Please RSVP by ${deadlineStr}.</p>` : ''}
       <p style="color: #999; font-size: 12px; line-height: 1.6; margin: 0; border-top: 1px solid #eee; padding-top: 16px;">
-        JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-554-4431
+        JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-213-8085
       </p>
     </div>
   </div>

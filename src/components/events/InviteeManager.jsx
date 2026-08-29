@@ -17,7 +17,7 @@ export default function InviteeManager({ promotion }) {
   const [selectedGroup, setSelectedGroup] = useState("");
   const [importing, setImporting] = useState(false);
   const [loyaltyPicker, setLoyaltyPicker] = useState(false);
-  const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState(promotion?.default_discount_amount || 0);
   const [importingLoyalty, setImportingLoyalty] = useState(false);
 
   const load = useCallback(() => {
