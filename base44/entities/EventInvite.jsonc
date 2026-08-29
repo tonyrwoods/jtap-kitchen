@@ -48,6 +48,10 @@
       "title": "Discount Amount ($)",
       "default": 0
     },
+    "discount_code": {
+      "type": "string",
+      "title": "Unique Discount Code"
+    },
     "invite_token": {
       "type": "string",
       "title": "Invite Token (unique RSVP link)"
