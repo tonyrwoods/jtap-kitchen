@@ -14,6 +14,7 @@ export default function PromotionsTab() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [showSocialSettings, setShowSocialSettings] = useState(false);
+  const [postingSocial, setPostingSocial] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -44,6 +45,23 @@ export default function PromotionsTab() {
     return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
 
+  const postToSocial = async () => {
+    if (!selected) return;
+    setPostingSocial(true);
+    try {
+      const res = await base44.functions.invoke("postPromotionToSocial", { promotion_id: selected.id });
+      const r = res.data?.results || {};
+      const parts = Object.entries(r).map(
+        ([platform, info]) => `${platform}: ${info.success ? "✓ posted" : "✗ " + (info.error || "failed")}`
+      );
+      if (parts.length) toast.info(parts.join("  ·  "));
+      else toast.info("No social platforms are configured");
+    } catch (e) {
+      toast.error("Social post failed: " + (e.message || "unknown error"));
+    }
+    setPostingSocial(false);
+  };
+
   if (selected) {
     return (
       <div className="space-y-5">
@@ -54,6 +72,9 @@ export default function PromotionsTab() {
           <div className="flex items-center gap-2">
             <button onClick={() => copyLink(selected.share_slug)} className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-lg font-body text-xs font-medium hover:bg-muted">
               <Copy className="w-3.5 h-3.5" /> Copy Link
+            </button>
+            <button onClick={postToSocial} disabled={postingSocial} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg font-body text-xs font-medium hover:opacity-90 disabled:opacity-50">
+              <Share2 className="w-3.5 h-3.5" /> {postingSocial ? "Posting…" : "Post to Social"}
             </button>
             <button onClick={() => { setEditing(selected); setShowForm(true); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-lg font-body text-xs font-medium hover:bg-muted">
               <Pencil className="w-3.5 h-3.5" /> Edit

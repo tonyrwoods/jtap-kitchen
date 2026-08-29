@@ -177,7 +177,7 @@ export default async function (req) {
     const s = (settingsRows && settingsRows[0]) || {};
     const platforms = (Array.isArray(payloadPlatforms) && payloadPlatforms.length)
       ? payloadPlatforms
-      : (s.social_default_platforms || ['instagram', 'facebook']);
+      : (s.social_default_platforms || ['instagram', 'facebook', 'linkedin']);
     const hashtags = s.social_hashtags || 'jtapkitchen, memphis';
     const template = s.social_caption_template || '';
     const appUrl = secrets.get('APP_URL') || 'https://jtapkitchen.base44.app';
