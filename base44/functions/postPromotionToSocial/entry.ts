@@ -122,13 +122,13 @@ async function postToFacebook(userAccessToken, imageUrl, message) {
   return post.id || post.post_id;
 }
 
+// JTAP Kitchen Company Page — https://www.linkedin.com/company/143568250
+// The connected account must be an admin of this organization; the
+// w_organization_social scope on the token authorizes posting on its behalf.
+const JTAP_LINKEDIN_COMPANY_URN = 'urn:li:organization:143568250';
+
 async function postToLinkedIn(accessToken, text) {
-  const profileRes = await fetch('https://api.linkedin.com/v2/userinfo', {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  const profile = await profileRes.json();
-  if (!profile.sub) throw new Error(`LinkedIn profile lookup failed: ${JSON.stringify(profile.error || profile)}`);
-  const authorUrn = `urn:li:person:${profile.sub}`;
+  const authorUrn = JTAP_LINKEDIN_COMPANY_URN;
   const postRes = await fetch('https://api.linkedin.com/v2/ugcPosts', {
     method: 'POST',
     headers: {
