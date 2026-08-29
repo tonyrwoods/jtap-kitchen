@@ -1,0 +1,75 @@
+{
+  "name": "ChangelogEntry",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "Feature",
+        "Improvement",
+        "Fix",
+        "Design"
+      ],
+      "default": "Improvement"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Short Summary"
+    },
+    "details": {
+      "type": "string",
+      "title": "Details (longer description)"
+    },
+    "entry_date": {
+      "type": "string",
+      "title": "Entry Date (YYYY-MM-DD)"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version Tag (optional)"
+    },
+    "is_published": {
+      "type": "boolean",
+      "title": "Published (visible on What's New)",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "category"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.is_published": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

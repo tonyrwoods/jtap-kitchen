@@ -29,6 +29,7 @@ import InviteUserPanel from "../components/admin/InviteUserPanel";
 import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 import CareersTab from "../components/admin/CareersTab";
 import PromotionsTab from "../components/admin/PromotionsTab";
+import ChangelogAdminTab from "../components/admin/ChangelogAdminTab";
 import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import ReservationEditModal from "../components/admin/ReservationEditModal";
 import SelectDropdown from "../components/SelectDropdown";
@@ -43,6 +44,7 @@ const TAB_GROUPS = [
   { label: "Marketing", tabs: ["Gallery", "Instagram", "Team Members", "LinkedIn", "Promotions", "SEO"] },
   { label: "Careers", tabs: ["Job Listings"] },
   { label: "Account", tabs: ["Profile"] },
+  { label: "System", tabs: ["Changelog"] },
 ];
 const TABS = TAB_GROUPS.flatMap(g => g.tabs);
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
@@ -579,6 +581,12 @@ export default function AdminDashboard() {
                 <a href="/reconciliation" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">
                   Open Reconciliation Center →
                 </a>
+              </motion.div>
+            )}
+
+            {tab === "Changelog" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <ChangelogAdminTab />
               </motion.div>
             )}
 

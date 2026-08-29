@@ -44,6 +44,7 @@ import PitchDeck from './pages/PitchDeck';
 import EventAnnouncement from './pages/EventAnnouncement';
 import ReservationConfirm from './pages/ReservationConfirm';
 import ThankYou from './pages/ThankYou';
+import WhatsNew from './pages/WhatsNew';
 import AdFlyer from './pages/AdFlyer';
 import TableNumberPlaques from './pages/TableNumberPlaques';
 const AdminMemberships = lazy(() => import('./pages/AdminMemberships'));
@@ -152,6 +153,7 @@ const AuthenticatedApp = () => {
         <Route path="/event-invite/:token" element={<EventAnnouncement />} />
         <Route path="/reserve/:token" element={<ReservationConfirm />} />
         <Route path="/ThankYou" element={<ThankYou />} />
+        <Route path="/whats-new" element={<WhatsNew />} />
         <Route path="/admin/flyer" element={<AdFlyer />} />
         <Route path="/admin/table-plaques" element={<TableNumberPlaques />} />
         <Route path="*" element={<PageNotFound />} />

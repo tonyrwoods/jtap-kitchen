@@ -23,6 +23,7 @@ const MORE_LINKS = [
   { label: "JTAP Room Society", href: "/tap-room-society" },
   { label: "My Membership", href: "/my-membership" },
   { label: "Founders Wall", href: "/founders" },
+  { label: "What's New", href: "/whats-new" },
 ];
 
 const ALL_LINKS = [...PRIMARY_LINKS, ...MORE_LINKS];
