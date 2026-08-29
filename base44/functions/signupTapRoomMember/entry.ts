@@ -41,6 +41,10 @@ export default async function(req) {
 
     const tierData = TIER_DEFAULTS[tier];
     const today = new Date().toISOString().split('T')[0];
+    const isPaidTier = tierData.annual_fee_amount > 0;
+    const renewalDate = isPaidTier
+      ? new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0]
+      : undefined;
 
     // All financial/points/founding fields are forced server-side — submitters cannot self-elevate.
     const member = await base44.asServiceRole.entities.TapRoomMember.create({
@@ -63,8 +67,10 @@ export default async function(req) {
       referral_code: generateReferralCode(guest_name),
       referral_count: 0,
       referral_reward_awarded: false,
-      annual_fee_paid: false,
       ...tierData,
+      annual_fee_paid: isPaidTier,
+      fee_payment_date: isPaidTier ? today : undefined,
+      fee_renewal_date: renewalDate,
     });
 
     // Welcome email — Gmail delivers to external (non-registered) addresses.

@@ -33,7 +33,7 @@ function buildBirthdayEmail(m) {
       </div>
       <p style="color: #555; line-height: 1.7; margin: 0 0 24px;">Just show this email (or mention it) when you dine with us. We can't wait to celebrate with you.</p>
       <p style="color: #999; font-size: 13px; line-height: 1.6; margin: 0; border-top: 1px solid #eee; padding-top: 16px;">
-        JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-554-4431<br/>
+        JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-213-8085<br/>
         <a href="https://jtapkitchen.com/my-membership" style="color: #C89B4F;">View your membership</a>
       </p>
     </div>
@@ -61,7 +61,7 @@ function buildRenewalEmail(m) {
       </div>
       <p style="color: #555; line-height: 1.7; margin: 0 0 24px;">Questions about your renewal? Reply to this email or give us a call — we're happy to help.</p>
       <p style="color: #999; font-size: 13px; line-height: 1.6; margin: 0; border-top: 1px solid #eee; padding-top: 16px;">
-        JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-554-4431<br/>
+        JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-213-8085<br/>
         <a href="https://jtapkitchen.com/my-membership" style="color: #C89B4F;">View your membership</a>
       </p>
     </div>
