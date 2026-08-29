@@ -96,11 +96,19 @@ async function postToInstagram(accessToken, imageUrl, caption) {
   return pub.id;
 }
 
+// JTAP Kitchen Facebook Page — https://www.facebook.com/profile.php?id=61590816114855
+const JTAP_FACEBOOK_PAGE_ID = '61590816114855';
+
 async function postToFacebook(userAccessToken, imageUrl, message) {
   const accRes = await fetch(`https://graph.facebook.com/v25.0/me/accounts?fields=id,name,access_token&access_token=${userAccessToken}`);
   const acc = await accRes.json();
-  const page = acc.data && acc.data[0];
-  if (!page) throw new Error('No Facebook Pages are managed by this account');
+  const pages = (acc.data || []).filter(Boolean);
+  let page = pages.find((p) => p.id === JTAP_FACEBOOK_PAGE_ID);
+  if (!page) {
+    page = pages[0];
+    if (!page) throw new Error('No Facebook Pages are managed by this account');
+    console.warn(`Facebook: target page ${JTAP_FACEBOOK_PAGE_ID} not found among managed pages; posting to "${page.name}" (${page.id}) instead`);
+  }
   const pageToken = page.access_token;
 
   let postRes;
