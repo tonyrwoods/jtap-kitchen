@@ -26,8 +26,6 @@ export default function PromotionForm({ promotion, onSave, onCancel }) {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sendToLoyalty, setSendToLoyalty] = useState(false);
-  const [postToInstagram, setPostToInstagram] = useState(false);
-  const [postToFacebook, setPostToFacebook] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleImageUpload = async (e) => {
@@ -101,22 +99,6 @@ export default function PromotionForm({ promotion, onSave, onCancel }) {
       }
       if (sendToLoyalty && promoId) {
         await sendToLoyaltyMembers({ id: promoId, title: promoTitle });
-      }
-      if ((postToInstagram || postToFacebook) && promoId) {
-        const platforms = [...(postToInstagram ? ["instagram"] : []), ...(postToFacebook ? ["facebook"] : [])];
-        toast.loading("Posting to social media...", { id: "social-post" });
-        try {
-          const res = await base44.functions.invoke("postPromotionToSocial", { promotion_id: promoId, platforms });
-          const r = res.data?.results || {};
-          toast.dismiss("social-post");
-          if (r.instagram?.success) toast.success("Posted to Instagram");
-          else if (r.instagram) toast.error(`Instagram: ${r.instagram.error}`);
-          if (r.facebook?.success) toast.success("Posted to Facebook");
-          else if (r.facebook) toast.error(`Facebook: ${r.facebook.error}`);
-        } catch {
-          toast.dismiss("social-post");
-          toast.error("Social posting failed");
-        }
       }
       onSave();
     } catch (err) {
@@ -220,22 +202,6 @@ export default function PromotionForm({ promotion, onSave, onCancel }) {
                 <span className="font-body text-sm">Send invites to all loyalty members now</span>
               </label>
               {sendToLoyalty && <p className="font-body text-xs text-muted-foreground mt-1 ml-6">Creates a pending invite (with the discount above) for every active Tap Room member and emails them immediately. Members already invited are skipped.</p>}
-            </div>
-            <div className="sm:col-span-2 border-t border-border pt-4">
-              <p className="font-body text-sm font-semibold mb-2">Auto-post to social media</p>
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={postToInstagram} onChange={(e) => setPostToInstagram(e.target.checked)} className="w-4 h-4" />
-                  <span className="font-body text-sm">Post to Instagram {form.banner_image_url ? "" : "(requires banner image)"}</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={postToFacebook} onChange={(e) => setPostToFacebook(e.target.checked)} className="w-4 h-4" />
-                  <span className="font-body text-sm">Post to Facebook</span>
-                </label>
-                {(postToInstagram || postToFacebook) && (
-                  <p className="font-body text-xs text-muted-foreground mt-1">Posts the banner image with event details and RSVP link immediately when you save.</p>
-                )}
-              </div>
             </div>
           </div>
           <div className="flex gap-3 pt-2">

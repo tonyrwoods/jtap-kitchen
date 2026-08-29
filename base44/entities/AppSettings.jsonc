@@ -71,6 +71,32 @@
       "title": "Gift Card Expiry (months from purchase)",
       "default": 12
     },
+    "social_default_platforms": {
+      "type": "array",
+      "title": "Auto-Post Platforms",
+      "items": {
+        "type": "string",
+        "enum": [
+          "instagram",
+          "facebook"
+        ]
+      },
+      "default": [
+        "instagram",
+        "facebook"
+      ],
+      "description": "Platforms that receive an automatic post when a new promotion is created"
+    },
+    "social_caption_template": {
+      "type": "string",
+      "title": "Social Post Caption Template",
+      "description": "Placeholders: {title} {subtitle} {date} {time} {endtime} {location} {price} {discount} {description} {rsvp_deadline} {link}. Leave blank for default format."
+    },
+    "social_hashtags": {
+      "type": "string",
+      "title": "Social Hashtags (comma-separated)",
+      "default": "jtapkitchen, memphis, foodie"
+    },
     "description": {
       "type": "string",
       "title": "Description",

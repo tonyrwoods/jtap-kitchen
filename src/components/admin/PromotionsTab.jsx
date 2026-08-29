@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Plus, Megaphone, Pencil, Trash2, ArrowLeft, CalendarDays, Users, Copy, ExternalLink } from "lucide-react";
+import { Plus, Megaphone, Pencil, Trash2, ArrowLeft, CalendarDays, Users, Copy, ExternalLink, Share2 } from "lucide-react";
 import PromotionForm from "../events/PromotionForm";
+import SocialMediaSettingsModal from "./SocialMediaSettingsModal";
 import InviteeManager from "../events/InviteeManager";
 import RsvpDashboard from "../events/RsvpDashboard";
 
@@ -12,6 +13,7 @@ export default function PromotionsTab() {
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [showSocialSettings, setShowSocialSettings] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -103,9 +105,14 @@ export default function PromotionsTab() {
           <h3 className="font-heading text-lg font-semibold">Event Promotions</h3>
           <p className="font-body text-sm text-muted-foreground">Create event announcements, send invites, and track RSVPs.</p>
         </div>
-        <button onClick={() => { setEditing(null); setShowForm(true); }} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-body text-sm font-semibold hover:opacity-90">
-          <Plus className="w-4 h-4" /> New Promotion
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowSocialSettings(true)} className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-lg font-body text-sm font-medium hover:bg-muted">
+            <Share2 className="w-4 h-4" /> Social Settings
+          </button>
+          <button onClick={() => { setEditing(null); setShowForm(true); }} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-body text-sm font-semibold hover:opacity-90">
+            <Plus className="w-4 h-4" /> New Promotion
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -153,6 +160,8 @@ export default function PromotionsTab() {
           onCancel={() => { setShowForm(false); setEditing(null); }}
         />
       )}
+
+      {showSocialSettings && <SocialMediaSettingsModal onClose={() => setShowSocialSettings(false)} />}
     </div>
   );
 }

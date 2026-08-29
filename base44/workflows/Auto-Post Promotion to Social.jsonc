@@ -1,0 +1,40 @@
+{
+  "name": "Auto-Post Promotion to Social",
+  "description": "When a new active event promotion is created, automatically post it to Instagram and/or Facebook using the saved social media settings",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "EventPromotion",
+      "events": [
+        "create"
+      ]
+    },
+    "condition": "${ .trigger.data.is_active == true }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "auto_post_promotion_social",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "post_to_social": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "postPromotionToSocial",
+            "args": {
+              "promotion_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Post promotion to social media",
+            "description": "Instagram & Facebook"
+          }
+        }
+      }
+    ]
+  }
+}
