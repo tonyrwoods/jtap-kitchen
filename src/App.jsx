@@ -14,6 +14,7 @@ import Layout from './components/Layout';
 // Eagerly loaded
 import GiftCards from './pages/GiftCards';
 import Events from './pages/Events';
+import EventCalendarPage from './pages/EventCalendarPage';
 import Home from './pages/Home';
 import SubmitReview from './pages/SubmitReview';
 import LoyaltyProgram from './pages/LoyaltyProgram';
@@ -105,6 +106,7 @@ const AuthenticatedApp = () => {
         <Route path="/mileage" element={<MileageTracking />} />
         <Route path="/posted-shifts" element={<PostedShifts />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/calendar" element={<EventCalendarPage />} />
         <Route path="/reservations-calendar" element={<ReservationsCalendar />} />
         <Route path="/email-marketing" element={<EmailMarketing />} />
         <Route path="/submit-review" element={<SubmitReview />} />

@@ -17,6 +17,7 @@ const PRIMARY_LINKS = [
 // Secondary links grouped under "More"
 const MORE_LINKS = [
   { label: "Our Story", href: "/#about" },
+  { label: "Event Calendar", href: "/calendar" },
   { label: "Reviews", href: "/submit-review" },
   { label: "Careers", href: "/careers" },
   { label: "JTAP Room Society", href: "/tap-room-society" },
