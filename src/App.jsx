@@ -17,6 +17,7 @@ import Events from './pages/Events';
 import EventCalendarPage from './pages/EventCalendarPage';
 import Home from './pages/Home';
 import SubmitReview from './pages/SubmitReview';
+import Reviews from './pages/Reviews';
 import LoyaltyProgram from './pages/LoyaltyProgram';
 import DigitalMenu from './pages/DigitalMenu';
 import QRCodePrinter from './pages/QRCodePrinter';
@@ -111,6 +112,7 @@ const AuthenticatedApp = () => {
         <Route path="/reservations-calendar" element={<ReservationsCalendar />} />
         <Route path="/email-marketing" element={<EmailMarketing />} />
         <Route path="/submit-review" element={<SubmitReview />} />
+        <Route path="/reviews" element={<Reviews />} />
         <Route path="/loyalty" element={<LoyaltyProgram />} />
         <Route path="/staff-scheduler" element={<StaffScheduler />} />
         <Route path="/menu" element={<DigitalMenu />} />

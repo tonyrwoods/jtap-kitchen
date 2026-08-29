@@ -18,7 +18,7 @@ const PRIMARY_LINKS = [
 const MORE_LINKS = [
   { label: "Our Story", href: "/#about" },
   { label: "Event Calendar", href: "/calendar" },
-  { label: "Reviews", href: "/submit-review" },
+  { label: "Reviews", href: "/reviews" },
   { label: "Careers", href: "/careers" },
   { label: "JTAP Room Society", href: "/tap-room-society" },
   { label: "My Membership", href: "/my-membership" },
