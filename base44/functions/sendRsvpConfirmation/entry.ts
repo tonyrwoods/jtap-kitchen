@@ -97,7 +97,7 @@ function buildConfirmationEmail(promotion, invite) {
       ${invite.rsvp_status === 'Attending' && invite.dietary_notes ? `<div style="background: #fffbf0; border-left: 4px solid #C89B4F; padding: 15px; border-radius: 4px; margin: 0 0 24px;"><p style="margin: 0; font-size: 13px; color: #666;"><strong>Dietary Notes:</strong> ${esc(invite.dietary_notes)}</p></div>` : ''}
       <p style="color: #999; font-size: 13px; line-height: 1.6; margin: 0; border-top: 1px solid #eee; padding-top: 16px;">
         Need to update your response? Visit your <a href="https://jtapkitchen.com/event-invite/${invite.invite_token}" style="color: #C89B4F;">RSVP link</a> anytime.<br/>
-        JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-554-4431
+        JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-213-8085
       </p>
     </div>
   </div>

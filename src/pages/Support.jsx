@@ -8,11 +8,11 @@ const FAQS = [
     items: [
       {
         q: "How do I make a reservation?",
-        a: "You can book a table through our website reservation system or call us at (901) 233-4060 during business hours. We accept reservations up to 30 days in advance."
+        a: "You can book a table through our website reservation system or call us at (901) 213-8085 during business hours. We accept reservations up to 30 days in advance."
       },
       {
         q: "Can I modify or cancel my reservation?",
-        a: "Yes, you can modify or cancel up to 48 hours before your reservation. Please contact us directly at (901) 233-4060 or info@jtapkitchen.com."
+        a: "Yes, you can modify or cancel up to 48 hours before your reservation. Please contact us directly at (901) 213-8085 or info@jtapkitchen.com."
       },
       {
         q: "Do you accommodate large parties?",
@@ -37,7 +37,7 @@ const FAQS = [
       },
       {
         q: "Can I request a private chef's table?",
-        a: "Absolutely! Contact us at (901) 233-4060 or info@jtapkitchen.com to inquire about private chef's table experiences."
+        a: "Absolutely! Contact us at (901) 213-8085 or info@jtapkitchen.com to inquire about private chef's table experiences."
       }
     ]
   },
@@ -165,14 +165,14 @@ export default function Support() {
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           <a
-            href="tel:+19012334060"
+            href="tel:+19012138085"
             className="bg-card border border-border rounded-2xl p-6 hover:shadow-lg transition-all"
           >
             <div className="flex items-start gap-4">
               <Phone className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
               <div>
                 <h3 className="font-heading font-semibold text-foreground mb-1">Call Us</h3>
-                <p className="font-body text-sm text-muted-foreground">+1 (901) 233-4060</p>
+                <p className="font-body text-sm text-muted-foreground">+1 (901) 213-8085</p>
                 <p className="font-body text-xs text-muted-foreground mt-2">
                   Wed–Sat 5:30 PM – 11:00 PM CST
                 </p>
