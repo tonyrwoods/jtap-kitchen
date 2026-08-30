@@ -125,7 +125,7 @@ export default function BookTable() {
   const canNext2 = name.trim() && email.trim();
 
   const isSun = date ? isSunday(date) : false;
-  const slots = isSun ? [...BRUNCH_SLOTS, ...TIME_SLOTS] : TIME_SLOTS;
+  const slots = TIME_SLOTS;
 
   const handleDateSelect = (d) => {
     setDate(d);
@@ -269,7 +269,7 @@ export default function BookTable() {
                     <div className="bg-card border border-border rounded-2xl p-6">
                       <label className="flex items-center gap-2 font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground mb-4">
                         <Clock className="w-3.5 h-3.5" /> Select Time
-                        {isSun && <span className="text-primary font-normal normal-case tracking-normal">– Sunday hours include brunch</span>}
+                        {isSun && <span className="text-primary font-normal normal-case tracking-normal">– Brunch coming soon</span>}
                       </label>
                       {!date ? (
                         <p className="font-body text-sm text-muted-foreground text-center py-4">Please select a date first</p>
