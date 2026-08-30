@@ -14,6 +14,7 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
     special_requests: reservation.special_requests || "",
   });
   const [saving, setSaving] = useState(false);
+  const [notifyGuest, setNotifyGuest] = useState(true);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSave = async (e) => {
@@ -35,6 +36,16 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
     try {
       await base44.entities.Reservation.update(reservation.id, payload);
       onSaved({ ...reservation, ...payload });
+      if (notifyGuest) {
+        try {
+          await base44.functions.invoke("sendReservationUpdateEmail", { reservation_id: reservation.id });
+          toast.success("Reservation saved — confirmation email sent to guest");
+        } catch (mailErr) {
+          toast.error("Saved, but the email to the guest failed: " + (mailErr.message || "unknown error"));
+        }
+      } else {
+        toast.success("Reservation saved");
+      }
     } catch (err) {
       toast.error(err.message || "Failed to update reservation");
     }
@@ -85,6 +96,10 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
             <label className="font-body text-sm font-semibold mb-1 block">Special Requests</label>
             <textarea rows={3} value={form.special_requests} onChange={e => set("special_requests", e.target.value)} className={`${inputCls} resize-none`} />
           </div>
+          <label className="flex items-center gap-2 cursor-pointer select-text">
+            <input type="checkbox" checked={notifyGuest} onChange={e => setNotifyGuest(e.target.checked)} className="w-4 h-4" />
+            <span className="font-body text-sm">Notify guest by email about these changes</span>
+          </label>
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium disabled:opacity-50">
               {saving ? "Saving..." : "Save Changes"}
