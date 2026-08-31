@@ -1,0 +1,40 @@
+{
+  "name": "Waitlist Notify on Cancellation",
+  "description": "When a same-day reservation is cancelled, email the next waiting walk-in party that fits the freed table and mark them Table Ready.",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Reservation",
+      "events": [
+        "update"
+      ]
+    },
+    "condition": "${ .trigger.event_type == \"update\" and .trigger.data.status == \"Cancelled\" and .trigger.old_data.status != \"Cancelled\" }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "waitlist_notify_on_cancellation",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify_waitlist": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyWaitlistOnAvailability",
+            "args": {
+              "reservation_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Notify waiting guest",
+            "description": "Email the next waiting party that fits the freed table"
+          }
+        }
+      }
+    ]
+  }
+}

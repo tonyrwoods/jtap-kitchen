@@ -58,6 +58,10 @@
       "title": "Ready Email Sent",
       "default": false
     },
+    "notified_at": {
+      "type": "string",
+      "title": "Notified At (ISO)"
+    },
     "description": {
       "type": "string",
       "title": "Description",
