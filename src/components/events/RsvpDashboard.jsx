@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Check, X, HelpCircle, Clock, Salad, Hourglass, ArrowUpCircle } from "lucide-react";
+import { Check, X, HelpCircle, Clock, Salad, Hourglass, ArrowUpCircle, Pencil } from "lucide-react";
+import EventInviteEditModal from "./EventInviteEditModal";
 
 const STATUS_CONFIG = {
   Attending: { icon: Check, color: "bg-green-100 text-green-700" },
@@ -24,6 +25,7 @@ export default function RsvpDashboard({ promotion }) {
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [promotingId, setPromotingId] = useState(null);
+  const [editing, setEditing] = useState(null);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -109,6 +111,7 @@ export default function RsvpDashboard({ promotion }) {
                   <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5">Status</th>
                   <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5">Party</th>
                   <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5 hidden sm:table-cell">Dietary / Notes</th>
+                  <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -141,6 +144,11 @@ export default function RsvpDashboard({ promotion }) {
                       <td className="px-4 py-2.5 hidden sm:table-cell">
                         <p className="font-body text-xs text-muted-foreground max-w-xs truncate">{inv.dietary_notes || inv.plus_ones || "—"}</p>
                       </td>
+                      <td className="px-4 py-2.5">
+                        <button onClick={() => setEditing(inv)} className="p-1.5 hover:text-primary transition-colors" aria-label="Edit RSVP">
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -149,6 +157,18 @@ export default function RsvpDashboard({ promotion }) {
           </div>
         )}
       </div>
+
+      {editing && (
+        <EventInviteEditModal
+          invite={editing}
+          promotion={promotion}
+          onSaved={(updated) => {
+            setInvites((prev) => prev.map((i) => (i.id === updated.id ? updated : i)));
+            setEditing(null);
+          }}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </div>
   );
 }
