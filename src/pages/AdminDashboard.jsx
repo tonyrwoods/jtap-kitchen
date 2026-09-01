@@ -29,7 +29,7 @@ import InviteUserPanel from "../components/admin/InviteUserPanel";
 import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 import CareersTab from "../components/admin/CareersTab";
 import PromotionsTab from "../components/admin/PromotionsTab";
-import ChangelogAdminTab from "../components/admin/ChangelogAdminTab";
+import ChangeLogAdmin from "../components/admin/ChangeLogAdmin";
 import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import ReservationEditModal from "../components/admin/ReservationEditModal";
 import SelectDropdown from "../components/SelectDropdown";
@@ -586,7 +586,7 @@ export default function AdminDashboard() {
 
             {tab === "Changelog" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <ChangelogAdminTab />
+                <ChangeLogAdmin />
               </motion.div>
             )}
 

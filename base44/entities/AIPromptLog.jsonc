@@ -1,0 +1,68 @@
+{
+  "name": "AIPromptLog",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "prompt_type": {
+      "type": "string",
+      "title": "Prompt Type",
+      "enum": [
+        "System Prompt",
+        "Chat Prompt",
+        "Caption Template",
+        "LLM Prompt"
+      ],
+      "default": "System Prompt"
+    },
+    "source_feature": {
+      "type": "string",
+      "title": "Source Feature / File"
+    },
+    "prompt_text": {
+      "type": "string",
+      "title": "Prompt Text"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "prompt_type"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "description": "Auto-records a ChangelogEntry each time the app is published from the builder.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "log_changelog_on_publish",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "log_entry": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "logChangelogOnPublish",
+            "args": {
+              "occurred_at": "${ .trigger.occurred_at }",
+              "visibility": "${ .trigger.visibility }",
+              "is_first_publish": "${ .trigger.is_first_publish }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Log changelog entry",
+            "description": "Record publish event"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Log Changelog on Publish",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "app_publish",
+      "events": [
+        "published"
+      ]
+    }
+  }
+}

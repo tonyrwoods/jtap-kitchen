@@ -17,6 +17,32 @@
       ],
       "default": "Improvement"
     },
+    "area": {
+      "type": "string",
+      "title": "App Area",
+      "enum": [
+        "Reservations",
+        "Events",
+        "Marketing",
+        "Loyalty",
+        "Finance",
+        "Operations",
+        "Staff",
+        "Infrastructure",
+        "AI/Agents"
+      ],
+      "default": "Infrastructure"
+    },
+    "source": {
+      "type": "string",
+      "title": "Entry Source",
+      "enum": [
+        "Manual",
+        "Auto",
+        "Retroactive"
+      ],
+      "default": "Manual"
+    },
     "summary": {
       "type": "string",
       "title": "Short Summary"
