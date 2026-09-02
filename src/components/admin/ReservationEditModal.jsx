@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { X } from "lucide-react";
+import { X, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ReservationEditModal({ reservation, onSaved, onClose }) {
@@ -12,10 +12,29 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
     time: reservation.time || "",
     party_size: reservation.party_size || 1,
     special_requests: reservation.special_requests || "",
+    admin_notes: reservation.admin_notes || "",
   });
   const [saving, setSaving] = useState(false);
   const [notifyGuest, setNotifyGuest] = useState(true);
+  const [replyText, setReplyText] = useState("");
+  const [sendingReply, setSendingReply] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleSendReply = async () => {
+    if (!replyText.trim()) {
+      toast.error("Write a reply message first.");
+      return;
+    }
+    setSendingReply(true);
+    try {
+      await base44.functions.invoke("sendReservationNoteReply", { reservation_id: reservation.id, message: replyText.trim() });
+      toast.success("Reply sent to guest");
+      setReplyText("");
+    } catch (err) {
+      toast.error("Reply failed: " + (err.message || "unknown error"));
+    }
+    setSendingReply(false);
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -32,6 +51,7 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
       time: form.time,
       party_size: parseInt(form.party_size) || 1,
       special_requests: form.special_requests || null,
+      admin_notes: form.admin_notes || null,
     };
     try {
       await base44.entities.Reservation.update(reservation.id, payload);
@@ -92,10 +112,31 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
             <label className="font-body text-sm font-semibold mb-1 block">Party Size *</label>
             <input type="number" min="1" value={form.party_size} onChange={e => set("party_size", e.target.value)} className={inputCls} required />
           </div>
-          <div>
-            <label className="font-body text-sm font-semibold mb-1 block">Special Requests</label>
-            <textarea rows={3} value={form.special_requests} onChange={e => set("special_requests", e.target.value)} className={`${inputCls} resize-none`} />
+          <div className="rounded-lg bg-muted/40 border border-border p-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="font-body text-sm font-semibold">Guest's Special Request</label>
+              <span className="font-body text-xs text-muted-foreground">Guest-submitted</span>
+            </div>
+            <textarea rows={3} value={form.special_requests} onChange={e => set("special_requests", e.target.value)} className={`${inputCls} resize-none bg-background`} />
           </div>
+          <div className="rounded-lg bg-muted/40 border border-border p-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="font-body text-sm font-semibold">Admin Notes</label>
+              <span className="font-body text-xs text-muted-foreground">Internal only — not sent to guest</span>
+            </div>
+            <textarea rows={2} value={form.admin_notes} onChange={e => set("admin_notes", e.target.value)} className={`${inputCls} resize-none bg-background`} placeholder="How this request was handled..." />
+          </div>
+          {reservation.special_requests ? (
+            <div className="rounded-lg bg-primary/5 border border-primary/20 p-3">
+              <label className="font-body text-sm font-semibold mb-1.5 block flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-primary" /> Reply to the guest's note by email
+              </label>
+              <textarea rows={3} value={replyText} onChange={e => setReplyText(e.target.value)} className={`${inputCls} resize-none mb-2`} placeholder={`Reply to their request: "${reservation.special_requests?.slice(0, 60)}..."`} />
+              <button type="button" onClick={handleSendReply} disabled={sendingReply} className="px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 disabled:opacity-50">
+                {sendingReply ? "Sending..." : "Send Reply"}
+              </button>
+            </div>
+          ) : null}
           <label className="flex items-center gap-2 cursor-pointer select-text">
             <input type="checkbox" checked={notifyGuest} onChange={e => setNotifyGuest(e.target.checked)} className="w-4 h-4" />
             <span className="font-body text-sm">Notify guest by email about these changes</span>
