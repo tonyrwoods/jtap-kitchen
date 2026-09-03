@@ -3,7 +3,7 @@ export default function PrivacyPolicy() {
     <div className="min-h-screen bg-background py-16 px-6">
       <div className="max-w-3xl mx-auto">
         <h1 className="font-heading text-4xl font-bold text-foreground mb-2">Privacy Policy</h1>
-        <p className="font-body text-sm text-muted-foreground mb-10">Last updated: April 28, 2026</p>
+        <p className="font-body text-sm text-muted-foreground mb-10">Last updated: September 3, 2026</p>
 
         <div className="space-y-8 font-body text-sm text-foreground leading-relaxed">
 
@@ -53,7 +53,24 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">5. Cookies & Tracking Technologies</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">5. SMS Messaging</h2>
+            <p className="mb-3">
+              By providing your mobile phone number and opting in — or by joining our waitlist with your phone number —
+              you consent to receive SMS text messages from JTAP Kitchen related to your reservations, waitlist
+              notifications, and table-ready alerts. The following terms apply to our SMS messaging:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+              <li><span className="text-foreground font-medium">Consent:</span> When you provide your mobile number and opt in, you are consenting to receive text messages from JTAP Kitchen at the number you provided. Consent is not a condition of any purchase.</li>
+              <li><span className="text-foreground font-medium">No Sharing for Marketing:</span> We do not share your personal information, including your mobile number, with third parties for their marketing purposes.</li>
+              <li><span className="text-foreground font-medium">Message Frequency:</span> Message frequency varies. You may receive messages in connection with reservations, waitlist, and table-ready alerts, as well as recurring reminders (such as pre-visit reminders). The number of messages will vary based on your interactions with us.</li>
+              <li><span className="text-foreground font-medium">Opt Out:</span> You may cancel at any time by replying <strong>STOP</strong> to any message we send, or by contacting us at the information below. After opting out you will receive no further messages from that number.</li>
+              <li><span className="text-foreground font-medium">Help:</span> You may reply <strong>HELP</strong> to any message for more information about our SMS program.</li>
+              <li><span className="text-foreground font-medium">Message &amp; Data Rates May Apply:</span> Standard message and data rates charged by your mobile carrier may apply to the messages you receive.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-heading text-xl font-semibold mb-3">6. Cookies & Tracking Technologies</h2>
             <p>
               We use cookies and similar tracking technologies to enhance your experience on our website. You can control
               cookie settings through your browser preferences. Disabling cookies may limit some functionality of our site.
@@ -61,7 +78,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">6. Data Retention</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">7. Data Retention</h2>
             <p>
               We retain your personal information for as long as necessary to fulfill the purposes outlined in this policy,
               unless a longer retention period is required by law. Reservation and transaction records are typically retained
@@ -70,7 +87,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">7. Your Rights</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">8. Your Rights</h2>
             <p className="mb-3">Depending on your location, you may have the right to:</p>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
               <li>Access the personal information we hold about you</li>
@@ -83,7 +100,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">8. Security</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">9. Security</h2>
             <p>
               We implement industry-standard technical and organizational measures to protect your personal information
               against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over
@@ -92,7 +109,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">9. Third-Party Links</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">10. Third-Party Links</h2>
             <p>
               Our website may contain links to third-party websites. We are not responsible for the privacy practices of
               those sites and encourage you to review their privacy policies before providing any personal information.
@@ -100,7 +117,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">10. Children's Privacy</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">11. Children's Privacy</h2>
             <p>
               Our services are not directed to children under the age of 13. We do not knowingly collect personal
               information from children. If you believe we have inadvertently collected such information, please contact
@@ -109,7 +126,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">11. Changes to This Policy</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">12. Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy from time to time. We will notify you of material changes by posting
               the new policy on this page with an updated date. Your continued use of our services after any changes
@@ -118,7 +135,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">12. Contact Us</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">13. Contact Us</h2>
             <p className="mb-2">If you have any questions or concerns about this Privacy Policy, please contact us:</p>
             <div className="bg-card border border-border rounded-xl p-4 space-y-1 text-muted-foreground">
               <p className="font-semibold text-foreground">JTAP Kitchen</p>
