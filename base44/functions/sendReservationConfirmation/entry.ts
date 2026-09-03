@@ -59,7 +59,8 @@ Deno.serve(async (req) => {
       const fromNumber = secrets.get('TWILIO_FROM_NUMBER');
       if (!accountSid || !authToken || !fromNumber) return false;
       try {
-        await sendSms({ to: reservation.phone, body: smsBody, accountSid, authToken, fromNumber });
+        const smsRes = await sendSms({ to: reservation.phone, body: smsBody, accountSid, authToken, fromNumber, base44 });
+        if (smsRes?.opted_out) return false;
         await base44.asServiceRole.entities.Reservation.update(reservation.id, { sms_sent_at: new Date().toISOString() });
         return true;
       } catch (err) {

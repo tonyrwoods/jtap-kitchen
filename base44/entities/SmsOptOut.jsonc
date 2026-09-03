@@ -1,0 +1,66 @@
+{
+  "name": "SmsOptOut",
+  "type": "object",
+  "properties": {
+    "phone": {
+      "type": "string",
+      "title": "Phone Number (E.164)",
+      "description": "Normalized to +<digits>"
+    },
+    "status": {
+      "type": "string",
+      "title": "Opt Status",
+      "enum": [
+        "OptedOut",
+        "OptedIn"
+      ],
+      "default": "OptedOut"
+    },
+    "opted_out_at": {
+      "type": "string",
+      "title": "Opted Out At (ISO)"
+    },
+    "opted_in_at": {
+      "type": "string",
+      "title": "Opted In At (ISO)"
+    },
+    "last_keyword": {
+      "type": "string",
+      "title": "Last Keyword Received"
+    },
+    "last_message_body": {
+      "type": "string",
+      "title": "Last Inbound Message Body"
+    },
+    "last_received_at": {
+      "type": "string",
+      "title": "Last Message Received At (ISO)"
+    }
+  },
+  "required": [
+    "phone",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

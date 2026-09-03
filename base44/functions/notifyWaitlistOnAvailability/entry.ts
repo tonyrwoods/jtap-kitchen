@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
           await sendSms({
             to: match.phone,
             body: `JTAP Kitchen: Hi ${firstName}, a table just opened up for your party of ${partySize}! Please check in with the host within 10 minutes. See you soon! 901-233-4060. Reply STOP to opt out.`,
-            accountSid, authToken, fromNumber,
+            accountSid, authToken, fromNumber, base44,
           });
         } catch (smsErr) {
           console.error('Waitlist table-ready SMS failed:', smsErr.message);

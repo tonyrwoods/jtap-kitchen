@@ -51,7 +51,10 @@ export default async function (req) {
       ? customBody.trim()
       : `JTAP Kitchen: Hi ${firstName}, your reservation for ${reservation.party_size} on ${formattedDate} at ${reservation.time} is confirmed. We can't wait to host you! Questions? Call (901) 213-8085. Reply STOP to opt out.`;
 
-    await sendSms({ to: reservation.phone, body, accountSid, authToken, fromNumber });
+    const smsRes = await sendSms({ to: reservation.phone, body, accountSid, authToken, fromNumber, base44 });
+    if (smsRes?.opted_out) {
+      return Response.json({ sent: false, opted_out: true, to: reservation.phone });
+    }
     await base44.entities.Reservation.update(reservation_id, { sms_sent_at: new Date().toISOString() });
 
     return Response.json({ sent: true, to: reservation.phone });

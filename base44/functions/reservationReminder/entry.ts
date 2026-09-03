@@ -6,12 +6,12 @@ import { sendSms } from '../../shared/sendSms.js';
 
 // Send a reminder SMS when the guest opted in and Twilio is configured.
 // Non-fatal: callers track their own errors separately.
-async function sendReminderSms(to, body) {
+async function sendReminderSms(base44, to, body) {
   const accountSid = secrets.get('TWILIO_ACCOUNT_SID');
   const authToken = secrets.get('TWILIO_AUTH_TOKEN');
   const fromNumber = secrets.get('TWILIO_FROM_NUMBER');
   if (!accountSid || !authToken || !fromNumber || !to) return;
-  await sendSms({ to, body, accountSid, authToken, fromNumber });
+  await sendSms({ to, body, accountSid, authToken, fromNumber, base44 });
 }
 
 // Scheduled daily automation — scans for confirmed reservations happening
@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
         if (reservation.sms_opt_in && reservation.phone) {
           const firstName = (reservation.guest_name || '').split(' ')[0] || 'there';
           try {
-            await sendReminderSms(reservation.phone, `JTAP Kitchen: Hi ${firstName}, don't forget to confirm your reservation for tomorrow, ${formattedDate} at ${reservation.time}. Check your email for the link. Call 901-233-4060. Reply STOP to opt out.`);
+            await sendReminderSms(base44, reservation.phone, `JTAP Kitchen: Hi ${firstName}, don't forget to confirm your reservation for tomorrow, ${formattedDate} at ${reservation.time}. Check your email for the link. Call 901-233-4060. Reply STOP to opt out.`);
           } catch (smsErr) {
             errors.push({ id: reservation.id, error: 'SMS: ' + smsErr.message });
           }
@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
       if (reservation.sms_opt_in && reservation.phone) {
         const firstName = (reservation.guest_name || '').split(' ')[0] || 'there';
         try {
-          await sendReminderSms(reservation.phone, `JTAP Kitchen: Reminder: your reservation tomorrow, ${formattedDate} at ${reservation.time}, party of ${reservation.party_size}. We'll see you then! Call 901-233-4060 with questions. Reply STOP to opt out.`);
+          await sendReminderSms(base44, reservation.phone, `JTAP Kitchen: Reminder: your reservation tomorrow, ${formattedDate} at ${reservation.time}, party of ${reservation.party_size}. We'll see you then! Call 901-233-4060 with questions. Reply STOP to opt out.`);
         } catch (smsErr) {
           errors.push({ id: reservation.id, error: 'SMS: ' + smsErr.message });
         }

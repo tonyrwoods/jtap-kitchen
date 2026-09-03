@@ -13,13 +13,28 @@
  * @param {string} opts.fromNumber - Twilio sender number in E.164
  * @returns {Promise<object>} Twilio message resource (contains `sid`, `status`)
  */
-export async function sendSms({ to, body, accountSid, authToken, fromNumber }) {
+export async function sendSms({ to, body, accountSid, authToken, fromNumber, base44 }) {
   if (!to || !body || !accountSid || !authToken || !fromNumber) {
     throw new Error('sendSms: missing required parameter');
   }
 
   // Normalize to E.164-ish (strip spaces/dashes/parens), keep leading +
   const cleanTo = '+' + to.replace(/[^\d]/g, '');
+
+  // Honor STOP opt-outs recorded from inbound replies (Privacy Policy: "reply STOP to opt out").
+  // Best-effort: a DB hiccup never blocks a transactional text. When a base44
+  // client is supplied, the recipient is checked against the SmsOptOut table.
+  if (base44) {
+    try {
+      const records = await base44.asServiceRole.entities.SmsOptOut.filter({ phone: cleanTo });
+      if (records && records.length > 0 && records[0].status === 'OptedOut') {
+        console.log(`sendSms: skipping opted-out recipient ${cleanTo}`);
+        return { sid: null, status: 'opted_out', opted_out: true };
+      }
+    } catch (e) {
+      console.error('sendSms: opt-out check failed, sending anyway:', e.message);
+    }
+  }
 
   const auth = btoa(`${accountSid}:${authToken}`);
   const res = await fetch(
