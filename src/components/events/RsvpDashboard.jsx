@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Check, X, HelpCircle, Clock, Salad, Hourglass, ArrowUpCircle, Pencil } from "lucide-react";
+import { Check, X, HelpCircle, Clock, Salad, Hourglass, ArrowUpCircle, Pencil, LogIn, CheckCheck } from "lucide-react";
 import EventInviteEditModal from "./EventInviteEditModal";
 
 const STATUS_CONFIG = {
@@ -25,6 +25,7 @@ export default function RsvpDashboard({ promotion }) {
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [promotingId, setPromotingId] = useState(null);
+  const [checkingInId, setCheckingInId] = useState(null);
   const [editing, setEditing] = useState(null);
 
   const load = useCallback(() => {
@@ -44,6 +45,8 @@ export default function RsvpDashboard({ promotion }) {
     pending: invites.filter((i) => i.rsvp_status === "Pending"),
     waitlisted: invites.filter((i) => i.rsvp_status === "Waitlisted"),
     totalParty: invites.filter((i) => i.rsvp_status === "Attending").reduce((sum, i) => sum + (i.party_size || 1), 0),
+    arrived: invites.filter((i) => i.rsvp_status === "Attending" && i.checked_in),
+    arrivedParty: invites.filter((i) => i.rsvp_status === "Attending" && i.checked_in).reduce((sum, i) => sum + (i.party_size || 1), 0),
   };
 
   const promote = async (inv) => {
@@ -57,11 +60,25 @@ export default function RsvpDashboard({ promotion }) {
     }
   };
 
+  const toggleCheckIn = async (inv) => {
+    const next = !inv.checked_in;
+    setCheckingInId(inv.id);
+    try {
+      const patch = { checked_in: next };
+      if (next) patch.checked_in_at = new Date().toISOString();
+      await base44.entities.EventInvite.update(inv.id, patch);
+      setInvites((prev) => prev.map((i) => (i.id === inv.id ? { ...i, checked_in: next, checked_in_at: patch.checked_in_at } : i)));
+    } finally {
+      setCheckingInId(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <StatCard label="Invited" value={stats.total} color="bg-blue-50 text-blue-900" />
         <StatCard label="Attending" value={stats.attending.length} sub={`${stats.totalParty} guests`} color="bg-green-50 text-green-900" />
+        <StatCard label="Arrived" value={stats.arrived.length} sub={`${stats.arrivedParty} guests`} color="bg-emerald-100 text-emerald-900" />
         <StatCard label="Maybe" value={stats.maybe.length} color="bg-amber-50 text-amber-900" />
         <StatCard label="Declined" value={stats.declined.length} color="bg-red-50 text-red-900" />
         <StatCard label="Pending" value={stats.pending.length} color="bg-muted text-foreground" />
@@ -70,6 +87,15 @@ export default function RsvpDashboard({ promotion }) {
       {stats.totalParty > 0 && (
         <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 text-center">
           <span className="font-body text-sm text-foreground"><strong className="font-heading">{stats.totalParty}</strong> confirmed guests attending out of <strong className="font-heading">{promotion.max_guests || "∞"}</strong> max</span>
+        </div>
+      )}
+
+      {stats.attending.length > 0 && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2">
+          <CheckCheck className="w-4 h-4 text-emerald-700 shrink-0" />
+          <span className="font-body text-sm text-emerald-900">
+            <strong className="font-heading">{stats.arrived.length}</strong> of <strong className="font-heading">{stats.attending.length}</strong> attending guests checked in. Use the <em>Check In</em> button in the list on the night of the event.
+          </span>
         </div>
       )}
 
@@ -91,6 +117,7 @@ export default function RsvpDashboard({ promotion }) {
             {stats.attending.filter((i) => i.dietary_notes).map((i) => (
               <li key={i.id} className="font-body text-xs text-amber-800">
                 <strong className="font-medium">{i.guest_name}:</strong> {i.dietary_notes}
+                {i.checked_in ? <span className="ml-1 text-emerald-700 font-semibold">· arrived</span> : null}
               </li>
             ))}
           </ul>
@@ -111,15 +138,17 @@ export default function RsvpDashboard({ promotion }) {
                   <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5">Status</th>
                   <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5">Party</th>
                   <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5 hidden sm:table-cell">Dietary / Notes</th>
-                  <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5">Actions</th>
+                  <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5">Checked In</th>
+                  <th className="font-body text-xs font-semibold text-muted-foreground px-4 py-2.5">Edit</th>
                 </tr>
               </thead>
               <tbody>
                 {invites.map((inv) => {
                   const cfg = STATUS_CONFIG[inv.rsvp_status] || STATUS_CONFIG.Pending;
                   const Icon = cfg.icon;
+                  const isAttending = inv.rsvp_status === "Attending";
                   return (
-                    <tr key={inv.id} className="border-b border-border last:border-0">
+                    <tr key={inv.id} className={`border-b border-border last:border-0 ${inv.checked_in ? "bg-emerald-50/40" : ""}`}>
                       <td className="px-4 py-2.5">
                         <p className="font-body text-sm font-medium">{inv.guest_name}</p>
                         <p className="font-body text-xs text-muted-foreground">{inv.guest_email}</p>
@@ -140,9 +169,28 @@ export default function RsvpDashboard({ promotion }) {
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-2.5 font-body text-sm">{inv.rsvp_status === "Attending" ? `${inv.party_size || 1}` : "—"}</td>
+                      <td className="px-4 py-2.5 font-body text-sm">{isAttending ? `${inv.party_size || 1}` : "—"}</td>
                       <td className="px-4 py-2.5 hidden sm:table-cell">
                         <p className="font-body text-xs text-muted-foreground max-w-xs truncate">{inv.dietary_notes || inv.plus_ones || "—"}</p>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        {isAttending ? (
+                          <button
+                            onClick={() => toggleCheckIn(inv)}
+                            disabled={checkingInId === inv.id}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors disabled:opacity-50 ${
+                              inv.checked_in
+                                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                                : "bg-muted text-foreground hover:bg-emerald-100"
+                            }`}
+                            title={inv.checked_in ? `Arrived ${inv.checked_in_at ? new Date(inv.checked_in_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : ""}` : "Mark as arrived"}
+                          >
+                            <LogIn className="w-3 h-3" />
+                            {checkingInId === inv.id ? "…" : inv.checked_in ? "Arrived" : "Check In"}
+                          </button>
+                        ) : (
+                          <span className="font-body text-xs text-muted-foreground">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-2.5">
                         <button onClick={() => setEditing(inv)} className="p-1.5 hover:text-primary transition-colors" aria-label="Edit RSVP">

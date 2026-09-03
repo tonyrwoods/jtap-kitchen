@@ -50,6 +50,15 @@
       "type": "string",
       "title": "Internal Admin Notes"
     },
+    "sms_opt_in": {
+      "type": "boolean",
+      "title": "Guest opted in to SMS",
+      "default": false
+    },
+    "sms_sent_at": {
+      "type": "string",
+      "title": "SMS Confirmation Sent At (ISO)"
+    },
     "confirm_token": {
       "type": "string",
       "title": "Confirm Token (RSVP link)"

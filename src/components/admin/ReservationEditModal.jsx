@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Mail } from "lucide-react";
+import { X, Mail, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ReservationEditModal({ reservation, onSaved, onClose }) {
@@ -13,12 +13,25 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
     party_size: reservation.party_size || 1,
     special_requests: reservation.special_requests || "",
     admin_notes: reservation.admin_notes || "",
+    sms_opt_in: reservation.sms_opt_in || false,
   });
   const [saving, setSaving] = useState(false);
   const [notifyGuest, setNotifyGuest] = useState(true);
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
+  const [sendingSms, setSendingSms] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleSendSms = async () => {
+    setSendingSms(true);
+    try {
+      await base44.functions.invoke("sendReservationSms", { reservation_id: reservation.id });
+      toast.success("SMS confirmation sent");
+    } catch (err) {
+      toast.error("SMS failed: " + (err.message || "unknown error"));
+    }
+    setSendingSms(false);
+  };
 
   const handleSendReply = async () => {
     if (!replyText.trim()) {
@@ -52,6 +65,7 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
       party_size: parseInt(form.party_size) || 1,
       special_requests: form.special_requests || null,
       admin_notes: form.admin_notes || null,
+      sms_opt_in: !!form.sms_opt_in,
     };
     try {
       await base44.entities.Reservation.update(reservation.id, payload);
@@ -137,6 +151,20 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
               </button>
             </div>
           ) : null}
+          <div className="rounded-lg bg-muted/40 border border-border p-3 space-y-2">
+            <label className="flex items-center gap-2 cursor-pointer select-text">
+              <input type="checkbox" checked={form.sms_opt_in} onChange={e => set("sms_opt_in", e.target.checked)} className="w-4 h-4" />
+              <span className="font-body text-sm">Guest opted in to SMS confirmations</span>
+            </label>
+            {form.sms_opt_in && form.phone ? (
+              <button type="button" onClick={handleSendSms} disabled={sendingSms} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 disabled:opacity-50">
+                <MessageSquare className="w-3.5 h-3.5" />
+                {sendingSms ? "Sending…" : reservation.sms_sent_at ? "Resend SMS Confirmation ✓" : "Send SMS Confirmation"}
+              </button>
+            ) : form.sms_opt_in && !form.phone ? (
+              <p className="font-body text-xs text-amber-700">Add a phone number to enable SMS.</p>
+            ) : null}
+          </div>
           <label className="flex items-center gap-2 cursor-pointer select-text">
             <input type="checkbox" checked={notifyGuest} onChange={e => setNotifyGuest(e.target.checked)} className="w-4 h-4" />
             <span className="font-body text-sm">Notify guest by email about these changes</span>

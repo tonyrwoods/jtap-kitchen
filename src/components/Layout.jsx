@@ -32,6 +32,19 @@ export default function Layout() {
     setShowScrollTop(false);
   }, [location.pathname]);
 
+  // Scroll to an in-page anchor (e.g. #reserve, #menu) when the hash changes.
+  // The app uses a custom scroll container, so native browser anchor scrolling
+  // doesn't fire — we handle it here via scrollIntoView on the target element.
+  useEffect(() => {
+    if (!location.hash) return;
+    const id = location.hash.replace("#", "");
+    const t = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 120);
+    return () => clearTimeout(t);
+  }, [location.hash, location.pathname]);
+
   const scrollToTop = () => {
     if (scrollRef.current) scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -100,7 +113,7 @@ export default function Layout() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={scrollToTop}
-            className="fixed bottom-24 md:bottom-8 right-5 z-50 w-11 h-11 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center hover:opacity-90 transition-opacity"
+            className="fixed bottom-24 md:bottom-8 right-20 z-50 w-11 h-11 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center hover:opacity-90 transition-opacity"
             aria-label="Return to top"
           >
             <ArrowUp className="w-5 h-5" />

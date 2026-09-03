@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowDown, Phone } from "lucide-react";
 import SmartImage from "@/components/SmartImage";
+import { Link } from "react-router-dom";
 
 export default function HeroSection() {
   return (
@@ -72,11 +73,11 @@ export default function HeroSection() {
             className="px-10 py-4 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/25">
             Reserve Your Table — Book Direct &amp; Save
           </a>
-          <a
-            href="#menu"
+          <Link
+            to="/full-menu"
             className="px-10 py-4 border-2 border-white/30 text-white font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:bg-white/10 transition-all duration-300">
             Explore Menu
-          </a>
+          </Link>
           <a
             href="/event-center"
             className="px-10 py-4 border-2 border-amber-400/50 text-amber-300 font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:bg-amber-400/10 transition-all duration-300">

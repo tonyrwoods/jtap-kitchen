@@ -11,7 +11,8 @@ function QRCard({ tableNum, url }) {
     const svg = svgRef.current?.querySelector("svg");
     if (!svg) return;
     const serializer = new XMLSerializer();
-    const svgStr = serializer.serializeToString(svg);
+    let svgStr = serializer.serializeToString(svg);
+    if (!/xmlns=/.test(svgStr)) svgStr = svgStr.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
     const canvas = document.createElement("canvas");
     canvas.width = 300;
     canvas.height = 360;
@@ -35,7 +36,7 @@ function QRCard({ tableNum, url }) {
         a.click();
       });
     };
-    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgStr)));
+    img.src = "data:image/svg+xml;base64," + btoa(String.fromCharCode(...new TextEncoder().encode(svgStr)));
   };
 
   return (
@@ -48,7 +49,6 @@ function QRCard({ tableNum, url }) {
           fgColor="#1a1a1a"
           bgColor="#ffffff"
           level="M"
-          imageSettings={{ src: "", excavate: false }}
         />
       </div>
       <p className="font-body text-xs text-muted-foreground text-center max-w-[160px] break-all">{url}</p>

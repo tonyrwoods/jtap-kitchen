@@ -43,6 +43,15 @@
       "type": "string",
       "title": "Dietary Notes / Special Requests"
     },
+    "checked_in": {
+      "type": "boolean",
+      "title": "Arrived / Checked In",
+      "default": false
+    },
+    "checked_in_at": {
+      "type": "string",
+      "title": "Checked In At (ISO)"
+    },
     "discount_amount": {
       "type": "number",
       "title": "Discount Amount ($)",

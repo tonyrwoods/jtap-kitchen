@@ -33,10 +33,16 @@ export default function MobileTabBar() {
     const isActive = baseHref === "/" ? location.pathname === "/" : location.pathname.startsWith(baseHref);
 
     if (isActive) {
-      // Already on this tab — navigate back to the root tab URL and scroll to top
-      navigate(baseHref);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      saveTabState(tabId, 0, baseHref);
+      // Already on this tab. If the target has a hash (e.g. "/#reserve"),
+      // navigate with the hash so Layout's hash-scroll effect jumps to it.
+      // Otherwise go to the tab root and scroll to the top.
+      if (href.includes("#")) {
+        navigate(href);
+      } else {
+        navigate(baseHref);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        saveTabState(tabId, 0, baseHref);
+      }
     } else {
       // Different tab — navigate and restore saved position
       navigate(href);
