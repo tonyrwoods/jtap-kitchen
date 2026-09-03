@@ -169,7 +169,7 @@ function WaitlistEntry({ entry, onStatusChange, onDelete, onNotify }) {
               <Check className="w-3 h-3" /> Ready
             </button>
             <button
-              onClick={() => onNotify(entry.id, entry.guest_name, entry.email)}
+              onClick={() => onNotify(entry.id, entry.guest_name, entry.email, entry.phone)}
               disabled={entry.notification_sent}
               className="flex items-center gap-1 px-3 py-1.5 border border-primary text-primary rounded-lg text-xs font-medium hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
@@ -232,13 +232,13 @@ export default function WaitlistAdminTab() {
     }
   };
 
-  const handleNotify = async (id, name, email) => {
+  const handleNotify = async (id, name, email, phone) => {
     try {
-      await base44.functions.invoke("sendTableReadyEmail", { waitlistId: id, guestName: name, guestEmail: email });
-      toast.success("Email sent to " + name);
+      await base44.functions.invoke("sendTableReadyEmail", { waitlistId: id, guestName: name, guestEmail: email, guestPhone: phone });
+      toast.success(phone ? "Table-ready email & text sent to " + name : "Email sent to " + name);
       fetchWaitlist();
     } catch (error) {
-      toast.error("Failed to send email");
+      toast.error("Failed to send notification");
     }
   };
 

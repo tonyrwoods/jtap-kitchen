@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { secrets } from 'base44:runtime';
+import { sendSms } from '../../shared/sendSms.js';
 
 // System-triggered by the "Waitlist Notify on Cancellation" workflow when a
 // Reservation is cancelled. No user session is available, so entity access and
@@ -58,6 +60,27 @@ Deno.serve(async (req) => {
       subject: 'Your Table at JTAP Kitchen is Ready!',
       body: `Hello ${match.guest_name},\n\nGreat news! A table has just opened up at JTAP Kitchen and you're next in line.\n\nPlease check in with the host within 10 minutes to claim your table for your party of ${partySize}.\n\nWe can't wait to host you!\n\n— The JTAP Kitchen Team`,
     });
+
+    // Text the waiting guest if they left a number — table-ready alerts are the
+    // reason the number was collected, so presence implies consent. Non-blocking
+    // so a Twilio failure can't keep the waitlist record from being marked ready.
+    if (match.phone) {
+      const accountSid = secrets.get('TWILIO_ACCOUNT_SID');
+      const authToken = secrets.get('TWILIO_AUTH_TOKEN');
+      const fromNumber = secrets.get('TWILIO_FROM_NUMBER');
+      if (accountSid && authToken && fromNumber) {
+        const firstName = (match.guest_name || '').split(' ')[0] || 'there';
+        try {
+          await sendSms({
+            to: match.phone,
+            body: `JTAP Kitchen: Hi ${firstName}, a table just opened up for your party of ${partySize}! Please check in with the host within 10 minutes. See you soon! 901-233-4060. Reply STOP to opt out.`,
+            accountSid, authToken, fromNumber,
+          });
+        } catch (smsErr) {
+          console.error('Waitlist table-ready SMS failed:', smsErr.message);
+        }
+      }
+    }
 
     await base44.asServiceRole.entities.Waitlist.update(match.id, {
       status: 'Table Ready',
