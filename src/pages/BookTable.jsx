@@ -116,6 +116,7 @@ export default function BookTable() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [special, setSpecial] = useState("");
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [reservationToken, setReservationToken] = useState(null);
@@ -148,6 +149,7 @@ export default function BookTable() {
         time,
         party_size: party,
         special_requests: special,
+        sms_opt_in: smsOptIn,
       });
       if (res.data?.success) {
         setReservationToken(res.data.reservation.confirm_token);
@@ -357,6 +359,13 @@ export default function BookTable() {
                           placeholder="+1 (555) 000-0000"
                           className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground font-body text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" />
                       </div>
+                      <label className={`flex items-start gap-3 ${phone ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}>
+                        <input type="checkbox" checked={smsOptIn} onChange={e => setSmsOptIn(e.target.checked)} disabled={!phone}
+                          className="mt-0.5 w-4 h-4 rounded border-border text-primary focus:ring-primary/40" />
+                        <span className="font-body text-xs text-muted-foreground leading-relaxed">
+                          Yes, text me a confirmation and reminder at the number above. Msg &amp; data rates may apply. Reply STOP to cancel.
+                        </span>
+                      </label>
                       <div>
                         <label className="flex items-center gap-2 font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground mb-2">
                           <MessageSquare className="w-3.5 h-3.5" /> Special Requests

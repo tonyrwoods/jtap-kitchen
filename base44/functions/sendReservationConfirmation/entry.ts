@@ -1,6 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
+import { secrets } from 'base44:runtime';
+import { sendSms } from '../../shared/sendSms.js';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -46,6 +48,28 @@ Deno.serve(async (req) => {
     const isEventBooking = reservation.special_requests?.startsWith('[Event:');
     const dateObj = new Date(reservation.date);
     const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    const firstName = (reservation.guest_name || '').split(' ')[0] || 'there';
+
+    // SMS confirmation — only when the guest opted in and Twilio is configured.
+    // Non-blocking: email already sent. Failures notify admins but don't fail the request.
+    const maybeSendSms = async (smsBody) => {
+      if (!reservation.sms_opt_in || !reservation.phone) return false;
+      const accountSid = secrets.get('TWILIO_ACCOUNT_SID');
+      const authToken = secrets.get('TWILIO_AUTH_TOKEN');
+      const fromNumber = secrets.get('TWILIO_FROM_NUMBER');
+      if (!accountSid || !authToken || !fromNumber) return false;
+      try {
+        await sendSms({ to: reservation.phone, body: smsBody, accountSid, authToken, fromNumber });
+        await base44.asServiceRole.entities.Reservation.update(reservation.id, { sms_sent_at: new Date().toISOString() });
+        return true;
+      } catch (err) {
+        await notifyAdmins(base44, {
+          subject: 'Reservation SMS confirmation failed',
+          body: `Could not text ${esc(reservation.guest_name)} (${esc(reservation.phone)}):<br>${esc(err.message)}`,
+        }).catch(() => {});
+        return false;
+      }
+    };
 
     // Regular reservations still pending confirmation: send a "please confirm" RSVP email.
     // Auto-confirmed reservations (status === 'Confirmed') skip this and get a confirmation email below.
@@ -83,6 +107,7 @@ Deno.serve(async (req) => {
         body: `New reservation request:<br><br><strong>${esc(reservation.guest_name)}</strong> (${esc(reservation.email)})<br>Phone: ${esc(reservation.phone || 'N/A')}<br>Date: ${formattedDate}<br>Time: ${reservation.time}<br>Party: ${reservation.party_size}<br>Requests: ${esc(reservation.special_requests || 'None')}<br><br><a href="${rsvpUrl}">View reservation</a>`,
         from_name: 'JTAP Kitchen Reservations',
       }).catch(() => {});
+      await maybeSendSms(`JTAP Kitchen: Hi ${firstName}, we received your reservation request for ${formattedDate} at ${reservation.time}, party of ${reservation.party_size}. Check your email to confirm. Questions? Call 901-213-8085. Reply STOP to opt out.`);
       return Response.json({ sent: true, email: reservation.email, type: 'rsvp_confirm' });
     }
 
@@ -143,6 +168,7 @@ Deno.serve(async (req) => {
       from_name: 'JTAP Kitchen Reservations',
     }).catch(() => {});
 
+    await maybeSendSms(`JTAP Kitchen: Hi ${firstName}, your reservation (party of ${reservation.party_size}) on ${formattedDate} at ${reservation.time} is confirmed! We can't wait to host you. Questions? Call 901-213-8085. Reply STOP to opt out.`);
     return Response.json({ sent: true, email: reservation.email });
   } catch (error) {
     await notifyAdmins(base44, {

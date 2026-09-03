@@ -34,7 +34,7 @@ export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json();
-    const { guest_name, email, phone, date, time, party_size, special_requests } = body;
+    const { guest_name, email, phone, date, time, party_size, special_requests, sms_opt_in } = body;
 
     if (!guest_name || !email || !date || !time || !party_size) {
       return Response.json({ error: 'Missing required fields.' }, { status: 400 });
@@ -82,6 +82,7 @@ export default async function(req) {
       time,
       party_size: Number(party_size),
       special_requests: special_requests || '',
+      sms_opt_in: !!sms_opt_in,
       status: 'Confirmed',
       confirmed_at: new Date().toISOString(),
       confirm_token,

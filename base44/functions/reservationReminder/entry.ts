@@ -1,6 +1,18 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
+import { secrets } from 'base44:runtime';
+import { sendSms } from '../../shared/sendSms.js';
+
+// Send a reminder SMS when the guest opted in and Twilio is configured.
+// Non-fatal: callers track their own errors separately.
+async function sendReminderSms(to, body) {
+  const accountSid = secrets.get('TWILIO_ACCOUNT_SID');
+  const authToken = secrets.get('TWILIO_AUTH_TOKEN');
+  const fromNumber = secrets.get('TWILIO_FROM_NUMBER');
+  if (!accountSid || !authToken || !fromNumber || !to) return;
+  await sendSms({ to, body, accountSid, authToken, fromNumber });
+}
 
 // Scheduled daily automation — scans for confirmed reservations happening
 // tomorrow and sends each guest a reminder (tracked via reminder_sent_at).
@@ -84,6 +96,14 @@ Deno.serve(async (req) => {
         await base44.asServiceRole.entities.Reservation.update(reservation.id, {
           reminder_sent_at: new Date().toISOString(),
         });
+        if (reservation.sms_opt_in && reservation.phone) {
+          const firstName = (reservation.guest_name || '').split(' ')[0] || 'there';
+          try {
+            await sendReminderSms(reservation.phone, `JTAP Kitchen: Hi ${firstName}, don't forget to confirm your reservation for tomorrow, ${formattedDate} at ${reservation.time}. Check your email for the link. Call 901-233-4060. Reply STOP to opt out.`);
+          } catch (smsErr) {
+            errors.push({ id: reservation.id, error: 'SMS: ' + smsErr.message });
+          }
+        }
         sent++;
       } catch (err) {
         errors.push({ id: reservation.id, error: err.message });
@@ -128,6 +148,14 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.Reservation.update(reservation.id, {
         reminder_sent_at: new Date().toISOString(),
       });
+      if (reservation.sms_opt_in && reservation.phone) {
+        const firstName = (reservation.guest_name || '').split(' ')[0] || 'there';
+        try {
+          await sendReminderSms(reservation.phone, `JTAP Kitchen: Reminder: your reservation tomorrow, ${formattedDate} at ${reservation.time}, party of ${reservation.party_size}. We'll see you then! Call 901-233-4060 with questions. Reply STOP to opt out.`);
+        } catch (smsErr) {
+          errors.push({ id: reservation.id, error: 'SMS: ' + smsErr.message });
+        }
+      }
       sent++;
     } catch (err) {
       errors.push({ id: reservation.id, error: err.message });
