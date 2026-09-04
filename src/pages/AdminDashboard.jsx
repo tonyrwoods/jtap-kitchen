@@ -260,7 +260,7 @@ export default function AdminDashboard() {
               <div key={group.label} className="flex items-end">
                 {gi > 0 && <div className="w-px h-5 bg-border mx-1 mb-3 shrink-0" />}
                 <div className="flex flex-col">
-                  <span className="font-body text-[11px] uppercase tracking-widest text-muted-foreground px-3 mb-1 font-semibold">{group.label}</span>
+                  <span className={`font-body text-[11px] uppercase tracking-widest px-3 mb-1 font-semibold transition-colors ${group.tabs.includes(tab) ? "text-primary" : "text-muted-foreground"}`}>{group.label}</span>
                   <div className="flex">
                     {group.tabs.map(t => (
                       <button
