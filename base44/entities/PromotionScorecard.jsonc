@@ -26,6 +26,10 @@
       "type": "number",
       "title": "Dishes Rating (1\u20135)"
     },
+    "presentation_rating": {
+      "type": "number",
+      "title": "Presentation Rating (1\u20135)"
+    },
     "service_rating": {
       "type": "number",
       "title": "Service Rating (1\u20135)"
@@ -33,6 +37,18 @@
     "atmosphere_rating": {
       "type": "number",
       "title": "Atmosphere Rating (1\u20135)"
+    },
+    "value_rating": {
+      "type": "number",
+      "title": "Value Rating (1\u20135)"
+    },
+    "hospitality_rating": {
+      "type": "number",
+      "title": "Hospitality Rating (1\u20135)"
+    },
+    "favorite_dish": {
+      "type": "string",
+      "title": "Favorite Dish"
     },
     "comment": {
       "type": "string",

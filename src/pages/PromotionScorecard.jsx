@@ -3,10 +3,25 @@ import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Star, CheckCircle2, PartyPopper, ArrowLeft } from "lucide-react";
+import { Star, CheckCircle2, PartyPopper, ArrowLeft, UtensilsCrossed } from "lucide-react";
 import SmartImage from "@/components/SmartImage";
 import StarRating from "@/components/scorecards/StarRating";
 import ScorecardSummary from "@/components/scorecards/ScorecardSummary";
+
+const LOGO_URL = "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png";
+
+// Parse a numbered course list out of the promotion description.
+// Lines like "1) JTAP Trio of Dips" become menu courses.
+function parseCourses(description) {
+  if (!description) return [];
+  const lines = description.split(/\r?\n/);
+  const courses = [];
+  for (const line of lines) {
+    const m = line.match(/^\s*(\d+)\s*[\).:\-]\s*(.+?)\s*$/);
+    if (m) courses.push({ n: parseInt(m[1], 10), name: m[2].trim() });
+  }
+  return courses;
+}
 
 export default function PromotionScorecard() {
   const { slug } = useParams();
@@ -19,8 +34,12 @@ export default function PromotionScorecard() {
     guest_name: "",
     email: "",
     dishes_rating: 0,
+    presentation_rating: 0,
     service_rating: 0,
     atmosphere_rating: 0,
+    value_rating: 0,
+    hospitality_rating: 0,
+    favorite_dish: "",
     comment: "",
   });
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
@@ -51,7 +70,7 @@ export default function PromotionScorecard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSubmit) {
-      toast.error("Please add your name and all three ratings");
+      toast.error("Please add your name and the three required ratings");
       return;
     }
     setSubmitting(true);
@@ -61,8 +80,12 @@ export default function PromotionScorecard() {
         guest_name: form.guest_name.trim(),
         email: form.email.trim().toLowerCase(),
         dishes_rating: form.dishes_rating,
+        presentation_rating: form.presentation_rating || undefined,
         service_rating: form.service_rating,
         atmosphere_rating: form.atmosphere_rating,
+        value_rating: form.value_rating || undefined,
+        hospitality_rating: form.hospitality_rating || undefined,
+        favorite_dish: form.favorite_dish.trim(),
         comment: form.comment.trim(),
       });
       if (res.data?.success) {
@@ -99,6 +122,16 @@ export default function PromotionScorecard() {
     );
   }
 
+  const courses = parseCourses(promo.description);
+  const ratings = [
+    { key: "dishes_rating", label: "Dishes", hint: "The food & flavors", required: true },
+    { key: "presentation_rating", label: "Presentation", hint: "Plating & visual appeal", required: false },
+    { key: "service_rating", label: "Service", hint: "The team", required: true },
+    { key: "atmosphere_rating", label: "Atmosphere", hint: "The vibe", required: true },
+    { key: "value_rating", label: "Value", hint: "Worth the price", required: false },
+    { key: "hospitality_rating", label: "Hospitality", hint: "Warmth of welcome", required: false },
+  ];
+
   return (
     <div className="min-h-screen bg-background pt-20">
       {/* Hero */}
@@ -120,6 +153,17 @@ export default function PromotionScorecard() {
       </div>
 
       <div className="max-w-2xl mx-auto px-6 py-10">
+        {/* Logo + brand */}
+        <div className="flex flex-col items-center text-center mb-6">
+          <img
+            src={LOGO_URL}
+            alt="JTAP Kitchen"
+            className="h-20 w-20 rounded-full object-cover border border-primary/30 mb-3"
+          />
+          <p className="font-heading text-lg font-semibold text-foreground">JTAP Kitchen</p>
+          <p className="font-body text-xs text-muted-foreground">Memphis, TN</p>
+        </div>
+
         <Link
           to={`/event-announce/${promo.share_slug}`}
           className="inline-flex items-center gap-1.5 font-body text-sm text-muted-foreground hover:text-primary mb-6 transition-colors"
@@ -143,7 +187,7 @@ export default function PromotionScorecard() {
             <button
               onClick={() => {
                 setSubmitted(false);
-                setForm({ guest_name: "", email: "", dishes_rating: 0, service_rating: 0, atmosphere_rating: 0, comment: "" });
+                setForm({ guest_name: "", email: "", dishes_rating: 0, presentation_rating: 0, service_rating: 0, atmosphere_rating: 0, value_rating: 0, hospitality_rating: 0, favorite_dish: "", comment: "" });
               }}
               className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted transition-colors"
             >
@@ -151,80 +195,118 @@ export default function PromotionScorecard() {
             </button>
           </motion.div>
         ) : (
-          <motion.form
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onSubmit={handleSubmit}
-            className="bg-card border border-border rounded-2xl p-6 md:p-8 mb-10"
-          >
-            <h2 className="font-heading text-xl font-bold mb-1">Rate Your Experience</h2>
-            <p className="font-body text-sm text-muted-foreground mb-6">
-              How did we do? Rate each category and share your thoughts about <strong>{promo.title}</strong>.
-            </p>
-
-            {/* Ratings */}
-            <div className="space-y-5 mb-6">
-              {[
-                { key: "dishes_rating", label: "Dishes", hint: "The food" },
-                { key: "service_rating", label: "Service", hint: "The team" },
-                { key: "atmosphere_rating", label: "Atmosphere", hint: "The vibe" },
-              ].map((r) => (
-                <div key={r.key} className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="font-body text-sm font-semibold">{r.label} <span className="text-muted-foreground font-normal">· {r.hint}</span></p>
+          <>
+            {/* The dishes / menu */}
+            {courses.length > 0 && (
+              <div className="bg-card border border-border rounded-2xl p-6 mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    <UtensilsCrossed className="w-4 h-4" />
                   </div>
-                  <StarRating value={form[r.key]} onChange={(v) => set(r.key, v)} />
+                  <div>
+                    <h2 className="font-heading text-lg font-bold leading-tight">Tonight's Menu</h2>
+                    <p className="font-body text-xs text-muted-foreground">{courses.length}-course tasting by Chef Steve</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Name + email */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-              <div>
-                <label className="font-body text-sm font-semibold mb-1.5 block">Your Name *</label>
-                <input
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
-                  value={form.guest_name}
-                  onChange={(e) => set("guest_name", e.target.value)}
-                  placeholder="Your name"
-                  required
-                />
+                <ol className="space-y-3">
+                  {courses.map((c) => (
+                    <li key={c.n} className="flex items-start gap-3">
+                      <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-heading text-sm font-bold shrink-0">
+                        {c.n}
+                      </span>
+                      <p className="font-body text-sm text-foreground leading-relaxed pt-1">{c.name}</p>
+                    </li>
+                  ))}
+                </ol>
               </div>
-              <div>
-                <label className="font-body text-sm font-semibold mb-1.5 block">Email <span className="text-muted-foreground font-normal">(optional)</span></label>
-                <input
-                  type="email"
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
-                  value={form.email}
-                  onChange={(e) => set("email", e.target.value)}
-                  placeholder="you@email.com"
-                />
-              </div>
-            </div>
+            )}
 
-            {/* Comment */}
-            <div className="mb-6">
-              <label className="font-body text-sm font-semibold mb-1.5 block">Comments <span className="text-muted-foreground font-normal">(optional)</span></label>
-              <textarea
-                rows={4}
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background resize-none"
-                value={form.comment}
-                onChange={(e) => set("comment", e.target.value)}
-                placeholder="What did you love? Anything we could improve? Favorite dish?"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={submitting || !canSubmit}
-              className="w-full py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+            <motion.form
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              onSubmit={handleSubmit}
+              className="bg-card border border-border rounded-2xl p-6 md:p-8 mb-10"
             >
-              {submitting ? "Submitting..." : "Submit Scorecard"}
-            </button>
-            <p className="font-body text-xs text-muted-foreground text-center mt-3">
-              Your scorecard is reviewed by our team before it appears publicly.
-            </p>
-          </motion.form>
+              <h2 className="font-heading text-xl font-bold mb-1">Rate Your Experience</h2>
+              <p className="font-body text-sm text-muted-foreground mb-6">
+                How did we do? Rate each category and share your thoughts about <strong>{promo.title}</strong>.
+              </p>
+
+              {/* Ratings */}
+              <div className="space-y-5 mb-6">
+                {ratings.map((r) => (
+                  <div key={r.key} className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="font-body text-sm font-semibold">
+                        {r.label}
+                        {!r.required && <span className="text-muted-foreground font-normal"> · optional</span>}
+                      </p>
+                      <p className="font-body text-xs text-muted-foreground">{r.hint}</p>
+                    </div>
+                    <StarRating value={form[r.key]} onChange={(v) => set(r.key, v)} />
+                  </div>
+                ))}
+              </div>
+
+              {/* Name + email */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1.5 block">Your Name *</label>
+                  <input
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+                    value={form.guest_name}
+                    onChange={(e) => set("guest_name", e.target.value)}
+                    placeholder="Your name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="font-body text-sm font-semibold mb-1.5 block">Email <span className="text-muted-foreground font-normal">(optional)</span></label>
+                  <input
+                    type="email"
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+                    value={form.email}
+                    onChange={(e) => set("email", e.target.value)}
+                    placeholder="you@email.com"
+                  />
+                </div>
+              </div>
+
+              {/* Favorite dish */}
+              <div className="mb-5">
+                <label className="font-body text-sm font-semibold mb-1.5 block">Favorite Dish <span className="text-muted-foreground font-normal">(optional)</span></label>
+                <input
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+                  value={form.favorite_dish}
+                  onChange={(e) => set("favorite_dish", e.target.value)}
+                  placeholder="Which course stood out to you?"
+                />
+              </div>
+
+              {/* Comment */}
+              <div className="mb-6">
+                <label className="font-body text-sm font-semibold mb-1.5 block">Comments <span className="text-muted-foreground font-normal">(optional)</span></label>
+                <textarea
+                  rows={4}
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background resize-none"
+                  value={form.comment}
+                  onChange={(e) => set("comment", e.target.value)}
+                  placeholder="What did you love? Anything we could improve?"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting || !canSubmit}
+                className="w-full py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+              >
+                {submitting ? "Submitting..." : "Submit Scorecard"}
+              </button>
+              <p className="font-body text-xs text-muted-foreground text-center mt-3">
+                Your scorecard is reviewed by our team before it appears publicly.
+              </p>
+            </motion.form>
+          </>
         )}
 
         {/* Approved scorecards */}

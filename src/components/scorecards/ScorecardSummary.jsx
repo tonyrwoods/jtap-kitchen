@@ -8,15 +8,21 @@ function avg(nums) {
   return xs.length ? xs.reduce((s, n) => s + Number(n), 0) / xs.length : 0;
 }
 
+const CATEGORIES = [
+  { key: "dishes_rating", label: "Dishes" },
+  { key: "presentation_rating", label: "Presentation" },
+  { key: "service_rating", label: "Service" },
+  { key: "atmosphere_rating", label: "Atmosphere" },
+  { key: "value_rating", label: "Value" },
+  { key: "hospitality_rating", label: "Hospitality" },
+];
+
 function CategoryBreakdown({ cards }) {
-  const categories = [
-    { key: "dishes_rating", label: "Dishes" },
-    { key: "service_rating", label: "Service" },
-    { key: "atmosphere_rating", label: "Atmosphere" },
-  ];
+  const active = CATEGORIES.filter((c) => cards.some((x) => Number(x[c.key]) > 0));
+  if (!active.length) return null;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      {categories.map((c) => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      {active.map((c) => (
         <div key={c.key} className="bg-background border border-border rounded-xl p-4 text-center">
           <p className="font-body text-xs text-muted-foreground mb-1">{c.label}</p>
           <p className="font-heading text-2xl font-bold text-foreground mb-1">
@@ -60,7 +66,15 @@ export default function ScorecardSummary({ slug, limit = 100 }) {
 
       <div className="space-y-4">
         {cards.map((c, i) => {
-          const overall = avg([c.dishes_rating, c.service_rating, c.atmosphere_rating]);
+          const ratings = [
+            Number(c.dishes_rating),
+            Number(c.presentation_rating),
+            Number(c.service_rating),
+            Number(c.atmosphere_rating),
+            Number(c.value_rating),
+            Number(c.hospitality_rating),
+          ];
+          const overall = avg(ratings);
           return (
             <motion.div
               key={c.id}
@@ -84,13 +98,11 @@ export default function ScorecardSummary({ slug, limit = 100 }) {
                     <span className="font-heading text-sm font-bold text-primary">{overall.toFixed(1)}</span>
                     <StarRating value={Math.round(overall)} size="w-3.5 h-3.5" />
                   </div>
-                  <div className="flex gap-2 mt-1 text-[10px] text-muted-foreground">
-                    <span>D {c.dishes_rating}</span>
-                    <span>S {c.service_rating}</span>
-                    <span>A {c.atmosphere_rating}</span>
-                  </div>
                 </div>
               </div>
+              {c.favorite_dish && (
+                <p className="font-body text-xs text-primary font-medium mb-2">★ Favorite dish: {c.favorite_dish}</p>
+              )}
               {c.comment && (
                 <p className="font-body text-sm leading-relaxed text-foreground/90">"{c.comment}"</p>
               )}

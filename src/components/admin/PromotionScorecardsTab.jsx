@@ -144,7 +144,12 @@ export default function PromotionScorecardsTab() {
       ) : (
         <div className="space-y-3">
           {filtered.map((card) => {
-            const overall = ((Number(card.dishes_rating) + Number(card.service_rating) + Number(card.atmosphere_rating)) / 3) || 0;
+            const _ratings = [
+              Number(card.dishes_rating), Number(card.presentation_rating),
+              Number(card.service_rating), Number(card.atmosphere_rating),
+              Number(card.value_rating), Number(card.hospitality_rating),
+            ].filter((n) => n > 0);
+            const overall = _ratings.length ? _ratings.reduce((s, n) => s + n, 0) / _ratings.length : 0;
             return (
               <motion.div
                 key={card.id}
@@ -169,17 +174,24 @@ export default function PromotionScorecardsTab() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-3 mb-2 text-xs">
+                  <div className="flex flex-wrap gap-2 mb-2 text-xs">
                     {[
                       { label: "Dishes", val: card.dishes_rating },
+                      { label: "Presentation", val: card.presentation_rating },
                       { label: "Service", val: card.service_rating },
                       { label: "Atmosphere", val: card.atmosphere_rating },
-                    ].map((r) => (
+                      { label: "Value", val: card.value_rating },
+                      { label: "Hospitality", val: card.hospitality_rating },
+                    ].filter((r) => Number(r.val) > 0).map((r) => (
                       <span key={r.label} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted/60 text-muted-foreground">
                         {r.label} <strong className="text-foreground">{r.val}</strong>
                       </span>
                     ))}
                   </div>
+
+                  {card.favorite_dish && (
+                    <p className="font-body text-xs text-primary font-medium mb-2">★ Favorite dish: {card.favorite_dish}</p>
+                  )}
 
                   {card.comment && (
                     <p className="font-body text-sm text-foreground mb-2">"{card.comment}"</p>
