@@ -260,7 +260,13 @@ export default function AdminDashboard() {
               <div key={group.label} className="flex items-end">
                 {gi > 0 && <div className="w-px h-5 bg-border mx-1 mb-3 shrink-0" />}
                 <div className="flex flex-col">
-                  <span className={`font-body text-[11px] uppercase tracking-widest px-3 mb-1 font-semibold transition-colors ${group.tabs.includes(tab) ? "text-primary" : "text-muted-foreground"}`}>{group.label}</span>
+                  <button
+                    type="button"
+                    onClick={() => setTab(group.tabs[0])}
+                    className={`font-body text-[11px] uppercase tracking-widest px-3 mb-1 font-semibold transition-colors text-left hover:text-primary ${group.tabs.includes(tab) ? "text-primary" : "text-muted-foreground"}`}
+                  >
+                    {group.label}
+                  </button>
                   <div className="flex">
                     {group.tabs.map(t => (
                       <button
