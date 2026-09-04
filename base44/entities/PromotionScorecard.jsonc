@@ -1,0 +1,102 @@
+{
+  "name": "PromotionScorecard",
+  "type": "object",
+  "properties": {
+    "promotion_id": {
+      "type": "string",
+      "title": "Promotion ID"
+    },
+    "promotion_title": {
+      "type": "string",
+      "title": "Promotion Title (cache)"
+    },
+    "share_slug": {
+      "type": "string",
+      "title": "Share Slug (cache)"
+    },
+    "guest_name": {
+      "type": "string",
+      "title": "Guest Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "dishes_rating": {
+      "type": "number",
+      "title": "Dishes Rating (1\u20135)"
+    },
+    "service_rating": {
+      "type": "number",
+      "title": "Service Rating (1\u20135)"
+    },
+    "atmosphere_rating": {
+      "type": "number",
+      "title": "Atmosphere Rating (1\u20135)"
+    },
+    "comment": {
+      "type": "string",
+      "title": "Guest Comment"
+    },
+    "visit_date": {
+      "type": "string",
+      "title": "Visit Date"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending",
+        "Approved",
+        "Rejected"
+      ],
+      "default": "Pending"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "title": "Featured",
+      "default": false
+    },
+    "manager_response": {
+      "type": "string",
+      "title": "Manager Response"
+    }
+  },
+  "required": [
+    "promotion_id",
+    "share_slug",
+    "guest_name",
+    "dishes_rating",
+    "service_rating",
+    "atmosphere_rating"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.status": "Approved"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

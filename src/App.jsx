@@ -43,6 +43,7 @@ import FoundersWall from './pages/FoundersWall';
 import BookPrivateRoom from './pages/BookPrivateRoom';
 import PitchDeck from './pages/PitchDeck';
 import EventAnnouncement from './pages/EventAnnouncement';
+import PromotionScorecard from './pages/PromotionScorecard';
 import ReservationConfirm from './pages/ReservationConfirm';
 import ThankYou from './pages/ThankYou';
 import WhatsNew from './pages/WhatsNew';
@@ -152,6 +153,7 @@ const AuthenticatedApp = () => {
         <Route path="/revenue-analytics" element={<RevenueAnalytics />} />
         <Route path="/dining-assistant" element={<ReservationChat />} />
         <Route path="/event-announce/:slug" element={<EventAnnouncement />} />
+        <Route path="/scorecard/:slug" element={<PromotionScorecard />} />
         <Route path="/event-invite/:token" element={<EventAnnouncement />} />
         <Route path="/reserve/:token" element={<ReservationConfirm />} />
         <Route path="/ThankYou" element={<ThankYou />} />

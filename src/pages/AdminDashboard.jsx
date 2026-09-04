@@ -32,6 +32,7 @@ import PromotionsTab from "../components/admin/PromotionsTab";
 import ChangeLogAdmin from "../components/admin/ChangeLogAdmin";
 import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import ReservationEditModal from "../components/admin/ReservationEditModal";
+import PromotionScorecardsTab from "../components/admin/PromotionScorecardsTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
@@ -40,7 +41,7 @@ const TAB_GROUPS = [
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
-  { label: "Guests", tabs: ["Gift Cards", "Feedback", "Loyalty"] },
+  { label: "Guests", tabs: ["Gift Cards", "Feedback", "Scorecards", "Loyalty"] },
   { label: "Marketing", tabs: ["Gallery", "Instagram", "Team Members", "LinkedIn", "Promotions", "SEO"] },
   { label: "Careers", tabs: ["Job Listings"] },
   { label: "Account", tabs: ["Profile"] },
@@ -506,6 +507,12 @@ export default function AdminDashboard() {
             {tab === "Feedback" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                 <FeedbackManagementTab />
+              </motion.div>
+            )}
+
+            {tab === "Scorecards" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <PromotionScorecardsTab />
               </motion.div>
             )}
 

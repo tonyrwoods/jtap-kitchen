@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { CalendarDays, Clock, MapPin, Users, Ticket, CheckCircle2, PartyPopper, Mail, CalendarPlus, CalendarClock } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Users, Ticket, CheckCircle2, PartyPopper, Mail, CalendarPlus, CalendarClock, Star } from "lucide-react";
 import SmartImage from "@/components/SmartImage";
+import ScorecardSummary from "@/components/scorecards/ScorecardSummary";
 import { buildEventIcs, downloadIcs } from "@/lib/buildEventIcs";
 
 function formatDate(dateStr) {
@@ -315,6 +316,22 @@ export default function EventAnnouncement() {
               {submitting ? "Submitting..." : "Submit RSVP"}
             </button>
           </motion.form>
+        )}
+
+        {/* Guest Scorecard */}
+        {promo.share_slug && (
+          <>
+            <div className="mt-10">
+              <ScorecardSummary slug={promo.share_slug} limit={6} />
+            </div>
+            <div className="mt-6 bg-card border border-border rounded-2xl p-6 text-center">
+              <h3 className="font-heading text-lg font-semibold mb-1">Tell Us About Your Experience</h3>
+              <p className="font-body text-sm text-muted-foreground mb-4">Joined us for this event? Rate the dishes, service, and atmosphere.</p>
+              <Link to={`/scorecard/${promo.share_slug}`} className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity">
+                <Star className="w-4 h-4" /> Rate Your Experience
+              </Link>
+            </div>
+          </>
         )}
       </div>
     </div>
