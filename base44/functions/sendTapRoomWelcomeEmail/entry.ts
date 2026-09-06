@@ -20,10 +20,19 @@ function formatDate(dateStr) {
 // TapRoomMember record is created. Sends a branded welcome email with the
 // member's loyalty details. No user session is available (system-triggered),
 // so entity access uses the service role.
+//
+// Shared secret (also passed by the workflow) gates the public endpoint so
+// unauthenticated callers can't trigger welcome emails for arbitrary members.
+const WELCOME_SECRET = 'taproom_welcome_9e4a2f8c1d7b5e3a6f0c8b4d2e7a1f05';
+
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
-    const { member_id } = await req.json().catch(() => ({}));
+    const body = await req.json().catch(() => ({}));
+    if (body.secret !== WELCOME_SECRET) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    const { member_id } = body;
     if (!member_id) {
       return Response.json({ error: 'member_id required' }, { status: 400 });
     }

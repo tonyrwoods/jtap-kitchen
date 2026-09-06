@@ -24,7 +24,8 @@
           "with": {
             "function_name": "sendTapRoomWelcomeEmail",
             "args": {
-              "member_id": "${ .trigger.entity_id }"
+              "member_id": "${ .trigger.entity_id }",
+              "secret": "taproom_welcome_9e4a2f8c1d7b5e3a6f0c8b4d2e7a1f05"
             }
           },
           "then": "end",
