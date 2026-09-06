@@ -16,7 +16,8 @@
             "args": {
               "occurred_at": "${ .trigger.occurred_at }",
               "visibility": "${ .trigger.visibility }",
-              "is_first_publish": "${ .trigger.is_first_publish }"
+              "is_first_publish": "${ .trigger.is_first_publish }",
+              "secret": "pub_changelog_3f7a9c2e1b8d4e6a9f2c7b5d1e8a4f03"
             }
           },
           "then": "end",
