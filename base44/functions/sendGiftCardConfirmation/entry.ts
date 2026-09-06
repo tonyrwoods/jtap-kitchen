@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
+import { esc } from '../../shared/escapeHtml.js';
 
 Deno.serve(async (req) => {
   try {
@@ -42,11 +43,11 @@ Deno.serve(async (req) => {
         
         <div style="background: #f9f9f9; padding: 40px 20px; border-radius: 0 0 12px 12px;">
           <p style="margin: 0 0 20px; font-size: 16px;">
-            Hi <strong>${giftCard.purchaser_name}</strong>,
+            Hi <strong>${esc(giftCard.purchaser_name)}</strong>,
           </p>
           
           <p style="margin: 0 0 30px; font-size: 14px; line-height: 1.6; color: #666;">
-            Thank you for purchasing a gift card! ${isForRecipient ? `We'll be sending a separate email to ${giftCard.recipient_name} with the code and your personal message.` : 'Keep this confirmation for your records.'}
+            Thank you for purchasing a gift card! ${isForRecipient ? `We'll be sending a separate email to ${esc(giftCard.recipient_name)} with the code and your personal message.` : 'Keep this confirmation for your records.'}
           </p>
 
           <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
@@ -106,13 +107,13 @@ Deno.serve(async (req) => {
           
           <div style="background: #f9f9f9; padding: 40px 20px; border-radius: 0 0 12px 12px;">
             <p style="margin: 0 0 20px; font-size: 16px;">
-              Hi <strong>${giftCard.recipient_name}</strong>,
+              Hi <strong>${esc(giftCard.recipient_name)}</strong>,
             </p>
             
             ${giftCard.message ? `
               <div style="background: white; border-left: 4px solid #C89B4F; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-                <p style="margin: 0 0 10px; font-size: 12px; color: #999; text-transform: uppercase; font-weight: bold;">From ${giftCard.purchaser_name}:</p>
-                <p style="margin: 0; font-size: 14px; font-style: italic; line-height: 1.6;">"${giftCard.message}"</p>
+                <p style="margin: 0 0 10px; font-size: 12px; color: #999; text-transform: uppercase; font-weight: bold;">From ${esc(giftCard.purchaser_name)}:</p>
+                <p style="margin: 0; font-size: 14px; font-style: italic; line-height: 1.6;">"${esc(giftCard.message)}"</p>
               </div>
             ` : ''}
 

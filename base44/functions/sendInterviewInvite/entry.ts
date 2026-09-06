@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { esc } from '../../shared/escapeHtml.js';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -32,9 +33,9 @@ Deno.serve(async (req) => {
       <h1 style="color: #C89B4F; font-size: 28px; margin: 0; letter-spacing: 1px;">JTAP Kitchen</h1>
     </div>
     <div style="padding: 40px 36px;">
-      <h2 style="font-size: 22px; margin: 0 0 12px;">Hi ${app.applicant_name},</h2>
+      <h2 style="font-size: 22px; margin: 0 0 12px;">Hi ${esc(app.applicant_name)},</h2>
       <p style="color: #555; line-height: 1.7; margin: 0 0 20px;">
-        We're excited about your application for the <strong>${app.job_title}</strong> position and would love to connect with you for an interview.
+        We're excited about your application for the <strong>${esc(app.job_title)}</strong> position and would love to connect with you for an interview.
       </p>
       <p style="color: #555; line-height: 1.7; margin: 0 0 32px;">
         Please click the button below to view available time slots and pick one that works best for you. The booking only takes a moment.

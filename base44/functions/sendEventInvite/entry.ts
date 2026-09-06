@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { esc } from '../../shared/escapeHtml.js';
 
 export default async function(req) {
   try {
@@ -94,13 +95,13 @@ function buildInviteEmail(promotion, invite, rsvpUrl) {
     </div>
     ${promotion.banner_image_url ? `<div style="width:100%;height:200px;background-image:url('${promotion.banner_image_url}');background-size:cover;background-position:center;"></div>` : ''}
     <div style="padding: 40px 36px;">
-      <h2 style="font-size: 26px; margin: 0 0 8px; color: #1a1a1a;">${promotion.title}</h2>
-      ${promotion.subtitle ? `<p style="color: #C89B4F; font-size: 15px; margin: 0 0 20px; font-style: italic;">${promotion.subtitle}</p>` : ''}
-      <p style="color: #555; line-height: 1.7; margin: 0 0 24px;">Hi ${invite.guest_name},</p>
-      ${promotion.host_message ? `<p style="color: #555; line-height: 1.7; margin: 0 0 24px;">${promotion.host_message}</p>` : ''}
+      <h2 style="font-size: 26px; margin: 0 0 8px; color: #1a1a1a;">${esc(promotion.title)}</h2>
+      ${promotion.subtitle ? `<p style="color: #C89B4F; font-size: 15px; margin: 0 0 20px; font-style: italic;">${esc(promotion.subtitle)}</p>` : ''}
+      <p style="color: #555; line-height: 1.7; margin: 0 0 24px;">Hi ${esc(invite.guest_name)},</p>
+      ${promotion.host_message ? `<p style="color: #555; line-height: 1.7; margin: 0 0 24px;">${esc(promotion.host_message)}</p>` : ''}
       <div style="background: #f5f3f0; border-radius: 12px; padding: 20px; margin: 0 0 28px;">
         <p style="margin: 0 0 8px; color: #1a1a1a; font-size: 14px;"><strong>&#128197;</strong> ${dateStr}${timeStr ? ' at ' + timeStr : ''}</p>
-        <p style="margin: 0 0 8px; color: #1a1a1a; font-size: 14px;"><strong>&#128205;</strong> ${promotion.location_label || 'JTAP Kitchen — Memphis, TN'}</p>
+        <p style="margin: 0 0 8px; color: #1a1a1a; font-size: 14px;"><strong>&#128205;</strong> ${esc(promotion.location_label || 'JTAP Kitchen — Memphis, TN')}</p>
         <p style="margin: 0; color: #1a1a1a; font-size: 14px;"><strong>&#127903;</strong> ${priceLine}</p>
         ${invite.discount_amount > 0 ? `<p style="margin: 8px 0 0; color: #1a6b3a; font-size: 14px;"><strong>&#127873;</strong> Your member discount: $${Number(invite.discount_amount).toFixed(0)} off</p>` : ''}
       </div>

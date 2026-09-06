@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { esc } from '../../shared/escapeHtml.js';
 
 Deno.serve(async (req) => {
   try {
@@ -51,7 +52,7 @@ Deno.serve(async (req) => {
         <h1>Share Your Experience</h1>
       </div>
       <div class="content">
-        <p>Hi <strong>${reservation.guest_name}</strong>,</p>
+        <p>Hi <strong>${esc(reservation.guest_name)}</strong>,</p>
         
         <div class="section">
           <p>Thank you for choosing JTAP Kitchen for your meal on <strong>${new Date(reservation.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</strong>. We hope you had a wonderful experience!</p>
