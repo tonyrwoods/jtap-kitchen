@@ -25,7 +25,8 @@
           "with": {
             "function_name": "notifyWaitlistOnAvailability",
             "args": {
-              "reservation_id": "${ .trigger.entity_id }"
+              "reservation_id": "${ .trigger.entity_id }",
+              "secret": "waitlist_notify_5c2e8a4f1d9b7e6a3f0c5b8d2e7a4f01"
             }
           },
           "then": "end",

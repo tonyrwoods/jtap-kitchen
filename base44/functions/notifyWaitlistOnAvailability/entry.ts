@@ -15,10 +15,18 @@ function todayInChicago() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
 }
 
+// Shared secret — also passed by the "Waitlist Notify on Cancellation"
+// workflow. Gates the public endpoint so unauthenticated callers can't
+// trigger waitlist notifications or move waitlist records.
+const NOTIFY_SECRET = 'waitlist_notify_5c2e8a4f1d9b7e6a3f0c5b8d2e7a4f01';
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
+    if (body.secret !== NOTIFY_SECRET) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
     const { reservation_id } = body;
     if (!reservation_id) {
       return Response.json({ error: 'reservation_id is required' }, { status: 400 });
