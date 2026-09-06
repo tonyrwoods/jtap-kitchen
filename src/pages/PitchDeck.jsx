@@ -224,14 +224,14 @@ export default function PitchDeck() {
 
   return (
     <div className="fixed inset-0 bg-black">
-      <AnimatePresence mode="wait">
+      <AnimatePresence initial={false}>
         <motion.div
           key={index}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="w-full h-full"
+          className="absolute inset-0 w-full h-full"
         >
           <Slide slide={slide} index={index} />
         </motion.div>
