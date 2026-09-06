@@ -3,7 +3,13 @@ import { secrets } from 'base44:runtime';
 
 // System-triggered (by the "Auto-Post Promotion to Social" workflow on
 // EventPromotion create) — no user session is available, so entity and
-// connector access uses the service role.
+// connector access uses the service role. Also invoked manually from the
+// admin Promotions tab by a logged-in admin.
+//
+// Auth: accepts EITHER the workflow's shared secret OR a logged-in admin.
+// Blocks unauthenticated public callers from triggering social posts.
+
+const SOCIAL_POST_SECRET = 'social_post_7d2a9e4f1c8b6e3a5f0d2b8c4e7a1f09';
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -165,6 +171,15 @@ export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
+
+    // Allow the workflow (shared secret) or a logged-in admin; reject everyone else.
+    if (body.secret !== SOCIAL_POST_SECRET) {
+      const user = await base44.auth.me().catch(() => null);
+      if (!user || user.role !== 'admin') {
+        return Response.json({ error: 'Forbidden' }, { status: 403 });
+      }
+    }
+
     const { promotion_id, platforms: payloadPlatforms } = body;
     if (!promotion_id) return Response.json({ error: 'promotion_id is required' }, { status: 400 });
 

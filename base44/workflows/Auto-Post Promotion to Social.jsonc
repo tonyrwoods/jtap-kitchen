@@ -25,7 +25,8 @@
           "with": {
             "function_name": "postPromotionToSocial",
             "args": {
-              "promotion_id": "${ .trigger.entity_id }"
+              "promotion_id": "${ .trigger.entity_id }",
+              "secret": "social_post_7d2a9e4f1c8b6e3a5f0d2b8c4e7a1f09"
             }
           },
           "then": "end",
