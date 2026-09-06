@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import useSeoMeta from "../hooks/useSeoMeta";
 
-const CATEGORIES = ["Starters", "Mains", "Desserts", "Drinks"];
+const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
 const DIETARY_COLORS = {
   "Vegetarian": "bg-green-100 text-green-800",
