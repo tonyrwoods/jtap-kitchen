@@ -202,7 +202,7 @@ export default function PitchDeck() {
   }, []);
 
   const go = (dir) => {
-    haptic?.();
+    haptic.tap();
     setIndex((prev) => {
       const next = prev + dir;
       if (next < 0) return slides.length - 1;
@@ -268,7 +268,7 @@ export default function PitchDeck() {
         {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => { haptic?.(); setIndex(i); }}
+            onClick={() => { haptic.tap(); setIndex(i); }}
             className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? "w-8 bg-primary" : "w-1.5 bg-white/30 hover:bg-white/50"}`}
           />
         ))}
