@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MapPin, Phone, Mail, Instagram, Clock, Send, CheckCircle2, Facebook } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { trackPixel } from "@/lib/metaPixel";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -15,6 +16,7 @@ export default function Footer({ onBookTable }) {
     setLoading(true);
     await base44.functions.invoke("subscribeNewsletter", { name: name.trim(), email: email.trim(), source: "footer" });
     base44.analytics.track({ eventName: "newsletter_signup", properties: { source: "footer" } });
+    trackPixel("CompleteRegistration", { content_name: "Newsletter", status: "footer" });
     setName("");
     setEmail("");
     setLoading("done");

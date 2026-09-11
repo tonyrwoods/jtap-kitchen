@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Gift, Search, CreditCard } from "lucide-react";
 import { toast } from "sonner";
+import { trackPixel } from "@/lib/metaPixel";
 
 const AMOUNTS = [25, 50, 100, 150, 200];
 
@@ -87,6 +88,7 @@ export default function GiftCards() {
         return;
       }
       // 3. Hand off to Wix's hosted payment page.
+      trackPixel("InitiateCheckout", { content_name: "Gift Card", value: Number(finalAmount) || 0, currency: "USD" });
       window.location.href = redirectUrl;
     } catch {
       toast.error("Failed to start checkout. Please try again.");

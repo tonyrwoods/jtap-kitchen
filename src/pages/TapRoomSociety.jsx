@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
+import { trackPixel } from "@/lib/metaPixel";
 import {
   Percent, Lock, CalendarDays, Gift, Star, Award,
   CheckCircle2, XCircle, Crown, Camera
@@ -87,6 +88,7 @@ export default function TapRoomSociety() {
       referred_by_code: form.referred_by_code,
     });
     if (res.data?.success) {
+      trackPixel("CompleteRegistration", { content_name: "Tap Room Society", status: form.tier });
       setSubmitted(true);
       setTimeout(() => navigate("/my-membership"), 1500);
     } else {

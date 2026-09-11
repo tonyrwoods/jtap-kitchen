@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle, Mail } from "lucide-react";
 import { toast } from "sonner";
 import CompanionInviteForm from "@/components/CompanionInviteForm";
+import { trackPixel } from "@/lib/metaPixel";
 
 const TIME_SLOTS = [
   "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM",
@@ -155,6 +156,7 @@ export default function BookTable() {
         setReservationToken(res.data.reservation.confirm_token);
         setReservationId(res.data.reservation.id);
         base44.analytics.track({ eventName: "reservation_created", properties: { party_size: party, date: dateStr } });
+        trackPixel("Lead", { content_name: "Reservation", content_category: "Dining", value: 0, currency: "USD" });
         setSubmitted(true);
       } else {
         toast.error(res.data?.error || "Unable to create reservation.");

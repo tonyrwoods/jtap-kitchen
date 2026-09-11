@@ -5,6 +5,7 @@ import { CheckCircle2, Users, Star, CalendarDays, Phone, Mail, ChevronDown, Chev
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import EventWaitlistSignup from "../components/EventWaitlistSignup";
+import { trackPixel } from "@/lib/metaPixel";
 
 const PACKAGES = [
 {
@@ -135,6 +136,7 @@ export default function EventCenter() {
       ...form,
       guest_count: parseInt(form.guest_count) || 0
     });
+    trackPixel("Lead", { content_name: "Event Inquiry", content_category: form.package || "Not Sure", value: 0, currency: "USD" });
     setSubmitted(true);
     setSubmitting(false);
   };

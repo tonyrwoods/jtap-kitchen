@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import useSeoMeta from "../hooks/useSeoMeta";
+import { trackPixel } from "@/lib/metaPixel";
 
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
@@ -66,6 +67,10 @@ export default function DigitalMenu() {
       setItems(data);
       setLoading(false);
     });
+  }, []);
+
+  useEffect(() => {
+    trackPixel("ViewContent", { content_name: "Digital Menu", content_category: "Menu" });
   }, []);
 
   const toggleTag = (tag) => {

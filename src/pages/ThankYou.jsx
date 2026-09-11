@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
+import { trackPixel } from "@/lib/metaPixel";
 
 export default function ThankYou() {
   useEffect(() => {
     document.title = "Thank You — JTAP Kitchen";
+    trackPixel("Purchase", { content_name: "Checkout", value: 0, currency: "USD" });
   }, []);
 
   return (

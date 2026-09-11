@@ -9,6 +9,7 @@ import EventCardSkeleton from "../components/EventCardSkeleton";
 import EventCountdown from "../components/EventCountdown";
 import WaitlistConfirmationModal from "../components/WaitlistConfirmationModal";
 import PromoBanner from "../components/events/PromoBanner";
+import { trackPixel } from "@/lib/metaPixel";
 
 const CATEGORY_COLORS = {
   "Wine Tasting": "bg-purple-100 text-purple-700",
@@ -122,6 +123,10 @@ export default function Events() {
       setEvents(data.filter(e => e.date >= today));
       setLoading(false);
     });
+  }, []);
+
+  useEffect(() => {
+    trackPixel("ViewContent", { content_name: "Events", content_category: "Events" });
   }, []);
 
   const filtered = filter === "All" ? events : events.filter(e => e.event_type === filter);
