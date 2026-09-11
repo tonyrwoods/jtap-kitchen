@@ -40,8 +40,8 @@ export default function ChefHighlights() {
           {/* Image */}
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
             <img
-              key={dish.id} src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/dd9e260cf_Grilled_Ribeye_Steak_DJ.jpg"
-
+              key={dish.id}
+              src={dish.image_url || "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80"}
               alt={dish.name}
               loading="lazy"
               decoding="async"
