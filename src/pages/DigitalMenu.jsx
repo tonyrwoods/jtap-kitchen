@@ -79,9 +79,10 @@ export default function DigitalMenu() {
     );
   };
 
-  const categories = ["All", ...CATEGORIES.filter(c => items.some(i => i.category === c))];
+  const hasFeatured = items.some(i => i.is_featured);
+  const categories = ["All", ...(hasFeatured ? ["Chef's Favorites"] : []), ...CATEGORIES.filter(c => items.some(i => i.category === c))];
   const filtered = items
-    .filter(i => activeCategory === "All" || i.category === activeCategory)
+    .filter(i => activeCategory === "All" || (activeCategory === "Chef's Favorites" ? i.is_featured : i.category === activeCategory))
     .filter(i => activeDietaryTags.length === 0 || activeDietaryTags.every(tag => i.dietary_tags?.includes(tag)));
 
   return (
