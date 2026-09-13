@@ -55,6 +55,64 @@
         "Not Sure"
       ]
     },
+    "package_name": {
+      "type": "string",
+      "title": "Package Name"
+    },
+    "event_date": {
+      "type": "string",
+      "title": "Event Date (YYYY-MM-DD)",
+      "format": "date"
+    },
+    "selected_talent_ids": {
+      "type": "array",
+      "title": "Selected Talent",
+      "items": {
+        "type": "string",
+        "relation": "EventServiceProvider",
+        "format": "uuid"
+      }
+    },
+    "selected_addon_ids": {
+      "type": "array",
+      "title": "Selected Add-Ons",
+      "items": {
+        "type": "string",
+        "relation": "EventAddOn",
+        "format": "uuid"
+      }
+    },
+    "selected_menu_item_ids": {
+      "type": "array",
+      "title": "Selected Menu Items",
+      "items": {
+        "type": "string",
+        "relation": "MenuItem",
+        "format": "uuid"
+      }
+    },
+    "estimated_total": {
+      "type": "number",
+      "title": "Estimated Total (USD)"
+    },
+    "deposit_amount": {
+      "type": "number",
+      "title": "Deposit Amount (USD)"
+    },
+    "deposit_status": {
+      "type": "string",
+      "title": "Deposit Status",
+      "enum": [
+        "Unpaid",
+        "Paid",
+        "Refunded"
+      ],
+      "default": "Unpaid"
+    },
+    "stripe_payment_id": {
+      "type": "string",
+      "title": "Stripe Payment ID (optional)"
+    },
     "message": {
       "type": "string",
       "title": "Additional Details"
@@ -64,8 +122,8 @@
       "title": "Status",
       "enum": [
         "New",
-        "Contacted",
-        "Booked",
+        "Confirmed",
+        "Talent Pending",
         "Declined"
       ],
       "default": "New"
