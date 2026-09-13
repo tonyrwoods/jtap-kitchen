@@ -60,9 +60,9 @@ export default async function(req) {
     }
     // base44 auth setup BEFORE Stripe signature validation (per platform guidance).
     const base44 = createClientFromRequest(req);
-    const webhookSecret = secrets.get("STRIPE_WEBHOOK_SECRET");
+    const webhookSecret = secrets.get("STRIPE_SECRET_KEY2");
     if (!webhookSecret) {
-      console.error("stripe-event-deposit-webhook: STRIPE_WEBHOOK_SECRET not set");
+      console.error("stripe-event-deposit-webhook: STRIPE_SECRET_KEY2 not set");
       return Response.json({ error: "Webhook not configured" }, { status: 500 });
     }
 
@@ -77,12 +77,22 @@ export default async function(req) {
       return Response.json({ error: "Invalid signature" }, { status: 401 });
     }
 
-    if (event.type !== "checkout.session.completed") {
-      // Acknowledge other event types so Stripe doesn't retry.
+    const session = event.data && event.data.object;
+
+    // Fulfill only when the session is actually paid: completed(paid) for card,
+    // or async_payment_succeeded for delayed payment methods. For completed
+    // sessions still pending (async), wait for the succeeded event.
+    const shouldFulfill =
+      event.type === "checkout.session.async_payment_succeeded" ||
+      (event.type === "checkout.session.completed" && session && session.payment_status === "paid");
+
+    if (!shouldFulfill) {
+      // expired / async_payment_failed / completed-but-unpaid: no fulfillment.
+      // The inquiry stays Unpaid so the team can see no payment landed.
+      console.log("stripe-event-deposit-webhook: ignoring event", { type: event.type, payment_status: session && session.payment_status });
       return Response.json({ received: true, ignored: event.type });
     }
 
-    const session = event.data && event.data.object;
     const inquiryId = (session && (session.client_reference_id || (session.metadata && session.metadata.inquiry_id))) || "";
     if (!inquiryId) {
       console.error("stripe-event-deposit-webhook: session missing inquiry reference", { id: session && session.id });
