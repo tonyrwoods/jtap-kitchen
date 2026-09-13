@@ -5,13 +5,13 @@ import { toast } from "sonner";
 import { CheckCircle2, ChevronLeft, ChevronRight, Send } from "lucide-react";
 import WizardProgress from "./WizardProgress";
 import WizardStepDetails from "./WizardStepDetails";
-import WizardStepPackage from "./WizardStepPackage";
+import WizardStepPackageDate from "./WizardStepPackageDate";
 import WizardStepTalent from "./WizardStepTalent";
 import WizardStepAddOns from "./WizardStepAddOns";
 import WizardStepContact from "./WizardStepContact";
 import { trackPixel } from "@/lib/metaPixel";
 
-const STEPS = ["Details", "Package", "Talent", "Add-Ons", "Contact"];
+const STEPS = ["Package & Date", "Details", "Talent", "Add-Ons", "Contact"];
 const EMPTY = {
   event_type: "", preferred_day: "Flexible", preferred_date: "", guest_count: "",
   package: "Not Sure", selected_talent_ids: [], selected_addon_ids: [],
@@ -40,7 +40,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
   useEffect(() => {
     if (initialPackage) {
       setForm((f) => ({ ...f, package: initialPackage.value }));
-      setStep(1);
+      setStep(0);
       onPackageConsumed?.();
     }
   }, [initialPackage]);
@@ -64,11 +64,30 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
       .catch(() => setDateBooked(false));
   }, [form.preferred_date]);
 
+  // Derive preferred_day from the chosen date and compute weekday validity
+  const weekdayInvalid = (() => {
+    if (!form.preferred_date) return false;
+    const d = new Date(form.preferred_date + "T00:00:00").getDay();
+    return d < 0 || d > 2;
+  })();
+
+  useEffect(() => {
+    if (!form.preferred_date) return;
+    const d = new Date(form.preferred_date + "T00:00:00").getDay();
+    const names = ["Sunday", "Monday", "Tuesday"];
+    if (d >= 0 && d <= 2) set("preferred_day", names[d]);
+  }, [form.preferred_date]);
+
   const scrollToTop = () => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const validateStep = (i) => {
-    if (i === 0 && (!form.event_type || !form.guest_count || !form.preferred_day)) {
-      toast.error("Please complete event type, guest count, and preferred day.");
+    if (i === 0) {
+      if (!form.package) { toast.error("Please choose a package."); return false; }
+      if (!form.preferred_date) { toast.error("Please pick an event date."); return false; }
+      if (weekdayInvalid) { toast.error("Please pick a Sunday, Monday, or Tuesday."); return false; }
+    }
+    if (i === 1 && (!form.event_type || !form.guest_count)) {
+      toast.error("Please complete event type and guest count.");
       return false;
     }
     if (i === 4 && (!form.contact_name || !form.email)) {
@@ -139,8 +158,8 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
         <WizardProgress steps={STEPS} current={step} />
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.2 }}>
-            {step === 0 && <WizardStepDetails form={form} set={set} dateBooked={dateBooked} onJoinWaitlist={onJoinWaitlist} />}
-            {step === 1 && <WizardStepPackage form={form} set={set} />}
+            {step === 0 && <WizardStepPackageDate form={form} set={set} dateBooked={dateBooked} onJoinWaitlist={onJoinWaitlist} weekdayInvalid={weekdayInvalid} />}
+            {step === 1 && <WizardStepDetails form={form} set={set} />}
             {step === 2 && <WizardStepTalent form={form} set={set} talent={talent} availability={availability} preferredDate={form.preferred_date} />}
             {step === 3 && <WizardStepAddOns form={form} set={set} addons={addons} />}
             {step === 4 && <WizardStepContact form={form} set={set} talent={talent} addons={addons} estimatedTotal={estimatedTotal} />}
