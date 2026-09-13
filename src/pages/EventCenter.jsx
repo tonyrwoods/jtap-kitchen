@@ -119,7 +119,7 @@ export default function EventCenter() {
     set("preferred_date", date);
     if (!date) return;
     // Fetch existing confirmed inquiries for this date
-    const existing = await base44.entities.EventCenterInquiry.filter({ preferred_date: date, status: "Booked" });
+    const existing = await base44.entities.EventCenterInquiry.filter({ preferred_date: date, status: "Confirmed" });
     if (existing.length >= 1) {
       setBookedDates((prev) => [...new Set([...prev, date])]);
     }
