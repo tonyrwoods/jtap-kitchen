@@ -1,0 +1,167 @@
+import { useState, useEffect, useRef } from "react";
+import { base44 } from "@/api/base44Client";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { CheckCircle2, ChevronLeft, ChevronRight, Send } from "lucide-react";
+import WizardProgress from "./WizardProgress";
+import WizardStepDetails from "./WizardStepDetails";
+import WizardStepPackage from "./WizardStepPackage";
+import WizardStepTalent from "./WizardStepTalent";
+import WizardStepAddOns from "./WizardStepAddOns";
+import WizardStepContact from "./WizardStepContact";
+import { trackPixel } from "@/lib/metaPixel";
+
+const STEPS = ["Details", "Package", "Talent", "Add-Ons", "Contact"];
+const EMPTY = {
+  event_type: "", preferred_day: "Flexible", preferred_date: "", guest_count: "",
+  package: "Not Sure", selected_talent_ids: [], selected_addon_ids: [],
+  contact_name: "", email: "", phone: "", message: "",
+};
+
+export default function EventBookingWizard({ initialPackage, onPackageConsumed, onJoinWaitlist }) {
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState(EMPTY);
+  const [talent, setTalent] = useState([]);
+  const [addons, setAddons] = useState([]);
+  const [availability, setAvailability] = useState({});
+  const [dateBooked, setDateBooked] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const topRef = useRef(null);
+
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  useEffect(() => {
+    base44.entities.EventServiceProvider.filter({ is_active: true }, "name", 200).then(setTalent).catch(() => {});
+    base44.entities.EventAddOn.filter({ is_active: true }, "name", 200).then(setAddons).catch(() => {});
+  }, []);
+
+  // Prefill package from "Book This Package" CTA
+  useEffect(() => {
+    if (initialPackage) {
+      setForm((f) => ({ ...f, package: initialPackage.value }));
+      setStep(1);
+      onPackageConsumed?.();
+    }
+  }, [initialPackage]);
+
+  // Live talent availability + booked-date check when date changes
+  useEffect(() => {
+    if (!form.preferred_date) {
+      setAvailability({});
+      setDateBooked(false);
+      return;
+    }
+    base44.entities.TalentAvailability.filter({ date: form.preferred_date }, "date", 200)
+      .then((blocks) => {
+        const map = {};
+        blocks.forEach((b) => { map[b.provider_id] = b.is_available; });
+        setAvailability(map);
+      })
+      .catch(() => setAvailability({}));
+    base44.entities.EventCenterInquiry.filter({ preferred_date: form.preferred_date, status: "Confirmed" })
+      .then((res) => setDateBooked(res.length >= 1))
+      .catch(() => setDateBooked(false));
+  }, [form.preferred_date]);
+
+  const scrollToTop = () => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const validateStep = (i) => {
+    if (i === 0 && (!form.event_type || !form.guest_count || !form.preferred_day)) {
+      toast.error("Please complete event type, guest count, and preferred day.");
+      return false;
+    }
+    if (i === 4 && (!form.contact_name || !form.email)) {
+      toast.error("Please enter your name and email.");
+      return false;
+    }
+    return true;
+  };
+
+  const next = () => {
+    if (!validateStep(step)) return;
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    scrollToTop();
+  };
+  const back = () => {
+    setStep((s) => Math.max(s - 1, 0));
+    scrollToTop();
+  };
+
+  const estimatedTotal =
+    addons.filter((a) => form.selected_addon_ids.includes(a.id)).reduce((s, a) => s + Number(a.price || 0), 0) +
+    talent.filter((t) => form.selected_talent_ids.includes(t.id)).reduce((s, t) => s + Number(t.base_rate || 0), 0);
+
+  const handleSubmit = async () => {
+    if (!validateStep(4)) return;
+    setSubmitting(true);
+    try {
+      await base44.functions.invoke("submitEventInquiry", {
+        ...form,
+        guest_count: parseInt(form.guest_count) || 0,
+        event_date: form.preferred_date || null,
+        package_name: form.package,
+        estimated_total: estimatedTotal,
+      });
+      trackPixel("Lead", { content_name: "Event Inquiry", content_category: form.package || "Not Sure", value: estimatedTotal, currency: "USD" });
+      setSubmitted(true);
+    } catch (e) {
+      toast.error("Could not submit: " + (e.message || "unknown error"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle2 className="w-10 h-10 text-green-600" />
+        </div>
+        <h3 className="font-heading text-2xl font-bold mb-3">Inquiry Submitted!</h3>
+        <p className="font-body text-muted-foreground mb-6">Thank you! We'll be in touch within 24 hours to discuss your event.</p>
+        <button onClick={() => { setSubmitted(false); setForm(EMPTY); setStep(0); }} className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold">
+          Start a New Inquiry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={topRef}>
+      <div className="text-center mb-6">
+        <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">Get Started</p>
+        <h2 className="font-heading text-3xl font-bold">Request a Private Event</h2>
+        <p className="font-body text-sm text-muted-foreground mt-2">Our events team will respond within 24 hours.</p>
+      </div>
+
+      <div className="bg-card border border-border rounded-2xl p-6 sm:p-8">
+        <WizardProgress steps={STEPS} current={step} />
+        <AnimatePresence mode="wait">
+          <motion.div key={step} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.2 }}>
+            {step === 0 && <WizardStepDetails form={form} set={set} dateBooked={dateBooked} onJoinWaitlist={onJoinWaitlist} />}
+            {step === 1 && <WizardStepPackage form={form} set={set} />}
+            {step === 2 && <WizardStepTalent form={form} set={set} talent={talent} availability={availability} preferredDate={form.preferred_date} />}
+            {step === 3 && <WizardStepAddOns form={form} set={set} addons={addons} />}
+            {step === 4 && <WizardStepContact form={form} set={set} talent={talent} addons={addons} estimatedTotal={estimatedTotal} />}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="flex items-center justify-between mt-8 pt-5 border-t border-border">
+          <button type="button" onClick={back} disabled={step === 0} className="inline-flex items-center gap-1.5 px-5 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">
+            <ChevronLeft className="w-4 h-4" /> Back
+          </button>
+          {step < STEPS.length - 1 ? (
+            <button type="button" onClick={next} className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90">
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <button type="button" onClick={handleSubmit} disabled={submitting} className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50">
+              <Send className="w-4 h-4" /> {submitting ? "Submitting..." : "Submit Inquiry"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

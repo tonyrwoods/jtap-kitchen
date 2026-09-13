@@ -12,7 +12,8 @@ export default async function(req) {
     const body = await req.json();
     const {
       contact_name, email, phone, event_type,
-      preferred_day, preferred_date, guest_count, package: pkg, message,
+      preferred_day, preferred_date, guest_count, package: pkg, package_name,
+      event_date, selected_talent_ids, selected_addon_ids, estimated_total, message,
     } = body;
 
     if (!contact_name || !email || !guest_count) {
@@ -30,8 +31,13 @@ export default async function(req) {
       event_type: event_type || null,
       preferred_day: preferred_day || 'Flexible',
       preferred_date: preferred_date || null,
+      event_date: event_date || preferred_date || null,
       guest_count: parseInt(guest_count) || 0,
       package: pkg || 'Not Sure',
+      package_name: package_name || pkg || null,
+      selected_talent_ids: Array.isArray(selected_talent_ids) ? selected_talent_ids : [],
+      selected_addon_ids: Array.isArray(selected_addon_ids) ? selected_addon_ids : [],
+      estimated_total: Number(estimated_total) || 0,
       message: message || null,
       status: 'New',
     });
