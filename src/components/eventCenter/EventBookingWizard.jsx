@@ -134,7 +134,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
       const inquiryId = submitRes.data?.inquiry?.id;
       if (!inquiryId) throw new Error("Inquiry could not be created.");
       trackPixel("InitiateCheckout", { content_name: "Event Deposit", content_category: form.package, value: packageDeposit, currency: "USD" });
-      const checkoutRes = await base44.functions.invoke("create-checkout", { productId: `eventdeposit:${inquiryId}` });
+      const checkoutRes = await base44.functions.invoke("create-event-deposit-checkout", { inquiryId });
       const redirectUrl = checkoutRes.data?.redirectUrl;
       if (!redirectUrl) throw new Error("Could not start checkout.");
       window.location.href = redirectUrl;
