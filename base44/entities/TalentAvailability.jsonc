@@ -1,0 +1,48 @@
+{
+  "name": "TalentAvailability",
+  "type": "object",
+  "properties": {
+    "provider_id": {
+      "type": "string",
+      "title": "Provider",
+      "relation": "EventServiceProvider",
+      "format": "uuid"
+    },
+    "date": {
+      "type": "string",
+      "title": "Date (YYYY-MM-DD)",
+      "format": "date"
+    },
+    "is_available": {
+      "type": "boolean",
+      "title": "Available",
+      "default": true
+    },
+    "note": {
+      "type": "string",
+      "title": "Note (optional)"
+    }
+  },
+  "required": [
+    "provider_id",
+    "date"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": null,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
