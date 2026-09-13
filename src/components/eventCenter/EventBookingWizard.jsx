@@ -14,7 +14,7 @@ import { trackPixel } from "@/lib/metaPixel";
 const STEPS = ["Package & Date", "Talent", "Add-Ons", "Details", "Contact"];
 const EMPTY = {
   event_type: "", preferred_day: "Flexible", preferred_date: "", guest_count: "",
-  package: "Not Sure", selected_talent_ids: [], selected_addon_ids: [],
+  package: "Not Sure", selected_talent_ids: [], selected_addon_ids: [], selected_menu_item_ids: [],
   contact_name: "", email: "", phone: "", message: "",
 };
 
@@ -23,7 +23,9 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
   const [form, setForm] = useState(EMPTY);
   const [talent, setTalent] = useState([]);
   const [addons, setAddons] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
   const [availability, setAvailability] = useState({});
+  const [addonCounts, setAddonCounts] = useState({});
   const [dateBooked, setDateBooked] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -34,6 +36,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
   useEffect(() => {
     base44.entities.EventServiceProvider.filter({ is_active: true }, "name", 200).then(setTalent).catch(() => {});
     base44.entities.EventAddOn.filter({ is_active: true }, "name", 200).then(setAddons).catch(() => {});
+    base44.entities.MenuItem.list("-created_date", 200).then(setMenuItems).catch(() => {});
   }, []);
 
   // Prefill package from "Book This Package" CTA
@@ -50,6 +53,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
     if (!form.preferred_date) {
       setAvailability({});
       setDateBooked(false);
+      setAddonCounts({});
       return;
     }
     base44.functions.invoke("getTalentAvailabilityForDate", { date: form.preferred_date })
@@ -59,10 +63,12 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
         talent.forEach((t) => { map[t.id] = !unavailable.includes(t.id); });
         setAvailability(map);
         setDateBooked(!!res.data?.dateBooked);
+        setAddonCounts(res.data?.addonCounts || {});
       })
       .catch(() => {
         setAvailability({});
         setDateBooked(false);
+        setAddonCounts({});
       });
   }, [form.preferred_date, talent]);
 
@@ -162,7 +168,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
           <motion.div key={step} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.2 }}>
             {step === 0 && <WizardStepPackageDate form={form} set={set} dateBooked={dateBooked} onJoinWaitlist={onJoinWaitlist} weekdayInvalid={weekdayInvalid} />}
             {step === 1 && <WizardStepTalent form={form} set={set} talent={talent} availability={availability} preferredDate={form.preferred_date} />}
-            {step === 2 && <WizardStepAddOns form={form} set={set} addons={addons} />}
+            {step === 2 && <WizardStepAddOns form={form} set={set} addons={addons} menuItems={menuItems} addonCounts={addonCounts} preferredDate={form.preferred_date} />}
             {step === 3 && <WizardStepDetails form={form} set={set} />}
             {step === 4 && <WizardStepContact form={form} set={set} talent={talent} addons={addons} estimatedTotal={estimatedTotal} />}
           </motion.div>

@@ -28,10 +28,17 @@ export default async function(req) {
       (c.selected_talent_ids || []).forEach((id) => blocked.add(id));
     });
 
+    // add-on booking counts across confirmed inquiries for this date
+    const addonCounts = {};
+    confirmed.forEach((c) => {
+      (c.selected_addon_ids || []).forEach((id) => { addonCounts[id] = (addonCounts[id] || 0) + 1; });
+    });
+
     return Response.json({
       date,
       unavailable: Array.from(blocked),
       dateBooked: confirmed.length > 0,
+      addonCounts,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
