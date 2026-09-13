@@ -4,14 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { CheckCircle2, ChevronLeft, ChevronRight, Send } from "lucide-react";
 import WizardProgress from "./WizardProgress";
-import WizardStepDetails from "./WizardStepDetails";
 import WizardStepPackageDate from "./WizardStepPackageDate";
 import WizardStepTalent from "./WizardStepTalent";
 import WizardStepAddOns from "./WizardStepAddOns";
 import WizardStepContact from "./WizardStepContact";
 import { trackPixel } from "@/lib/metaPixel";
 
-const STEPS = ["Package & Date", "Talent", "Add-Ons", "Details", "Contact"];
+const STEPS = ["Package & Date", "Talent", "Add-Ons", "Review & Contact"];
+const PACKAGE_PRICES = { "Social Gathering": 1600, "Elevated Experience": 3600, "Full Buyout": 9000 };
 const EMPTY = {
   event_type: "", preferred_day: "Flexible", preferred_date: "", guest_count: "",
   package: "Not Sure", selected_talent_ids: [], selected_addon_ids: [], selected_menu_item_ids: [],
@@ -94,13 +94,10 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
       if (!form.preferred_date) { toast.error("Please pick an event date."); return false; }
       if (weekdayInvalid) { toast.error("Please pick a Sunday, Monday, or Tuesday."); return false; }
     }
-    if (i === 3 && (!form.event_type || !form.guest_count)) {
-      toast.error("Please complete event type and guest count.");
-      return false;
-    }
-    if (i === 4 && (!form.contact_name || !form.email)) {
-      toast.error("Please enter your name and email.");
-      return false;
+    if (i === STEPS.length - 1) {
+      if (!form.contact_name || !form.email) { toast.error("Please enter your name and email."); return false; }
+      if (!form.event_type) { toast.error("Please select an event type."); return false; }
+      if (!form.guest_count) { toast.error("Please enter a guest count."); return false; }
     }
     return true;
   };
@@ -115,12 +112,14 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
     scrollToTop();
   };
 
+  const packagePrice = PACKAGE_PRICES[form.package] || 0;
   const estimatedTotal =
+    packagePrice +
     addons.filter((a) => form.selected_addon_ids.includes(a.id)).reduce((s, a) => s + Number(a.price || 0), 0) +
     talent.filter((t) => form.selected_talent_ids.includes(t.id)).reduce((s, t) => s + Number(t.base_rate || 0), 0);
 
   const handleSubmit = async () => {
-    if (!validateStep(4)) return;
+    if (!validateStep(STEPS.length - 1)) return;
     setSubmitting(true);
     try {
       await base44.functions.invoke("submitEventInquiry", {
@@ -169,8 +168,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
             {step === 0 && <WizardStepPackageDate form={form} set={set} dateBooked={dateBooked} onJoinWaitlist={onJoinWaitlist} weekdayInvalid={weekdayInvalid} />}
             {step === 1 && <WizardStepTalent form={form} set={set} talent={talent} availability={availability} preferredDate={form.preferred_date} />}
             {step === 2 && <WizardStepAddOns form={form} set={set} addons={addons} menuItems={menuItems} addonCounts={addonCounts} preferredDate={form.preferred_date} />}
-            {step === 3 && <WizardStepDetails form={form} set={set} />}
-            {step === 4 && <WizardStepContact form={form} set={set} talent={talent} addons={addons} estimatedTotal={estimatedTotal} />}
+            {step === 3 && <WizardStepContact form={form} set={set} talent={talent} addons={addons} estimatedTotal={estimatedTotal} packagePrice={packagePrice} />}
           </motion.div>
         </AnimatePresence>
 
