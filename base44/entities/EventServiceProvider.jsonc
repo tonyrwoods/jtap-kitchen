@@ -2,89 +2,68 @@
   "name": "EventServiceProvider",
   "type": "object",
   "properties": {
-    "full_name": {
+    "name": {
       "type": "string",
-      "title": "Full Name"
+      "title": "Name"
     },
-    "email": {
+    "category": {
       "type": "string",
-      "title": "Email"
-    },
-    "phone": {
-      "type": "string",
-      "title": "Phone"
-    },
-    "business_name": {
-      "type": "string",
-      "title": "Business / Brand Name"
-    },
-    "service_category": {
-      "type": "string",
-      "title": "Service Category",
+      "title": "Category",
       "enum": [
-        "DJ / Music",
-        "Live Band / Musicians",
-        "Photography",
-        "Videography",
-        "Floral Design",
-        "Event Decor",
-        "Caricature / Entertainment",
-        "Photo Booth",
+        "Wedding Planner",
+        "Event Planner",
+        "DJ",
+        "Musician",
+        "Photographer",
+        "Florist",
         "MC / Host",
-        "Event Planning",
-        "Lighting & AV",
-        "Bartending / Mixology",
-        "Cake & Desserts",
-        "Hair & Makeup",
+        "Clown / Entertainer",
+        "Officiant",
         "Other"
       ]
     },
-    "experience_years": {
-      "type": "number",
-      "title": "Years of Experience"
-    },
-    "portfolio_url": {
-      "type": "string",
-      "title": "Portfolio / Website URL"
-    },
-    "instagram_handle": {
-      "type": "string",
-      "title": "Instagram Handle"
-    },
     "bio": {
       "type": "string",
-      "title": "About You / Your Services"
+      "title": "Bio"
     },
-    "availability": {
+    "photo_url": {
       "type": "string",
-      "title": "General Availability",
-      "enum": [
-        "Sundays Only",
-        "Mondays Only",
-        "Tuesdays Only",
-        "Sun\u2013Tue (Any)",
-        "Flexible"
-      ]
+      "title": "Photo URL",
+      "format": "uri"
     },
-    "status": {
+    "base_rate": {
+      "type": "number",
+      "title": "Base Rate (USD)"
+    },
+    "rate_unit": {
       "type": "string",
-      "title": "Status",
+      "title": "Rate Unit",
       "enum": [
-        "Pending Review",
-        "Approved",
-        "Declined"
+        "Flat Rate",
+        "Per Hour",
+        "Per Guest"
       ],
-      "default": "Pending Review"
+      "default": "Flat Rate"
     },
-    "admin_notes": {
+    "contact_email": {
       "type": "string",
-      "title": "Admin Notes"
+      "title": "Contact Email (Internal \u2014 never shown to site visitors)",
+      "format": "email"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    },
+    "is_featured": {
+      "type": "boolean",
+      "title": "Featured",
+      "default": false
     }
   },
   "required": [
-    "full_name",
-    "email",
-    "service_category"
+    "name",
+    "category"
   ],
   "rls": {
     "create": {
@@ -92,11 +71,7 @@
         "role": "admin"
       }
     },
-    "read": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
+    "read": null,
     "update": {
       "user_condition": {
         "role": "admin"
