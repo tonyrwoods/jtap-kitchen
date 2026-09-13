@@ -15,6 +15,7 @@
 // (order.checkoutId === checkoutSession.id). Skipping this write makes fulfillment impossible.
 
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.31";
+import { depositForPackage } from "../../shared/eventDeposit.js";
 
 const CONSTRUCT_URL = "https://www.wixapis.com/payments/platform/v1/checkout-sessions/construct";
 
@@ -90,7 +91,8 @@ Deno.serve(async (req: Request) => {
     let price = "0.00";
     const currency = "USD";
     let subscriptionInfo = null;
-    const thankYouPath = "/ThankYou";
+    let thankYouPath = "/ThankYou";
+    let customerInfo = appUser?.email ? { email: appUser.email } : null;
     const postFlowPath = "/";
 
     // --- Gift card purchase ---
@@ -143,6 +145,33 @@ Deno.serve(async (req: Request) => {
       }
       productName = `${evt.title} — ${quantity} guest${quantity !== 1 ? "s" : ""}`;
       price = Number(evt.price_per_guest).toFixed(2);
+    } else if (productId.startsWith("eventdeposit:")) {
+      // Event center deposit — the inquiry was already created (deposit_status "Unpaid")
+      // by submitEventInquiry. Resolve the deposit amount SERVER-SIDE from the package tier.
+      const inquiryId = productId.slice("eventdeposit:".length);
+      const inquiry = await base44.asServiceRole.entities.EventCenterInquiry.get(inquiryId);
+      if (!inquiry) {
+        return new Response(JSON.stringify({ error: "Event inquiry not found" }), { status: 400 });
+      }
+      if (inquiry.deposit_status !== "Unpaid") {
+        return new Response(JSON.stringify({ error: "This inquiry is no longer eligible for checkout." }), { status: 400 });
+      }
+      const deposit = depositForPackage(inquiry.package);
+      if (!deposit || deposit < 0.5) {
+        return new Response(JSON.stringify({ error: "Invalid deposit amount for this package" }), { status: 400 });
+      }
+      if (quantity !== 1) {
+        return new Response(JSON.stringify({ error: "Deposit quantity must be 1" }), { status: 400 });
+      }
+      productName = `JTAP Kitchen Event Deposit — ${inquiry.package || "Event"}`;
+      price = Number(deposit).toFixed(2);
+      thankYouPath = `/event-confirmed?id=${inquiryId}`;
+      const firstSpace = (inquiry.contact_name || "").indexOf(" ");
+      customerInfo = {
+        email: inquiry.email || appUser?.email || undefined,
+        firstName: firstSpace >= 0 ? inquiry.contact_name.slice(0, firstSpace) : inquiry.contact_name || undefined,
+        phone: inquiry.phone || undefined,
+      };
     } else {
       return new Response(JSON.stringify({ error: "Unknown product" }), { status: 400 });
     }
@@ -158,7 +187,7 @@ Deno.serve(async (req: Request) => {
       cart: {
         items: [{ name: productName, quantity, price, ...(subscriptionInfo ? { subscriptionInfo } : {}) }],
         // Prefill the signed-in buyer's email if we have one; anonymous buyers enter it on Wix.
-        ...(appUser?.email ? { customerInfo: { email: appUser.email } } : {}),
+        ...(customerInfo ? { customerInfo } : {}),
       },
       callbackUrls: {
         thankYouPageUrl: `${appUrl}${thankYouPath}`,

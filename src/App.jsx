@@ -46,6 +46,7 @@ import EventAnnouncement from './pages/EventAnnouncement';
 import PromotionScorecard from './pages/PromotionScorecard';
 import ReservationConfirm from './pages/ReservationConfirm';
 import ThankYou from './pages/ThankYou';
+import EventDepositConfirmed from './pages/EventDepositConfirmed';
 import WhatsNew from './pages/WhatsNew';
 import AdFlyer from './pages/AdFlyer';
 import TableNumberPlaques from './pages/TableNumberPlaques';
@@ -157,6 +158,7 @@ const AuthenticatedApp = () => {
         <Route path="/event-invite/:token" element={<EventAnnouncement />} />
         <Route path="/reserve/:token" element={<ReservationConfirm />} />
         <Route path="/ThankYou" element={<ThankYou />} />
+        <Route path="/event-confirmed" element={<EventDepositConfirmed />} />
         <Route path="/whats-new" element={<WhatsNew />} />
         <Route path="/admin/flyer" element={<AdFlyer />} />
         <Route path="/admin/table-plaques" element={<TableNumberPlaques />} />
