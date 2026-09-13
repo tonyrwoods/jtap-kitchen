@@ -11,7 +11,7 @@ import WizardStepAddOns from "./WizardStepAddOns";
 import WizardStepContact from "./WizardStepContact";
 import { trackPixel } from "@/lib/metaPixel";
 
-const STEPS = ["Package & Date", "Details", "Talent", "Add-Ons", "Contact"];
+const STEPS = ["Package & Date", "Talent", "Add-Ons", "Details", "Contact"];
 const EMPTY = {
   event_type: "", preferred_day: "Flexible", preferred_date: "", guest_count: "",
   package: "Not Sure", selected_talent_ids: [], selected_addon_ids: [],
@@ -52,17 +52,19 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
       setDateBooked(false);
       return;
     }
-    base44.entities.TalentAvailability.filter({ date: form.preferred_date }, "date", 200)
-      .then((blocks) => {
+    base44.functions.invoke("getTalentAvailabilityForDate", { date: form.preferred_date })
+      .then((res) => {
+        const unavailable = res.data?.unavailable || [];
         const map = {};
-        blocks.forEach((b) => { map[b.provider_id] = b.is_available; });
+        talent.forEach((t) => { map[t.id] = !unavailable.includes(t.id); });
         setAvailability(map);
+        setDateBooked(!!res.data?.dateBooked);
       })
-      .catch(() => setAvailability({}));
-    base44.entities.EventCenterInquiry.filter({ preferred_date: form.preferred_date, status: "Confirmed" })
-      .then((res) => setDateBooked(res.length >= 1))
-      .catch(() => setDateBooked(false));
-  }, [form.preferred_date]);
+      .catch(() => {
+        setAvailability({});
+        setDateBooked(false);
+      });
+  }, [form.preferred_date, talent]);
 
   // Derive preferred_day from the chosen date and compute weekday validity
   const weekdayInvalid = (() => {
@@ -86,7 +88,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
       if (!form.preferred_date) { toast.error("Please pick an event date."); return false; }
       if (weekdayInvalid) { toast.error("Please pick a Sunday, Monday, or Tuesday."); return false; }
     }
-    if (i === 1 && (!form.event_type || !form.guest_count)) {
+    if (i === 3 && (!form.event_type || !form.guest_count)) {
       toast.error("Please complete event type and guest count.");
       return false;
     }
@@ -159,9 +161,9 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.2 }}>
             {step === 0 && <WizardStepPackageDate form={form} set={set} dateBooked={dateBooked} onJoinWaitlist={onJoinWaitlist} weekdayInvalid={weekdayInvalid} />}
-            {step === 1 && <WizardStepDetails form={form} set={set} />}
-            {step === 2 && <WizardStepTalent form={form} set={set} talent={talent} availability={availability} preferredDate={form.preferred_date} />}
-            {step === 3 && <WizardStepAddOns form={form} set={set} addons={addons} />}
+            {step === 1 && <WizardStepTalent form={form} set={set} talent={talent} availability={availability} preferredDate={form.preferred_date} />}
+            {step === 2 && <WizardStepAddOns form={form} set={set} addons={addons} />}
+            {step === 3 && <WizardStepDetails form={form} set={set} />}
             {step === 4 && <WizardStepContact form={form} set={set} talent={talent} addons={addons} estimatedTotal={estimatedTotal} />}
           </motion.div>
         </AnimatePresence>
