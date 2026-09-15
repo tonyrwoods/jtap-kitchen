@@ -60,9 +60,9 @@ export default async function(req) {
     }
     // base44 auth setup BEFORE Stripe signature validation (per platform guidance).
     const base44 = createClientFromRequest(req);
-    const webhookSecret = secrets.get("STRIPE_SECRET_KEY2");
+    const webhookSecret = secrets.get("STRIPE_WEBHOOK_SECRET");
     if (!webhookSecret) {
-      console.error("stripe-event-deposit-webhook: STRIPE_SECRET_KEY2 not set");
+      console.error("stripe-event-deposit-webhook: STRIPE_WEBHOOK_SECRET not set");
       return Response.json({ error: "Webhook not configured" }, { status: 500 });
     }
 
