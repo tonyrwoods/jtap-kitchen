@@ -1,0 +1,45 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 8 * * *",
+      "one_time_date": null,
+      "timezone": "America/Chicago",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_event_inquiry_cleanup",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "expire_inquiries": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "cleanupExpiredEventInquiries",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Expire unpaid inquiries",
+            "description": "Marks 7-day-old unpaid inquiries as Expired"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Expires unpaid event-center inquiries older than 7 days so they don't linger as New.",
+  "name": "Daily Event Inquiry Cleanup"
+}

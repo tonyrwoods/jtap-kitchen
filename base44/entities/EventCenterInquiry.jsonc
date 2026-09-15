@@ -124,7 +124,8 @@
         "New",
         "Confirmed",
         "Talent Pending",
-        "Declined"
+        "Declined",
+        "Expired"
       ],
       "default": "New"
     },
