@@ -65,6 +65,19 @@ export default async function (req) {
     const reservations = await base44.asServiceRole.entities.Reservation.filter({ confirm_token: reservation_token });
     const reservation = reservations[0];
     if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
+
+    // Require an authenticated caller who is the legitimate reservation holder
+    // (email match) or an admin before dispatching emails. A bare reservation
+    // token is not enough — it could be obtained/leaked and used to spam
+    // arbitrary external recipients via the companion-invite path.
+    let caller;
+    try { caller = await base44.auth.me(); } catch (_) { caller = null; }
+    const isHolder = !!(caller && reservation.email && caller.email && caller.email.toLowerCase() === reservation.email.toLowerCase());
+    const isAdmin = !!(caller && caller.role === 'admin');
+    if (!isHolder && !isAdmin) {
+      return Response.json({ error: 'You must be logged in as the reservation holder to invite companions.' }, { status: 403 });
+    }
+
     if (reservation.status !== 'Confirmed' && reservation.status !== 'Pending') {
       return Response.json({ error: 'Reservation must be active (Pending or Confirmed) before inviting companions' }, { status: 400 });
     }
