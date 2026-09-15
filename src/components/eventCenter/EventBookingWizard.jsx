@@ -91,7 +91,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
 
   const validateStep = (i) => {
     if (i === 0) {
-      if (!form.package) { toast.error("Please choose a package."); return false; }
+      if (!form.package || form.package === "Not Sure") { toast.error("Please choose a package tier to continue."); return false; }
       if (!form.preferred_date) { toast.error("Please pick an event date."); return false; }
       if (weekdayInvalid) { toast.error("Please pick a Sunday, Monday, or Tuesday."); return false; }
     }

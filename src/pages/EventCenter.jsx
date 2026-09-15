@@ -66,7 +66,7 @@ const DAYS = [
 
 const FAQS = [
 { q: "Can I bring my own cake or decorations?", a: "Yes! You're welcome to bring a custom cake and personal decorations. We provide complimentary cake cutting and setup time 30 minutes before your event." },
-{ q: "Is a deposit required to hold the date?", a: "A 25% deposit is required to confirm your booking. The remainder is due 7 days prior to your event." },
+{ q: "Is a deposit required to hold the date?", a: "Yes — a flat-rate deposit secures your date: $250 for Social Gathering, $500 for Elevated Experience, and $1,000 for Full Buyout. The remaining balance is due 7 days prior to your event." },
 { q: "Do you accommodate dietary restrictions?", a: "Absolutely. Our culinary team can accommodate vegetarian, vegan, gluten-free, and allergy-specific menus with advance notice." },
 { q: "What is the cancellation policy?", a: "Cancellations 14+ days in advance receive a full deposit refund. Cancellations within 7 days forfeit the deposit." }];
 
