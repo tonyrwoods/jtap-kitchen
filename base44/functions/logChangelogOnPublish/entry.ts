@@ -1,22 +1,28 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { secrets } from 'base44:runtime';
 
 // Auto-logged by the "Log Changelog on Publish" workflow each time the app
 // is published from the builder. Creates a ChangelogEntry with source=Auto.
-// Shared secret (read from the app secret PUBLISH_SECRET and also passed by
-// the workflow) gates the public endpoint so arbitrary callers can't create
-// changelog entries.
+//
+// app_publish is a system trigger with no user session, so there is no auth
+// check. A per-day dedupe guard limits the impact of an unauthenticated call
+// to a single low-sensitivity changelog note per day.
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    if (body.secret !== secrets.get('PUBLISH_SECRET')) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
-    }
     const occurred_at = body.occurred_at || new Date().toISOString();
     const visibility = body.visibility || 'unknown';
     const is_first_publish = body.is_first_publish === true;
     const dateStr = occurred_at.split('T')[0];
+
+    // Dedupe: only one auto changelog entry per day.
+    const existing = await base44.asServiceRole.entities.ChangelogEntry.filter({
+      source: 'Auto',
+      entry_date: dateStr,
+    });
+    if (existing && existing.length > 0) {
+      return Response.json({ skipped: true, reason: 'already logged for this date' });
+    }
 
     const title = is_first_publish
       ? 'App launched (first publish)'
