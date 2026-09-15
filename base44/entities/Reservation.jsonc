@@ -79,6 +79,10 @@
       "type": "string",
       "title": "Confirmation Email Sent At (ISO)"
     },
+    "waitlist_notified_at": {
+      "type": "string",
+      "title": "Waitlist Notified At (ISO)"
+    },
     "description": {
       "type": "string",
       "title": "Description",

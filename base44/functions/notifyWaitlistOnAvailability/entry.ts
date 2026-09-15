@@ -15,18 +15,16 @@ function todayInChicago() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date());
 }
 
-// Shared secret — read from the app secret WAITLIST_NOTIFY_SECRET and also
-// passed by the "Waitlist Notify on Cancellation" workflow. Gates the public
-// endpoint so unauthenticated callers can't trigger waitlist notifications
-// or move waitlist records.
+// One-time guard: the workflow has no user session (reservations are
+// cancelled by guests via a token link or by admins), so there is no auth
+// check. The waitlist_notified_at flag on the cancelled reservation ensures
+// each cancellation triggers at most one waitlist notification, so an
+// unauthenticated caller can't replay a cancellation to drain the waitlist.
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    if (body.secret !== secrets.get('WAITLIST_NOTIFY_SECRET')) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
-    }
     const { reservation_id } = body;
     if (!reservation_id) {
       return Response.json({ error: 'reservation_id is required' }, { status: 400 });
@@ -44,6 +42,9 @@ Deno.serve(async (req) => {
     const today = todayInChicago();
     if (reservation.date !== today) {
       return Response.json({ skipped: 'Not a same-day cancellation', reservation_date: reservation.date, today });
+    }
+    if (reservation.waitlist_notified_at) {
+      return Response.json({ skipped: 'Waitlist already notified for this cancellation' });
     }
 
     const waiting = await base44.asServiceRole.entities.Waitlist.filter({ status: 'Waiting' });
@@ -95,6 +96,10 @@ Deno.serve(async (req) => {
       notification_sent: true,
       notified_at: new Date().toISOString(),
     });
+
+    await base44.asServiceRole.entities.Reservation.update(reservation.id, {
+      waitlist_notified_at: new Date().toISOString(),
+    }).catch(() => {});
 
     return Response.json({ notified: 1, guest: match.guest_name, party_size: partySize });
   } catch (error) {
