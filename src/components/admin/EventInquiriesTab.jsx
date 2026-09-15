@@ -4,13 +4,14 @@ import { toast } from "sonner";
 import { Trash2, Mail, Phone, Users, CalendarDays, MessageSquare, Filter } from "lucide-react";
 import SelectDropdown from "@/components/SelectDropdown";
 
-const STATUSES = ["New", "Confirmed", "Talent Pending", "Declined"];
+const STATUSES = ["New", "Confirmed", "Talent Pending", "Declined", "Expired"];
 
 const STATUS_COLORS = {
   "New": "bg-blue-100 text-blue-800",
   "Confirmed": "bg-green-100 text-green-800",
   "Talent Pending": "bg-amber-100 text-amber-800",
   "Declined": "bg-red-100 text-red-800",
+  "Expired": "bg-slate-200 text-slate-700",
 };
 
 export default function EventInquiriesTab() {

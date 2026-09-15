@@ -101,9 +101,9 @@ const AuthenticatedApp = () => {
   return (
     <Suspense fallback={spinner}>
     <Routes>
+      <Route path="/pitch-deck" element={<PitchDeck />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/pitch-deck" element={<PitchDeck />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/gift-cards" element={<GiftCards />} />
         <Route path="/vendor-overcharge-analysis" element={<VendorOverchargeAnalysis />} />
