@@ -75,6 +75,10 @@
       "type": "string",
       "title": "Reminder Sent At (ISO)"
     },
+    "confirmation_email_sent_at": {
+      "type": "string",
+      "title": "Confirmation Email Sent At (ISO)"
+    },
     "description": {
       "type": "string",
       "title": "Description",

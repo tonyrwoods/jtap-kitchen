@@ -13,8 +13,7 @@
           "with": {
             "function_name": "sendReservationConfirmation",
             "args": {
-              "entity_id": "${ .trigger.entity_id }",
-              "secret": "resv_confirm_4e9a2c7b1f8d3a6e0c5b9f2d7a1e4c83"
+              "entity_id": "${ .trigger.entity_id }"
             }
           },
           "then": "end"

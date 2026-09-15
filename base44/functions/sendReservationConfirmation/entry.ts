@@ -17,29 +17,28 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const event = body.event || {};
 
-    // Authorize BEFORE any payload-driven branching: accept the workflow's
-    // shared secret (entity-triggered automation has no user session) OR a
-    // logged-in admin (manual invocation). Reject everyone else so an
-    // unauthenticated caller can't forge an event envelope to trigger guest
-    // confirmation emails/SMS.
-    const isAutomation = body.secret === secrets.get('RESERVATION_CONFIRM_SECRET');
-    if (!isAutomation) {
+    const entityId = body.entity_id || event.entity_id;
+
+    // Two invocation modes:
+    //  1. Workflow/replay — passes entity_id, no user session (reservations
+    //     are created by the public submit function via the service role).
+    //     A one-time flag on the reservation guards re-sends.
+    //  2. Manual admin — passes inline reservation data (no entity_id).
+    //     Requires an admin session.
+    let reservation;
+    if (entityId) {
+      if (event.type && event.type !== 'create') return Response.json({ skipped: true });
+      reservation = await base44.asServiceRole.entities.Reservation.get(entityId);
+      if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
+      if (reservation.confirmation_email_sent_at) {
+        return Response.json({ skipped: true, reason: 'confirmation email already sent' });
+      }
+    } else {
       let user;
       try { user = await base44.auth.me(); } catch (_) { user = null; }
       if (!user || user.role !== 'admin') {
         return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
       }
-    }
-
-    const entityId = body.entity_id || event.entity_id;
-    let reservation;
-    if (entityId) {
-      // Workflow or admin passing an id — fetch the real record, never trust body.data
-      if (event.type && event.type !== 'create') return Response.json({ skipped: true });
-      reservation = await base44.asServiceRole.entities.Reservation.get(entityId);
-      if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
-    } else {
-      // Manual admin invocation with inline reservation data
       reservation = body.data;
       if (!reservation) return Response.json({ error: 'Missing reservation data' }, { status: 400 });
     }
@@ -118,6 +117,9 @@ Deno.serve(async (req) => {
         from_name: 'JTAP Kitchen Reservations',
       }).catch(() => {});
       await maybeSendSms(`JTAP Kitchen: Hi ${firstName}, we received your reservation request for ${formattedDate} at ${reservation.time}, party of ${reservation.party_size}. Check your email to confirm. Questions? Call 901-213-8085. Reply STOP to opt out.`);
+      if (reservation.id) {
+        await base44.asServiceRole.entities.Reservation.update(reservation.id, { confirmation_email_sent_at: new Date().toISOString() }).catch(() => {});
+      }
       return Response.json({ sent: true, email: reservation.email, type: 'rsvp_confirm' });
     }
 
@@ -179,6 +181,9 @@ Deno.serve(async (req) => {
     }).catch(() => {});
 
     await maybeSendSms(`JTAP Kitchen: Hi ${firstName}, your reservation (party of ${reservation.party_size}) on ${formattedDate} at ${reservation.time} is confirmed! We can't wait to host you. Questions? Call 901-213-8085. Reply STOP to opt out.`);
+    if (reservation.id) {
+      await base44.asServiceRole.entities.Reservation.update(reservation.id, { confirmation_email_sent_at: new Date().toISOString() }).catch(() => {});
+    }
     return Response.json({ sent: true, email: reservation.email });
   } catch (error) {
     await notifyAdmins(base44, {
