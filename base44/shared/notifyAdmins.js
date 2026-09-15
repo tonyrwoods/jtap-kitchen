@@ -14,7 +14,7 @@ export async function notifyAdmins(base44, { subject, body }) {
     const admins = await base44.asServiceRole.entities.User.filter({ role: 'admin' });
     for (const a of admins) {
       if (!a.email) continue;
-      await base44.integrations.Core.SendEmail({
+      await base44.asServiceRole.integrations.Core.SendEmail({
         to: a.email,
         subject,
         body,

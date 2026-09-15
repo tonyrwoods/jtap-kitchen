@@ -43,11 +43,11 @@ Provide concise, actionable advice. Focus on waste reduction, smart ordering, an
     const contextPrompt = buildContext();
     const conversationHistory = newMessages.map(m => `${m.role === "user" ? "Manager" : "AI Advisor"}: ${m.content}`).join("\n\n");
 
-    const response = await base44.integrations.Core.InvokeLLM({
-      prompt: `${contextPrompt}\n\nConversation:\n${conversationHistory}\n\nAI Advisor:`,
+    const result = await base44.functions.invoke('generateWasteAdvisorReply', {
+      inventoryContext: contextPrompt,
+      conversationHistory,
     });
-
-    const aiMsg = typeof response === "string" ? response : (response?.text || response?.content || JSON.stringify(response));
+    const aiMsg = result.data?.reply || '';
     setMessages(prev => [...prev, { role: "assistant", content: aiMsg }]);
     setLoading(false);
   };

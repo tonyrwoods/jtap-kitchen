@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
     return Response.json({ error: 'file_url is required' }, { status: 400 });
   }
 
-  const extracted = await base44.integrations.Core.InvokeLLM({
+  const extracted = await base44.asServiceRole.integrations.Core.InvokeLLM({
     prompt: `You are a data extraction assistant for a restaurant business. Analyze this vendor invoice PDF and extract all key financial and payment information.
 
 Extract the following fields if present:

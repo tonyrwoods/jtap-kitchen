@@ -16,10 +16,15 @@ export default function LinkedInAnnouncementModal({ open, onClose, event }) {
     if (!event) return;
     setGenerating(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Write a professional, engaging LinkedIn post announcing this fine dining experience at JTAP Kitchen. Keep it under 280 characters, use 1-2 emojis, include relevant hashtags like #FineDining #JTAPKitchen. Event details: Title: "${event.title}", Date: ${event.date}, Time: ${event.time}, Price: $${event.price_per_guest}/guest, Type: ${event.event_type}. Description: ${event.description || ''}`
+      const result = await base44.functions.invoke('generateLinkedInPostDraft', {
+        title: event.title,
+        date: event.date,
+        time: event.time,
+        price_per_guest: event.price_per_guest,
+        event_type: event.event_type,
+        description: event.description || '',
       });
-      setPostText(result);
+      setPostText(result.data?.text || '');
     } catch {
       toast.error("Failed to generate post");
     } finally {
