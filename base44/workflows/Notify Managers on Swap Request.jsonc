@@ -24,7 +24,10 @@
           "call": "invoke_backend_function",
           "with": {
             "function_name": "notifySwapRequest",
-            "args": {}
+            "args": {
+              "entity_id": "${ .trigger.entity_id }",
+              "secret": "swap_notify_3f8c1e5a9b2d7e0c6a4f8b1d3e7a9c20"
+            }
           },
           "then": "end"
         }
