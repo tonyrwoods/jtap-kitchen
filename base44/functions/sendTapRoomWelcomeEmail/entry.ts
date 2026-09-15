@@ -1,6 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
-import { secrets } from 'base44:runtime';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -22,16 +21,15 @@ function formatDate(dateStr) {
 // member's loyalty details. No user session is available (system-triggered),
 // so entity access uses the service role.
 //
-// Shared secret (read from the app secret TAPROOM_WELCOME_SECRET and also
-// passed by the workflow) gates the public endpoint so unauthenticated
-// callers can't trigger welcome emails for arbitrary members.
+// One-time guard: the workflow has no user session (members are created via
+// the public signup function with the service role), so there is no auth
+// check. The welcome_email_sent flag on the member prevents an
+// unauthenticated caller from re-triggering welcome emails — each member
+// receives at most one.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    if (body.secret !== secrets.get('TAPROOM_WELCOME_SECRET')) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
-    }
     const { member_id } = body;
     if (!member_id) {
       return Response.json({ error: 'member_id required' }, { status: 400 });
@@ -44,11 +42,18 @@ export default async function(req) {
     if (!member.email) {
       return Response.json({ skipped: true, reason: 'no email on file' });
     }
+    if (member.welcome_email_sent) {
+      return Response.json({ skipped: true, reason: 'welcome email already sent' });
+    }
 
     await sendTransactionalEmail(base44, {
       to: member.email,
       subject: 'Welcome to The JTAP Room Society — JTAP Kitchen',
       body: buildWelcomeEmail(member),
+    });
+
+    await base44.asServiceRole.entities.TapRoomMember.update(member.id, {
+      welcome_email_sent: true,
     });
 
     return Response.json({ success: true, sent_to: member.email });

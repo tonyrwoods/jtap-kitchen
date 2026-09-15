@@ -164,6 +164,11 @@
       "title": "Welcome Kit Sent",
       "default": false
     },
+    "welcome_email_sent": {
+      "type": "boolean",
+      "title": "Welcome Email Sent",
+      "default": false
+    },
     "private_room_access": {
       "type": "boolean",
       "title": "Private Room Access",
