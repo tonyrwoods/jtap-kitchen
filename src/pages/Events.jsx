@@ -119,7 +119,7 @@ export default function Events() {
 
   useEffect(() => {
     base44.entities.Event.filter({ is_published: true }, "date", 100).then(data => {
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
       setEvents(data.filter(e => e.date >= today));
       setLoading(false);
     });

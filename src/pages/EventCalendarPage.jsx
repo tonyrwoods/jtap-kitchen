@@ -103,7 +103,7 @@ export default function EventCalendarPage() {
       base44.entities.EventPromotion.filter({ is_active: true }, "date", 100),
     ])
       .then(([events, promos]) => {
-        const today = new Date().toISOString().split("T")[0];
+        const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
         const merged = [
           ...events
             .filter((e) => e.date && e.date >= today)
