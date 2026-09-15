@@ -4,14 +4,19 @@ import { notifyAdmins } from "../../shared/notifyAdmins.js";
 // Expires unpaid event-center inquiries older than EXPIRY_DAYS so they don't
 // linger in the admin dashboard as "New". Idempotent and safe: only touches
 // inquiries with deposit_status "Unpaid" AND status "New". Runs from a daily
-// scheduled workflow (no user auth context), so it operates via the service
-// role and is not gated on base44.auth.me().
+// scheduled workflow, which executes as the workflow owner (admin) — matching
+// every other scheduled job in the app — so the admin auth check passes for
+// the automation while blocking unauthenticated direct HTTP invocation.
 
 const EXPIRY_DAYS = 7;
 
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
     const cutoff = new Date(Date.now() - EXPIRY_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
     const inquiries = await base44.asServiceRole.entities.EventCenterInquiry.filter(
