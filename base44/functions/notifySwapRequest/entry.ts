@@ -7,25 +7,28 @@ function esc(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+const SWAP_NOTIFY_SECRET = 'swap_notify_3f8c1e5a9b2d7e0c6a4f8b1d3e7a9c20';
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
-  // Require an authenticated caller — the swap-request automation fires as the
-  // staff member who created it. Reject anonymous requests entirely.
-  let user;
-  try { user = await base44.auth.me(); } catch (_) { user = null; }
-  if (!user) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   const payload = await req.json().catch(() => ({}));
 
-  const requestId = payload?.event?.entity_id;
-  if (!requestId) {
-    // Manual (non-automation) invocation requires admin
-    if (user.role !== 'admin') {
+  // Authorize BEFORE touching the entity id: accept the workflow's shared
+  // secret (entity-triggered automation has no user session) OR a logged-in
+  // admin (manual invocation). Reject everyone else so a non-admin can't forge
+  // an event envelope to spam managers with swap-request notifications.
+  const isAutomation = payload?.secret === SWAP_NOTIFY_SECRET;
+  if (!isAutomation) {
+    let user;
+    try { user = await base44.auth.me(); } catch (_) { user = null; }
+    if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
+  }
+
+  const requestId = payload?.entity_id || payload?.event?.entity_id;
+  if (!requestId) {
     return Response.json({ error: 'No entity_id' }, { status: 400 });
   }
 

@@ -10,6 +10,8 @@ function esc(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+const RESV_CONFIRM_SECRET = 'resv_confirm_4e9a2c7b1f8d3a6e0c5b9f2d7a1e4c83';
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -17,20 +19,29 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const event = body.event || {};
 
-    let reservation;
-    if (event.type) {
-      // Entity automation trigger — fetch the real record, never trust body.data
-      if (event.type !== 'create') return Response.json({ skipped: true });
-      if (!event.entity_id) return Response.json({ error: 'Missing entity_id' }, { status: 400 });
-      reservation = await base44.asServiceRole.entities.Reservation.get(event.entity_id);
-      if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
-    } else {
-      // Manual invocation — requires admin (reject unauthenticated calls)
+    // Authorize BEFORE any payload-driven branching: accept the workflow's
+    // shared secret (entity-triggered automation has no user session) OR a
+    // logged-in admin (manual invocation). Reject everyone else so an
+    // unauthenticated caller can't forge an event envelope to trigger guest
+    // confirmation emails/SMS.
+    const isAutomation = body.secret === RESV_CONFIRM_SECRET;
+    if (!isAutomation) {
       let user;
       try { user = await base44.auth.me(); } catch (_) { user = null; }
       if (!user || user.role !== 'admin') {
         return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
       }
+    }
+
+    const entityId = body.entity_id || event.entity_id;
+    let reservation;
+    if (entityId) {
+      // Workflow or admin passing an id — fetch the real record, never trust body.data
+      if (event.type && event.type !== 'create') return Response.json({ skipped: true });
+      reservation = await base44.asServiceRole.entities.Reservation.get(entityId);
+      if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
+    } else {
+      // Manual admin invocation with inline reservation data
       reservation = body.data;
       if (!reservation) return Response.json({ error: 'Missing reservation data' }, { status: 400 });
     }
