@@ -103,7 +103,9 @@ async function postToInstagram(accessToken, imageUrl, caption) {
 }
 
 // JTAP Kitchen Facebook Page — https://www.facebook.com/profile.php?id=61590816114855
-const JTAP_FACEBOOK_PAGE_ID = '61590816114855';
+// The connected account exposes this same Page under managed-Page id 1167504153111773
+// (/me/accounts), which is the id used to obtain a Page access token for posting.
+const JTAP_FACEBOOK_PAGE_ID = '1167504153111773';
 
 async function postToFacebook(userAccessToken, imageUrl, message) {
   const accRes = await fetch(`https://graph.facebook.com/v25.0/me/accounts?fields=id,name,access_token&access_token=${userAccessToken}`);
