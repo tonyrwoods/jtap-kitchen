@@ -49,6 +49,21 @@ export default async function(req) {
     if (inquiry.deposit_status !== "Unpaid") {
       return Response.json({ error: "This inquiry is no longer eligible for checkout." }, { status: 400 });
     }
+    // Server-side date-taken guard: refuse payment if another inquiry on this
+    // date is already paid or admin-confirmed. Prevents double-booking a date
+    // (the client "fully booked" warning is advisory only).
+    const eventDate = inquiry.preferred_date || inquiry.event_date;
+    if (eventDate) {
+      const sameDate = await base44.asServiceRole.entities.EventCenterInquiry.filter(
+        { preferred_date: eventDate }, "created_date", 500
+      );
+      const taken = sameDate.some(
+        (t) => t.id !== inquiryId && (t.deposit_status === "Paid" || t.status === "Confirmed")
+      );
+      if (taken) {
+        return Response.json({ error: "This date has just been booked. Please choose another date or join the waitlist." }, { status: 409 });
+      }
+    }
     // Authoritative deposit resolved server-side from the package tier.
     const deposit = depositForPackage(inquiry.package);
     if (!deposit || deposit < 0.5) {

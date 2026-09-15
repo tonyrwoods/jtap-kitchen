@@ -34,10 +34,17 @@ export default async function(req) {
       (c.selected_addon_ids || []).forEach((id) => { addonCounts[id] = (addonCounts[id] || 0) + 1; });
     });
 
+    // A date is also booked when someone has already paid a deposit for it
+    // (not yet admin-confirmed). Keeps the client warning and the server-side
+    // payment guard in create-event-deposit-checkout consistent.
+    const paid = await base44.asServiceRole.entities.EventCenterInquiry.filter(
+      { preferred_date: date, deposit_status: 'Paid' }, 'created_date', 500
+    );
+
     return Response.json({
       date,
       unavailable: Array.from(blocked),
-      dateBooked: confirmed.length > 0,
+      dateBooked: confirmed.length > 0 || paid.length > 0,
       addonCounts,
     });
   } catch (error) {

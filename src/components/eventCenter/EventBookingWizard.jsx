@@ -94,6 +94,7 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
       if (!form.package || form.package === "Not Sure") { toast.error("Please choose a package tier to continue."); return false; }
       if (!form.preferred_date) { toast.error("Please pick an event date."); return false; }
       if (weekdayInvalid) { toast.error("Please pick a Sunday, Monday, or Tuesday."); return false; }
+      if (dateBooked) { toast.error("That date is fully booked — please pick another date or join the waitlist."); return false; }
     }
     if (i === 3) {
       if (!form.contact_name || !form.email) { toast.error("Please enter your name and email."); return false; }
