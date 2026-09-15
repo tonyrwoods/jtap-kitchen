@@ -10,8 +10,6 @@ function esc(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-const RESV_CONFIRM_SECRET = 'resv_confirm_4e9a2c7b1f8d3a6e0c5b9f2d7a1e4c83';
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -24,7 +22,7 @@ Deno.serve(async (req) => {
     // logged-in admin (manual invocation). Reject everyone else so an
     // unauthenticated caller can't forge an event envelope to trigger guest
     // confirmation emails/SMS.
-    const isAutomation = body.secret === RESV_CONFIRM_SECRET;
+    const isAutomation = body.secret === secrets.get('RESERVATION_CONFIRM_SECRET');
     if (!isAutomation) {
       let user;
       try { user = await base44.auth.me(); } catch (_) { user = null; }

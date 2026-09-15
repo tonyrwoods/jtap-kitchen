@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { secrets } from 'base44:runtime';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -21,15 +22,14 @@ function formatDate(dateStr) {
 // member's loyalty details. No user session is available (system-triggered),
 // so entity access uses the service role.
 //
-// Shared secret (also passed by the workflow) gates the public endpoint so
-// unauthenticated callers can't trigger welcome emails for arbitrary members.
-const WELCOME_SECRET = 'taproom_welcome_9e4a2f8c1d7b5e3a6f0c8b4d2e7a1f05';
-
+// Shared secret (read from the app secret TAPROOM_WELCOME_SECRET and also
+// passed by the workflow) gates the public endpoint so unauthenticated
+// callers can't trigger welcome emails for arbitrary members.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    if (body.secret !== WELCOME_SECRET) {
+    if (body.secret !== secrets.get('TAPROOM_WELCOME_SECRET')) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
     const { member_id } = body;
