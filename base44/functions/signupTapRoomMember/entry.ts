@@ -25,14 +25,16 @@ export default async function(req) {
       return Response.json({ error: 'Invalid membership tier.' }, { status: 400 });
     }
 
+    // Membership signup requires a signed-in account.
+    let user;
+    try { user = await base44.auth.me(); } catch (_) { user = null; }
+    if (!user) {
+      return Response.json({ error: 'Sign in required to join the JTAP Room Society.' }, { status: 401 });
+    }
     // Paid tiers (Reserve/Founding) grant credits and private room access —
-    // only admins may assign those. Public self-signup is limited to Regular.
-    if (tier !== 'Regular') {
-      let user;
-      try { user = await base44.auth.me(); } catch (_) { user = null; }
-      if (!user || user.role !== 'admin') {
-        return Response.json({ error: 'That tier requires admin approval. Please sign up as a Regular member or contact us.' }, { status: 403 });
-      }
+    // only admins may assign those. Self-signup is limited to Regular.
+    if (tier !== 'Regular' && user.role !== 'admin') {
+      return Response.json({ error: 'That tier requires admin approval. Please sign up as a Regular member or contact us.' }, { status: 403 });
     }
 
     const limited = await enforceRateLimit(req, base44, 'signupTapRoomMember', email.toLowerCase(), 1, 3600000);

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { toast } from "sonner";
 import { trackPixel } from "@/lib/metaPixel";
 import {
@@ -76,6 +77,8 @@ export default function TapRoomSociety() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.guest_name || !form.email) { toast.error("Name and email are required."); return; }
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setSubmitting(true);
     const res = await base44.functions.invoke("signupTapRoomMember", {
       guest_name: form.guest_name,
