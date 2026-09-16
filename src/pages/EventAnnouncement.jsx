@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { CalendarDays, Clock, MapPin, Users, Ticket, CheckCircle2, PartyPopper, Mail, CalendarPlus, CalendarClock, Star } from "lucide-react";
@@ -76,6 +77,10 @@ export default function EventAnnouncement() {
     if (!isInviteMode && (!guestName.trim() || !guestEmail.trim())) {
       toast.error("Please enter your name and email");
       return;
+    }
+    if (!isInviteMode) {
+      const user = await requireAuthOrRedirect();
+      if (!user) return;
     }
     setSubmitting(true);
     try {

@@ -15,6 +15,8 @@ export default async function (req) {
   let base44;
   try {
     base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Sign in required to book an event.' }, { status: 401 });
     const body = await req.json();
     const { event_id, guest_name, email, phone, party_size, special_requests } = body;
     const pSize = parseInt(party_size) || 1;

@@ -39,6 +39,8 @@ function normalizeRating(val, label, required) {
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Sign in required to submit a scorecard.' }, { status: 401 });
     const body = await req.json().catch(() => ({}));
     const {
       share_slug, promotion_id,

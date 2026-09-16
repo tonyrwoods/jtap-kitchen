@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, CheckCircle2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -27,6 +28,8 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
       toast.error("Please fill in your name and email.");
       return;
     }
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setSubmitting(true);
     await base44.functions.invoke("submitEventWaitlist", {
       ...form,

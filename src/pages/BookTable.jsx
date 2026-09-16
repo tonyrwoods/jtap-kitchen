@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle, Mail } from "lucide-react";
 import { toast } from "sonner";
@@ -139,6 +140,8 @@ export default function BookTable() {
       toast.error("Reservations open August 12, 2026. Please select a date on or after that.");
       return;
     }
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setLoading(true);
     try {
       const dateStr = date.toISOString().split("T")[0];

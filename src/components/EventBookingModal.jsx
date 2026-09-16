@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { X, Users, Clock, DollarSign } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -28,6 +29,8 @@ export default function EventBookingModal({ event, onClose, onWaitlist, onBookin
       return;
     }
 
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setSubmitting(true);
     try {
       const res = await base44.functions.invoke("submitEventBooking", {

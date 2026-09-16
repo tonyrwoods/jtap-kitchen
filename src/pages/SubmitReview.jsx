@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { Star, Crown } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -60,6 +61,8 @@ export default function SubmitReview() {
     e.preventDefault();
     if (!form.rating) { toast.error("Please select a star rating."); return; }
     if (!form.comment.trim()) { toast.error("Please write a review."); return; }
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setLoading(true);
     const guestName = member ? `${form.guest_name} ⭐ ${member.tier}` : form.guest_name;
     await base44.functions.invoke("submitReview", {

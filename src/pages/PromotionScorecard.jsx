@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Star, CheckCircle2, PartyPopper, ArrowLeft, UtensilsCrossed } from "lucide-react";
@@ -73,6 +74,8 @@ export default function PromotionScorecard() {
       toast.error("Please add your name and the three required ratings");
       return;
     }
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setSubmitting(true);
     try {
       const res = await base44.functions.invoke("submitPromotionScorecard", {

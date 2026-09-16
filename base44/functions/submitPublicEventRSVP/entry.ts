@@ -17,6 +17,8 @@ function esc(text) {
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Sign in required to RSVP.' }, { status: 401 });
     const body = await req.json();
     const { share_slug, promotion_id, guest_name, guest_email, rsvp_status, party_size, plus_ones, dietary_notes } = body;
 

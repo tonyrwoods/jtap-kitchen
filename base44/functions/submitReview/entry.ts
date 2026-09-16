@@ -4,6 +4,8 @@ import { enforceRateLimit } from '../../shared/rateLimit.js';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Sign in required to submit a review.' }, { status: 401 });
     const body = await req.json();
     const { guest_name, email, rating, comment, visit_date } = body;
 
