@@ -9,6 +9,8 @@ const escapeHtml = (text) => String(text == null ? '' : text)
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Sign in required to request an event.' }, { status: 401 });
     const body = await req.json();
     const {
       contact_name, email, phone, event_type,

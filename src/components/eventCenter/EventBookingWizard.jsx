@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, CreditCard } from "lucide-react";
@@ -123,6 +124,8 @@ export default function EventBookingWizard({ initialPackage, onPackageConsumed, 
 
   const handlePayAndSubmit = async () => {
     if (!validateStep(3)) return;
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setPaying(true);
     try {
       const submitRes = await base44.functions.invoke("submitEventInquiry", {
