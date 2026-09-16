@@ -18,6 +18,8 @@ export default async function (req) {
   let base44;
   try {
     base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Sign in required to purchase a gift card.' }, { status: 401 });
     const body = await req.json();
     const { purchaser_name, purchaser_email, recipient_name, recipient_email, message, amount } = body;
     const amt = parseFloat(amount);

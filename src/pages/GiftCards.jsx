@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { Gift, Search, CreditCard } from "lucide-react";
 import { toast } from "sonner";
@@ -58,6 +59,8 @@ export default function GiftCards() {
       toast.error("Please fill in your details.");
       return;
     }
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setLoading(true);
     try {
       // 1. Create the pending gift card (server-side, rate-limited).
