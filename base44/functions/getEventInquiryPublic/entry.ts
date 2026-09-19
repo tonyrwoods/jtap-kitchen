@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 export default async function(req) {
   try {
@@ -10,6 +11,12 @@ export default async function(req) {
       id = url.searchParams.get('id');
     }
     if (!id) return Response.json({ error: 'id is required' }, { status: 400 });
+
+    // Public endpoint (backs the post-checkout deposit-confirmed page, which must
+    // be reachable without login) — the inquiry id acts as the capability token.
+    // Rate-limit by id to blunt enumeration/abuse.
+    const rl = await enforceRateLimit(req, base44, 'getEventInquiryPublic', id, 30, 600000);
+    if (rl) return rl;
 
     const inq = await base44.asServiceRole.entities.EventCenterInquiry.get(id);
     if (!inq) return Response.json({ error: 'not found' }, { status: 404 });
