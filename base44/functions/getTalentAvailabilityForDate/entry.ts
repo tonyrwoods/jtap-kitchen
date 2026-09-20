@@ -1,8 +1,15 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+
+    // Public availability lookup for the booking wizard — no PII is returned, so
+    // only the shared IP flood guard applies (no per-key throttle, so users
+    // browsing multiple dates aren't blocked).
+    const rl = await enforceRateLimit(req, base44, 'talentAvailability', null, 1, 600000);
+    if (rl) return rl;
 
     let date;
     try { date = (await req.json())?.date; } catch {}
