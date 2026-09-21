@@ -116,7 +116,7 @@ function SpiritsGrid({ items }) {
   );
 }
 
-export default function LiquorMenuContent({ items }) {
+export default function LiquorMenuContent({ items, activeSection }) {
   const cocktails = items
     .filter((i) => i.section === "Signature Cocktails")
     .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
@@ -125,9 +125,13 @@ export default function LiquorMenuContent({ items }) {
     .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
   const spirits = items.filter((i) => i.section === "Spirits & Liquors");
 
+  const showCocktails = !activeSection || activeSection === "Signature Cocktails";
+  const showWines = !activeSection || activeSection === "Wine List";
+  const showSpirits = !activeSection || activeSection === "Spirits & Liquors";
+
   return (
     <div className="space-y-12">
-      {cocktails.length > 0 && (
+      {showCocktails && cocktails.length > 0 && (
         <section>
           <div className="flex items-center gap-3 mb-5">
             <Martini className="w-6 h-6 text-primary" />
@@ -141,7 +145,7 @@ export default function LiquorMenuContent({ items }) {
         </section>
       )}
 
-      {wines.length > 0 && (
+      {showWines && wines.length > 0 && (
         <section>
           <div className="flex items-center gap-3 mb-5">
             <Wine className="w-6 h-6 text-primary" />
@@ -154,7 +158,7 @@ export default function LiquorMenuContent({ items }) {
         </section>
       )}
 
-      {spirits.length > 0 && (
+      {showSpirits && spirits.length > 0 && (
         <section>
           <div className="flex items-center gap-3 mb-5">
             <GlassWater className="w-6 h-6 text-primary" />

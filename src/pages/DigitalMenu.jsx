@@ -62,6 +62,7 @@ export default function DigitalMenu() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeDietaryTags, setActiveDietaryTags] = useState([]);
   const [view, setView] = useState("food");
+  const [liquorSection, setLiquorSection] = useState("Signature Cocktails");
   const [liquorItems, setLiquorItems] = useState([]);
   const [liquorLoading, setLiquorLoading] = useState(false);
   const urlParams = new URLSearchParams(window.location.search);
@@ -169,6 +170,27 @@ export default function DigitalMenu() {
               </div>
             </>
           )}
+          {view === "liquor" && (
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {[
+                { key: "Signature Cocktails", label: "Cocktails" },
+                { key: "Wine List", label: "Wine" },
+                { key: "Spirits & Liquors", label: "Spirits" },
+              ].map(sec => (
+                <button
+                  key={sec.key}
+                  onClick={() => setLiquorSection(sec.key)}
+                  className={`shrink-0 px-4 py-1.5 rounded-full font-body text-sm font-medium transition-all ${
+                    liquorSection === sec.key
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-muted/70"
+                  }`}
+                >
+                  {sec.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -182,7 +204,7 @@ export default function DigitalMenu() {
           ) : liquorItems.length === 0 ? (
             <p className="text-center font-body text-muted-foreground py-20">Liquor menu is coming soon.</p>
           ) : (
-            <LiquorMenuContent items={liquorItems} />
+            <LiquorMenuContent items={liquorItems} activeSection={liquorSection} />
           )
         ) : loading ? (
           <div className="flex items-center justify-center py-24">
