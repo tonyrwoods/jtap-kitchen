@@ -190,6 +190,17 @@
   }
 }
 
+/* Print: hide site nav and footer so menu pages print cleanly */
+@media print {
+  nav,
+  footer {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+}
+
 /* Respect prefers-reduced-motion: disable animations and transitions for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,

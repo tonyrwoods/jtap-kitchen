@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { Printer } from "lucide-react";
 import useSeoMeta from "../hooks/useSeoMeta";
 import { trackPixel } from "@/lib/metaPixel";
 import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
@@ -26,8 +27,21 @@ export default function LiquorMenu() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Print button */}
+      <div className="print:hidden sticky top-0 z-20 bg-card/95 backdrop-blur border-b border-border">
+        <div className="max-w-5xl mx-auto px-6 lg:px-10 py-2 flex justify-end">
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary text-primary-foreground font-body text-sm font-medium hover:bg-primary/90 transition-colors"
+          >
+            <Printer className="w-4 h-4" />
+            Print Menu
+          </button>
+        </div>
+      </div>
+
       {/* Hero */}
-      <div className="relative h-64 md:h-80 overflow-hidden">
+      <div className="print:hidden relative h-64 md:h-80 overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=1600&q=80"
           alt="JTAP Kitchen Liquor Menu"
@@ -57,7 +71,7 @@ export default function LiquorMenu() {
         )}
       </div>
 
-      <div className="text-center py-8 border-t border-border">
+      <div className="print:hidden text-center py-8 border-t border-border">
         <p className="font-body text-xs text-muted-foreground">
           © {new Date().getFullYear()} JTAP Kitchen · Memphis, TN
         </p>
