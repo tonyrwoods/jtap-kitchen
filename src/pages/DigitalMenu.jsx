@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
+import { UtensilsCrossed, Wine } from "lucide-react";
 import useSeoMeta from "../hooks/useSeoMeta";
 import { trackPixel } from "@/lib/metaPixel";
+import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
 
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
@@ -59,6 +61,9 @@ export default function DigitalMenu() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeDietaryTags, setActiveDietaryTags] = useState([]);
+  const [view, setView] = useState("food");
+  const [liquorItems, setLiquorItems] = useState([]);
+  const [liquorLoading, setLiquorLoading] = useState(false);
   const urlParams = new URLSearchParams(window.location.search);
   const tableNum = urlParams.get("table");
 
@@ -70,8 +75,17 @@ export default function DigitalMenu() {
   }, []);
 
   useEffect(() => {
-    trackPixel("ViewContent", { content_name: "Digital Menu", content_category: "Menu" });
-  }, []);
+    if (view !== "liquor" || liquorItems.length > 0) return;
+    setLiquorLoading(true);
+    base44.entities.LiquorMenuItem.list("sort_order", 200).then(data => {
+      setLiquorItems(data.filter(i => i && i.id && i.name && i.is_active !== false));
+      setLiquorLoading(false);
+    });
+  }, [view, liquorItems.length]);
+
+  useEffect(() => {
+    trackPixel("ViewContent", { content_name: view === "liquor" ? "Liquor Menu" : "Digital Menu", content_category: "Menu" });
+  }, [view]);
 
   const toggleTag = (tag) => {
     setActiveDietaryTags(prev =>
@@ -96,44 +110,81 @@ export default function DigitalMenu() {
             </p>
             <h1 className="font-heading text-3xl font-bold">Our Menu</h1>
           </div>
-          {/* Category tabs */}
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {categories.map(cat => (
+          {/* Food / Liquor toggle */}
+          <div className="flex justify-center mb-4">
+            <div className="inline-flex rounded-full border border-border bg-muted/50 p-1">
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`shrink-0 px-4 py-1.5 rounded-full font-body text-sm font-medium transition-all ${
-                  activeCategory === cat
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/70"
+                onClick={() => setView("food")}
+                className={`flex items-center gap-1.5 px-5 py-1.5 rounded-full font-body text-sm font-medium transition-all ${
+                  view === "food" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {cat}
+                <UtensilsCrossed className="w-4 h-4" />
+                Food
               </button>
-            ))}
-          </div>
-          {/* Dietary tag filters */}
-          <div className="flex gap-2 overflow-x-auto pt-2 pb-1 scrollbar-hide">
-            {DIETARY_FILTERS.map(tag => (
               <button
-                key={tag}
-                onClick={() => toggleTag(tag)}
-                className={`shrink-0 px-3 py-1 rounded-full font-body text-xs font-medium border transition-all ${
-                  activeDietaryTags.includes(tag)
-                    ? "bg-foreground text-background border-foreground"
-                    : "border-border text-muted-foreground hover:border-foreground/40"
+                onClick={() => setView("liquor")}
+                className={`flex items-center gap-1.5 px-5 py-1.5 rounded-full font-body text-sm font-medium transition-all ${
+                  view === "liquor" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {tag}
+                <Wine className="w-4 h-4" />
+                Liquor
               </button>
-            ))}
+            </div>
           </div>
+          {view === "food" && (
+            <>
+              {/* Category tabs */}
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                {categories.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`shrink-0 px-4 py-1.5 rounded-full font-body text-sm font-medium transition-all ${
+                      activeCategory === cat
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-muted/70"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+              {/* Dietary tag filters */}
+              <div className="flex gap-2 overflow-x-auto pt-2 pb-1 scrollbar-hide">
+                {DIETARY_FILTERS.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => toggleTag(tag)}
+                    className={`shrink-0 px-3 py-1 rounded-full font-body text-xs font-medium border transition-all ${
+                      activeDietaryTags.includes(tag)
+                        ? "bg-foreground text-background border-foreground"
+                        : "border-border text-muted-foreground hover:border-foreground/40"
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {/* Items */}
       <div className="max-w-2xl mx-auto px-4 py-6">
-        {loading ? (
+        {view === "liquor" ? (
+          liquorLoading ? (
+            <div className="flex items-center justify-center py-24">
+              <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" />
+            </div>
+          ) : liquorItems.length === 0 ? (
+            <p className="text-center font-body text-muted-foreground py-20">Liquor menu is coming soon.</p>
+          ) : (
+            <LiquorMenuContent items={liquorItems} />
+          )
+        ) : loading ? (
           <div className="flex items-center justify-center py-24">
             <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" />
           </div>
