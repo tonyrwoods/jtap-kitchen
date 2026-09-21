@@ -1,0 +1,87 @@
+{
+  "name": "LiquorMenuItem",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "section": {
+      "type": "string",
+      "title": "Section",
+      "enum": [
+        "Signature Cocktails",
+        "Wine List",
+        "Spirits & Liquors"
+      ]
+    },
+    "spirit_type": {
+      "type": "string",
+      "title": "Spirit Type (Spirits & Liquors only)",
+      "enum": [
+        "Bourbon & Whiskey",
+        "Scotch",
+        "Cognac",
+        "Tequila",
+        "Vodka",
+        "Gin"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "price": {
+      "type": "number",
+      "title": "Price (USD) \u2014 Signature Cocktails"
+    },
+    "price_half_pour": {
+      "type": "number",
+      "title": "1/2 Pour Price (5 oz) \u2014 Wine"
+    },
+    "price_full_pour": {
+      "type": "number",
+      "title": "Full Pour Price (8 oz) \u2014 Wine"
+    },
+    "price_bottle": {
+      "type": "number",
+      "title": "Bottle Price \u2014 Wine"
+    },
+    "flavors": {
+      "type": "string",
+      "title": "Available Flavors"
+    },
+    "sort_order": {
+      "type": "number",
+      "title": "Display Order",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    }
+  },
+  "required": [
+    "name",
+    "section"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

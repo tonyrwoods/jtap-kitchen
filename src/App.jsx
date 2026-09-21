@@ -24,6 +24,7 @@ import QRCodePrinter from './pages/QRCodePrinter';
 import LoyaltyPortal from './pages/LoyaltyPortal';
 import Checkout from './pages/Checkout';
 import Menu from './pages/Menu';
+import LiquorMenu from './pages/LiquorMenu';
 import ContactUs from './pages/ContactUs';
 import Support from './pages/Support';
 import InformationSecurityPolicy from './pages/InformationSecurityPolicy';
@@ -119,6 +120,7 @@ const AuthenticatedApp = () => {
         <Route path="/staff-scheduler" element={<StaffScheduler />} />
         <Route path="/menu" element={<DigitalMenu />} />
         <Route path="/full-menu" element={<Menu />} />
+        <Route path="/liquor-menu" element={<LiquorMenu />} />
         <Route path="/table-qr-codes" element={<QRCodePrinter />} />
         <Route path="/kitchen" element={<KitchenDashboard />} />
         <Route path="/menu-performance" element={<MenuPerformance />} />

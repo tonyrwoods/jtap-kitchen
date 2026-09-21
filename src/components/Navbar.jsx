@@ -19,6 +19,7 @@ const MORE_LINKS = [
   { label: "Our Story", href: "/#about" },
   { label: "Event Calendar", href: "/calendar" },
   { label: "Reviews", href: "/reviews" },
+  { label: "Liquor Menu", href: "/liquor-menu" },
   { label: "Careers", href: "/careers" },
   { label: "JTAP Room Society", href: "/tap-room-society" },
   { label: "My Membership", href: "/my-membership" },
