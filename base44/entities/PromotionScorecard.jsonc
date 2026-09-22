@@ -76,6 +76,11 @@
     "manager_response": {
       "type": "string",
       "title": "Manager Response"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [

@@ -35,6 +35,11 @@
     "last_received_at": {
       "type": "string",
       "title": "Last Message Received At (ISO)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [

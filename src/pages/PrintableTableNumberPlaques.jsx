@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 // Printable restaurant table-number plaques (1–15). PDF is generated entirely
 // client-side with jsPDF so no admin/backend round-trip is required.
-export default function TableNumberPlaques() {
+export default function PrintableTableNumberPlaques() {
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(15);

@@ -14,6 +14,11 @@
     "window_start": {
       "type": "string",
       "title": "Window Start (ISO)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [
