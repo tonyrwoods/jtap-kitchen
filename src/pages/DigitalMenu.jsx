@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
-import { UtensilsCrossed, Wine } from "lucide-react";
+import { UtensilsCrossed, Wine, Printer } from "lucide-react";
 import useSeoMeta from "../hooks/useSeoMeta";
 import { trackPixel } from "@/lib/metaPixel";
 import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
@@ -65,6 +65,23 @@ export default function DigitalMenu() {
   const [liquorSection, setLiquorSection] = useState("Signature Cocktails");
   const [liquorItems, setLiquorItems] = useState([]);
   const [liquorLoading, setLiquorLoading] = useState(false);
+  const [printing, setPrinting] = useState(false);
+
+  const handlePrintMenu = async () => {
+    setPrinting(true);
+    try {
+      let liquor = liquorItems;
+      if (liquor.length === 0) {
+        const data = await base44.entities.LiquorMenuItem.list("sort_order", 200);
+        liquor = data.filter(i => i && i.id && i.name && i.is_active !== false);
+        setLiquorItems(liquor);
+      }
+      const { generateMenuPdf } = await import("@/lib/menuPdf");
+      generateMenuPdf(items, liquor);
+    } finally {
+      setPrinting(false);
+    }
+  };
   const urlParams = new URLSearchParams(window.location.search);
   const tableNum = urlParams.get("table");
 
@@ -111,8 +128,8 @@ export default function DigitalMenu() {
             </p>
             <h1 className="font-heading text-3xl font-bold">Our Menu</h1>
           </div>
-          {/* Food / Liquor toggle */}
-          <div className="flex justify-center mb-4">
+          {/* Food / Liquor toggle + Print */}
+          <div className="flex items-center justify-center gap-3 mb-4">
             <div className="inline-flex rounded-full border border-border bg-muted/50 p-1">
               <button
                 onClick={() => setView("food")}
@@ -133,6 +150,19 @@ export default function DigitalMenu() {
                 Liquor
               </button>
             </div>
+            <button
+              onClick={handlePrintMenu}
+              disabled={printing || loading}
+              aria-label="Print menu"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-border bg-card text-foreground font-body text-sm font-medium hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
+            >
+              {printing ? (
+                <span className="w-4 h-4 border-2 border-muted-foreground/40 border-t-foreground rounded-full animate-spin" />
+              ) : (
+                <Printer className="w-4 h-4" />
+              )}
+              <span className="hidden sm:inline">Print Menu</span>
+            </button>
           </div>
           {view === "food" && (
             <>
