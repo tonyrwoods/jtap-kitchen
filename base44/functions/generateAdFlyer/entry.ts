@@ -36,6 +36,7 @@ Deno.serve(async (req) => {
     const hours = 'Wed\u2013Thu 5:00pm\u201310:00pm  \u00b7  Fri\u2013Sat 5:00pm\u201311:00pm  \u00b7  Sun Brunch 10:00am\u20133:00pm';
     const appUrl = (Deno.env.get('APP_URL') || 'https://jtapkitchen.com').replace(/\/$/, '');
     const menuUrl = `${appUrl}/menu`;
+    const bookUrl = `${appUrl}/book`;
 
     // Brand palette (RGB)
     const GOLD = [200, 155, 79];
@@ -47,7 +48,7 @@ Deno.serve(async (req) => {
     // QR code (scan to view digital menu)
     let qrDataUrl: string | null = null;
     try {
-      qrDataUrl = await QRCode.toDataURL(menuUrl, {
+      qrDataUrl = await QRCode.toDataURL(bookUrl, {
         margin: 2,
         width: 300,
         color: { dark: '#1a1a1a', light: '#ffffff' },
@@ -221,7 +222,7 @@ Deno.serve(async (req) => {
       doc.setTextColor(...MUTED);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
-      doc.text('Scan to view menu', qrX + qrSize / 2, contactStartY + qrSize + 14, { align: 'center' });
+      doc.text('Scan to reserve your table', qrX + qrSize / 2, contactStartY + qrSize + 14, { align: 'center' });
     }
 
     // Footer band
@@ -230,7 +231,7 @@ Deno.serve(async (req) => {
     doc.setTextColor(...GOLD);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text(`Reserve at ${appUrl.replace(/^https?:\/\//, '')}/book`, W / 2, H - 22, { align: 'center' });
+    doc.text(`View our menu at ${appUrl.replace(/^https?:\/\//, '')}/menu`, W / 2, H - 22, { align: 'center' });
 
     const pdfBuffer = doc.output('arraybuffer');
     return new Response(pdfBuffer, {
