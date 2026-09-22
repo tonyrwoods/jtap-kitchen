@@ -71,10 +71,16 @@ export default function LoyaltyProgram() {
         )}
 
         <div className="text-center mt-14">
-          <p className="font-body text-muted-foreground mb-4">Ready to start earning? Make a reservation today.</p>
-          <a href="/#reserve" className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity">
-            Reserve a Table
-          </a>
+          <p className="font-body text-muted-foreground mb-5">Ready to start earning? Join the Tap Room Society or make a reservation today.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a href="/tap-room-society" className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20">
+              <Crown className="w-4 h-4" />
+              Sign Up & Start Earning
+            </a>
+            <a href="/book" className="inline-flex items-center justify-center px-8 py-3 bg-card border border-border text-foreground rounded-full font-body text-sm font-semibold hover:border-primary hover:text-primary transition-colors">
+              Reserve a Table
+            </a>
+          </div>
         </div>
       </div>
     </div>
