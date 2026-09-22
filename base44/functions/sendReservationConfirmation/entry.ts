@@ -57,6 +57,7 @@ Deno.serve(async (req) => {
     const dateObj = new Date(reservation.date);
     const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
     const firstName = (reservation.guest_name || '').split(' ')[0] || 'there';
+    const bringFriendUrl = reservation.confirm_token ? `${origin}/book?ref_reservation=${encodeURIComponent(reservation.confirm_token)}` : null;
 
     // SMS confirmation — only when the guest opted in and Twilio is configured.
     // Non-blocking: email already sent. Failures notify admins but don't fail the request.
@@ -160,6 +161,12 @@ Deno.serve(async (req) => {
                 <p style="margin: 0; font-size: 14px; font-style: italic;">${esc(reservation.special_requests)}</p>
               </div>` : ''}
           </div>
+          ${bringFriendUrl ? `
+          <div style="background:#f5f0e6;border:1px solid #C89B4F;border-radius:10px;padding:22px;margin:24px 0;text-align:center;">
+            <p style="margin:0 0 6px;font-size:15px;font-weight:bold;color:#1a1a1a;">Bring a Friend 🍽️</p>
+            <p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:#666;">Know someone who should join you? Send them a link to reserve their own seat tonight.</p>
+            <a href="${bringFriendUrl}" style="display:inline-block;background:#C89B4F;color:#fff;text-decoration:none;padding:12px 32px;border-radius:50px;font-family:Inter,sans-serif;font-size:14px;font-weight:600;">Invite a Friend &rarr;</a>
+          </div>` : ''}
           <p style="margin: 0 0 10px; font-size: 14px; color: #666;">If you need to cancel or modify your reservation, please contact us as soon as possible.</p>
           <p style="margin: 20px 0 0; font-size: 12px; color: #999; text-align: center; border-top: 1px solid #e0e0e0; padding-top: 20px;">© JTAP Kitchen. All rights reserved.</p>
         </div>

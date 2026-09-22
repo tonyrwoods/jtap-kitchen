@@ -109,6 +109,10 @@ export default function BookTable() {
     document.title = "Reserve a Table at JTAP Kitchen";
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute("content", "Reserve a table at JTAP Kitchen in Memphis. Choose your date, time, and party size — instant confirmation.");
+    const refReservation = new URLSearchParams(window.location.search).get("ref_reservation");
+    if (refReservation) {
+      base44.analytics.track({ eventName: "companion_invite_click", properties: { ref_reservation: refReservation } });
+    }
   }, []);
   const [step, setStep] = useState(1);
   const [date, setDate] = useState(null);
