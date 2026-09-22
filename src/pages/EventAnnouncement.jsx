@@ -23,6 +23,38 @@ function formatTime(time) {
   return `${display}:${m} ${ampm}`;
 }
 
+function setMetaProperty(property, content) {
+  if (!content) return;
+  let el = document.querySelector(`meta[property="${property}"]`);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute("property", property);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", content);
+}
+
+function setMetaName(name, content) {
+  if (!content) return;
+  let el = document.querySelector(`meta[name="${name}"]`);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute("name", name);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", content);
+}
+
+function setCanonical(url) {
+  let el = document.querySelector('link[rel="canonical"]');
+  if (!el) {
+    el = document.createElement("link");
+    el.setAttribute("rel", "canonical");
+    document.head.appendChild(el);
+  }
+  el.setAttribute("href", url);
+}
+
 export default function EventAnnouncement() {
   const { slug, token } = useParams();
   const [promo, setPromo] = useState(null);
@@ -70,6 +102,30 @@ export default function EventAnnouncement() {
         .finally(() => setLoading(false));
     }
   }, [slug, token]);
+
+  // Dynamic social meta tags for rich link previews (Facebook, Instagram, iMessage, WhatsApp).
+  useEffect(() => {
+    if (!promo) return;
+    const shareUrl = `${window.location.origin}/event-announce/${encodeURIComponent(promo.share_slug || slug || "")}`;
+    const title = promo.title || "JTAP Kitchen Event";
+    const description = (promo.description || "").slice(0, 150);
+
+    document.title = `${title} · JTAP Kitchen`;
+
+    setMetaProperty("og:type", "website");
+    setMetaProperty("og:site_name", "JTAP Kitchen");
+    setMetaProperty("og:title", title);
+    setMetaProperty("og:description", description);
+    if (promo.banner_image_url) setMetaProperty("og:image", promo.banner_image_url);
+    setMetaProperty("og:url", shareUrl);
+
+    setMetaName("twitter:card", promo.banner_image_url ? "summary_large_image" : "summary");
+    setMetaName("twitter:title", title);
+    setMetaName("twitter:description", description);
+    if (promo.banner_image_url) setMetaName("twitter:image", promo.banner_image_url);
+
+    setCanonical(shareUrl);
+  }, [promo, slug]);
 
   const submitRSVP = async (e) => {
     e.preventDefault();
