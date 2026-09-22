@@ -43,6 +43,7 @@ import MyMembership from './pages/MyMembership';
 import FoundersWall from './pages/FoundersWall';
 import BookPrivateRoom from './pages/BookPrivateRoom';
 import PitchDeck from './pages/PitchDeck';
+import AdLanding from './pages/AdLanding';
 import EventAnnouncement from './pages/EventAnnouncement';
 import PromotionScorecard from './pages/PromotionScorecard';
 import ReservationConfirm from './pages/ReservationConfirm';
@@ -103,6 +104,7 @@ const AuthenticatedApp = () => {
     <Suspense fallback={spinner}>
     <Routes>
       <Route path="/pitch-deck" element={<PitchDeck />} />
+      <Route path="/go" element={<AdLanding />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<AdminDashboard />} />
