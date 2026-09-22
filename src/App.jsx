@@ -41,6 +41,7 @@ import VendorSignup from './pages/VendorSignup';
 import TapRoomSociety from './pages/TapRoomSociety';
 import MyMembership from './pages/MyMembership';
 import FoundersWall from './pages/FoundersWall';
+import FoundingMembers from './pages/FoundingMembers';
 import BookPrivateRoom from './pages/BookPrivateRoom';
 import PitchDeck from './pages/PitchDeck';
 import AdLanding from './pages/AdLanding';
@@ -150,6 +151,7 @@ const AuthenticatedApp = () => {
         <Route path="/tap-room-society" element={<TapRoomSociety />} />
         <Route path="/my-membership" element={<MyMembership />} />
         <Route path="/founders" element={<FoundersWall />} />
+        <Route path="/founding-members" element={<FoundingMembers />} />
         <Route path="/book-private-room" element={<BookPrivateRoom />} />
         <Route path="/admin/memberships" element={<AdminMemberships />} />
         <Route path="/admin/private-room" element={<AdminPrivateRoom />} />
