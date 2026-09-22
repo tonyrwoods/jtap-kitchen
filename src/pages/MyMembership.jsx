@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
-import { Crown, Star, Lock, Gift, Copy, Check, ChevronDown, ChevronUp, TrendingUp, Wallet, CalendarDays } from "lucide-react";
+import { Crown, Star, Lock, Gift, Copy, Check, ChevronDown, ChevronUp, TrendingUp, Wallet, CalendarDays, MessageCircle, Users } from "lucide-react";
 import RewardsSection from "@/components/membership/RewardsSection";
 
 const GOLD = "#C89B4F";
@@ -60,9 +60,23 @@ export default function MyMembership() {
   const activity = [...allActivity].sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
   const paged = activity.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
-  const copyCode = () => {
-    if (!member?.referral_code) return;
-    navigator.clipboard.writeText(member.referral_code);
+  const referralLink = member?.referral_code
+    ? `${window.location.origin}/tap-room-society?ref=${encodeURIComponent(member.referral_code)}`
+    : "";
+  const whatsappUrl = referralLink
+    ? `https://wa.me/?text=${encodeURIComponent(`Join me at the JTAP Room Society! Use my code ${member.referral_code} to sign up: ${referralLink}`)}`
+    : "";
+
+  const referralPoints = allActivity
+    .filter(a => {
+      const t = `${a.description || ""} ${a.trigger || ""}`.toLowerCase();
+      return t.includes("referral") || t.includes("refer");
+    })
+    .reduce((sum, a) => sum + (a.points > 0 ? a.points : 0), 0);
+
+  const copyLink = () => {
+    if (!referralLink) return;
+    navigator.clipboard.writeText(referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -235,23 +249,64 @@ export default function MyMembership() {
           )}
         </div>
 
-        {/* REFERRAL */}
+        {/* REFERRAL — Refer a Friend */}
         <div className="rounded-2xl p-7" style={{ background: "#1a1a1a", border: "1px solid rgba(200,155,79,0.15)" }}>
-          <p className="font-body text-xs uppercase tracking-widest mb-4" style={{ color: GOLD }}>Your Referral Code</p>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="font-heading text-3xl font-bold tracking-widest" style={{ color: GOLD }}>{member.referral_code || "—"}</span>
-            <button onClick={copyCode} className="p-2 rounded-lg transition-all"
-              style={{ background: copied ? "#22c55e20" : "rgba(255,255,255,0.05)", color: copied ? "#22c55e" : "rgba(255,255,255,0.5)" }}>
+          <div className="flex items-center gap-2 mb-1">
+            <Gift className="w-4 h-4" style={{ color: GOLD }} />
+            <p className="font-body text-xs uppercase tracking-widest" style={{ color: GOLD }}>Refer a Friend</p>
+          </div>
+          <p className="font-body text-sm mb-5" style={{ color: "rgba(255,255,255,0.55)" }}>
+            Share your link. When a friend joins the Society, you both earn points.
+          </p>
+
+          {/* Referral code + copy link */}
+          <div className="rounded-xl p-4 mb-3 flex items-center justify-between gap-3"
+            style={{ background: "#0d0d0d", border: `1px dashed ${GOLD}55` }}>
+            <div className="min-w-0">
+              <p className="font-body text-xs uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.35)" }}>Your code</p>
+              <span className="font-heading text-2xl font-bold tracking-widest truncate block" style={{ color: GOLD }}>
+                {member.referral_code || "—"}
+              </span>
+            </div>
+            <button onClick={copyLink} disabled={!referralLink}
+              className="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-body text-sm font-bold transition-all disabled:opacity-40"
+              style={{ background: copied ? "#22c55e20" : GOLD, color: copied ? "#22c55e" : "#0a0a0a" }}>
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {copied ? "Copied" : "Copy link"}
             </button>
           </div>
+
+          {/* Share via WhatsApp */}
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-disabled={!whatsappUrl}
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-body text-sm font-bold mb-6 ${!whatsappUrl ? "pointer-events-none opacity-40" : ""}`}
+            style={{ background: "#25D36620", color: "#25D366", border: "1px solid #25D36655" }}>
+            <MessageCircle className="w-4 h-4" />
+            Share via WhatsApp
+          </a>
+
+          {/* Referral counters */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl p-4" style={{ background: "#252525" }}>
-              <p className="font-body text-xl font-bold text-white">1,000 pts</p>
-              <p className="font-body text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>per free member referred</p>
+            <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: "#252525" }}>
+              <Users className="w-5 h-5 shrink-0" style={{ color: "rgba(255,255,255,0.45)" }} />
+              <div>
+                <p className="font-body text-2xl font-bold text-white">{member.referral_count || 0}</p>
+                <p className="font-body text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>Members Referred</p>
+              </div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "#252525" }}>
-              <p className="font-body text-xl font-bold text-white">2,500 pts</p>
+              <p className="font-body text-2xl font-bold" style={{ color: GOLD }}>{referralPoints.toLocaleString()} pts</p>
+              <p className="font-body text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>Bonus earned from referrals</p>
+            </div>
+          </div>
+
+          {/* Reward structure */}
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="rounded-xl p-4" style={{ background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <p className="font-body text-base font-bold text-white">1,000 pts</p>
+              <p className="font-body text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>per free member referred</p>
+            </div>
+            <div className="rounded-xl p-4" style={{ background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <p className="font-body text-base font-bold text-white">2,500 pts</p>
               <p className="font-body text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>per paid member referred</p>
             </div>
           </div>
