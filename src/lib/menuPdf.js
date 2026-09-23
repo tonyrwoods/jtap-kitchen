@@ -31,7 +31,7 @@ function fmtPrice(n) {
  * @param {Array} foodItems  - MenuItem records
  * @param {Array} liquorItems - LiquorMenuItem records
  */
-export async function generateMenuPdf(foodItems = [], liquorItems = []) {
+export async function generateMenuPdf(foodItems = [], liquorItems = [], qrDataUrl = null) {
   const doc = new jsPDF({ unit: "pt", format: "letter" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -154,13 +154,24 @@ export async function generateMenuPdf(foodItems = [], liquorItems = []) {
 
   // Footer
   y += 6;
-  writeWrapped(
+  writeCentered(
     `Please inform your server of any allergies. Prices subject to change. © ${new Date().getFullYear()} JTAP Kitchen.`,
     8,
     1.3,
     "italic",
     [140, 140, 140]
   );
+
+  // QR — Join the Tap Room Society
+  if (qrDataUrl) {
+    const qrSize = 72;
+    ensureSpace(qrSize + 40);
+    y += 18;
+    doc.addImage(qrDataUrl, "PNG", pageW / 2 - qrSize / 2, y, qrSize, qrSize);
+    y += qrSize + 8;
+    writeCentered("Join the Tap Room Society", 11, 1.2, "bold");
+    writeCentered("Scan to join — jtapkitchen.com/tap-room-society", 8, 1.3, "normal", [120, 120, 120]);
+  }
 
   doc.save("JTAP-Kitchen-Menu.pdf");
 }

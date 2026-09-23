@@ -4,6 +4,7 @@ import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda
 import { motion, AnimatePresence } from "framer-motion";
 import useSeoMeta from "../hooks/useSeoMeta";
 import MenuQRCode from "../components/MenuQRCode";
+import TapRoomSocietyQR from "../components/TapRoomSocietyQR";
 
 const CATEGORIES = [
   { key: "All", label: "Full Menu", icon: UtensilsCrossed },
@@ -251,6 +252,7 @@ export default function Menu() {
       <div className="border-t border-border bg-secondary/30">
         <div className="max-w-7xl mx-auto">
           <MenuQRCode />
+          <TapRoomSocietyQR />
         </div>
       </div>
     </div>
