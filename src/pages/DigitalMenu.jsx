@@ -6,7 +6,7 @@ import useSeoMeta from "../hooks/useSeoMeta";
 import { trackPixel } from "@/lib/metaPixel";
 import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
 
-const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
+const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks"];
 
 const DIETARY_COLORS = {
   "Vegetarian": "bg-green-100 text-green-800",

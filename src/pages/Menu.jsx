@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie } from "lucide-react";
+import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie, Utensils, Carrot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSeoMeta from "../hooks/useSeoMeta";
 import MenuQRCode from "../components/MenuQRCode";
@@ -10,6 +10,8 @@ const CATEGORIES = [
   { key: "Appetizers", label: "Appetizers", icon: ChefHat },
   { key: "Salads & Sandwiches", label: "Salads & Sandwiches", icon: Salad },
   { key: "Entrees", label: "Entrees", icon: Beef },
+  { key: "Lunch", label: "Lunch", icon: Utensils },
+  { key: "Lunch Sides", label: "Lunch Sides", icon: Carrot },
   { key: "Sides", label: "Sides", icon: CupSoda },
   { key: "Desserts", label: "Desserts", icon: Cookie },
 ];
@@ -18,6 +20,8 @@ const CATEGORY_IMAGES = {
   Appetizers: "https://images.unsplash.com/photo-1541014741259-de529411b96a?w=1200&q=80",
   "Salads & Sandwiches": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&q=80",
   Entrees: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80",
+  Lunch: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&q=80",
+  "Lunch Sides": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&q=80",
   Sides: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=1200&q=80",
   Desserts: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=1200&q=80",
 };
@@ -30,12 +34,14 @@ const DIETARY_ICONS = {
   Spicy: { icon: Flame, color: "text-red-600", bg: "bg-red-50" },
 };
 
-const SECTION_ORDER = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts"];
+const SECTION_ORDER = ["Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts"];
 
 const FALLBACK_IMAGES = {
   Appetizers: "https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&q=80",
   "Salads & Sandwiches": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
   Entrees: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
+  Lunch: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80",
+  "Lunch Sides": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
   Sides: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
   Desserts: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600&q=80",
 };
