@@ -87,7 +87,13 @@ export default function DigitalMenu() {
 
   useEffect(() => {
     base44.entities.MenuItem.list("category", 200).then(data => {
-      setItems(data);
+      const sorted = [...data].sort((a, b) => {
+        const ca = CATEGORIES.indexOf(a.category);
+        const cb = CATEGORIES.indexOf(b.category);
+        if (ca !== cb) return (ca === -1 ? 99 : ca) - (cb === -1 ? 99 : cb);
+        return (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" });
+      });
+      setItems(sorted);
       setLoading(false);
     });
   }, []);

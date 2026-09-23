@@ -144,7 +144,9 @@ export default function Menu() {
 
   useEffect(() => {
     base44.entities.MenuItem.list("created_date", 200).then((data) => {
-      setItems(data.filter(i => i && i.id && i.name));
+      const cleaned = data.filter(i => i && i.id && i.name);
+      cleaned.sort((a, b) => (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" }));
+      setItems(cleaned);
       setLoading(false);
     });
   }, []);
