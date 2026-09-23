@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 
-const FOOD_CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
+const FOOD_CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks"];
 const LIQUOR_SECTIONS = ["Signature Cocktails", "Wine List", "Spirits & Liquors"];
 
 const LOGO_URL = "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png";
