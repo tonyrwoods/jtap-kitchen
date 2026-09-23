@@ -1,0 +1,117 @@
+{
+  "name": "MetaAdsInsight",
+  "type": "object",
+  "properties": {
+    "account_id": {
+      "type": "string",
+      "title": "Ad Account ID"
+    },
+    "account_name": {
+      "type": "string",
+      "title": "Ad Account Name"
+    },
+    "campaign_id": {
+      "type": "string",
+      "title": "Campaign ID"
+    },
+    "campaign_name": {
+      "type": "string",
+      "title": "Campaign Name"
+    },
+    "objective": {
+      "type": "string",
+      "title": "Campaign Objective"
+    },
+    "campaign_status": {
+      "type": "string",
+      "title": "Campaign Status"
+    },
+    "spend": {
+      "type": "number",
+      "title": "Spend (USD, 30d)"
+    },
+    "impressions": {
+      "type": "number",
+      "title": "Impressions (30d)"
+    },
+    "clicks": {
+      "type": "number",
+      "title": "Clicks (30d)"
+    },
+    "reach": {
+      "type": "number",
+      "title": "Reach (30d)"
+    },
+    "frequency": {
+      "type": "number",
+      "title": "Frequency"
+    },
+    "cpc": {
+      "type": "number",
+      "title": "Cost Per Click (USD)"
+    },
+    "cpm": {
+      "type": "number",
+      "title": "Cost Per 1k Impressions (USD)"
+    },
+    "ctr": {
+      "type": "number",
+      "title": "Click-Through Rate (%)"
+    },
+    "results": {
+      "type": "number",
+      "title": "Conversions / Results (30d)"
+    },
+    "purchase_value": {
+      "type": "number",
+      "title": "Purchase Value (USD, 30d)"
+    },
+    "roas": {
+      "type": "number",
+      "title": "Return on Ad Spend"
+    },
+    "date_start": {
+      "type": "string",
+      "title": "Insights Window Start (YYYY-MM-DD)"
+    },
+    "date_stop": {
+      "type": "string",
+      "title": "Insights Window Stop (YYYY-MM-DD)"
+    },
+    "synced_at": {
+      "type": "string",
+      "title": "Synced At (ISO)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "account_id",
+    "campaign_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
-import { Plus, Clock, ChefHat, CheckCircle, Utensils, AlertTriangle, X, ArrowLeftRight, RotateCcw } from "lucide-react";
+import { Plus, Clock, ChefHat, CheckCircle, Utensils, AlertTriangle, X, ArrowLeftRight, RotateCcw, TrendingUp } from "lucide-react";
+import MetaAdsPerformanceModal from "../components/MetaAdsPerformanceModal";
 import { toast } from "sonner";
 import SwapRequestsPanel from "../components/SwapRequestsPanel";
 
@@ -194,6 +195,7 @@ export default function KitchenDashboard() {
   const [showNew, setShowNew] = useState(false);
   const [showServed, setShowServed] = useState(false);
   const [showSwaps, setShowSwaps] = useState(false);
+  const [showAds, setShowAds] = useState(false);
   const [pendingSwaps, setPendingSwaps] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const containerRef = useRef(null);
@@ -295,6 +297,13 @@ export default function KitchenDashboard() {
             Show Served
           </label>
           <button
+            onClick={() => setShowAds(true)}
+            className="flex items-center gap-2 px-4 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted transition-colors"
+          >
+            <TrendingUp className="w-4 h-4" />
+            Meta Ads
+          </button>
+          <button
             onClick={() => setShowSwaps(true)}
             className="relative flex items-center gap-2 px-4 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted transition-colors"
           >
@@ -338,6 +347,7 @@ export default function KitchenDashboard() {
 
       {showNew && <NewOrderModal onClose={() => setShowNew(false)} onSave={() => { setShowNew(false); }} />}
       {showSwaps && <SwapRequestsPanel onClose={() => setShowSwaps(false)} />}
+      {showAds && <MetaAdsPerformanceModal onClose={() => setShowAds(false)} />}
     </div>
   );
 }

@@ -1,0 +1,45 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * *",
+      "one_time_date": null,
+      "timezone": "America/Chicago",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "Daily Meta Ads Sync",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_meta_ads_sync",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncMetaAdsInsights",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync Meta Ads insights",
+            "description": "Pull campaign performance into the dashboard"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Pulls campaign performance (last 30 days) from the connected Meta Ads account every morning and stores it in MetaAdsInsight for the Kitchen Dashboard."
+}
