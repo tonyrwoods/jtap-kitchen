@@ -6,6 +6,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import useSeoMeta from "../hooks/useSeoMeta";
 import { trackPixel } from "@/lib/metaPixel";
 import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
+import TapRoomSocietyQR from "@/components/TapRoomSocietyQR";
 
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks"];
 
@@ -78,7 +79,8 @@ export default function DigitalMenu() {
         liquor = data.filter(i => i && i.id && i.name && i.is_active !== false);
         setLiquorItems(liquor);
       }
-      const qrDataUrl = qrRef.current ? qrRef.current.toDataURL("image/png") : null;
+      const qrCanvas = qrRef.current ? qrRef.current.querySelector("canvas") : null;
+      const qrDataUrl = qrCanvas ? qrCanvas.toDataURL("image/png") : null;
       const { generateMenuPdf } = await import("@/lib/menuPdf");
       await generateMenuPdf(items, liquor, qrDataUrl);
     } finally {
@@ -264,9 +266,11 @@ export default function DigitalMenu() {
         <p className="font-body text-xs text-muted-foreground mt-1">Please inform your server of any allergies.</p>
       </div>
 
+      <TapRoomSocietyQR />
+
       {/* Hidden QR canvas used to embed a Tap Room Society code in the print-menu PDF */}
-      <div className="hidden" aria-hidden="true">
-        <QRCodeCanvas ref={qrRef} value="https://www.jtapkitchen.com/tap-room-society" size={200} level="M" />
+      <div ref={qrRef} className="w-0 h-0 overflow-hidden" aria-hidden="true">
+        <QRCodeCanvas value="https://www.jtapkitchen.com/tap-room-society" size={200} level="M" />
       </div>
     </div>
   );
