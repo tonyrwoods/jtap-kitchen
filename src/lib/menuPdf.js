@@ -3,6 +3,24 @@ import { jsPDF } from "jspdf";
 const FOOD_CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 const LIQUOR_SECTIONS = ["Signature Cocktails", "Wine List", "Spirits & Liquors"];
 
+const LOGO_URL = "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png";
+
+async function loadImageDataUrl(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 function fmtPrice(n) {
   if (n == null || isNaN(Number(n))) return "";
   return `$${Number(n).toFixed(2)}`;
@@ -13,7 +31,7 @@ function fmtPrice(n) {
  * @param {Array} foodItems  - MenuItem records
  * @param {Array} liquorItems - LiquorMenuItem records
  */
-export function generateMenuPdf(foodItems = [], liquorItems = []) {
+export async function generateMenuPdf(foodItems = [], liquorItems = []) {
   const doc = new jsPDF({ unit: "pt", format: "letter" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -41,10 +59,30 @@ export function generateMenuPdf(foodItems = [], liquorItems = []) {
     });
   };
 
-  // Header
-  writeWrapped("JTAP Kitchen — Our Menu", 22, 1.2, "bold");
+  const writeCentered = (text, size, lineHeight = 1.4, font = "normal", color = [0, 0, 0]) => {
+    doc.setFont("helvetica", font);
+    doc.setFontSize(size);
+    doc.setTextColor(color[0], color[1], color[2]);
+    const lines = doc.splitTextToSize(text, contentW);
+    const lineH = size * lineHeight;
+    lines.forEach((line) => {
+      ensureSpace(lineH);
+      doc.text(line, pageW / 2, y, { align: "center" });
+      y += lineH;
+    });
+  };
+
+  // Logo + Header
+  const logoDataUrl = await loadImageDataUrl(LOGO_URL);
+  if (logoDataUrl) {
+    const logoSize = 50;
+    ensureSpace(logoSize + 10);
+    doc.addImage(logoDataUrl, "PNG", pageW / 2 - logoSize / 2, y, logoSize, logoSize);
+    y += logoSize + 8;
+  }
+  writeCentered("JTAP Kitchen — Our Menu", 22, 1.2, "bold");
   y += 4;
-  writeWrapped("Memphis, TN  ·  (901) 213-8085  ·  jtapkitchen.com", 10, 1.3, "normal", [120, 120, 120]);
+  writeCentered("Memphis, TN  ·  (901) 213-8085  ·  jtapkitchen.com", 10, 1.3, "normal", [120, 120, 120]);
   y += 14;
 
   const drawItem = (name, priceText, description, extraLine) => {

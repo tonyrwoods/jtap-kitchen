@@ -77,7 +77,7 @@ export default function DigitalMenu() {
         setLiquorItems(liquor);
       }
       const { generateMenuPdf } = await import("@/lib/menuPdf");
-      generateMenuPdf(items, liquor);
+      await generateMenuPdf(items, liquor);
     } finally {
       setPrinting(false);
     }
