@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
   UtensilsCrossed, CalendarDays,
-  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload, Salad, Heart
+  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload, Salad, Heart, Mail
 } from "lucide-react";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
@@ -35,6 +35,7 @@ import EventAddOnsTab from "../components/admin/EventAddOnsTab";
 import ChangeLogAdmin from "../components/admin/ChangeLogAdmin";
 import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import ReservationEditModal from "../components/admin/ReservationEditModal";
+import ReservationEmailModal from "../components/admin/ReservationEmailModal";
 import PromotionScorecardsTab from "../components/admin/PromotionScorecardsTab";
 import LiquorMenuItemsTab from "../components/admin/LiquorMenuItemsTab";
 import SelectDropdown from "../components/SelectDropdown";
@@ -169,6 +170,23 @@ export default function AdminDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [rsvpOpen, setRsvpOpen] = useState(null);
   const [editingRes, setEditingRes] = useState(null);
+  const [emailingRes, setEmailingRes] = useState(null);
+  const [resendingId, setResendingId] = useState(null);
+
+  const handleResendConfirmation = async (r) => {
+    setResendingId(r.id);
+    try {
+      const res = await base44.functions.invoke("sendReservationConfirmation", { entity_id: r.id, force: true });
+      if (res.data?.skipped) {
+        toast.error("Could not resend: " + (res.data.reason || "skipped"));
+      } else {
+        toast.success("Confirmation email resent to " + (r.guest_name || "guest"));
+      }
+    } catch (err) {
+      toast.error("Resend failed: " + (err.message || "unknown error"));
+    }
+    setResendingId(null);
+  };
 
   useEffect(() => {
     Promise.all([
@@ -439,6 +457,11 @@ export default function AdminDashboard() {
                       <StatusBadge status={r.status || "Pending"} />
                       <SelectDropdown value={r.status || "Pending"} onChange={v => updateResStatus(r.id, v)} options={STATUSES.map(s => ({ value: s, label: s }))} />
                       <button onClick={() => setEditingRes(r)} className="p-1.5 hover:text-primary transition-colors shrink-0" aria-label="Edit reservation"><Pencil className="w-4 h-4" /></button>
+                      <button onClick={() => setEmailingRes(r)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-body font-medium border border-primary/40 text-primary hover:bg-primary/5 transition-colors shrink-0" aria-label="Email guest"><Mail className="w-3.5 h-3.5" />Email</button>
+                      <button onClick={() => handleResendConfirmation(r)} disabled={resendingId === r.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-body font-medium border border-border hover:bg-muted transition-colors shrink-0 disabled:opacity-50" aria-label="Resend confirmation email">
+                        {resendingId === r.id ? <span className="w-3.5 h-3.5 border-2 border-muted-foreground/40 border-t-foreground rounded-full animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+                        Resend
+                      </button>
                       <button onClick={() => setRsvpOpen(rsvpOpen === r.id ? null : r.id)} className="px-3 py-1.5 rounded-lg text-xs font-body font-medium border border-border hover:bg-muted transition-colors shrink-0">RSVP</button>
                       </div>
                       {rsvpOpen === r.id && <ReservationRsvpPanel reservation={r} />}
@@ -461,6 +484,9 @@ export default function AdminDashboard() {
                     }}
                     onClose={() => setEditingRes(null)}
                   />
+                )}
+                {emailingRes && (
+                  <ReservationEmailModal reservation={emailingRes} onClose={() => setEmailingRes(null)} />
                 )}
               </motion.div>
             )}
