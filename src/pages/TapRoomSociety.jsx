@@ -55,6 +55,30 @@ export default function TapRoomSociety() {
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute("content", "Join the JTAP Kitchen JTAP Room Society. Member tiers with dining discounts, private room access, birthday rewards, and exclusive events.");
   }, []);
+
+  // Google Ads tag (gtag.js) — Google tag AW-18468679504
+  useEffect(() => {
+    const GTAG_ID = "AW-18468679504";
+    const scriptSrc = document.createElement("script");
+    scriptSrc.async = true;
+    scriptSrc.src = `https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`;
+    scriptSrc.dataset.gtag = GTAG_ID;
+    document.head.appendChild(scriptSrc);
+
+    const inline = document.createElement("script");
+    inline.dataset.gtag = GTAG_ID;
+    inline.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${GTAG_ID}');
+    `;
+    document.head.appendChild(inline);
+
+    return () => {
+      document.querySelectorAll(`script[data-gtag="${GTAG_ID}"]`).forEach((s) => s.remove());
+    };
+  }, []);
   const joinRef = useRef(null);
   const navigate = useNavigate();
   const [form, setForm] = useState({
