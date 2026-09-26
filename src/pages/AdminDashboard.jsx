@@ -36,11 +36,12 @@ import ChangeLogAdmin from "../components/admin/ChangeLogAdmin";
 import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import ReservationEditModal from "../components/admin/ReservationEditModal";
 import PromotionScorecardsTab from "../components/admin/PromotionScorecardsTab";
+import LiquorMenuItemsTab from "../components/admin/LiquorMenuItemsTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
   { label: "Operations", tabs: ["Overview", "Opening Checklist", "End of Year Checklist"] },
-  { label: "Menu & Pricing", tabs: ["Menu Items", "Pricing Strategy", "Chef Highlights"] },
+  { label: "Menu & Pricing", tabs: ["Menu Items", "Liquor Items", "Pricing Strategy", "Chef Highlights"] },
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
   { label: "Events", tabs: ["Inquiries", "Talent", "Add-Ons"] },
   { label: "Staff", tabs: ["Staff Roster"] },
@@ -330,6 +331,12 @@ export default function AdminDashboard() {
             {tab === "End of Year Checklist" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <EndOfYearChecklistTab />
+              </motion.div>
+            )}
+
+            {tab === "Liquor Items" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <LiquorMenuItemsTab />
               </motion.div>
             )}
 
