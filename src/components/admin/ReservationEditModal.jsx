@@ -23,6 +23,7 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
   const [msgSubject, setMsgSubject] = useState("");
   const [msgBody, setMsgBody] = useState("");
   const [sendingMsg, setSendingMsg] = useState(false);
+  const [sendingResend, setSendingResend] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSendSms = async () => {
@@ -67,6 +68,21 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
       toast.error("Email failed: " + (err.message || "unknown error"));
     }
     setSendingMsg(false);
+  };
+
+  const handleResendConfirmation = async () => {
+    setSendingResend(true);
+    try {
+      const res = await base44.functions.invoke("sendReservationConfirmation", { entity_id: reservation.id, force: true });
+      if (res.data?.skipped) {
+        toast.error("Could not resend: " + (res.data.reason || "skipped"));
+      } else {
+        toast.success("Confirmation email resent to guest");
+      }
+    } catch (err) {
+      toast.error("Resend failed: " + (err.message || "unknown error"));
+    }
+    setSendingResend(false);
   };
 
   const handleSave = async (e) => {
@@ -195,6 +211,10 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
               {sendingMsg ? "Sending..." : "Send Email"}
             </button>
           </div>
+          <button type="button" onClick={handleResendConfirmation} disabled={sendingResend} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 border border-primary text-primary rounded-full font-body text-sm font-medium hover:bg-primary/5 disabled:opacity-50">
+            <Mail className="w-3.5 h-3.5" />
+            {sendingResend ? "Sending..." : "Resend Reservation Confirmation Email"}
+          </button>
           <label className="flex items-center gap-2 cursor-pointer select-text">
             <input type="checkbox" checked={notifyGuest} onChange={e => setNotifyGuest(e.target.checked)} className="w-4 h-4" />
             <span className="font-body text-sm">Notify guest by email about these changes</span>

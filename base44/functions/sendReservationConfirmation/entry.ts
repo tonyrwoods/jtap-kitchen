@@ -11,13 +11,14 @@ function esc(s) {
 }
 
 Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
+  let reservation;
   try {
-    const base44 = createClientFromRequest(req);
-
     const body = await req.json().catch(() => ({}));
     const event = body.event || {};
 
     const entityId = body.entity_id || event.entity_id;
+    const force = !!body.force;
 
     // Two invocation modes:
     //  1. Workflow/replay — passes entity_id, no user session (reservations
@@ -25,12 +26,19 @@ Deno.serve(async (req) => {
     //     A one-time flag on the reservation guards re-sends.
     //  2. Manual admin — passes inline reservation data (no entity_id).
     //     Requires an admin session.
-    let reservation;
     if (entityId) {
       if (event.type && event.type !== 'create') return Response.json({ skipped: true });
+      // Force resend is admin-only — stops public callers re-triggering emails.
+      if (force) {
+        let user;
+        try { user = await base44.auth.me(); } catch (_) { user = null; }
+        if (!user || user.role !== 'admin') {
+          return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+        }
+      }
       reservation = await base44.asServiceRole.entities.Reservation.get(entityId);
       if (!reservation) return Response.json({ error: 'Reservation not found' }, { status: 404 });
-      if (reservation.confirmation_email_sent_at) {
+      if (reservation.confirmation_email_sent_at && !force) {
         return Response.json({ skipped: true, reason: 'confirmation email already sent' });
       }
     } else {
