@@ -20,6 +20,9 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
   const [sendingSms, setSendingSms] = useState(false);
+  const [msgSubject, setMsgSubject] = useState("");
+  const [msgBody, setMsgBody] = useState("");
+  const [sendingMsg, setSendingMsg] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSendSms = async () => {
@@ -47,6 +50,23 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
       toast.error("Reply failed: " + (err.message || "unknown error"));
     }
     setSendingReply(false);
+  };
+
+  const handleSendMsg = async () => {
+    if (!msgSubject.trim() || !msgBody.trim()) {
+      toast.error("Subject and message are required.");
+      return;
+    }
+    setSendingMsg(true);
+    try {
+      await base44.functions.invoke("sendReservationMessage", { reservation_id: reservation.id, subject: msgSubject.trim(), message: msgBody.trim() });
+      toast.success("Email sent to guest");
+      setMsgSubject("");
+      setMsgBody("");
+    } catch (err) {
+      toast.error("Email failed: " + (err.message || "unknown error"));
+    }
+    setSendingMsg(false);
   };
 
   const handleSave = async (e) => {
@@ -164,6 +184,16 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
             ) : form.sms_opt_in && !form.phone ? (
               <p className="font-body text-xs text-amber-700">Add a phone number to enable SMS.</p>
             ) : null}
+          </div>
+          <div className="rounded-lg bg-primary/5 border border-primary/20 p-3">
+            <label className="font-body text-sm font-semibold mb-1.5 block flex items-center gap-1.5">
+              <Mail className="w-3.5 h-3.5 text-primary" /> Email this guest
+            </label>
+            <input value={msgSubject} onChange={e => setMsgSubject(e.target.value)} className={`${inputCls} mb-2`} placeholder="Subject" />
+            <textarea rows={3} value={msgBody} onChange={e => setMsgBody(e.target.value)} className={`${inputCls} resize-none mb-2`} placeholder="Write a message to the guest…" />
+            <button type="button" onClick={handleSendMsg} disabled={sendingMsg} className="px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 disabled:opacity-50">
+              {sendingMsg ? "Sending..." : "Send Email"}
+            </button>
           </div>
           <label className="flex items-center gap-2 cursor-pointer select-text">
             <input type="checkbox" checked={notifyGuest} onChange={e => setNotifyGuest(e.target.checked)} className="w-4 h-4" />
