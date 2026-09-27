@@ -1,0 +1,93 @@
+{
+  "name": "GbpPostDraft",
+  "type": "object",
+  "properties": {
+    "promotion_id": {
+      "type": "string",
+      "title": "Promotion ID"
+    },
+    "promotion_title": {
+      "type": "string",
+      "title": "Promotion Title (cache)"
+    },
+    "post_type": {
+      "type": "string",
+      "title": "Post Type",
+      "enum": [
+        "What's New",
+        "Event",
+        "Offer"
+      ],
+      "default": "Event"
+    },
+    "post_text": {
+      "type": "string",
+      "title": "Post Text (ready to paste into Google Business Profile)"
+    },
+    "cta_label": {
+      "type": "string",
+      "title": "CTA Label",
+      "enum": [
+        "Book",
+        "Order Online",
+        "Learn More",
+        "Sign Up",
+        "Call Now"
+      ],
+      "default": "Book"
+    },
+    "event_date": {
+      "type": "string",
+      "title": "Event Date"
+    },
+    "share_url": {
+      "type": "string",
+      "title": "Share URL"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Draft",
+        "Posted",
+        "Skipped"
+      ],
+      "default": "Draft"
+    },
+    "generated_at": {
+      "type": "string",
+      "title": "Generated At (ISO)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "promotion_id",
+    "post_text"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

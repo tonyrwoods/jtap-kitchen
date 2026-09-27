@@ -127,6 +127,38 @@ export default function EventAnnouncement() {
     setCanonical(shareUrl);
   }, [promo, slug]);
 
+  // Apply an admin-approved AI SEO content draft for this event — overrides the
+  // default meta with an optimized title/description and injects JSON-LD
+  // structured data so the event can earn rich search results.
+  useEffect(() => {
+    if (!promo?.id) return;
+    let cancelled = false;
+    base44.entities.SeoContentDraft.filter({ promotion_id: promo.id, status: "Applied" })
+      .then(([draft]) => {
+        if (cancelled || !draft) return;
+        if (draft.seo_title) document.title = draft.seo_title;
+        if (draft.meta_description) setMetaName("description", draft.meta_description);
+        if (draft.og_title) setMetaProperty("og:title", draft.og_title);
+        if (draft.og_description) setMetaProperty("og:description", draft.og_description);
+        if (draft.json_ld) {
+          let el = document.getElementById("seo-jsonld-event");
+          if (!el) {
+            el = document.createElement("script");
+            el.id = "seo-jsonld-event";
+            el.setAttribute("type", "application/ld+json");
+            document.head.appendChild(el);
+          }
+          el.textContent = draft.json_ld;
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+      const el = document.getElementById("seo-jsonld-event");
+      if (el) el.remove();
+    };
+  }, [promo]);
+
   const submitRSVP = async (e) => {
     e.preventDefault();
     if (!rsvpStatus) { toast.error("Please select a response"); return; }

@@ -1,0 +1,102 @@
+{
+  "name": "SeoContentDraft",
+  "type": "object",
+  "properties": {
+    "promotion_id": {
+      "type": "string",
+      "title": "Promotion ID"
+    },
+    "promotion_title": {
+      "type": "string",
+      "title": "Promotion Title (cache)"
+    },
+    "share_slug": {
+      "type": "string",
+      "title": "Share Slug (cache)"
+    },
+    "seo_title": {
+      "type": "string",
+      "title": "SEO Title (<title>)"
+    },
+    "meta_description": {
+      "type": "string",
+      "title": "Meta Description"
+    },
+    "og_title": {
+      "type": "string",
+      "title": "OG Title (Social)"
+    },
+    "og_description": {
+      "type": "string",
+      "title": "OG Description (Social)"
+    },
+    "h1": {
+      "type": "string",
+      "title": "On-Page H1"
+    },
+    "body_intro": {
+      "type": "string",
+      "title": "SEO Intro Paragraph"
+    },
+    "keywords": {
+      "type": "string",
+      "title": "Keywords (comma-separated)"
+    },
+    "json_ld": {
+      "type": "string",
+      "title": "JSON-LD Structured Data"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Draft",
+        "Applied",
+        "Skipped"
+      ],
+      "default": "Draft"
+    },
+    "generated_at": {
+      "type": "string",
+      "title": "Generated At (ISO)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "promotion_id",
+    "seo_title"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.status": "Applied"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

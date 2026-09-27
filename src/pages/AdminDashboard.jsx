@@ -39,6 +39,8 @@ import ReservationEmailModal from "../components/admin/ReservationEmailModal";
 import PromotionScorecardsTab from "../components/admin/PromotionScorecardsTab";
 import LiquorMenuItemsTab from "../components/admin/LiquorMenuItemsTab";
 import AdsRecommendationsTab from "../components/admin/AdsRecommendationsTab";
+import GbpPostsTab from "../components/admin/GbpPostsTab";
+import SeoContentDraftsTab from "../components/admin/SeoContentDraftsTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
@@ -49,7 +51,7 @@ const TAB_GROUPS = [
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
   { label: "Guests", tabs: ["Gift Cards", "Feedback", "Scorecards", "Loyalty"] },
-  { label: "Marketing", tabs: ["Gallery", "Instagram", "Team Members", "LinkedIn", "Promotions", "SEO", "Ads"] },
+  { label: "Marketing", tabs: ["Gallery", "Instagram", "Team Members", "LinkedIn", "Promotions", "SEO", "Event SEO", "GBP Posts", "Ads"] },
   { label: "Careers", tabs: ["Job Listings"] },
   { label: "Account", tabs: ["Profile"] },
   { label: "System", tabs: ["Changelog"] },
@@ -635,6 +637,18 @@ export default function AdminDashboard() {
             {tab === "Ads" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <AdsRecommendationsTab />
+              </motion.div>
+            )}
+
+            {tab === "Event SEO" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <SeoContentDraftsTab />
+              </motion.div>
+            )}
+
+            {tab === "GBP Posts" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <GbpPostsTab />
               </motion.div>
             )}
 
