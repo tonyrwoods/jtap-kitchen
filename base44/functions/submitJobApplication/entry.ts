@@ -1,8 +1,32 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
+import { secrets } from 'base44:runtime';
+
+// Only accept submissions that originate from this app's own domain.
+// The function's public URL can be called by anyone, so we require a
+// browser Origin (or Referer) whose host matches the request's own Host
+// — i.e. a same-origin call from the site — before creating records.
+// Direct hits to the raw function URL are rejected.
+function isAllowedOrigin(req) {
+  const origin = (req.headers.get('origin') || '').toLowerCase();
+  const referer = (req.headers.get('referer') || '').toLowerCase();
+  const host = (req.headers.get('host') || '').toLowerCase();
+  if (!host) return false;
+  const fromHeader = (url) => {
+    if (!url) return false;
+    try { return new URL(url).host.toLowerCase() === host; } catch { return false; }
+  };
+  if (fromHeader(origin) || fromHeader(referer)) return true;
+  const appUrl = (secrets.get('APP_URL') || '').toLowerCase().replace(/\/$/, '');
+  if (appUrl && (origin === appUrl || origin.startsWith(appUrl + '/') || referer === appUrl || referer.startsWith(appUrl + '/'))) return true;
+  return false;
+}
 
 export default async function(req) {
   try {
+    if (!isAllowedOrigin(req)) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
     const base44 = createClientFromRequest(req);
     const body = await req.json();
     const {
