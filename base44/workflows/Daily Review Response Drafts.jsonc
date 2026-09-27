@@ -1,0 +1,41 @@
+{
+  "name": "Daily Review Response Drafts",
+  "description": "Autonomous agent: drafts manager responses for approved guest reviews without a response, pre-filling them for admin review in the Feedback tab.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 14 * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_review_response_drafts",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "draftReviewResponses",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}

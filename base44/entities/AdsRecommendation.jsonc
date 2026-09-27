@@ -1,0 +1,88 @@
+{
+  "name": "AdsRecommendation",
+  "type": "object",
+  "properties": {
+    "campaign_name": {
+      "type": "string",
+      "title": "Campaign Name"
+    },
+    "account_name": {
+      "type": "string",
+      "title": "Ad Account Name"
+    },
+    "current_spend": {
+      "type": "number",
+      "title": "Current Spend (USD, 30d)"
+    },
+    "recommendation": {
+      "type": "string",
+      "title": "Recommendation"
+    },
+    "suggested_action": {
+      "type": "string",
+      "title": "Suggested Action",
+      "enum": [
+        "Scale Up",
+        "Hold",
+        "Optimize",
+        "Pause"
+      ],
+      "default": "Hold"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "default": "Medium"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "New",
+        "Acknowledged",
+        "Applied"
+      ],
+      "default": "New"
+    },
+    "generated_at": {
+      "type": "string",
+      "title": "Generated At (ISO)"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "campaign_name",
+    "recommendation"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

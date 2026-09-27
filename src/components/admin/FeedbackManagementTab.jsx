@@ -186,7 +186,10 @@ export default function FeedbackManagementTab() {
 
                 {review.manager_response && (
                   <div className="bg-muted/50 rounded-lg p-3 mb-3 border-l-2 border-primary">
-                    <p className="font-body text-xs font-semibold text-primary mb-1">Your Response:</p>
+                    <p className="font-body text-xs font-semibold text-primary mb-1 flex items-center gap-2">
+                      Your Response:
+                      {!review.response_date && <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-100 text-amber-800 font-semibold uppercase tracking-wide">AI Draft</span>}
+                    </p>
                     <p className="font-body text-sm text-foreground">{review.manager_response}</p>
                   </div>
                 )}
@@ -209,12 +212,12 @@ export default function FeedbackManagementTab() {
                   ))}
                 </select>
 
-                {review.status === "Approved" && !review.manager_response && (
+                {review.status === "Approved" && !review.response_date && (
                   <button
                     onClick={() => setRespondingTo(review)}
                     className="px-3 py-1.5 text-xs font-semibold bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
                   >
-                    Respond
+                    {review.manager_response ? "Review Draft" : "Respond"}
                   </button>
                 )}
 

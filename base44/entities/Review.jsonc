@@ -37,6 +37,14 @@
       "title": "Featured on Homepage",
       "default": false
     },
+    "manager_response": {
+      "type": "string",
+      "title": "Manager Response"
+    },
+    "response_date": {
+      "type": "string",
+      "title": "Response Published At (ISO)"
+    },
     "description": {
       "type": "string",
       "title": "Description",
