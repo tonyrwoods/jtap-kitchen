@@ -171,6 +171,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [menuSort, setMenuSort] = useState("name");
   const [rsvpOpen, setRsvpOpen] = useState(null);
   const [editingRes, setEditingRes] = useState(null);
   const [emailingRes, setEmailingRes] = useState(null);
@@ -402,12 +403,28 @@ export default function AdminDashboard() {
 
             {tab === "Menu Items" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
-                {!showForm && (
-                  <button onClick={() => { setEditingItem(null); setShowForm(true); }}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">
-                    <Plus className="w-4 h-4" /> Add Item
-                  </button>
-                )}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    {!showForm && (
+                      <button onClick={() => { setEditingItem(null); setShowForm(true); }}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">
+                        <Plus className="w-4 h-4" /> Add Item
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-body text-xs text-muted-foreground">Sort by</span>
+                    <SelectDropdown
+                      value={menuSort}
+                      onChange={setMenuSort}
+                      options={[
+                        { value: "name", label: "Name (A–Z)" },
+                        { value: "category", label: "Category (A–Z)" },
+                        { value: "price", label: "Price (Low–High)" },
+                      ]}
+                    />
+                  </div>
+                </div>
                 {showForm && (
                   <MenuItemForm item={editingItem} onSave={refreshMenu} onCancel={() => { setShowForm(false); setEditingItem(null); }} />
                 )}
@@ -422,7 +439,16 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {menuItems.map(item => (
+                      {[...menuItems]
+                        .sort((a, b) => {
+                          if (menuSort === "price") return (Number(a.price) || 0) - (Number(b.price) || 0);
+                          if (menuSort === "category") {
+                            const c = String(a.category || "").localeCompare(String(b.category || ""));
+                            return c !== 0 ? c : String(a.name || "").localeCompare(String(b.name || ""));
+                          }
+                          return String(a.name || "").localeCompare(String(b.name || ""));
+                        })
+                        .map(item => (
                         <tr key={item.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
                           <td className="px-5 py-3">
                             <p className="font-body text-sm font-medium">{item.name}</p>
