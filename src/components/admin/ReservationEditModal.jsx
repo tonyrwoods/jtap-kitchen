@@ -133,6 +133,13 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
             <X className="w-4 h-4" />
           </button>
         </div>
+        <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 mb-5">
+          <p className="font-body text-xs font-semibold text-primary uppercase tracking-wide mb-2">Email Actions</p>
+          <button type="button" onClick={handleResendConfirmation} disabled={sendingResend} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 disabled:opacity-50">
+            <Mail className="w-4 h-4" />
+            {sendingResend ? "Sending..." : "Resend Reservation Confirmation Email"}
+          </button>
+        </div>
         <form onSubmit={handleSave} className="space-y-4">
           <div>
             <label className="font-body text-sm font-semibold mb-1 block">Guest Name *</label>
@@ -211,10 +218,6 @@ export default function ReservationEditModal({ reservation, onSaved, onClose }) 
               {sendingMsg ? "Sending..." : "Send Email"}
             </button>
           </div>
-          <button type="button" onClick={handleResendConfirmation} disabled={sendingResend} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 border border-primary text-primary rounded-full font-body text-sm font-medium hover:bg-primary/5 disabled:opacity-50">
-            <Mail className="w-3.5 h-3.5" />
-            {sendingResend ? "Sending..." : "Resend Reservation Confirmation Email"}
-          </button>
           <label className="flex items-center gap-2 cursor-pointer select-text">
             <input type="checkbox" checked={notifyGuest} onChange={e => setNotifyGuest(e.target.checked)} className="w-4 h-4" />
             <span className="font-body text-sm">Notify guest by email about these changes</span>
