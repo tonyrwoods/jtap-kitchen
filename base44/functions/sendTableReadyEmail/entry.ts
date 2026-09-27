@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { esc } from '../../shared/escapeHtml.js';
 import { secrets } from 'base44:runtime';
 import { sendSms } from '../../shared/sendSms.js';
 
@@ -16,20 +17,32 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden: Staff or admin access required' }, { status: 403 });
     }
 
-    const { waitlistId, guestName, guestEmail, guestPhone } = await req.json();
+    // Recipient and personalization are derived from the Waitlist record — never
+    // from the request body — to prevent an open email relay / content injection.
+    const { waitlistId } = await req.json();
 
-    if (!waitlistId || !guestEmail) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!waitlistId) {
+      return Response.json({ error: 'Missing waitlistId' }, { status: 400 });
     }
+
+    const waitlist = await base44.entities.Waitlist.get(waitlistId);
+    if (!waitlist?.email) {
+      return Response.json({ error: 'Waitlist entry has no email on file' }, { status: 400 });
+    }
+
+    const guestEmail = waitlist.email;
+    const guestName = waitlist.guest_name || 'Guest';
+    const guestPhone = waitlist.phone;
+    const safeName = esc(guestName);
 
     // Send email notification
     const emailResponse = await sendTransactionalEmail(base44, {
       to: guestEmail,
-      subject: `${guestName}, Your Table is Ready!`,
+      subject: `${safeName}, Your Table is Ready!`,
       body: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2>Your Table is Ready</h2>
-          <p>Hi ${guestName},</p>
+          <p>Hi ${safeName},</p>
           <p>Great news! Your table at <strong>JTAP Kitchen</strong> is ready for you.</p>
           <p style="font-size: 16px; color: #C89B4F;"><strong>Please proceed to the host stand.</strong></p>
           <p>We look forward to serving you!</p>
@@ -40,7 +53,7 @@ Deno.serve(async (req) => {
     });
 
     // Mark notification as sent
-    await base44.entities.Waitlist.update(waitlistId, { notification_sent: true });
+    await base44.asServiceRole.entities.Waitlist.update(waitlistId, { notification_sent: true, notified_at: new Date().toISOString() });
 
     // Optional SMS — staff-ordered table-ready text to a waitlist guest who left
     // a number. Presence implies consent (they gave it to be notified). Non-blocking.

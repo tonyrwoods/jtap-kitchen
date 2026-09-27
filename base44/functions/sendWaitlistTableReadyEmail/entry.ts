@@ -12,21 +12,28 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden — admin or staff only' }, { status: 403 });
     }
 
-    const { waitlistId, guestName, guestEmail } = await req.json();
+    // Recipient is derived from the Waitlist record — never from the request
+    // body — to prevent an open email relay via a request-controlled recipient.
+    const { waitlistId } = await req.json();
 
-    if (!guestEmail) {
-      return Response.json({ error: "Email required" }, { status: 400 });
+    if (!waitlistId) {
+      return Response.json({ error: 'waitlistId required' }, { status: 400 });
     }
 
+    const waitlist = await base44.entities.Waitlist.get(waitlistId);
+    if (!waitlist?.email) {
+      return Response.json({ error: 'Waitlist entry has no email on file' }, { status: 400 });
+    }
+
+    const guestName = waitlist.guest_name || 'Guest';
+
     await sendTransactionalEmail(base44, {
-      to: guestEmail,
+      to: waitlist.email,
       subject: "Your Table at JTAP Kitchen is Ready!",
       body: `Hello ${guestName},\n\nYour table at JTAP Kitchen is ready! Please check in with the host within 10 minutes.\n\nThank you!`,
     });
 
-    if (waitlistId) {
-      await base44.asServiceRole.entities.Waitlist.update(waitlistId, { notification_sent: true });
-    }
+    await base44.asServiceRole.entities.Waitlist.update(waitlistId, { notification_sent: true, notified_at: new Date().toISOString() });
 
     return Response.json({ success: true });
   } catch (error) {
