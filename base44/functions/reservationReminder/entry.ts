@@ -3,6 +3,7 @@ import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 import { secrets } from 'base44:runtime';
 import { sendSms } from '../../shared/sendSms.js';
+import { esc } from '../../shared/escapeHtml.js';
 
 // Send a reminder SMS when the guest opted in and Twilio is configured.
 // Non-fatal: callers track their own errors separately.
@@ -68,12 +69,12 @@ Deno.serve(async (req) => {
     <p style="color:#888;font-size:12px;margin:8px 0 0;">Confirm Your Reservation</p>
   </div>
   <div style="padding:36px 32px;background:#faf9f7;">
-    <h2 style="font-size:20px;margin:0 0 8px;">Don't forget to confirm, ${reservation.guest_name}!</h2>
+    <h2 style="font-size:20px;margin:0 0 8px;">Don't forget to confirm, ${esc(reservation.guest_name)}!</h2>
     <p style="color:#666;font-size:14px;margin:0 0 28px;">You have a pending reservation at JTAP Kitchen for tomorrow. Please confirm so we can hold your table.</p>
     <div style="background:#fff;border:1px solid #e8e0d4;border-radius:12px;padding:24px;">
       <table style="width:100%;font-size:14px;border-collapse:collapse;">
         <tr><td style="padding:8px 0;color:#888;width:120px;">Date</td><td style="padding:8px 0;font-weight:600;">${formattedDate}</td></tr>
-        <tr><td style="padding:8px 0;color:#888;">Time</td><td style="padding:8px 0;font-weight:600;">${reservation.time}</td></tr>
+        <tr><td style="padding:8px 0;color:#888;">Time</td><td style="padding:8px 0;font-weight:600;">${esc(reservation.time)}</td></tr>
         <tr><td style="padding:8px 0;color:#888;">Party size</td><td style="padding:8px 0;font-weight:600;">${reservation.party_size} guest${reservation.party_size !== 1 ? 's' : ''}</td></tr>
       </table>
     </div>
@@ -118,14 +119,14 @@ Deno.serve(async (req) => {
         <p style="color:#888;font-size:12px;margin:8px 0 0;">Reservation Reminder</p>
       </div>
       <div style="padding:36px 32px;background:#faf9f7;">
-        <h2 style="font-size:20px;margin:0 0 8px;">We'll see you tomorrow, ${reservation.guest_name}!</h2>
+        <h2 style="font-size:20px;margin:0 0 8px;">We'll see you tomorrow, ${esc(reservation.guest_name)}!</h2>
         <p style="color:#666;font-size:14px;margin:0 0 28px;">Your reservation at JTAP Kitchen is confirmed for tomorrow.</p>
         <div style="background:#fff;border:1px solid #e8e0d4;border-radius:12px;padding:24px;">
           <table style="width:100%;font-size:14px;border-collapse:collapse;">
             <tr><td style="padding:8px 0;color:#888;width:120px;">Date</td><td style="padding:8px 0;font-weight:600;">${formattedDate}</td></tr>
-            <tr><td style="padding:8px 0;color:#888;">Time</td><td style="padding:8px 0;font-weight:600;">${reservation.time}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Time</td><td style="padding:8px 0;font-weight:600;">${esc(reservation.time)}</td></tr>
             <tr><td style="padding:8px 0;color:#888;">Party size</td><td style="padding:8px 0;font-weight:600;">${reservation.party_size} guest${reservation.party_size !== 1 ? 's' : ''}</td></tr>
-            ${reservation.special_requests ? `<tr><td style="padding:8px 0;color:#888;vertical-align:top;">Requests</td><td style="padding:8px 0;color:#555;font-style:italic;">${reservation.special_requests}</td></tr>` : ''}
+            ${reservation.special_requests ? `<tr><td style="padding:8px 0;color:#888;vertical-align:top;">Requests</td><td style="padding:8px 0;color:#555;font-style:italic;">${esc(reservation.special_requests)}</td></tr>` : ''}
           </table>
         </div>
         <p style="margin:24px 0 0;font-size:13px;color:#888;">

@@ -13,6 +13,7 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.31";
 import { importSPKI, jwtVerify } from "npm:jose@5.9.6";
 import { sendTransactionalEmail } from "../../shared/sendTransactionalEmail.js";
+import { esc } from "../../shared/escapeHtml.js";
 
 // Wix event types (verbatim from Wix docs).
 const ORDER_APPROVED = "wix.ecom.v1.order_approved";
@@ -297,12 +298,12 @@ async function sendEventConfirmationEmail(base44: any, reservation: any, eventTi
       <p style="color:#999;font-size:13px;margin:8px 0 0;letter-spacing:2px;text-transform:uppercase;">Event Booking Confirmed</p>
     </div>
     <div style="padding:40px 36px;">
-      <h2 style="font-size:22px;margin:0 0 8px;">Hi ${reservation.guest_name},</h2>
-      <p style="color:#555;line-height:1.7;margin:0 0 24px;">Your booking for <strong>${eventTitle}</strong> is confirmed. We're excited to welcome you!</p>
+      <h2 style="font-size:22px;margin:0 0 8px;">Hi ${esc(reservation.guest_name)},</h2>
+      <p style="color:#555;line-height:1.7;margin:0 0 24px;">Your booking for <strong>${esc(eventTitle)}</strong> is confirmed. We're excited to welcome you!</p>
       <div style="background:#f5f3f0;border-radius:12px;padding:20px;margin:0 0 28px;">
-        <p style="margin:0 0 8px;font-size:14px;"><strong>Event:</strong> ${eventTitle}</p>
+        <p style="margin:0 0 8px;font-size:14px;"><strong>Event:</strong> ${esc(eventTitle)}</p>
         <p style="margin:0 0 8px;font-size:14px;"><strong>Date:</strong> ${fmtEventDate(reservation.date)}</p>
-        <p style="margin:0 0 8px;font-size:14px;"><strong>Time:</strong> ${reservation.time || ""}</p>
+        <p style="margin:0 0 8px;font-size:14px;"><strong>Time:</strong> ${esc(reservation.time || "")}</p>
         <p style="margin:0;font-size:14px;"><strong>Party size:</strong> ${partyLabel}</p>
         <p style="margin:12px 0 0;font-size:13px;color:#777;font-family:monospace;"><strong>Confirmation #:</strong> ${confirmationNo}</p>
       </div>

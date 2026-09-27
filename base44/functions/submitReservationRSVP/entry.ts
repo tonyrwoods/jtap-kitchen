@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
+import { esc } from '../../shared/escapeHtml.js';
 
 export default async function (req) {
   try {
@@ -42,11 +43,11 @@ export default async function (req) {
       <p style="color:#999;font-size:13px;margin:8px 0 0;letter-spacing:2px;text-transform:uppercase;">Reservation Confirmed</p>
     </div>
     <div style="padding:40px 36px;">
-      <h2 style="font-size:22px;margin:0 0 8px;">You are confirmed, ${reservation.guest_name}!</h2>
+      <h2 style="font-size:22px;margin:0 0 8px;">You are confirmed, ${esc(reservation.guest_name)}!</h2>
       <p style="color:#555;line-height:1.7;margin:0 0 24px;">Your table at JTAP Kitchen is confirmed. We look forward to hosting you.</p>
       <div style="background:#f5f3f0;border-radius:12px;padding:20px;margin:0 0 28px;">
         <p style="margin:0 0 8px;font-size:14px;"><strong>Date:</strong> ${formattedDate}</p>
-        <p style="margin:0 0 8px;font-size:14px;"><strong>Time:</strong> ${reservation.time}</p>
+        <p style="margin:0 0 8px;font-size:14px;"><strong>Time:</strong> ${esc(reservation.time)}</p>
         <p style="margin:0;font-size:14px;"><strong>Party size:</strong> ${reservation.party_size} guest${reservation.party_size !== 1 ? 's' : ''}</p>
       </div>
       <p style="color:#999;font-size:12px;line-height:1.6;margin:0;border-top:1px solid #eee;padding-top:16px;">JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-233-4060</p>
@@ -61,7 +62,7 @@ export default async function (req) {
         }).catch(async (err) => {
           await notifyAdmins(base44, {
             subject: 'Reservation confirmation email failed',
-            body: `A guest confirmed their reservation but the confirmation email could not be sent.<br><br><strong>Guest:</strong> ${reservation.guest_name} &lt;${reservation.email}&gt;<br><strong>Date:</strong> ${formattedDate} ${reservation.time}<br><strong>Error:</strong> ${err?.message || err}`,
+            body: `A guest confirmed their reservation but the confirmation email could not be sent.<br><br><strong>Guest:</strong> ${esc(reservation.guest_name)} &lt;${esc(reservation.email)}&gt;<br><strong>Date:</strong> ${formattedDate} ${esc(reservation.time)}<br><strong>Error:</strong> ${esc(err?.message || err)}`,
           }).catch(() => {});
         });
       }
@@ -105,13 +106,13 @@ export default async function (req) {
       <p style="color:#888;font-size:12px;margin:6px 0 0;letter-spacing:2px;text-transform:uppercase;">Companion RSVP Update</p>
     </div>
     <div style="padding:36px;">
-      <h2 style="font-size:20px;margin:0 0 12px;">Hi ${reservation.guest_name},</h2>
+      <h2 style="font-size:20px;margin:0 0 12px;">Hi ${esc(reservation.guest_name)},</h2>
       <p style="color:#555;line-height:1.7;margin:0 0 24px;font-size:14px;">
-        <strong>${invite.guest_name}</strong> (${invite.guest_email}) has ${statusLine} your dinner reservation.
+        <strong>${esc(invite.guest_name)}</strong> (${esc(invite.guest_email)}) has ${statusLine} your dinner reservation.
       </p>
       <div style="background:#f5f3f0;border-radius:12px;padding:20px;margin-bottom:24px;">
         <p style="margin:0 0 6px;font-size:14px;"><strong>Date:</strong> ${formattedDate}</p>
-        <p style="margin:0 0 6px;font-size:14px;"><strong>Time:</strong> ${reservation.time}</p>
+        <p style="margin:0 0 6px;font-size:14px;"><strong>Time:</strong> ${esc(reservation.time)}</p>
         <p style="margin:0;font-size:14px;"><strong>Party of:</strong> ${reservation.party_size}</p>
       </div>
       <div style="text-align:center;margin-bottom:8px;">
@@ -129,7 +130,7 @@ export default async function (req) {
         }).catch(async (err) => {
           await notifyAdmins(base44, {
             subject: 'Companion RSVP notification email failed',
-            body: `A companion RSVP update could not be delivered to the reservation holder.<br><br><strong>Holder:</strong> ${reservation.guest_name} &lt;${reservation.email}&gt;<br><strong>Companion:</strong> ${invite.guest_name} (${invite.guest_email}) — ${action}<br><strong>Error:</strong> ${err?.message || err}`,
+            body: `A companion RSVP update could not be delivered to the reservation holder.<br><br><strong>Holder:</strong> ${esc(reservation.guest_name)} &lt;${esc(reservation.email)}&gt;<br><strong>Companion:</strong> ${esc(invite.guest_name)} (${esc(invite.guest_email)}) — ${action}<br><strong>Error:</strong> ${esc(err?.message || err)}`,
           }).catch(() => {});
         });
       }

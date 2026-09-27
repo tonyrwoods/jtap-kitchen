@@ -5,7 +5,14 @@ import { sendSms } from '../../shared/sendSms.js';
 // Twilio inbound SMS keyword handling. When a guest replies to a JTAP Kitchen
 // text, Twilio POSTs the message here. We record STOP/UNSTOP opt-outs (so the
 // outbound sendSms helper skips opted-out numbers) and reply to HELP with
-// program info. Also accepts JSON so it can be exercised from the function tester.
+// program info.
+//
+// SECURITY: Every form-encoded request is verified against the Twilio signature
+// (X-Twilio-Signature header, HMAC-SHA1 of the URL + sorted POST params using
+// the Twilio auth token). Unsigned or mismatched requests are rejected with 403,
+// so a stranger cannot forge opt-outs/opt-ins for arbitrary numbers. The JSON
+// path is admin-only (for exercising via the function tester); Twilio itself
+// only sends form-encoded payloads.
 //
 // Configure Twilio's messaging webhook (Phone Number or Messaging Service >
 // "A MESSAGE COMES IN" > Webhook) to:
@@ -17,6 +24,42 @@ const HELP = ['help', 'info', 'more'];
 
 function normalizePhone(p) {
   return '+' + String(p == null ? '' : p).replace(/[^\d]/g, '');
+}
+
+// Verify the X-Twilio-Signature header for a form-encoded Twilio request.
+// Twilio signs: HMAC-SHA1(authToken, url + sortedParams(name+value...)), base64.
+async function verifyTwilioSignature(req, params: Record<string, string>): Promise<boolean> {
+  const sig = req.headers.get('x-twilio-signature') || req.headers.get('X-Twilio-Signature');
+  if (!sig) return false;
+  const authToken = secrets.get('TWILIO_AUTH_TOKEN');
+  if (!authToken) return false;
+
+  // Reconstruct the URL exactly as Twilio posted it (https + host + path + query).
+  const u = new URL(req.url);
+  const fullUrl = `https://${u.host}${u.pathname}${u.search}`;
+
+  let data = fullUrl;
+  for (const k of Object.keys(params).sort()) data += k + (params[k] ?? '');
+
+  try {
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(authToken),
+      { name: 'HMAC', hash: 'SHA-1' },
+      false,
+      ['sign'],
+    );
+    const sigBuf = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(data));
+    const expected = btoa(String.fromCharCode(...new Uint8Array(sigBuf)));
+    // Constant-time comparison to avoid timing leaks.
+    if (sig.length !== expected.length) return false;
+    let diff = 0;
+    for (let i = 0; i < sig.length; i++) diff |= sig.charCodeAt(i) ^ expected.charCodeAt(i);
+    return diff === 0;
+  } catch (e) {
+    console.error('Twilio signature verify failed:', e.message);
+    return false;
+  }
 }
 
 async function sendHelpReply(phone) {
@@ -39,9 +82,17 @@ export default async function (req) {
   const base44 = createClientFromRequest(req);
 
   let from, body;
-  const ct = req.headers.get('content-type') || '';
+  const ct = (req.headers.get('content-type') || '').toLowerCase();
   try {
     if (ct.includes('application/json')) {
+      // JSON is only for admin-driven testing via the function tester; Twilio
+      // posts form-encoded. Require an admin session so anonymous callers
+      // cannot forge opt-outs/opt-ins through the JSON path.
+      let user;
+      try { user = await base44.auth.me(); } catch (_) { user = null; }
+      if (!user || user.role !== 'admin') {
+        return Response.json({ error: 'Forbidden' }, { status: 403 });
+      }
       const j = await req.json();
       from = j.From || j.from;
       body = j.Body || j.body;
@@ -49,6 +100,12 @@ export default async function (req) {
       const form = await req.formData();
       from = form.get('From');
       body = form.get('Body');
+      // Build the param map Twilio signed (string values only).
+      const params: Record<string, string> = {};
+      for (const [k, v] of form.entries()) params[k] = v == null ? '' : String(v);
+      if (!(await verifyTwilioSignature(req, params))) {
+        return Response.json({ error: 'Invalid Twilio signature' }, { status: 403 });
+      }
     }
   } catch (_) {
     return Response.json({ error: 'Could not parse inbound message' }, { status: 400 });

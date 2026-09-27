@@ -1,4 +1,5 @@
 import { sendTransactionalEmail } from "./sendTransactionalEmail.js";
+import { esc } from "./escapeHtml.js";
 
 // Shared deposit-received email for the Event Center deposit flow.
 // Used by the Stripe webhook (stripe-event-deposit-webhook). Best-effort:
@@ -19,10 +20,10 @@ export async function sendEventDepositEmail(base44, inquiry, depositAmount) {
         <p style="color:#999;font-size:13px;margin:8px 0 0;letter-spacing:2px;text-transform:uppercase;">Deposit Received</p>
       </div>
       <div style="padding:40px 36px;">
-        <h2 style="font-size:22px;margin:0 0 8px;">Hi ${inquiry.contact_name || "there"},</h2>
-        <p style="color:#555;line-height:1.7;margin:0 0 24px;">We've received your <strong>$${deposit.toFixed(0)}</strong> deposit for your <strong>${inquiry.package || "event"}</strong> on <strong>${fmtDate}</strong>. Your inquiry is now submitted to our events team.</p>
+        <h2 style="font-size:22px;margin:0 0 8px;">Hi ${esc(inquiry.contact_name || "there")},</h2>
+        <p style="color:#555;line-height:1.7;margin:0 0 24px;">We've received your <strong>$${deposit.toFixed(0)}</strong> deposit for your <strong>${esc(inquiry.package || "event")}</strong> on <strong>${fmtDate}</strong>. Your inquiry is now submitted to our events team.</p>
         <div style="background:#f5f3f0;border-radius:12px;padding:20px;margin:0 0 24px;">
-          <p style="margin:0 0 8px;font-size:14px;"><strong>Package:</strong> ${inquiry.package || "—"}</p>
+          <p style="margin:0 0 8px;font-size:14px;"><strong>Package:</strong> ${esc(inquiry.package || "—")}</p>
           <p style="margin:0 0 8px;font-size:14px;"><strong>Date:</strong> ${fmtDate}</p>
           <p style="margin:0 0 8px;font-size:14px;"><strong>Guests:</strong> ${inquiry.guest_count || "—"}</p>
           <p style="margin:0;font-size:13px;color:#777;font-family:monospace;"><strong>Reference #:</strong> ${refNo}</p>
