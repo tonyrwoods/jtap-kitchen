@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
   UtensilsCrossed, CalendarDays,
-  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload, Salad, Heart, Mail
+  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload, Salad, Heart, Mail, Star
 } from "lucide-react";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
@@ -338,6 +338,33 @@ export default function AdminDashboard() {
                       </div>
                     ))}
                     {reservations.length === 0 && <p className="font-body text-sm text-muted-foreground">No reservations yet.</p>}
+                  </div>
+                </div>
+
+                <div className="bg-card border border-border rounded-2xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-heading text-lg font-semibold">Latest Guest Reviews</h3>
+                    <button onClick={() => setTab("Feedback")} className="font-body text-xs text-primary hover:underline">Manage all →</button>
+                  </div>
+                  <div className="space-y-3">
+                    {reviews.slice(0, 5).map(rv => (
+                      <div key={rv.id} className="flex items-start justify-between gap-3 py-3 border-b border-border last:border-0">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-body text-sm font-medium">{rv.guest_name}</p>
+                            <div className="flex gap-0.5">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`w-3 h-3 ${i < (rv.rating || 0) ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground/30"}`} />
+                              ))}
+                            </div>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${rv.status === "Approved" ? "bg-green-100 text-green-800" : rv.status === "Rejected" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"}`}>{rv.status || "Pending"}</span>
+                          </div>
+                          <p className="font-body text-xs text-muted-foreground mt-0.5 line-clamp-2">"{rv.comment}"</p>
+                        </div>
+                        <p className="font-body text-xs text-muted-foreground shrink-0">{rv.visit_date ? new Date(rv.visit_date).toLocaleDateString() : new Date(rv.created_date).toLocaleDateString()}</p>
+                      </div>
+                    ))}
+                    {reviews.length === 0 && <p className="font-body text-sm text-muted-foreground">No reviews yet.</p>}
                   </div>
                 </div>
               </motion.div>
