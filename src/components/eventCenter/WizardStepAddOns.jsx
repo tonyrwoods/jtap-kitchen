@@ -1,4 +1,5 @@
 import { Check, Package } from "lucide-react";
+import ComplementarySuggestions from "@/components/ComplementarySuggestions";
 
 const ADDON_CATEGORIES = ["Audio/Visual", "Decor", "Photography", "Other"];
 const MENU_CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
@@ -122,6 +123,14 @@ export default function WizardStepAddOns({ form, set, addons, menuItems, addonCo
             ))}
           </div>
         )}
+
+        <ComplementarySuggestions
+          contextItems={menuItems.filter((m) => form.selected_menu_item_ids.includes(m.id)).map((m) => m.name)}
+          partySize={parseInt(form.guest_count) || 8}
+          flow="event"
+          selectedIds={form.selected_menu_item_ids}
+          onAdd={(s) => toggleMenu(s.id)}
+        />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle, Mail } from "lucide-react";
 import { toast } from "sonner";
 import CompanionInviteForm from "@/components/CompanionInviteForm";
+import ComplementarySuggestions from "@/components/ComplementarySuggestions";
 import { trackPixel } from "@/lib/metaPixel";
 
 const TIME_SLOTS = [
@@ -384,6 +385,17 @@ export default function BookTable() {
                           rows={3}
                           className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground font-body text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all resize-none" />
                       </div>
+                    </div>
+
+                    <div className="bg-card border border-border rounded-2xl p-6">
+                      <ComplementarySuggestions
+                        partySize={party}
+                        flow="reservation"
+                        onAdd={(s) => setSpecial((prev) => {
+                          const line = `Pre-order: ${s.name} — $${Number(s.price).toFixed(2)}`;
+                          return prev ? `${prev}\n${line}` : line;
+                        })}
+                      />
                     </div>
 
                     <div className="flex gap-3">
