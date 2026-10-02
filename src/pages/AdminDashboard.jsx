@@ -37,7 +37,7 @@ import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import ReservationEditModal from "../components/admin/ReservationEditModal";
 import ReservationEmailModal from "../components/admin/ReservationEmailModal";
 import PromotionScorecardsTab from "../components/admin/PromotionScorecardsTab";
-import LiquorMenuItemsTab from "../components/admin/LiquorMenuItemsTab";
+import LiquorMenuItemsTab, { LiquorItemForm } from "../components/admin/LiquorMenuItemsTab";
 import AdsRecommendationsTab from "../components/admin/AdsRecommendationsTab";
 import GbpPostsTab from "../components/admin/GbpPostsTab";
 import SeoContentDraftsTab from "../components/admin/SeoContentDraftsTab";
@@ -172,6 +172,9 @@ export default function AdminDashboard() {
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [menuSort, setMenuSort] = useState("name");
+  const [liquorItems, setLiquorItems] = useState([]);
+  const [editingLiquor, setEditingLiquor] = useState(null);
+  const [showLiquorForm, setShowLiquorForm] = useState(false);
   const [rsvpOpen, setRsvpOpen] = useState(null);
   const [editingRes, setEditingRes] = useState(null);
   const [emailingRes, setEmailingRes] = useState(null);
@@ -199,12 +202,14 @@ export default function AdminDashboard() {
       base44.entities.GiftCard.list("-created_date", 100),
       base44.entities.Review.list("-created_date", 100),
       base44.entities.TapRoomMember.list("-created_date", 200),
-    ]).then(([m, r, g, rv, cp]) => {
+      base44.entities.LiquorMenuItem.list("sort_order", 300),
+    ]).then(([m, r, g, rv, cp, lq]) => {
       setMenuItems(m);
       setReservations(r);
       setGiftCards(g);
       setReviews(rv);
       setMembers(cp);
+      setLiquorItems(lq || []);
       setLoading(false);
     });
   }, []);
@@ -220,6 +225,28 @@ export default function AdminDashboard() {
     await base44.entities.MenuItem.delete(id);
     setMenuItems(prev => prev.filter(i => i.id !== id));
   };
+
+  const refreshLiquor = async () => {
+    const lq = await base44.entities.LiquorMenuItem.list("sort_order", 300);
+    setLiquorItems(lq);
+    setShowLiquorForm(false);
+    setEditingLiquor(null);
+  };
+
+  const deleteLiquorItem = async (id) => {
+    await base44.entities.LiquorMenuItem.delete(id);
+    setLiquorItems(prev => prev.filter(i => i.id !== id));
+  };
+
+  const liquorPriceLabel = (i) => {
+    const fmt = (v) => (v === null || v === undefined || v === "" || Number.isNaN(Number(v)) ? null : Number(v).toFixed(2));
+    if (i.section === "Signature Cocktails") return i.price != null ? `$${fmt(i.price)}` : "—";
+    if (i.section === "Wine List") {
+      return [i.price_half_pour, i.price_full_pour, i.price_bottle].map(p => p != null ? `$${fmt(p)}` : "—").join(" / ");
+    }
+    return i.spirit_type || "—";
+  };
+  const liquorSortPrice = (i) => Number(i.price) || Number(i.price_half_pour) || Number(i.price_full_pour) || Number(i.price_bottle) || 0;
 
   const updateResStatus = async (id, status) => {
     await base44.entities.Reservation.update(id, { status });
@@ -404,11 +431,17 @@ export default function AdminDashboard() {
             {tab === "Menu Items" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
                     {!showForm && (
                       <button onClick={() => { setEditingItem(null); setShowForm(true); }}
                         className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">
                         <Plus className="w-4 h-4" /> Add Item
+                      </button>
+                    )}
+                    {!showLiquorForm && (
+                      <button onClick={() => { setEditingLiquor(null); setShowLiquorForm(true); }}
+                        className="flex items-center gap-2 px-5 py-2.5 border border-primary text-primary rounded-full font-body text-sm font-medium hover:bg-primary/5">
+                        <Plus className="w-4 h-4" /> Add Liquor Item
                       </button>
                     )}
                   </div>
@@ -428,6 +461,9 @@ export default function AdminDashboard() {
                 {showForm && (
                   <MenuItemForm item={editingItem} onSave={refreshMenu} onCancel={() => { setShowForm(false); setEditingItem(null); }} />
                 )}
+                {showLiquorForm && (
+                  <LiquorItemForm item={editingLiquor} onSave={refreshLiquor} onCancel={() => { setShowLiquorForm(false); setEditingLiquor(null); }} />
+                )}
                 <div className="bg-card border border-border rounded-2xl overflow-hidden">
                   <table className="w-full">
                     <thead className="border-b border-border bg-muted/40">
@@ -439,33 +475,43 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {[...menuItems]
+                      {[
+                        ...menuItems.map(i => ({ id: `f-${i.id}`, type: "food", raw: i, name: i.name, category: i.category, price: Number(i.price) || 0, priceLabel: `$${Number(i.price || 0).toFixed(2)}` })),
+                        ...liquorItems.map(i => ({ id: `l-${i.id}`, type: "liquor", raw: i, name: i.name, category: i.section, price: liquorSortPrice(i), priceLabel: liquorPriceLabel(i) })),
+                      ]
                         .sort((a, b) => {
-                          if (menuSort === "price") return (Number(a.price) || 0) - (Number(b.price) || 0);
+                          if (menuSort === "price") return a.price - b.price;
                           if (menuSort === "category") {
                             const c = String(a.category || "").localeCompare(String(b.category || ""));
                             return c !== 0 ? c : String(a.name || "").localeCompare(String(b.name || ""));
                           }
                           return String(a.name || "").localeCompare(String(b.name || ""));
                         })
-                        .map(item => (
-                        <tr key={item.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                        .map(row => (
+                        <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
                           <td className="px-5 py-3">
-                            <p className="font-body text-sm font-medium">{item.name}</p>
-                            {item.is_featured && <span className="text-xs text-primary">Chef's Pick</span>}
+                            <div className="flex items-center gap-2">
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${row.type === "liquor" ? "bg-purple-100 text-purple-700" : "bg-amber-100 text-amber-700"}`}>{row.type}</span>
+                              <p className="font-body text-sm font-medium">{row.name}</p>
+                            </div>
+                            {row.type === "food" && row.raw.is_featured && <span className="text-xs text-primary ml-7">Chef's Pick</span>}
+                            {row.type === "liquor" && row.raw.is_active === false && <span className="text-xs text-muted-foreground ml-7 italic">Inactive</span>}
                           </td>
                           <td className="px-5 py-3 hidden sm:table-cell">
-                            <span className="font-body text-sm text-muted-foreground">{item.category}</span>
+                            <span className="font-body text-sm text-muted-foreground">{row.category}</span>
                           </td>
                           <td className="px-5 py-3">
-                            <span className="font-heading text-sm font-semibold">${Number(item.price).toFixed(2)}</span>
+                            <span className="font-heading text-sm font-semibold">{row.priceLabel}</span>
                           </td>
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-2 justify-end">
-                              <button onClick={() => { setEditingItem(item); setShowForm(true); }} className="p-1.5 hover:text-primary transition-colors">
+                              <button onClick={() => {
+                                if (row.type === "food") { setEditingItem(row.raw); setShowForm(true); }
+                                else { setEditingLiquor(row.raw); setShowLiquorForm(true); }
+                              }} className="p-1.5 hover:text-primary transition-colors">
                                 <Pencil className="w-4 h-4" />
                               </button>
-                              <button onClick={() => deleteItem(item.id)} className="p-1.5 hover:text-destructive transition-colors">
+                              <button onClick={() => row.type === "food" ? deleteItem(row.raw.id) : deleteLiquorItem(row.raw.id)} className="p-1.5 hover:text-destructive transition-colors">
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
@@ -474,7 +520,7 @@ export default function AdminDashboard() {
                       ))}
                     </tbody>
                   </table>
-                  {menuItems.length === 0 && <p className="font-body text-sm text-muted-foreground text-center py-10">No menu items yet.</p>}
+                  {menuItems.length === 0 && liquorItems.length === 0 && <p className="font-body text-sm text-muted-foreground text-center py-10">No menu items yet.</p>}
                 </div>
               </motion.div>
             )}

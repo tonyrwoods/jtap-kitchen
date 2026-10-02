@@ -10,7 +10,7 @@ const SPIRIT_TYPES = ["Bourbon & Whiskey", "Scotch", "Cognac", "Tequila", "Vodka
 
 const fmt = (v) => (v === null || v === undefined || v === "" || Number.isNaN(Number(v)) ? "" : Number(v).toFixed(2));
 
-function LiquorItemForm({ item, onSave, onCancel }) {
+export function LiquorItemForm({ item, onSave, onCancel }) {
   const [form, setForm] = useState(
     item || {
       name: "",
