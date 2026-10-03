@@ -29,6 +29,12 @@
       "title": "Reservation Time Slot Interval (minutes)",
       "default": 30
     },
+    "dining_duration_minutes": {
+      "type": "number",
+      "title": "Default Dining Duration (minutes per turn)",
+      "default": 90,
+      "description": "How long a table is considered occupied for a reservation. The availability engine counts overlapping covers across this turn window to enforce max seating capacity."
+    },
     "opening_time": {
       "type": "string",
       "title": "Opening Time (HH:MM)",

@@ -142,12 +142,31 @@ export default function BookTable() {
   const [loading, setLoading] = useState(false);
   const [reservationToken, setReservationToken] = useState(null);
   const [reservationId, setReservationId] = useState(null);
+  const [availability, setAvailability] = useState({}); // time -> { remaining, available }
+  const [availLoading, setAvailLoading] = useState(false);
 
   const canNext1 = date && time;
   const canNext2 = name.trim() && email.trim();
 
   const slots = date ? slotsForDate(date) : [];
   const serviceLabel = date ? dayServiceLabel(date) : "";
+
+  // Live per-slot availability from the cover-count engine. Re-fetch when the
+  // date or party size changes so full slots are greyed out before sign-in.
+  useEffect(() => {
+    if (!date) { setAvailability({}); return; }
+    let cancelled = false;
+    setAvailLoading(true);
+    base44.functions.invoke("getReservationAvailability", { date: date.toISOString().split("T")[0], party_size: party })
+      .then((res) => {
+        if (cancelled) return;
+        const list = res?.data?.slots;
+        setAvailability(list ? Object.fromEntries(list.map((s) => [s.time, s])) : {});
+      })
+      .catch(() => { if (!cancelled) setAvailability({}); })
+      .finally(() => { if (!cancelled) setAvailLoading(false); });
+    return () => { cancelled = true; };
+  }, [date, party]);
 
   const handleDateSelect = (d) => {
     setDate(d);
@@ -300,15 +319,24 @@ export default function BookTable() {
                       {!date ? (
                         <p className="font-body text-sm text-muted-foreground text-center py-4">Please select a date first</p>
                       ) : (
-                        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                          {slots.map(t => (
-                            <button key={t} onClick={() => setTime(t)}
-                              className={`py-2.5 px-2 rounded-xl text-xs font-body font-medium transition-all duration-200
-                                ${time === t ? "bg-primary text-primary-foreground shadow-md shadow-primary/25" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}>
-                              {t}
-                            </button>
-                          ))}
-                        </div>
+                        <>
+                          <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                            {slots.map(t => {
+                              const a = availability[t];
+                              const full = a && !a.available;
+                              return (
+                                <button key={t} onClick={() => setTime(t)} disabled={full}
+                                  className={`py-2.5 px-2 rounded-xl text-xs font-body font-medium transition-all duration-200
+                                    ${time === t ? "bg-primary text-primary-foreground shadow-md shadow-primary/25" :
+                                      full ? "bg-secondary/40 text-muted-foreground/40 cursor-not-allowed line-through" :
+                                      "bg-secondary hover:bg-secondary/80 text-foreground"}`}>
+                                  {t}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          {availLoading && <p className="font-body text-xs text-muted-foreground mt-3 text-center">Checking availability…</p>}
+                        </>
                       )}
                     </div>
 
