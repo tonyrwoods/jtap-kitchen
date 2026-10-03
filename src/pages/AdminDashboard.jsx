@@ -33,6 +33,7 @@ import EventInquiriesTab from "../components/admin/EventInquiriesTab";
 import EventTalentTab from "../components/admin/EventTalentTab";
 import EventAddOnsTab from "../components/admin/EventAddOnsTab";
 import ChangeLogAdmin from "../components/admin/ChangeLogAdmin";
+import OperationsSettingsTab from "../components/admin/OperationsSettingsTab";
 import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import ReservationEditModal from "../components/admin/ReservationEditModal";
 import ReservationEmailModal from "../components/admin/ReservationEmailModal";
@@ -44,7 +45,7 @@ import SeoContentDraftsTab from "../components/admin/SeoContentDraftsTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
-  { label: "Operations", tabs: ["Overview", "Opening Checklist", "End of Year Checklist"] },
+  { label: "Operations", tabs: ["Overview", "Operations Settings", "Opening Checklist", "End of Year Checklist"] },
   { label: "Menu & Pricing", tabs: ["Menu Items", "Liquor Items", "Pricing Strategy", "Chef Highlights"] },
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
   { label: "Events", tabs: ["Inquiries", "Talent", "Add-Ons"] },
@@ -395,6 +396,12 @@ export default function AdminDashboard() {
                     {reviews.length === 0 && <p className="font-body text-sm text-muted-foreground">No reviews yet.</p>}
                   </div>
                 </div>
+              </motion.div>
+            )}
+
+            {tab === "Operations Settings" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <OperationsSettingsTab />
               </motion.div>
             )}
 

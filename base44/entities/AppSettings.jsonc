@@ -17,7 +17,26 @@
     "max_capacity": {
       "type": "number",
       "title": "Restaurant Max Seating Capacity",
-      "default": 80
+      "default": 80,
+      "description": "Global fallback for max concurrent covers. Per-service capacities below override this when set above 0."
+    },
+    "brunch_capacity": {
+      "type": "number",
+      "title": "Brunch Max Seating Capacity",
+      "default": 80,
+      "description": "Max concurrent covers during brunch service (Sat/Sun 10:00\u201314:00). Falls back to Restaurant Max Seating Capacity when 0 or unset."
+    },
+    "lunch_capacity": {
+      "type": "number",
+      "title": "Lunch Max Seating Capacity",
+      "default": 80,
+      "description": "Max concurrent covers during lunch service (10:00\u201315:00). Falls back to Restaurant Max Seating Capacity when 0 or unset."
+    },
+    "dinner_capacity": {
+      "type": "number",
+      "title": "Dinner Max Seating Capacity",
+      "default": 80,
+      "description": "Max concurrent covers during dinner service (17:00\u201322:00). Falls back to Restaurant Max Seating Capacity when 0 or unset."
     },
     "max_reservation_party_size": {
       "type": "number",

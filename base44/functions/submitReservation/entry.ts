@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
 import {
   timeToMinutes, isValidReservationTime, dayServiceLabel,
-  overlappingCovers, ACTIVE_STATUSES,
+  overlappingCovers, ACTIVE_STATUSES, windowForTime, capacityForWindow,
 } from '../../shared/reservationAvailability.js';
 
 const OPENING_DATE = '2026-08-12';
@@ -34,7 +34,6 @@ export default async function(req) {
 
     // Capacity + service-hours settings.
     const settings = await base44.asServiceRole.entities.AppSettings.list();
-    const maxCapacity = Number(settings[0]?.max_capacity) || 80;
     const durationMinutes = Number(settings[0]?.dining_duration_minutes) || 90;
 
     // Day-aware service-hours guard: the reservation must start within one of
@@ -46,12 +45,15 @@ export default async function(req) {
       return Response.json({ error: `Reservations for that day are available during ${dayServiceLabel(dayOfWeek)}. Please choose a valid time.` }, { status: 400 });
     }
 
+    const win = windowForTime(dayOfWeek, reqMin);
+    const capacity = capacityForWindow(settings[0], win?.name);
+
     // Turn-window cover count: sum party_size of every active reservation on
     // this date whose dining window overlaps the requested window, then
     // enforce the restaurant's max seating capacity.
     const active = await base44.asServiceRole.entities.Reservation.filter({ date, status: { $in: ACTIVE_STATUSES } });
     const covers = overlappingCovers(active, reqMin, durationMinutes);
-    if (covers + Number(party_size) > maxCapacity) {
+    if (covers + Number(party_size) > capacity) {
       return Response.json({ error: 'Sorry, we are fully booked for that time. Please choose a different time.' }, { status: 409 });
     }
 

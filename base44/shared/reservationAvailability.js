@@ -62,6 +62,24 @@ export function dayServiceLabel(dayOfWeek) {
   return serviceWindowsForDay(dayOfWeek).map((w) => w.name).join(' + ');
 }
 
+// The service window a requested start time falls into (null if outside all
+// windows for that day).
+export function windowForTime(dayOfWeek, reqMinutes) {
+  if (reqMinutes === null) return null;
+  return serviceWindowsForDay(dayOfWeek).find((w) => reqMinutes >= w.open && reqMinutes <= w.close) || null;
+}
+
+// Per-service max concurrent covers, falling back to the global max_capacity
+// when a service-specific value is unset (0 / missing).
+export function capacityForWindow(settings, windowName) {
+  const s = settings || {};
+  const fallback = Number(s.max_capacity) || 80;
+  if (windowName === 'Brunch') return Number(s.brunch_capacity) || fallback;
+  if (windowName === 'Lunch') return Number(s.lunch_capacity) || fallback;
+  if (windowName === 'Dinner') return Number(s.dinner_capacity) || fallback;
+  return fallback;
+}
+
 // Turn-window cover count: a reservation occupies covers from its start time
 // for `durationMinutes`. Two reservations' seats overlap when their occupied
 // intervals intersect. Summing party_size over all reservations whose

@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import {
-  serviceWindowsForDay, overlappingCovers, minutesToTime12, ACTIVE_STATUSES,
+  serviceWindowsForDay, overlappingCovers, minutesToTime12, ACTIVE_STATUSES, capacityForWindow,
 } from '../../shared/reservationAvailability.js';
 
 // Public live availability for the booking UI. Returns, for a given date, the
@@ -31,9 +31,10 @@ export default async function (req) {
     // close, matching the times the booking UI offers.
     const slots = [];
     for (const w of serviceWindowsForDay(dayOfWeek)) {
+      const capacity = capacityForWindow(settings[0], w.name);
       for (let m = w.open; m < w.close; m += interval) {
         const covers = overlappingCovers(active, m, durationMinutes);
-        const remaining = Math.max(0, maxCapacity - covers);
+        const remaining = Math.max(0, capacity - covers);
         slots.push({
           time: minutesToTime12(m),
           service: w.name,
