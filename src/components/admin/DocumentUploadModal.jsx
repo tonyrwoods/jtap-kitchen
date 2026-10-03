@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Upload, X, FileText, Sparkles, Tag, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { logInvoiceAction } from "@/lib/auditLogHelper";
 import SelectDropdown from "../SelectDropdown";
+import PrivateFileLink from "../PrivateFileLink";
 
 const EXPENSE_CATEGORIES = [
   "Food & Beverage",
@@ -46,15 +47,16 @@ export default function DocumentUploadModal({ invoice, onClose, onSave }) {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
+      const { signed_url } = await base44.integrations.Core.CreateFileSignedUrl({ file_uri });
       setUploading(false);
       setExtracting(true);
 
-      const response = await base44.functions.invoke("extractInvoiceData", { file_url });
+      const response = await base44.functions.invoke("extractInvoiceData", { file_url: signed_url });
       const data = response.data?.extracted;
 
       if (data) {
-        setExtracted({ ...data, file_url });
+        setExtracted({ ...data, file_uri });
         if (data.expense_category) {
           setSelectedCategory(data.expense_category);
         }
@@ -74,16 +76,16 @@ export default function DocumentUploadModal({ invoice, onClose, onSave }) {
     setSaving(true);
     try {
       // Upload file if not already uploaded during extraction
-      let fileUrl = extracted?.file_url;
-      if (!fileUrl) {
-        const result = await base44.integrations.Core.UploadFile({ file });
-        fileUrl = result.file_url;
+      let fileUri = extracted?.file_uri;
+      if (!fileUri) {
+        const result = await base44.integrations.Core.UploadPrivateFile({ file });
+        fileUri = result.file_uri;
       }
 
       const newDoc = {
         name: file.name,
         type: docType,
-        url: fileUrl,
+        url: fileUri,
         uploaded_date: new Date().toISOString().split("T")[0],
       };
 
@@ -153,11 +155,9 @@ export default function DocumentUploadModal({ invoice, onClose, onSave }) {
               <p className="font-body text-xs text-muted-foreground uppercase font-semibold mb-2">Attached Documents</p>
               <div className="space-y-2">
                 {invoice.documents.map((doc, i) => (
-                  <a
+                  <PrivateFileLink
                     key={i}
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    uri={doc.url}
                     className="flex items-center gap-3 p-2.5 bg-muted/30 rounded-lg hover:bg-muted transition-colors"
                   >
                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -165,7 +165,7 @@ export default function DocumentUploadModal({ invoice, onClose, onSave }) {
                       <p className="font-body text-sm truncate">{doc.name}</p>
                       <p className="font-body text-xs text-muted-foreground">{doc.type} · {doc.uploaded_date}</p>
                     </div>
-                  </a>
+                  </PrivateFileLink>
                 ))}
               </div>
             </div>

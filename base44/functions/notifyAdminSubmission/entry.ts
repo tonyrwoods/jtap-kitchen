@@ -58,7 +58,25 @@ export default async function(req) {
         </div>`;
         break;
 
-      case 'JobApplication':
+      case 'JobApplication': {
+        // Resumes are stored privately; resolve a 7-day signed URL for the email link
+        // so admins can open it. Legacy public http URLs pass through unchanged.
+        let resumeLink = '';
+        if (d.resume_url) {
+          try {
+            if (/^https?:\/\//.test(d.resume_url)) {
+              resumeLink = d.resume_url;
+            } else {
+              const { signed_url } = await base44.asServiceRole.integrations.Core.CreateFileSignedUrl({
+                file_uri: d.resume_url,
+                expires_in: 604800,
+              });
+              resumeLink = signed_url;
+            }
+          } catch (e) {
+            resumeLink = '';
+          }
+        }
         subject = `New Job Application: ${d.applicant_name || 'Unknown'} — ${d.job_title || 'Position'}`;
         bodyHtml = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
           <h2 style="color:#C89B4F;">New Job Application</h2>
@@ -68,12 +86,13 @@ export default async function(req) {
             <tr><td style="padding:8px 0;color:#888;">Phone:</td><td style="padding:8px 0;">${escapeHtml(d.phone || 'N/A')}</td></tr>
             <tr><td style="padding:8px 0;color:#888;">Position:</td><td style="padding:8px 0;">${escapeHtml(d.job_title || 'N/A')}</td></tr>
             <tr><td style="padding:8px 0;color:#888;">Experience:</td><td style="padding:8px 0;">${escapeHtml(d.experience_years ? d.experience_years + ' years' : 'N/A')}</td></tr>
-            ${d.resume_url ? `<tr><td style="padding:8px 0;color:#888;">Resume:</td><td style="padding:8px 0;"><a href="${escapeHtml(d.resume_url)}">View Resume</a></td></tr>` : ''}
+            ${resumeLink ? `<tr><td style="padding:8px 0;color:#888;">Resume:</td><td style="padding:8px 0;"><a href="${escapeHtml(resumeLink)}">View Resume</a></td></tr>` : ''}
           </table>
           ${d.cover_letter ? `<h3 style="margin-top:20px;font-size:14px;color:#888;text-transform:uppercase;">Cover Letter</h3><div style="background:#f9f9f9;padding:16px;border-radius:8px;line-height:1.6;white-space:pre-wrap;">${escapeHtml(d.cover_letter)}</div>` : ''}
           <p style="margin-top:24px;font-size:13px;color:#999;">Review in the admin dashboard under Careers → Applications.</p>
         </div>`;
         break;
+      }
 
       case 'Review':
         subject = `New Review Pending Approval: ${d.rating || '?'}★ from ${d.guest_name || 'Guest'}`;

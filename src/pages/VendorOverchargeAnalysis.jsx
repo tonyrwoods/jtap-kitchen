@@ -284,7 +284,7 @@ export default function VendorOverchargeAnalysis() {
                       key={alert.id}
                       alert={alert}
                       onDismiss={(id) => dismissAlertMutation.mutate(id)}
-                      onViewInvoice={(invoiceId) => console.log('View invoice:', invoiceId)}
+                      onViewInvoice={() => {}}
                     />
                   ))}
                   {getAlertsBySeverity('medium').map(alert => (
@@ -292,7 +292,7 @@ export default function VendorOverchargeAnalysis() {
                       key={alert.id}
                       alert={alert}
                       onDismiss={(id) => dismissAlertMutation.mutate(id)}
-                      onViewInvoice={(invoiceId) => console.log('View invoice:', invoiceId)}
+                      onViewInvoice={() => {}}
                     />
                   ))}
                   {getAlertsBySeverity('low').map(alert => (
@@ -300,7 +300,7 @@ export default function VendorOverchargeAnalysis() {
                       key={alert.id}
                       alert={alert}
                       onDismiss={(id) => dismissAlertMutation.mutate(id)}
-                      onViewInvoice={(invoiceId) => console.log('View invoice:', invoiceId)}
+                      onViewInvoice={() => {}}
                     />
                   ))}
                 </>

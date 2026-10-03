@@ -31,8 +31,8 @@ function ApplicationModal({ job, onClose }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    set("resume_url", file_url);
+    const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
+    set("resume_url", file_uri);
     setUploading(false);
   };
 

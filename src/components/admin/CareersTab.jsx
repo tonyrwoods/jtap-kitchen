@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Plus, Pencil, Trash2, ChevronDown, ChevronUp, Mail, Calendar, Clock, MapPin, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
+import PrivateFileLink from "../PrivateFileLink";
 
 const DEPARTMENTS = ["Front of House", "Back of House", "Management", "Bar", "Other"];
 const EMP_TYPES = ["Full-time", "Part-time", "Seasonal"];
@@ -282,10 +283,10 @@ function ApplicationRow({ app, onInviteSent }) {
             </div>
           )}
           {app.resume_url && (
-            <a href={app.resume_url} target="_blank" rel="noopener noreferrer"
+            <PrivateFileLink uri={app.resume_url}
               className="inline-block font-body text-sm text-primary hover:underline">
               View Resume →
-            </a>
+            </PrivateFileLink>
           )}
         </div>
       )}
