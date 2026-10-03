@@ -53,7 +53,38 @@ export default async function(req) {
       </div>`,
     });
 
-    return Response.json({ success: true });
+    // Notify each selected talent provider that they've been booked. Best-effort:
+    // the guest confirmation already succeeded, so a talent email failure must
+    // not fail the whole call — we collect a per-provider result instead.
+    const talentIds = Array.isArray(inquiry.selected_talent_ids) ? inquiry.selected_talent_ids : [];
+    const talentResults = [];
+    for (const tid of talentIds) {
+      if (!tid) continue;
+      try {
+        const provider = await base44.asServiceRole.entities.EventServiceProvider.get(tid);
+        if (!provider || !provider.contact_email) {
+          talentResults.push({ id: tid, sent: false, reason: 'no contact email' });
+          continue;
+        }
+        const pName = escapeHtml(provider.name || 'there');
+        await sendTransactionalEmail(base44, {
+          to: provider.contact_email,
+          subject: `You're Booked — JTAP Kitchen Event on ${dateLabel || 'TBD'}`,
+          body: `<div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; padding: 20px;">
+            <h2 style="color: #C89B4F; margin-bottom: 16px;">Hi ${pName}, you're booked!</h2>
+            <p style="line-height: 1.7; color: #555;">You've been selected for a <strong>${safeType}</strong> at JTAP Kitchen${safeDate ? ` on <strong>${safeDate}</strong>` : ''}${safeGuests ? ` for approximately <strong>${safeGuests} guests</strong>` : ''}.</p>
+            <p style="line-height: 1.7; color: #555;">Our events team will follow up with timing, setup details, and your rate. Please hold the date and reply to this email if you have any conflicts.</p>
+            <p style="color: #999; font-size: 13px; margin-top: 32px; border-top: 1px solid #eee; padding-top: 16px;">— The JTAP Kitchen Events Team<br/>info@jtapkitchen.com | 901-554-4431</p>
+          </div>`,
+        });
+        talentResults.push({ id: tid, sent: true });
+      } catch (e) {
+        console.warn(`Talent notify failed for ${tid}:`, e.message);
+        talentResults.push({ id: tid, sent: false, reason: e.message });
+      }
+    }
+
+    return Response.json({ success: true, talent_notified: talentResults.filter(r => r.sent).length, talent_results: talentResults });
   } catch (error) {
     console.error('sendEventBookingConfirmation error:', error);
     return Response.json({ error: error.message }, { status: 500 });
