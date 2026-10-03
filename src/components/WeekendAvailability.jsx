@@ -3,13 +3,6 @@ import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { Flame, CalendarDays, RefreshCw } from "lucide-react";
 
-const TIME_SLOTS = [
-  "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM",
-  "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM"
-];
-const MAX_TABLES = 10;
-const TOTAL_SLOTS_PER_DAY = TIME_SLOTS.length * MAX_TABLES;
-
 function getUpcomingWeekend() {
   const today = new Date();
   const day = today.getDay(); // 0=Sun,1=Mon,...,6=Sat
@@ -61,13 +54,21 @@ export default function WeekendAvailability({ onBook }) {
     try {
       const results = await Promise.all(
         weekendDates.map(date =>
-          base44.entities.Reservation.filter({ date })
-            .then(res => ({ date, count: res.filter(r => r.status !== "Cancelled").length }))
-            .catch(() => ({ date, count: 0 }))
+          base44.functions.invoke("getReservationAvailability", { date, party_size: 2 })
+            .then((res) => {
+              const slots = res?.data?.slots ?? [];
+              const maxCapacity = res?.data?.max_capacity ?? 80;
+              // Peak occupancy = the most covers overlapping any single slot;
+              // remaining = seats still free at that tightest moment.
+              const peakCovers = slots.length ? Math.max(...slots.map((s) => s.covers)) : 0;
+              const remaining = slots.length ? Math.min(...slots.map((s) => s.remaining)) : maxCapacity;
+              return { date, remaining, pct: maxCapacity > 0 ? peakCovers / maxCapacity : 0, slotCount: slots.length };
+            })
+            .catch(() => ({ date, remaining: 0, pct: 0, slotCount: 0 }))
         )
       );
       const map = {};
-      results.forEach(({ date, count }) => { map[date] = count; });
+      results.forEach((r) => { map[r.date] = r; });
       setData(map);
       setLastUpdated(new Date());
     } catch {
@@ -83,11 +84,11 @@ export default function WeekendAvailability({ onBook }) {
     return () => clearInterval(interval);
   }, []);
 
-  const totalBooked = data ? Object.values(data).reduce((a, b) => a + b, 0) : 0;
-  const totalCapacity = TOTAL_SLOTS_PER_DAY * weekendDates.length;
-  const overallPct = totalCapacity > 0 ? totalBooked / totalCapacity : 0;
+  const totalAvailable = data ? Object.values(data).reduce((a, d) => a + (d?.remaining ?? 0), 0) : 0;
+  const overallPct = data && weekendDates.length
+    ? Object.values(data).reduce((a, d) => a + (d?.pct ?? 0), 0) / weekendDates.length
+    : 0;
   const overallUrgency = urgencyLabel(overallPct);
-  const totalAvailable = totalCapacity - totalBooked;
 
   return (
     <section className="bg-foreground text-background py-6 px-6 border-b border-white/10">
@@ -104,7 +105,7 @@ export default function WeekendAvailability({ onBook }) {
               <p className="font-body text-sm font-semibold text-white">
                 {loading
                   ? "Loading weekend availability..."
-                  : `${totalAvailable} table slot${totalAvailable !== 1 ? "s" : ""} left this weekend`}
+                  : `${totalAvailable} seat${totalAvailable !== 1 ? "s" : ""} left this weekend`}
               </p>
               {lastUpdated && (
                 <p className="font-body text-xs text-white/40">
@@ -117,10 +118,9 @@ export default function WeekendAvailability({ onBook }) {
           {/* Right: per-day pills + CTA */}
           <div className="flex flex-wrap items-center gap-2">
             {weekendDates.map(date => {
-              const booked = data?.[date] ?? 0;
-              const avail = TOTAL_SLOTS_PER_DAY - booked;
-              const pct = booked / TOTAL_SLOTS_PER_DAY;
-              const u = urgencyLabel(pct);
+              const d = data?.[date];
+              const avail = d?.remaining ?? 0;
+              const u = urgencyLabel(d?.pct ?? 0);
               return (
                 <motion.button
                   key={date}
@@ -158,9 +158,8 @@ export default function WeekendAvailability({ onBook }) {
         {!loading && data && (
           <div className="flex gap-3 mt-4">
             {weekendDates.map(date => {
-              const booked = data[date] ?? 0;
-              const pct = booked / TOTAL_SLOTS_PER_DAY;
-              const u = urgencyLabel(pct);
+              const d = data?.[date] ?? { pct: 0 };
+              const pct = d.pct;
               return (
                 <div key={date} className="flex-1">
                   <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
