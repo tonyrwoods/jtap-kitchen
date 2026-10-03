@@ -35,13 +35,20 @@ export default function EventInquiriesTab() {
   };
 
   // One-click confirm: locks the booking by stamping the event date (from the
-  // preferred date if not already set) and moving the inquiry to Confirmed.
+  // preferred date if not already set), moves the inquiry to Confirmed, then
+  // sends the guest a "booking confirmed" email (best-effort — the booking
+  // stays locked even if the email fails).
   const confirmBooking = async (i) => {
     const updates = { status: "Confirmed" };
     if (!i.event_date && i.preferred_date) updates.event_date = i.preferred_date;
     await base44.entities.EventCenterInquiry.update(i.id, updates);
     setInquiries(prev => prev.map(x => x.id === i.id ? { ...x, ...updates } : x));
-    toast.success("Booking confirmed — date & talent locked");
+    try {
+      await base44.functions.invoke("sendEventBookingConfirmation", { inquiry_id: i.id });
+      toast.success("Booking confirmed — date & talent locked, guest emailed");
+    } catch (err) {
+      toast.error("Booking confirmed, but confirmation email failed: " + (err.message || "unknown error"));
+    }
   };
 
   const remove = async (id) => {
