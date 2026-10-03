@@ -92,12 +92,12 @@ export default function ContactUs() {
                 <div>
                   <h3 className="font-heading font-semibold text-foreground mb-1">Hours</h3>
                   <div className="font-body text-sm text-muted-foreground space-y-1">
-                    <p>Wed – Thu: 5:30 PM – 10:00 PM</p>
-                    <p>Fri – Sat: 5:30 PM – 11:00 PM</p>
-                    <p>Sun Brunch: 10:00 AM – 3:00 PM</p>
-                    <p>Sun Dinner: 5:00 PM – 10:00 PM</p>
-                    <p className="text-foreground/80 font-medium">Mon – Tue: Closed</p>
-                    <p className="text-xs text-primary mt-1">Event Center available Mon & Tue by reservation →{" "}
+                    <p>Brunch (Sat & Sun): 10:00 AM – 2:00 PM</p>
+                    <p>Lunch (Mon–Fri): 10:00 AM – 3:00 PM</p>
+                    <p>Dinner (Sun, Mon, Thu–Sat): 5:00 PM – 10:00 PM</p>
+                    <p>Game Night Sports Menu: Sun 12–10PM · Mon/Thu 5–10PM</p>
+                    <p className="text-foreground/80 font-medium">Tue & Wed Dinner: Event Center only</p>
+                    <p className="text-xs text-primary mt-1">Event Center bookings available Tue & Wed evenings →{" "}
                       <a href="/event-center" className="underline underline-offset-2 hover:text-primary/80">Learn more</a>
                     </p>
                   </div>

@@ -4,11 +4,37 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
-const TIME_SLOTS = [
+const BRUNCH_SLOTS = [
+  "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
+  "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM",
+];
+
+const LUNCH_SLOTS = [
+  "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
+  "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM",
+  "2:00 PM", "2:30 PM",
+];
+
+const DINNER_SLOTS = [
   "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM",
   "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM",
   "9:00 PM", "9:30 PM",
 ];
+
+// Returns the bookable reservation slots for a given date based on JTAP Kitchen's hours.
+function slotsForDate(date) {
+  const day = date.getDay(); // 0=Sun ... 6=Sat
+  if (day === 0 || day === 6) return [...BRUNCH_SLOTS, ...DINNER_SLOTS]; // Sat & Sun: brunch + dinner
+  if (day === 2 || day === 3) return [...LUNCH_SLOTS]; // Tue & Wed: lunch only (dinner = Event Center)
+  return [...LUNCH_SLOTS, ...DINNER_SLOTS]; // Mon, Thu, Fri: lunch + dinner
+}
+
+function dayServiceLabel(date) {
+  const day = date.getDay();
+  if (day === 0 || day === 6) return "Brunch & Dinner";
+  if (day === 2 || day === 3) return "Lunch only (Dinner reserved for Event Center)";
+  return "Lunch & Dinner";
+}
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -16,8 +42,7 @@ const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const OPENING_DATE = new Date("2026-08-12");
 
 function isRestaurantOpen(date) {
-  const day = date.getDay();
-  return day !== 1 && day !== 2; // closed Mon & Tue
+  return true; // open 7 days a week — brunch, lunch & dinner
 }
 
 function MiniCalendar({ selectedDate, onSelect }) {
@@ -245,16 +270,16 @@ export default function ReservationModal({ open, onClose, prefill }) {
                       <div className="bg-secondary/50 rounded-2xl p-4">
                         <MiniCalendar selectedDate={date} onSelect={setDate} />
                       </div>
-                      <p className="font-body text-xs text-primary font-semibold mt-2 text-center">Reservations open August 12, 2026</p>
-                    </div>
+                      </div>
 
                     {/* Time */}
                     <div>
                       <label className="flex items-center gap-2 font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground mb-3">
                         <Clock className="w-3.5 h-3.5" /> Select Time
+                        {date && <span className="text-primary font-normal normal-case tracking-normal">– {dayServiceLabel(date)}</span>}
                       </label>
                       <div className="grid grid-cols-5 gap-2">
-                        {TIME_SLOTS.map(t => (
+                        {(date ? slotsForDate(date) : []).map(t => (
                           <button key={t} onClick={() => setTime(t)}
                             className={`py-2 px-1 rounded-xl text-xs font-body font-medium transition-all duration-200
                               ${time === t ? "bg-primary text-primary-foreground shadow-md shadow-primary/25" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}>

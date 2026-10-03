@@ -174,7 +174,7 @@ export default function Support() {
                 <h3 className="font-heading font-semibold text-foreground mb-1">Call Us</h3>
                 <p className="font-body text-sm text-muted-foreground">+1 (901) 213-8085</p>
                 <p className="font-body text-xs text-muted-foreground mt-2">
-                  Wed–Sat 5:30 PM – 11:00 PM CST
+                  Open 7 days · Brunch, Lunch & Dinner
                 </p>
               </div>
             </div>
