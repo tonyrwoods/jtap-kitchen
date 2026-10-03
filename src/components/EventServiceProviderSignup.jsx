@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Sparkles, Music, Camera, Palette, Mic } from "lucide-react";
+import { CheckCircle2, Sparkles, Music, Camera, Palette, Mic, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 const CATEGORIES = [
@@ -27,8 +27,22 @@ export default function EventServiceProviderSignup() {
   const [form, setForm] = useState(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      set("photo_url", file_url);
+    } catch {
+      toast.error("Photo upload failed. Please try again.");
+    }
+    setUploading(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -135,9 +149,17 @@ export default function EventServiceProviderSignup() {
                     className={inputCls} placeholder="e.g. 500" />
                 </div>
                 <div>
-                  <label className="font-body text-sm font-semibold mb-1 block text-white/80">Photo URL</label>
-                  <input type="url" value={form.photo_url} onChange={e => set("photo_url", e.target.value)}
-                    className={inputCls} placeholder="https://...photo.jpg" />
+                  <label className="font-body text-sm font-semibold mb-1 block text-white/80">Photo</label>
+                  <div className="flex items-center gap-3">
+                    <label className={`flex-1 flex items-center justify-center gap-2 border border-dashed border-white/25 rounded-lg px-4 py-3 cursor-pointer hover:border-primary transition-colors ${uploading ? "opacity-60 pointer-events-none" : ""}`}>
+                      <Upload className="w-4 h-4 text-white/50" />
+                      <span className="font-body text-sm text-white/60">{uploading ? "Uploading..." : form.photo_url ? "Replace photo" : "Choose photo"}</span>
+                      <input type="file" accept="image/*" onChange={handlePhotoUpload} disabled={uploading} className="hidden" />
+                    </label>
+                    {form.photo_url && (
+                      <img src={form.photo_url} alt="preview" className="w-12 h-12 rounded-lg object-cover border border-white/20" />
+                    )}
+                  </div>
                 </div>
                 <div className="sm:col-span-2">
                   <label className="font-body text-sm font-semibold mb-1 block text-white/80">Bio</label>

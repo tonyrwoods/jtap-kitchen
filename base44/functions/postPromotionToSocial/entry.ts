@@ -106,14 +106,51 @@ async function postToInstagram(accessToken, imageUrl, caption) {
 const JTAP_FACEBOOK_PAGE_ID = '1167504153111773';
 
 async function postToFacebook(userAccessToken, imageUrl, message) {
+  // Gather every Page the connected account can manage: directly-assigned
+  // Pages (/me/accounts) PLUS Pages owned by or shared with a Meta Business
+  // Manager (/me/businesses -> client_pages + owned_pages). A Page appears in
+  // exactly one business list, so query both and merge, de-duplicating by id.
+  // Without the business enumeration, Business-Manager-owned Pages (the common
+  // "new Pages experience" case) are invisible and posting fails with "no
+  // managed Pages" even though the account administers the Page.
+  const pages = new Map();
+
   const accRes = await fetch(`https://graph.facebook.com/v25.0/me/accounts?fields=id,name,access_token&access_token=${userAccessToken}`);
   const acc = await accRes.json();
-  const pages = (acc.data || []).filter(Boolean);
-  let page = pages.find((p) => p.id === JTAP_FACEBOOK_PAGE_ID);
+  for (const p of (acc.data || [])) {
+    if (p && p.id) pages.set(p.id, { id: p.id, name: p.name, access_token: p.access_token, source: 'direct' });
+  }
+
+  try {
+    const bizRes = await fetch(`https://graph.facebook.com/v25.0/me/businesses?fields=id,name&access_token=${userAccessToken}`);
+    const biz = await bizRes.json();
+    for (const b of (biz.data || [])) {
+      for (const endpoint of ['client_pages', 'owned_pages']) {
+        try {
+          const r = await fetch(`https://graph.facebook.com/v25.0/${b.id}/${endpoint}?fields=id,name,access_token&access_token=${userAccessToken}`);
+          const j = await r.json();
+          for (const p of (j.data || [])) {
+            if (p && p.id && !pages.has(p.id)) {
+              pages.set(p.id, { id: p.id, name: p.name || b.name, access_token: p.access_token, source: `business:${b.name}` });
+            }
+          }
+        } catch (e) {
+          console.warn(`Facebook: failed to list ${endpoint} for business ${b.id}:`, e.message);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('Facebook: /me/businesses lookup failed:', e.message);
+  }
+
+  if (pages.size === 0) {
+    throw new Error('No Facebook Pages are managed by this account (direct or via Business Manager). Reconnect Facebook Pages and ensure the Page is assigned to the account, or select the Business during consent.');
+  }
+
+  let page = JTAP_FACEBOOK_PAGE_ID ? pages.get(JTAP_FACEBOOK_PAGE_ID) : null;
   if (!page) {
-    page = pages[0];
-    if (!page) throw new Error('No Facebook Pages are managed by this account');
-    console.warn(`Facebook: target page ${JTAP_FACEBOOK_PAGE_ID} not found among managed pages; posting to "${page.name}" (${page.id}) instead`);
+    page = pages.values().next().value;
+    console.warn(`Facebook: target page ${JTAP_FACEBOOK_PAGE_ID} not found among ${pages.size} managed page(s); posting to "${page.name}" (${page.id}, source=${page.source}) instead`);
   }
   const pageToken = page.access_token;
 
