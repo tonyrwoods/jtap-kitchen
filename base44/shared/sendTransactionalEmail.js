@@ -18,15 +18,15 @@ import { sendEmailViaGmail } from './sendEmailViaGmail.js';
  * @returns {Promise<{ok: boolean, provider?: string, fallbackReason?: string}>}
  * @throws {Error} when SendEmail and both connectors fail
  */
-export async function sendTransactionalEmail(base44, { to, subject, body, from_name } = {}) {
+export async function sendTransactionalEmail(base44, { to, subject, body, from_name, attachments } = {}) {
   // 1) Primary — domain-verified platform SendEmail.
   try {
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to,
-      subject,
-      body,
-      from_name: from_name || 'JTAP Kitchen',
-    });
+    const payload = { to, subject, body, from_name: from_name || 'JTAP Kitchen' };
+    // Attachments (e.g. a calendar .ics) flow through the primary SendEmail
+    // path only; the Outlook/Gmail fallbacks omit them — the message still
+    // delivers, just without the attachment, on a provider outage.
+    if (Array.isArray(attachments) && attachments.length > 0) payload.attachments = attachments;
+    await base44.asServiceRole.integrations.Core.SendEmail(payload);
     return { ok: true, provider: 'sendemail' };
   } catch (primaryErr) {
     // 2) Fallback — builder's Outlook connector.

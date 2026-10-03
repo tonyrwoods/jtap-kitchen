@@ -72,6 +72,11 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Stamp the last-run timestamp so the admin Referrals snapshot can confirm
+    // the scheduled job is actually firing.
+    if (settings && settings.id) {
+      await base44.asServiceRole.entities.AppSettings.update(settings.id, { referral_bonus_last_run_at: new Date().toISOString() }).catch(() => {});
+    }
     if (errors.length > 0) {
       await notifyAdmins(base44, {
         subject: `Referral bonus job: ${errors.length} failed`,

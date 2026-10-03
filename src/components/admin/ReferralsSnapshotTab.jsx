@@ -10,12 +10,17 @@ import { Crown, UserPlus, ChevronRight, ExternalLink, Mail } from "lucide-react"
 
 export default function ReferralsSnapshotTab() {
   const [members, setMembers] = useState([]);
+  const [lastRun, setLastRun] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.TapRoomMember.list("-created_date", 500)
-      .then(setMembers)
-      .finally(() => setLoading(false));
+    Promise.all([
+      base44.entities.TapRoomMember.list("-created_date", 500),
+      base44.entities.AppSettings.list().then((d) => d[0] || null).catch(() => null),
+    ]).then(([m, s]) => {
+      setMembers(m);
+      setLastRun(s?.referral_bonus_last_run_at || null);
+    }).finally(() => setLoading(false));
   }, []);
 
   const referrers = members
@@ -38,6 +43,12 @@ export default function ReferralsSnapshotTab() {
         <div>
           <h3 className="font-heading text-lg font-semibold">Referral Activity</h3>
           <p className="font-body text-sm text-muted-foreground">{total} total referrals across {members.length} members</p>
+          {lastRun && (
+            <p className="font-body text-xs text-muted-foreground mt-1 flex items-center gap-1.5">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500" />
+              Auto-reward job last ran {new Date(lastRun).toLocaleString()}
+            </p>
+          )}
         </div>
         <Link to="/admin/referrals" className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 transition-opacity">
           <ExternalLink className="w-3.5 h-3.5" /> Full Dashboard

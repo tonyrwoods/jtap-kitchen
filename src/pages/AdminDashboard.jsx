@@ -60,7 +60,7 @@ const TAB_GROUPS = [
   { label: "System", tabs: ["Changelog"] },
 ];
 const TABS = TAB_GROUPS.flatMap(g => g.tabs);
-const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed"];
+const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed", "No-Show"];
 const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts", "Drinks"];
 
 function StatCard({ icon: Icon, label, value, color }) {
@@ -83,6 +83,7 @@ function StatusBadge({ status }) {
     Confirmed: "bg-green-100 text-green-800",
     Cancelled: "bg-red-100 text-red-800",
     Completed: "bg-blue-100 text-blue-800",
+    "No-Show": "bg-orange-100 text-orange-800",
   };
   return (
     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${colors[status] || "bg-muted text-muted-foreground"}`}>

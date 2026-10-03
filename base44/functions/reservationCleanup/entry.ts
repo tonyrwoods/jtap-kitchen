@@ -13,7 +13,8 @@ Deno.serve(async (req) => {
     // Fetch all reservations using service role
     const allReservations = await base44.asServiceRole.entities.Reservation.list('-created_date', 500);
 
-    // Old Pending reservations → Cancelled (never confirmed by staff)
+    // Old Pending reservations → No-Show (never confirmed by the guest; frees
+    // capacity and lets admins flag repeat no-shows).
     const stalePending = allReservations.filter(
       (r) => r.status === 'Pending' && r.date && r.date < today
     );
@@ -26,12 +27,12 @@ Deno.serve(async (req) => {
     let pendingUpdated = 0;
     let confirmedUpdated = 0;
 
-    // Bulk update stale pending → Cancelled
+    // Bulk update stale pending → No-Show
     if (stalePending.length > 0) {
       const ids = stalePending.map((r) => r.id);
       const result = await base44.asServiceRole.entities.Reservation.updateMany(
         { _id: { $in: ids } },
-        { $set: { status: 'Cancelled' } }
+        { $set: { status: 'No-Show' } }
       );
       pendingUpdated = stalePending.length;
     }

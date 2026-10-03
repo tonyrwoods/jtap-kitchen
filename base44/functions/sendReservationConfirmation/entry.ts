@@ -10,6 +10,47 @@ function esc(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// Build a .ics calendar file for a confirmed reservation so guests can
+// one-tap-add it to their phone calendar. Returns null when the date/time
+// can't be parsed (no attachment in that case). 90-min default duration.
+function reservationIcs(r) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const parseMin = (time) => {
+    if (!time) return null;
+    const s = String(time).trim().toUpperCase();
+    const m12 = s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+    if (m12) {
+      let h = parseInt(m12[1], 10);
+      if (m12[3] === 'PM' && h !== 12) h += 12;
+      if (m12[3] === 'AM' && h === 12) h = 0;
+      return h * 60 + parseInt(m12[2], 10);
+    }
+    const m24 = s.match(/^(\d{1,2}):(\d{2})$/);
+    if (m24) return parseInt(m24[1], 10) * 60 + parseInt(m24[2], 10);
+    return null;
+  };
+  const date = (r.date || '').replace(/-/g, '');
+  const startMin = parseMin(r.time);
+  if (!date || startMin === null) return null;
+  const fmt = (min) => `${date}T${pad(Math.floor(min / 60))}${pad(min % 60)}00`;
+  const now = new Date();
+  const stamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+  const escIcs = (t) => String(t || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const lines = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//JTAP Kitchen//Reservation//EN', 'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:${r.id || date}-${Date.now()}@jtapkitchen.com`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART:${fmt(startMin)}`,
+    `DTEND:${fmt(startMin + 90)}`,
+    `SUMMARY:${escIcs('JTAP Kitchen Reservation')}`,
+    `LOCATION:${escIcs('JTAP Kitchen — Memphis, TN')}`,
+    `DESCRIPTION:${escIcs(`Reservation for ${r.party_size} guest(s). Confirmation #${(r.id || '').substring(0, 8).toUpperCase()}`)}`,
+    'END:VEVENT', 'END:VCALENDAR',
+  ];
+  return lines.join('\r\n');
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   let reservation;
@@ -181,11 +222,14 @@ Deno.serve(async (req) => {
       </div>
     `;
 
+    const icsString = reservationIcs(reservation);
+    const icsAttach = icsString ? [{ filename: 'jtap-reservation.ics', content: btoa(icsString) }] : undefined;
     await sendTransactionalEmail(base44, {
       to: reservation.email,
       subject: subject,
       body: body_html,
-      from_name: 'JTAP Kitchen'
+      from_name: 'JTAP Kitchen',
+      attachments: icsAttach,
     });
     // Admin notification
     await sendTransactionalEmail(base44, {

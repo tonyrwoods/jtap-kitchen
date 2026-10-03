@@ -38,7 +38,8 @@
         "Pending Payment",
         "Confirmed",
         "Cancelled",
-        "Completed"
+        "Completed",
+        "No-Show"
       ],
       "default": "Pending"
     },

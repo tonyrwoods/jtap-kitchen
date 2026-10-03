@@ -86,6 +86,14 @@ export default function EventInquiriesTab() {
                   <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[i.status || "New"] || "bg-muted text-muted-foreground"}`}>
                     {i.status || "New"}
                   </span>
+                  {i.deposit_status && i.deposit_status !== "Unpaid" && (
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${i.deposit_status === "Paid" ? "bg-green-100 text-green-800" : "bg-purple-100 text-purple-800"}`}>
+                      Deposit {i.deposit_status}{i.deposit_amount ? ` · $${Number(i.deposit_amount).toFixed(0)}` : ""}
+                    </span>
+                  )}
+                  {i.deposit_status !== "Paid" && i.deposit_amount > 0 && (i.status || "New") === "New" && (
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Deposit Unpaid</span>
+                  )}
                   <p className="font-body font-semibold text-foreground">{i.contact_name}</p>
                 </div>
                 <div className="flex flex-wrap gap-x-5 gap-y-1 font-body text-sm text-muted-foreground">
