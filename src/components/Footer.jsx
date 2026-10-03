@@ -141,11 +141,12 @@ export default function Footer({ onBookTable }) {
             </h4>
             <div className="space-y-3">
               {[
-                { day: "Wed – Thu", time: "5:30 PM – 10:00 PM" },
-                { day: "Fri – Sat", time: "5:30 PM – 11:00 PM" },
-                { day: "Sunday Brunch", time: "Coming Soon" },
-                { day: "Sunday Dinner", time: "5:00 PM – 10:00 PM" },
-                { day: "Mon – Tue", time: "Closed" },
+                { day: "Brunch (Sat – Sun)", time: "10:00 AM – 2:00 PM" },
+                { day: "Lunch (Mon – Fri)", time: "10:00 AM – 3:00 PM" },
+                { day: "Dinner (Sun – Mon)", time: "5:00 PM – 10:00 PM" },
+                { day: "Dinner (Tue – Wed)", time: "Event Center" },
+                { day: "Dinner (Thu – Sat)", time: "5:00 PM – 10:00 PM" },
+                { day: "Game Night (Sun, Mon, Thu)", time: "See full schedule" },
               ].map(({ day, time }) => (
                 <div key={day} className="flex items-center gap-3">
                   <Clock className="w-4 h-4 text-primary shrink-0" />

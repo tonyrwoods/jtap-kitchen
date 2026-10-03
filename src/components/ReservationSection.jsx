@@ -89,8 +89,8 @@ export default function ReservationSection() {
 
             <div className="space-y-6">
               {[
-                { icon: CalendarDays, label: "Open 7 Days", desc: "Tuesday – Sunday, 5:30 PM – 11:00 PM" },
-                { icon: Clock, label: "Last Seating", desc: "9:30 PM for full tasting menu" },
+                { icon: CalendarDays, label: "Dinner", desc: "Sun, Mon, Thu – Sat, 5:00 PM – 10:00 PM" },
+                { icon: Clock, label: "Brunch & Lunch", desc: "Brunch Sat–Sun 10AM–2PM · Lunch Mon–Fri 10AM–3PM" },
                 { icon: Users, label: "Private Events", desc: "Up to 40 guests in our private dining room" },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex items-start gap-4">
