@@ -34,6 +34,8 @@ import EventTalentTab from "../components/admin/EventTalentTab";
 import EventAddOnsTab from "../components/admin/EventAddOnsTab";
 import ChangeLogAdmin from "../components/admin/ChangeLogAdmin";
 import OperationsSettingsTab from "../components/admin/OperationsSettingsTab";
+import MarketingKpiSnapshot from "../components/admin/MarketingKpiSnapshot";
+import ReferralsSnapshotTab from "../components/admin/ReferralsSnapshotTab";
 import ReservationRsvpPanel from "../components/admin/ReservationRsvpPanel";
 import ReservationEditModal from "../components/admin/ReservationEditModal";
 import ReservationEmailModal from "../components/admin/ReservationEmailModal";
@@ -51,7 +53,7 @@ const TAB_GROUPS = [
   { label: "Events", tabs: ["Inquiries", "Talent", "Add-Ons"] },
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
-  { label: "Guests", tabs: ["Gift Cards", "Feedback", "Scorecards", "Loyalty"] },
+  { label: "Guests", tabs: ["Gift Cards", "Feedback", "Scorecards", "Loyalty", "Referrals"] },
   { label: "Marketing", tabs: ["Gallery", "Instagram", "Team Members", "LinkedIn", "Promotions", "SEO", "Event SEO", "GBP Posts", "Ads"] },
   { label: "Careers", tabs: ["Job Listings"] },
   { label: "Account", tabs: ["Profile"] },
@@ -354,6 +356,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   {stats.map(s => <StatCard key={s.label} {...s} />)}
                 </div>
+                <MarketingKpiSnapshot />
                 <div className="bg-card border border-border rounded-2xl p-6">
                   <h3 className="font-heading text-lg font-semibold mb-4">Recent Reservations</h3>
                   <div className="space-y-3">
@@ -695,6 +698,12 @@ export default function AdminDashboard() {
             {tab === "Loyalty" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <LoyaltyAdminTab />
+              </motion.div>
+            )}
+
+            {tab === "Referrals" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <ReferralsSnapshotTab />
               </motion.div>
             )}
 

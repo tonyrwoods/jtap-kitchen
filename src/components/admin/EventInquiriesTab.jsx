@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Trash2, Mail, Phone, Users, CalendarDays, MessageSquare, Filter } from "lucide-react";
+import { Trash2, Mail, Phone, Users, CalendarDays, MessageSquare, Filter, CheckCircle2 } from "lucide-react";
 import SelectDropdown from "@/components/SelectDropdown";
 
 const STATUSES = ["New", "Confirmed", "Talent Pending", "Declined", "Expired"];
@@ -32,6 +32,16 @@ export default function EventInquiriesTab() {
     await base44.entities.EventCenterInquiry.update(id, { status });
     setInquiries(prev => prev.map(i => i.id === id ? { ...i, status } : i));
     toast.success(`Marked ${status}`);
+  };
+
+  // One-click confirm: locks the booking by stamping the event date (from the
+  // preferred date if not already set) and moving the inquiry to Confirmed.
+  const confirmBooking = async (i) => {
+    const updates = { status: "Confirmed" };
+    if (!i.event_date && i.preferred_date) updates.event_date = i.preferred_date;
+    await base44.entities.EventCenterInquiry.update(i.id, updates);
+    setInquiries(prev => prev.map(x => x.id === i.id ? { ...x, ...updates } : x));
+    toast.success("Booking confirmed — date & talent locked");
   };
 
   const remove = async (id) => {
@@ -92,6 +102,13 @@ export default function EventInquiriesTab() {
                 )}
               </div>
               <div className="flex items-center gap-3 shrink-0">
+                <button
+                  onClick={() => confirmBooking(i)}
+                  disabled={(i.status || "New") === "Confirmed"}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-body font-medium bg-green-600 text-white hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Confirm
+                </button>
                 <SelectDropdown value={i.status || "New"} onChange={v => updateStatus(i.id, v)} options={STATUSES.map(s => ({ value: s, label: s }))} />
                 <button onClick={() => remove(i.id)} className="p-1.5 hover:text-destructive transition-colors" aria-label="Delete inquiry">
                   <Trash2 className="w-4 h-4" />
