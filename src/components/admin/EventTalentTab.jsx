@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Star, CheckCircle2, Circle, CalendarDays, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Star, CheckCircle2, Circle, CalendarDays, X, Clock } from "lucide-react";
 import SelectDropdown from "@/components/SelectDropdown";
 
 const CATEGORIES = ["Wedding Planner", "Event Planner", "DJ", "Musician", "Photographer", "Florist", "MC / Host", "Clown / Entertainer", "Officiant", "Other"];
@@ -168,6 +168,15 @@ export default function EventTalentTab() {
     setTalent(prev => prev.map(x => x.id === t.id ? { ...x, is_featured: !t.is_featured } : x));
   };
 
+  // One-click activate from the pending queue (new vendor signups land inactive).
+  const quickActivate = async (t) => {
+    await base44.entities.EventServiceProvider.update(t.id, { is_active: true });
+    setTalent(prev => prev.map(x => x.id === t.id ? { ...x, is_active: true } : x));
+    toast.success(`${t.name} activated`);
+  };
+
+  const pending = talent.filter(t => !t.is_active);
+
   const remove = async (id) => {
     if (!confirm("Delete this talent entry?")) return;
     await base44.entities.EventServiceProvider.delete(id);
@@ -188,6 +197,39 @@ export default function EventTalentTab() {
       )}
       {showForm && (
         <TalentForm item={editing} onSave={() => { setShowForm(false); setEditing(null); load(); }} onCancel={() => { setShowForm(false); setEditing(null); }} />
+      )}
+
+      {pending.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Clock className="w-4 h-4 text-amber-600" />
+            <h3 className="font-heading text-base font-semibold text-amber-900">Pending Applications ({pending.length})</h3>
+            <span className="font-body text-xs text-amber-700">New vendor signups awaiting review</span>
+          </div>
+          <div className="space-y-2">
+            {pending.map(t => (
+              <div key={t.id} className="flex items-center gap-3 bg-white border border-amber-200 rounded-xl p-3">
+                {t.photo_url ? (
+                  <img src={t.photo_url} alt={t.name} className="w-10 h-10 rounded-lg object-cover border border-amber-200 shrink-0" />
+                ) : (
+                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                    <Star className="w-4 h-4 text-amber-500" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="font-body text-sm font-medium truncate">{t.name}</p>
+                  <p className="font-body text-xs text-muted-foreground truncate">{t.category}{t.contact_email ? ` · ${t.contact_email}` : ""}</p>
+                </div>
+                <button onClick={() => quickActivate(t)} className="px-3 py-1.5 rounded-lg text-xs font-body font-medium bg-green-600 text-white hover:bg-green-700 transition-colors shrink-0">
+                  Activate
+                </button>
+                <button onClick={() => { setEditing(t); setShowForm(true); }} className="px-3 py-1.5 rounded-lg text-xs font-body font-medium border border-amber-300 text-amber-700 hover:bg-amber-100 transition-colors shrink-0">
+                  Review
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {talent.length === 0 ? (

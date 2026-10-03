@@ -106,6 +106,12 @@ export default function PromotionsTab() {
           </div>
         </div>
 
+        {selected.last_social_post && (
+          <p className="font-body text-xs text-muted-foreground px-1 -mt-2">
+            <span className="font-medium">Last social post:</span> {selected.last_social_post}
+          </p>
+        )}
+
         <div>
           <h4 className="font-heading text-base font-semibold mb-3">RSVP Tracking</h4>
           <RsvpDashboard promotion={selected} />

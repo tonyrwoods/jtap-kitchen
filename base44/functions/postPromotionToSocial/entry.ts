@@ -273,6 +273,19 @@ export default async function (req) {
       }
     }
 
+    // Persist a compact audit trail of this post attempt on the promotion, so
+    // automated-workflow failures (which no admin watches live) are visible in
+    // the Promotions tab instead of vanishing with a toast.
+    try {
+      const parts = Object.entries(results).map(
+        ([p, info]) => `${p}: ${info.success ? 'posted' : 'failed (' + (info.error || 'unknown') + ')'}`
+      );
+      const summary = (parts.length ? parts.join(' · ') : 'no platforms configured') + ` @ ${new Date().toISOString()}`;
+      await base44.asServiceRole.entities.EventPromotion.update(promotion_id, { last_social_post: summary });
+    } catch (e) {
+      console.warn('Failed to persist last_social_post:', e.message);
+    }
+
     return Response.json({ success: true, results });
   } catch (error) {
     console.error('postPromotionToSocial error:', error);
