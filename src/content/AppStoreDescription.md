@@ -37,11 +37,11 @@ Chat with our intelligent dining assistant to get instant answers about reservat
 
 ### 📍 Visit Us
 **3397 Summer Ave., Memphis, TN 38122**
-Wed–Thu: 5:30 PM – 10:00 PM
-Fri–Sat: 5:30 PM – 11:00 PM
-Sunday Brunch: 10:00 AM – 3:00 PM
-Sunday Dinner: 5:00 PM – 10:00 PM
-Closed Mon–Tue
+Brunch (Sat & Sun): 10:00 AM – 2:00 PM
+Lunch (Mon–Fri): 10:00 AM – 3:00 PM
+Dinner (Sun, Mon, Thu–Sat): 5:00 PM – 10:00 PM
+Game Night Sports Menu: Sun 12–10PM · Mon/Thu 5–10PM
+Tue & Wed Dinner: Event Center only (by reservation)
 
 **Opening July 2026 — Reserve early!**
 
