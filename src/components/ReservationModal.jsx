@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -141,6 +142,11 @@ export default function ReservationModal({ open, onClose, prefill }) {
     if (!date || date < OPENING_DATE) {
       return;
     }
+    // Reservations require a signed-in account. Redirect unauthenticated
+    // guests to login (returning here) instead of letting the submit silently
+    // 401 — otherwise they abandon the flow and fall back to emailing.
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     try {
       const res = await base44.functions.invoke("submitReservation", {
         guest_name: name,
