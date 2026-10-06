@@ -55,6 +55,28 @@
     "failed_count": {
       "type": "number",
       "title": "Failed Deliveries"
+    },
+    "attachments": {
+      "type": "array",
+      "title": "Email Attachments",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "File Name"
+          },
+          "file_url": {
+            "type": "string",
+            "title": "File URL"
+          },
+          "content_type": {
+            "type": "string",
+            "title": "Content Type"
+          }
+        }
+      },
+      "default": []
     }
   },
   "required": [

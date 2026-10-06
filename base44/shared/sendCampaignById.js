@@ -47,6 +47,30 @@ export async function sendCampaignById(base44, campaignId) {
 
   const appUrl = Deno.env.get('APP_URL') || 'https://jtapkitchen.com';
 
+  // Pre-fetch and base64-encode attachments ONCE so a multi-recipient
+  // campaign doesn't re-download and re-encode each file per recipient.
+  const encodedAttachments = [];
+  if (Array.isArray(campaign.attachments) && campaign.attachments.length) {
+    for (const att of campaign.attachments) {
+      if (!att || !att.file_url) continue;
+      try {
+        const fileRes = await fetch(att.file_url);
+        if (!fileRes.ok) continue;
+        const buf = await fileRes.arrayBuffer();
+        const bytes = new Uint8Array(buf);
+        let binary = '';
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+        encodedAttachments.push({
+          filename: att.filename || 'attachment',
+          contentType: att.content_type || fileRes.headers.get('content-type') || 'application/octet-stream',
+          base64: btoa(binary),
+        });
+      } catch {
+        // skip unreadable attachment rather than failing the whole campaign
+      }
+    }
+  }
+
   // Send emails — track per-recipient success/failure so one bad address
   // no longer aborts the entire campaign.
   let sent = 0;
@@ -62,6 +86,7 @@ export async function sendCampaignById(base44, campaignId) {
         to: recipient.email,
         subject: campaign.subject,
         body: personalizedBody,
+        attachments: encodedAttachments,
       });
       sent++;
     } catch {

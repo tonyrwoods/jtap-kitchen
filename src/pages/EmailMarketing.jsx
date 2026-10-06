@@ -1,23 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
-import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle, FolderOpen, AlertCircle, Pencil } from "lucide-react";
+import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle, FolderOpen, AlertCircle, Pencil, Paperclip, X, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
-const QUILL_MODULES = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ align: [] }],
-    ["link"],
-    [{ color: [] }],
-    ["clean"],
-  ],
-};
 
 const SEGMENTS = [
   { value: "All Subscribers", desc: "Everyone who joined your newsletter list" },
@@ -32,6 +20,8 @@ const STATUS_COLORS = {
   Scheduled: "bg-yellow-100 text-yellow-800",
   Sent: "bg-green-100 text-green-800",
 };
+
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024; // 10 MB per file
 
 const DEFAULT_TEMPLATE = `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;color:#1a1a1a;">
   <div style="background:#1a1a1a;padding:32px;text-align:center;">
@@ -52,15 +42,20 @@ export default function EmailMarketing() {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // list | compose
-  const [form, setForm] = useState({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
+  const [form, setForm] = useState({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "", attachments: [] });
   const [sending, setSending] = useState(null);
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState(null);
   const [previewing, setPreviewing] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const quillRef = useRef(null);
+  const attachmentInputRef = useRef(null);
 
   const resetForm = () => {
-    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
+    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "", attachments: [] });
     setEditingId(null);
   };
 
@@ -73,6 +68,7 @@ export default function EmailMarketing() {
       segment: c.segment || "All Subscribers",
       contact_group_id: c.contact_group_id || "",
       scheduled_at: c.scheduled_at ? c.scheduled_at.slice(0, 16) : "",
+      attachments: c.attachments || [],
     });
     setView("compose");
   };
@@ -89,6 +85,87 @@ export default function EmailMarketing() {
   }, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // --- Image upload handler for the rich-text editor ---
+  // Uploads the chosen image to public storage and embeds it at the cursor.
+  const handleImageUpload = useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      if (file.size > MAX_ATTACHMENT_BYTES) {
+        toast.error("Image too large (max 10MB)");
+        return;
+      }
+      setUploadingImage(true);
+      try {
+        const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+        const editor = quillRef.current?.getEditor?.();
+        if (editor) {
+          const range = editor.getSelection(true);
+          editor.insertEmbed(range.index, "image", file_url);
+          editor.setSelection(range.index + 1, 0);
+        } else {
+          // Fallback: append to body HTML
+          setForm(f => ({ ...f, body: `${f.body}<p><img src="${file_url}" style="max-width:100%;border-radius:8px;" /></p>` }));
+        }
+        toast.success("Image added to email");
+      } catch {
+        toast.error("Image upload failed");
+      }
+      setUploadingImage(false);
+    };
+    input.click();
+  }, []);
+
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        [{ font: [] }, { size: ["small", false, "large", "huge"] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ color: [] }, { background: [] }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{ align: [] }],
+        ["blockquote", "code-block"],
+        ["link", "image"],
+        [{ indent: "-1" }, { indent: "+1" }],
+        ["clean"],
+      ],
+      handlers: {
+        image: handleImageUpload,
+      },
+    },
+  }), [handleImageUpload]);
+
+  // --- File attachment upload ---
+  const handleAttachmentUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      toast.error("File too large (max 10MB)");
+      return;
+    }
+    setUploadingAttachment(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      setForm(f => ({
+        ...f,
+        attachments: [...(f.attachments || []), { filename: file.name, file_url, content_type: file.type || "application/octet-stream" }],
+      }));
+      toast.success("File attached");
+    } catch {
+      toast.error("File upload failed");
+    }
+    setUploadingAttachment(false);
+  };
+
+  const removeAttachment = (idx) => {
+    setForm(f => ({ ...f, attachments: (f.attachments || []).filter((_, i) => i !== idx) }));
+  };
 
   const saveDraft = async () => {
     setSaving(true);
@@ -198,6 +275,11 @@ export default function EmailMarketing() {
                   <div className="flex items-center gap-3 mb-1">
                     <h3 className="font-body font-semibold truncate">{c.title}</h3>
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold shrink-0 ${STATUS_COLORS[c.status]}`}>{c.status}</span>
+                    {c.attachments?.length > 0 && (
+                      <span className="flex items-center gap-1 font-body text-xs text-muted-foreground shrink-0" title={`${c.attachments.length} attachment(s)`}>
+                        <Paperclip className="w-3 h-3" />{c.attachments.length}
+                      </span>
+                    )}
                   </div>
                   <p className="font-body text-sm text-muted-foreground truncate">{c.subject}</p>
                   <div className="flex items-center gap-4 mt-2">
@@ -355,19 +437,73 @@ export default function EmailMarketing() {
 
             {/* Email Body */}
             <div className="bg-card border border-border rounded-2xl p-6 space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <h2 className="font-heading text-lg font-semibold">Email Body</h2>
-                <span className="font-body text-xs text-muted-foreground">Use <code className="bg-muted px-1 rounded">{"{{name}}"}</code> for personalization</span>
+                <span className="font-body text-xs text-muted-foreground">Use <code className="bg-muted px-1 rounded">{"{{name}}"}</code> for personalization · Use the image button to embed images</span>
               </div>
+              {uploadingImage && (
+                <div className="flex items-center gap-2 text-sm text-primary font-body">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Uploading image…
+                </div>
+              )}
               <div className="quill-wrapper border border-border rounded-xl overflow-hidden bg-background">
                 <ReactQuill
+                  ref={quillRef}
                   theme="snow"
-                  modules={QUILL_MODULES}
+                  modules={modules}
                   value={form.body}
                   onChange={(val) => set("body", val)}
                   placeholder="Write your email content here…"
                 />
               </div>
+            </div>
+
+            {/* Attachments */}
+            <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                  <h2 className="font-heading text-lg font-semibold">Attachments</h2>
+                  <p className="font-body text-xs text-muted-foreground mt-0.5">Files are attached to every sent email (max 10MB each)</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => attachmentInputRef.current?.click()}
+                  disabled={uploadingAttachment}
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-full font-body text-sm font-medium hover:bg-muted disabled:opacity-50 transition-colors"
+                >
+                  {uploadingAttachment ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Paperclip className="w-3.5 h-3.5" />}
+                  {uploadingAttachment ? "Uploading…" : "Add File"}
+                </button>
+                <input
+                  ref={attachmentInputRef}
+                  type="file"
+                  className="hidden"
+                  onChange={handleAttachmentUpload}
+                />
+              </div>
+              {form.attachments?.length > 0 && (
+                <div className="space-y-2">
+                  {form.attachments.map((att, idx) => (
+                    <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border">
+                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <FileText className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-body text-sm font-medium truncate">{att.filename}</p>
+                        <p className="font-body text-xs text-muted-foreground truncate">{att.content_type || "file"}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(idx)}
+                        className="p-1.5 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors shrink-0"
+                        aria-label="Remove attachment"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Actions */}

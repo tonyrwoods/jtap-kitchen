@@ -2,14 +2,19 @@
  * Sends an email via the connected Gmail account.
  * Uses the Gmail API with the builder's authorized Gmail connector (SHARED mode).
  *
+ * Supports optional file attachments. Attachments must be pre-encoded by the
+ * caller as { filename, contentType, base64 } so a multi-recipient campaign
+ * only fetches/encodes each file once.
+ *
  * @param {object} base44 - The base44 client (from createClientFromRequest)
  * @param {object} opts
  * @param {string} opts.to - Recipient email address
  * @param {string} opts.subject - Email subject line
  * @param {string} opts.body - HTML email body
+ * @param {Array<{filename:string,contentType:string,base64:string}>} [opts.attachments]
  * @returns {Promise<{id: string, threadId: string}>} - Gmail API response
  */
-export async function sendEmailViaGmail(base44, { to, subject, body }) {
+export async function sendEmailViaGmail(base44, { to, subject, body, attachments = [] }) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
   // RFC 2047 encode subject if it contains non-ASCII characters (emoji, accents, etc.)
@@ -17,15 +22,48 @@ export async function sendEmailViaGmail(base44, { to, subject, body }) {
     ? subject
     : `=?UTF-8?B?${base64FromUtf8(subject)}?=`;
 
-  // Build RFC 2822 MIME message (From header omitted — Gmail sets it from the authenticated account)
-  const mimeMessage = [
-    `To: ${to}`,
-    `Subject: ${encodedSubject}`,
-    `MIME-Version: 1.0`,
-    `Content-Type: text/html; charset=utf-8`,
-    ``,
-    body,
-  ].join('\r\n');
+  const validAttachments = Array.isArray(attachments) ? attachments.filter(a => a && a.base64) : [];
+  const hasAttachments = validAttachments.length > 0;
+
+  let mimeMessage;
+  if (hasAttachments) {
+    const boundary = `jtap_boundary_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const lines = [
+      `To: ${to}`,
+      `Subject: ${encodedSubject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: multipart/mixed; boundary="${boundary}"`,
+      ``,
+      `--${boundary}`,
+      `Content-Type: text/html; charset=utf-8`,
+      ``,
+      body,
+    ];
+    for (const att of validAttachments) {
+      const filename = String(att.filename || 'attachment').replace(/"/g, "'");
+      const ct = att.contentType || 'application/octet-stream';
+      lines.push(
+        ``,
+        `--${boundary}`,
+        `Content-Type: ${ct}`,
+        `Content-Disposition: attachment; filename="${filename}"`,
+        `Content-Transfer-Encoding: base64`,
+        ``,
+        att.base64
+      );
+    }
+    lines.push(``, `--${boundary}--`);
+    mimeMessage = lines.join('\r\n');
+  } else {
+    mimeMessage = [
+      `To: ${to}`,
+      `Subject: ${encodedSubject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=utf-8`,
+      ``,
+      body,
+    ].join('\r\n');
+  }
 
   const raw = base64UrlEncode(mimeMessage);
 
