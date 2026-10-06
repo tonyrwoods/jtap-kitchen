@@ -1,9 +1,23 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
-import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle, FolderOpen, AlertCircle } from "lucide-react";
+import { Plus, Send, Clock, Users, FileText, Trash2, ChevronRight, CheckCircle, FolderOpen, AlertCircle, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
+const QUILL_MODULES = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
+    ["link"],
+    [{ color: [] }],
+    ["clean"],
+  ],
+};
 
 const SEGMENTS = [
   { value: "All Subscribers", desc: "Everyone who joined your newsletter list" },
@@ -43,6 +57,25 @@ export default function EmailMarketing() {
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState(null);
   const [previewing, setPreviewing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+
+  const resetForm = () => {
+    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
+    setEditingId(null);
+  };
+
+  const startEdit = (c) => {
+    setEditingId(c.id);
+    setForm({
+      title: c.title || "",
+      subject: c.subject || "",
+      body: c.body || DEFAULT_TEMPLATE,
+      segment: c.segment || "All Subscribers",
+      contact_group_id: c.contact_group_id || "",
+      scheduled_at: c.scheduled_at ? c.scheduled_at.slice(0, 16) : "",
+    });
+    setView("compose");
+  };
 
   const load = async () => {
     const data = await base44.entities.NewsletterCampaign.list("-created_date", 50);
@@ -59,28 +92,43 @@ export default function EmailMarketing() {
 
   const saveDraft = async () => {
     setSaving(true);
-    await base44.entities.NewsletterCampaign.create({ ...form, status: "Draft" });
-    toast.success("Draft saved!");
+    if (editingId) {
+      await base44.entities.NewsletterCampaign.update(editingId, { ...form, status: "Draft" });
+      toast.success("Draft updated!");
+    } else {
+      await base44.entities.NewsletterCampaign.create({ ...form, status: "Draft" });
+      toast.success("Draft saved!");
+    }
     setSaving(false);
     setView("list");
-    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
+    resetForm();
     load();
   };
 
   const scheduleOrSend = async (sendNow) => {
     setSaving(true);
-    const record = await base44.entities.NewsletterCampaign.create({
-      ...form,
-      status: sendNow ? "Draft" : "Scheduled",
-    });
+    let recordId;
+    if (editingId) {
+      await base44.entities.NewsletterCampaign.update(editingId, {
+        ...form,
+        status: sendNow ? "Draft" : "Scheduled",
+      });
+      recordId = editingId;
+    } else {
+      const created = await base44.entities.NewsletterCampaign.create({
+        ...form,
+        status: sendNow ? "Draft" : "Scheduled",
+      });
+      recordId = created.id;
+    }
     if (sendNow) {
-      await sendCampaign(record.id);
+      await sendCampaign(recordId);
     } else {
       toast.success("Campaign scheduled!");
     }
     setSaving(false);
     setView("list");
-    setForm({ title: "", subject: "", body: DEFAULT_TEMPLATE, segment: "All Subscribers", contact_group_id: "", scheduled_at: "" });
+    resetForm();
     load();
   };
 
@@ -120,7 +168,7 @@ export default function EmailMarketing() {
           <div className="flex items-center gap-4">
             <a href="/admin" className="font-body text-sm text-primary hover:underline">← Admin</a>
             {view === "list" && (
-              <button onClick={() => setView("compose")} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90">
+              <button onClick={() => { resetForm(); setView("compose"); }} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90">
                 <Plus className="w-4 h-4" /> New Campaign
               </button>
             )}
@@ -140,7 +188,7 @@ export default function EmailMarketing() {
                 <FileText className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                 <p className="font-heading text-lg font-semibold mb-1">No campaigns yet</p>
                 <p className="font-body text-sm text-muted-foreground mb-6">Create your first email campaign to get started.</p>
-                <button onClick={() => setView("compose")} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">
+                <button onClick={() => { resetForm(); setView("compose"); }} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium">
                   Create Campaign
                 </button>
               </div>
@@ -166,6 +214,14 @@ export default function EmailMarketing() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
+                  {c.status !== "Sent" && (
+                    <button
+                      onClick={() => startEdit(c)}
+                      className="flex items-center gap-1.5 px-4 py-2 border border-border rounded-full font-body text-sm font-medium hover:bg-muted transition-colors"
+                    >
+                      <Pencil className="w-3.5 h-3.5" /> Edit
+                    </button>
+                  )}
                   {c.status !== "Sent" && (
                     <button
                       onClick={() => sendCampaign(c.id)}
@@ -303,12 +359,15 @@ export default function EmailMarketing() {
                 <h2 className="font-heading text-lg font-semibold">Email Body</h2>
                 <span className="font-body text-xs text-muted-foreground">Use <code className="bg-muted px-1 rounded">{"{{name}}"}</code> for personalization</span>
               </div>
-              <textarea
-                className="w-full border border-border rounded-xl px-4 py-3 text-sm bg-background font-body font-mono resize-none focus:outline-none focus:border-primary transition-colors"
-                rows={14}
-                value={form.body}
-                onChange={e => set("body", e.target.value)}
-              />
+              <div className="quill-wrapper border border-border rounded-xl overflow-hidden bg-background">
+                <ReactQuill
+                  theme="snow"
+                  modules={QUILL_MODULES}
+                  value={form.body}
+                  onChange={(val) => set("body", val)}
+                  placeholder="Write your email content here…"
+                />
+              </div>
             </div>
 
             {/* Actions */}
@@ -318,7 +377,7 @@ export default function EmailMarketing() {
                 disabled={saving || !form.title || !form.subject || (form.segment === "Saved Contact Group" && !form.contact_group_id)}
                 className="px-6 py-2.5 border border-border rounded-full font-body text-sm font-medium hover:bg-muted disabled:opacity-50 transition-colors"
               >
-                {saving ? "Saving…" : "Save as Draft"}
+                {saving ? "Saving…" : editingId ? "Update Draft" : "Save as Draft"}
               </button>
               {form.scheduled_at && (
                 <button
