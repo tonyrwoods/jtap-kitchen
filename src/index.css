@@ -130,6 +130,12 @@
   }
 }
 
+/* Rich-text editor: give the writing area a comfortable height */
+.quill-wrapper .ql-editor {
+  min-height: 320px;
+  font-size: 14px;
+}
+
 /* Hide scrollbars while keeping scroll functionality */
 @layer utilities {
   .scrollbar-hide {
