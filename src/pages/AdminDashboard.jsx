@@ -48,15 +48,14 @@ import SeoContentDraftsTab from "../components/admin/SeoContentDraftsTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
-  { label: "Operations", tabs: ["Overview", "Operations Settings", "Opening Checklist", "End of Year Checklist"] },
+  { label: "Operations", tabs: ["Overview", "Operations Settings", "Opening Checklist", "End of Year Checklist", "Staff Roster"] },
   { label: "Menu & Pricing", tabs: ["Menu Items", "Liquor Items", "Pricing Strategy", "Chef Highlights"] },
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
   { label: "Events", tabs: ["Ticketed Events", "Inquiries", "Talent", "Add-Ons"] },
-  { label: "Staff", tabs: ["Staff Roster"] },
-  { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
   { label: "Guests", tabs: ["Gift Cards", "Feedback", "Scorecards", "Loyalty", "Referrals"] },
-  { label: "Marketing", tabs: ["Gallery", "Instagram", "Team Members", "LinkedIn", "Promotions", "SEO", "Event SEO", "GBP Posts", "Ads"] },
-  { label: "Careers", tabs: ["Job Listings"] },
+  { label: "Marketing", tabs: ["Promotions", "Gallery", "Instagram", "LinkedIn", "SEO", "Event SEO", "GBP Posts", "Ads"] },
+  { label: "Team & Careers", tabs: ["Team Members", "Job Listings"] },
+  { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
   { label: "Account", tabs: ["Profile"] },
   { label: "System", tabs: ["Changelog"] },
 ];
