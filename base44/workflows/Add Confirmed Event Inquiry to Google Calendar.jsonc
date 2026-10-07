@@ -1,0 +1,39 @@
+{
+  "name": "Add Confirmed Event Inquiry to Google Calendar",
+  "description": "When an EventCenterInquiry becomes Confirmed and has no calendar event yet, create a Google Calendar event via addEventInquiryToCalendar. Idempotent \u2014 skips once calendar_event_id is set.",
+  "trigger": {
+    "condition": "${ ((.trigger.data.status == \"Confirmed\") and (.trigger.data.calendar_event_id == null or .trigger.data.calendar_event_id == \"\" or .trigger.data.calendar_event_id == [] or .trigger.data.calendar_event_id == {})) }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create",
+        "update"
+      ],
+      "entity_name": "EventCenterInquiry"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "add_confirmed_event_inquiry_to_google_calendar",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "addEventInquiryToCalendar",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync event inquiry to calendar",
+            "description": "Create Google Calendar event for confirmed event center booking"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -130,6 +130,11 @@
       "title": "Confirmation Email Sent",
       "default": false
     },
+    "calendar_event_id": {
+      "type": "string",
+      "title": "Google Calendar Event ID",
+      "description": "Set when a confirmed rental is synced to Google Calendar, to prevent duplicate calendar events."
+    },
     "admin_notes": {
       "type": "string",
       "title": "Admin Notes"

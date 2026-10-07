@@ -129,6 +129,11 @@
       ],
       "default": "New"
     },
+    "calendar_event_id": {
+      "type": "string",
+      "title": "Google Calendar Event ID",
+      "description": "Set when a confirmed inquiry is synced to Google Calendar, to prevent duplicate calendar events."
+    },
     "description": {
       "type": "string",
       "title": "Description",
