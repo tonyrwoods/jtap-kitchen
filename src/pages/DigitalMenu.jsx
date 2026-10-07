@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
-import { UtensilsCrossed, Wine, Printer } from "lucide-react";
+import { UtensilsCrossed, Wine, Printer, ShoppingBag, Plus, Minus } from "lucide-react";
+import { toast } from "sonner";
+import MenuCartModal from "@/components/menu/MenuCartModal";
 import { QRCodeCanvas } from "qrcode.react";
 import useSeoMeta from "../hooks/useSeoMeta";
 import { trackPixel } from "@/lib/metaPixel";
@@ -18,7 +20,7 @@ const DIETARY_COLORS = {
   "Spicy": "bg-red-100 text-red-800",
 };
 
-function MenuCard({ item }) {
+function MenuCard({ item, qty, onAdd, onRemove }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -50,6 +52,26 @@ function MenuCard({ item }) {
             ))}
           </div>
         )}
+        <div className="mt-3 pt-3 border-t border-border">
+          {qty > 0 ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <button onClick={onRemove} className="w-7 h-7 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center" aria-label="Decrease quantity">
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="font-body text-sm font-semibold w-6 text-center">{qty}</span>
+                <button onClick={onAdd} className="w-7 h-7 rounded-full bg-primary text-primary-foreground hover:opacity-90 flex items-center justify-center" aria-label="Increase quantity">
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <span className="font-heading text-sm font-semibold text-primary">${(item.price * qty).toFixed(2)}</span>
+            </div>
+          ) : (
+            <button onClick={onAdd} className="w-full py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5">
+              <Plus className="w-3.5 h-3.5" /> Add to Order
+            </button>
+          )}
+        </div>
       </div>
     </motion.div>
   );
@@ -68,6 +90,9 @@ export default function DigitalMenu() {
   const [liquorItems, setLiquorItems] = useState([]);
   const [liquorLoading, setLiquorLoading] = useState(false);
   const [printing, setPrinting] = useState(false);
+  const [cart, setCart] = useState({});
+  const [itemNotes, setItemNotes] = useState({});
+  const [cartOpen, setCartOpen] = useState(false);
 
   const qrRef = useRef(null);
   const handlePrintMenu = async () => {
@@ -121,6 +146,15 @@ export default function DigitalMenu() {
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
   };
+
+  const addToCart = (id) => setCart(c => ({ ...c, [id]: (c[id] || 0) + 1 }));
+  const removeFromCart = (id) => setCart(c => { const n = (c[id] || 0) - 1; if (n <= 0) { const nc = { ...c }; delete nc[id]; return nc; } return { ...c, [id]: n }; });
+  const updateQty = (id, qty) => setCart(c => { if (qty <= 0) { const nc = { ...c }; delete nc[id]; return nc; } return { ...c, [id]: qty }; });
+  const updateNotes = (id, note) => setItemNotes(n => ({ ...n, [id]: note }));
+  const clearCart = () => { setCart({}); setItemNotes({}); };
+
+  const cartCount = Object.values(cart).reduce((s, q) => s + q, 0);
+  const cartTotal = items.filter(i => cart[i.id] > 0).reduce((s, i) => s + i.price * cart[i.id], 0);
 
   const hasFeatured = items.some(i => i.is_featured);
   const categories = ["All", ...(hasFeatured ? ["Chef's Favorites"] : []), ...CATEGORIES.filter(c => items.some(i => i.category === c))];
@@ -255,7 +289,7 @@ export default function DigitalMenu() {
           <p className="text-center font-body text-muted-foreground py-20">No items match your current filters.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filtered.map(item => <MenuCard key={item.id} item={item} />)}
+            {filtered.map(item => <MenuCard key={item.id} item={item} qty={cart[item.id] || 0} onAdd={() => addToCart(item.id)} onRemove={() => removeFromCart(item.id)} />)}
           </div>
         )}
       </div>
@@ -272,6 +306,33 @@ export default function DigitalMenu() {
       <div ref={qrRef} className="w-0 h-0 overflow-hidden" aria-hidden="true">
         <QRCodeCanvas value="https://www.jtapkitchen.com/tap-room-society" size={200} level="M" />
       </div>
+
+      {/* Floating order bar */}
+      {cartCount > 0 && !cartOpen && (
+        <button
+          onClick={() => setCartOpen(true)}
+          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 bg-primary text-primary-foreground px-5 py-3 rounded-full shadow-xl hover:opacity-90 transition-opacity"
+        >
+          <ShoppingBag className="w-5 h-5" />
+          <span className="font-body text-sm font-semibold">{cartCount} {cartCount === 1 ? "item" : "items"}</span>
+          <span className="font-heading text-sm font-bold">${cartTotal.toFixed(2)}</span>
+          <span className="font-body text-sm font-medium">View Order →</span>
+        </button>
+      )}
+
+      {/* Cart modal */}
+      {cartOpen && (
+        <MenuCartModal
+          items={items}
+          quantities={cart}
+          notes={itemNotes}
+          tableNumber={tableNum}
+          onClose={() => setCartOpen(false)}
+          onUpdateQty={updateQty}
+          onUpdateNotes={updateNotes}
+          onClear={clearCart}
+        />
+      )}
     </div>
   );
 }

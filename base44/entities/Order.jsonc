@@ -38,6 +38,11 @@
       "title": "Priority",
       "type": "string"
     },
+    "customer_name": {
+      "title": "Customer Name (self-order)",
+      "type": "string",
+      "description": "Set when a guest places their own order from the table QR menu."
+    },
     "server_name": {
       "title": "Server Name",
       "type": "string"
