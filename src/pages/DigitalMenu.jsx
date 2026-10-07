@@ -85,6 +85,7 @@ export default function DigitalMenu() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeDietaryTags, setActiveDietaryTags] = useState([]);
+  const [menuSort, setMenuSort] = useState("name");
   const [view, setView] = useState("food");
   const [liquorSection, setLiquorSection] = useState("Signature Cocktails");
   const [liquorItems, setLiquorItems] = useState([]);
@@ -160,7 +161,15 @@ export default function DigitalMenu() {
   const categories = ["All", ...(hasFeatured ? ["Chef's Favorites"] : []), ...CATEGORIES.filter(c => items.some(i => i.category === c))];
   const filtered = items
     .filter(i => activeCategory === "All" || (activeCategory === "Chef's Favorites" ? i.is_featured : i.category === activeCategory))
-    .filter(i => activeDietaryTags.length === 0 || activeDietaryTags.every(tag => i.dietary_tags?.includes(tag)));
+    .filter(i => activeDietaryTags.length === 0 || activeDietaryTags.every(tag => i.dietary_tags?.includes(tag)))
+    .sort((a, b) => {
+      if (menuSort === "price") return (Number(a.price) || 0) - (Number(b.price) || 0);
+      if (menuSort === "category") {
+        const c = String(a.category || "").localeCompare(String(b.category || ""));
+        return c !== 0 ? c : String(a.name || "").localeCompare(String(b.name || ""));
+      }
+      return String(a.name || "").localeCompare(String(b.name || ""));
+    });
 
   return (
     <div className="min-h-screen bg-background">
@@ -242,6 +251,29 @@ export default function DigitalMenu() {
                     {tag}
                   </button>
                 ))}
+              </div>
+              {/* Sort by */}
+              <div className="flex items-center gap-2 pt-2 pb-1">
+                <span className="font-body text-xs text-muted-foreground shrink-0">Sort by</span>
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                  {[
+                    { value: "name", label: "Name (A–Z)" },
+                    { value: "category", label: "Category (A–Z)" },
+                    { value: "price", label: "Price (Low–High)" },
+                  ].map(opt => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setMenuSort(opt.value)}
+                      className={`shrink-0 px-3 py-1 rounded-full font-body text-xs font-medium border transition-all ${
+                        menuSort === opt.value
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border text-muted-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </>
           )}
