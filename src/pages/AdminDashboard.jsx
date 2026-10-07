@@ -29,6 +29,7 @@ import InviteUserPanel from "../components/admin/InviteUserPanel";
 import EndOfYearChecklistTab from "../components/admin/EndOfYearChecklistTab";
 import CareersTab from "../components/admin/CareersTab";
 import PromotionsTab from "../components/admin/PromotionsTab";
+import EventsTab from "../components/admin/EventsTab";
 import EventInquiriesTab from "../components/admin/EventInquiriesTab";
 import EventTalentTab from "../components/admin/EventTalentTab";
 import EventAddOnsTab from "../components/admin/EventAddOnsTab";
@@ -50,7 +51,7 @@ const TAB_GROUPS = [
   { label: "Operations", tabs: ["Overview", "Operations Settings", "Opening Checklist", "End of Year Checklist"] },
   { label: "Menu & Pricing", tabs: ["Menu Items", "Liquor Items", "Pricing Strategy", "Chef Highlights"] },
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
-  { label: "Events", tabs: ["Inquiries", "Talent", "Add-Ons"] },
+  { label: "Events", tabs: ["Ticketed Events", "Inquiries", "Talent", "Add-Ons"] },
   { label: "Staff", tabs: ["Staff Roster"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
   { label: "Guests", tabs: ["Gift Cards", "Feedback", "Scorecards", "Loyalty", "Referrals"] },
@@ -607,6 +608,12 @@ export default function AdminDashboard() {
             {tab === "Calendar" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ minHeight: 600 }} className="flex flex-col">
                 <ReservationsCalendarView reservations={reservations} loading={loading} />
+              </motion.div>
+            )}
+
+            {tab === "Ticketed Events" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <EventsTab />
               </motion.div>
             )}
 
