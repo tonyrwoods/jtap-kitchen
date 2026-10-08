@@ -12,9 +12,9 @@ import { Save, Hourglass, Users, Clock } from "lucide-react";
 
 const FIELDS = [
   { key: "max_capacity", label: "Global Max Seating Capacity", group: "Capacity", help: "Fallback for any service without its own value." },
-  { key: "brunch_capacity", label: "Brunch Capacity", group: "Capacity", help: "Sat/Sun 10:00–14:00. 0 = use global." },
-  { key: "lunch_capacity", label: "Lunch Capacity", group: "Capacity", help: "10:00–15:00. 0 = use global." },
-  { key: "dinner_capacity", label: "Dinner Capacity", group: "Capacity", help: "17:00–22:00. 0 = use global." },
+  { key: "brunch_capacity", label: "Brunch Capacity", group: "Capacity", help: "Sat/Sun 10:00–15:00. 0 = use global." },
+  { key: "lunch_capacity", label: "Lunch Capacity", group: "Capacity", help: "Mon/Thu/Fri 10:00–15:00. 0 = use global." },
+  { key: "dinner_capacity", label: "Dinner Capacity", group: "Capacity", help: "Sun/Mon, Thu–Sat 17:00–22:00. 0 = use global." },
   { key: "dining_duration_minutes", label: "Dining Duration (min/turn)", group: "Turn", help: "How long a table counts as occupied." },
   { key: "slot_interval_minutes", label: "Slot Interval (minutes)", group: "Turn", help: "Spacing between bookable time slots." },
   { key: "max_reservation_party_size", label: "Max Online Party Size", group: "Turn", help: "Largest party bookable online." },

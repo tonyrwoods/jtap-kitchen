@@ -8,6 +8,7 @@ import { toast } from "sonner";
 const BRUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
   "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM",
+  "2:00 PM", "2:30 PM",
 ];
 
 const LUNCH_SLOTS = [
@@ -26,14 +27,14 @@ const DINNER_SLOTS = [
 function slotsForDate(date) {
   const day = date.getDay(); // 0=Sun ... 6=Sat
   if (day === 0 || day === 6) return [...BRUNCH_SLOTS, ...DINNER_SLOTS]; // Sat & Sun: brunch + dinner
-  if (day === 2 || day === 3) return [...LUNCH_SLOTS]; // Tue & Wed: lunch only (dinner = Event Center)
+  if (day === 2 || day === 3) return []; // Tue & Wed: Event Center only — no regular reservations
   return [...LUNCH_SLOTS, ...DINNER_SLOTS]; // Mon, Thu, Fri: lunch + dinner
 }
 
 function dayServiceLabel(date) {
   const day = date.getDay();
   if (day === 0 || day === 6) return "Brunch & Dinner";
-  if (day === 2 || day === 3) return "Lunch only (Dinner reserved for Event Center)";
+  if (day === 2 || day === 3) return "Event Center Only — Closed for reservations";
   return "Lunch & Dinner";
 }
 
@@ -43,7 +44,9 @@ const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const OPENING_DATE = new Date("2026-08-12");
 
 function isRestaurantOpen(date) {
-  return true; // open 7 days a week — brunch, lunch & dinner
+  const day = date.getDay();
+  if (day === 2 || day === 3) return false; // Tue & Wed: Event Center only
+  return true; // brunch, lunch & dinner
 }
 
 function MiniCalendar({ selectedDate, onSelect }) {
@@ -284,6 +287,9 @@ export default function ReservationModal({ open, onClose, prefill }) {
                         <Clock className="w-3.5 h-3.5" /> Select Time
                         {date && <span className="text-primary font-normal normal-case tracking-normal">– {dayServiceLabel(date)}</span>}
                       </label>
+                      {date && slotsForDate(date).length === 0 ? (
+                        <p className="font-body text-sm text-muted-foreground py-4 text-center">Event Center only on this day — no regular reservations. <a href="/event-center" className="text-primary underline">Book the Event Center →</a></p>
+                      ) : (
                       <div className="grid grid-cols-5 gap-2">
                         {(date ? slotsForDate(date) : []).map(t => (
                           <button key={t} onClick={() => setTime(t)}
@@ -293,6 +299,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
                           </button>
                         ))}
                       </div>
+                      )}
                     </div>
 
                     {/* Party Size */}
