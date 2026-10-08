@@ -40,7 +40,7 @@ Chat with our intelligent dining assistant to get instant answers about reservat
 Brunch (Sat & Sun): 10:00 AM – 2:00 PM
 Lunch (Mon–Fri): 10:00 AM – 3:00 PM
 Dinner (Sun, Mon, Thu–Sat): 5:00 PM – 10:00 PM
-Game Night Sports Menu: Sun 12–10PM · Mon/Thu 5–10PM
+Game Night Sports Menu: Sun–Mon 6:00 PM – 8:00 PM · Thu–Sat 6:00 PM – 8:00 PM
 Tue & Wed Dinner: Event Center only (by reservation)
 
 **Opening July 2026 — Reserve early!**

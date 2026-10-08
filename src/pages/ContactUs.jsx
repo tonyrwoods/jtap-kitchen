@@ -95,7 +95,7 @@ export default function ContactUs() {
                     <p>Brunch (Sat & Sun): 10:00 AM – 2:00 PM</p>
                     <p>Lunch (Mon–Fri): 10:00 AM – 3:00 PM</p>
                     <p>Dinner (Sun, Mon, Thu–Sat): 5:00 PM – 10:00 PM</p>
-                    <p>Game Night Sports Menu: Sun 12–10PM · Mon/Thu 5–10PM</p>
+                    <p>Game Night Sports Menu: Sun–Mon 6:00 PM – 8:00 PM · Thu–Sat 6:00 PM – 8:00 PM</p>
                     <p className="text-foreground/80 font-medium">Tue & Wed Dinner: Event Center only</p>
                     <p className="text-xs text-primary mt-1">Event Center bookings available Tue & Wed evenings →{" "}
                       <a href="/event-center" className="underline underline-offset-2 hover:text-primary/80">Learn more</a>
