@@ -1,11 +1,12 @@
 {
   "name": "Add Confirmed RSVP to Google Calendar",
-  "description": "",
+  "description": "When an EventInvite RSVP becomes Attending and has no calendar event yet, create a Google Calendar event via addRsvpToCalendar. Idempotent \u2014 skips once calendar_event_id is set.",
   "trigger": {
-    "condition": "${ ((.trigger.data.rsvp_status == \"Attending\") and (.trigger.data.calendar_event_id == null or .trigger.data.calendar_event_id == \"\" or .trigger.data.calendar_event_id == [] or .trigger.data.calendar_event_id == {})) }",
+    "condition": "${ ((.trigger.data.rsvp_status == \"Attending\") and (.trigger.data.calendar_event_id == null or .trigger.data.calendar_event_id == \"\" or .trigger.data.calendar_event_id == [] or .trigger.data.calendar_event_id == {}) and (.trigger.old_data.rsvp_status != \"Attending\" or .trigger.event_type == \"create\")) }",
     "config": {
       "trigger_type": "entity",
       "events": [
+        "create",
         "update"
       ],
       "entity_name": "EventInvite"
@@ -24,9 +25,19 @@
           "call": "invoke_backend_function",
           "with": {
             "function_name": "addRsvpToCalendar",
-            "args": {}
+            "args": {
+              "event": {
+                "type": "${ .trigger.event_type }",
+                "entity_name": "${ .trigger.entity_name }",
+                "data": "${ .trigger.data }"
+              }
+            }
           },
-          "then": "end"
+          "then": "end",
+          "x-base44": {
+            "title": "Create calendar event",
+            "description": "Sync attending RSVP to Google Calendar"
+          }
         }
       }
     ]

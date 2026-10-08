@@ -25,7 +25,13 @@
           "call": "invoke_backend_function",
           "with": {
             "function_name": "addEventInquiryToCalendar",
-            "args": {}
+            "args": {
+              "event": {
+                "type": "${ .trigger.event_type }",
+                "entity_name": "${ .trigger.entity_name }",
+                "data": "${ .trigger.data }"
+              }
+            }
           },
           "then": "end",
           "x-base44": {
