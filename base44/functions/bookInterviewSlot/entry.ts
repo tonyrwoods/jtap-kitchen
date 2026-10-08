@@ -44,15 +44,17 @@ export default async function (req) {
     const slots = await base44.asServiceRole.entities.InterviewSlot.filter({ id: slot_id });
     const slot = slots[0];
     if (!slot) return Response.json({ error: 'Slot not found' }, { status: 404 });
-    if (slot.is_booked) {
+
+    // Atomic claim: only update the slot if it is still open. If another
+    // concurrent request booked it between our read and write, the filter
+    // won't match, updated === 0, and we return 409 — no double-booking.
+    const claim = await base44.asServiceRole.entities.InterviewSlot.updateMany(
+      { id: slot.id, is_booked: false },
+      { $set: { is_booked: true, booked_by_application_id: application_id, booked_by_name: application.applicant_name } }
+    );
+    if (!claim?.updated) {
       return Response.json({ error: 'That time slot has already been booked. Please choose another.' }, { status: 409 });
     }
-
-    await base44.asServiceRole.entities.InterviewSlot.update(slot.id, {
-      is_booked: true,
-      booked_by_application_id: application_id,
-      booked_by_name: application.applicant_name,
-    });
     await base44.asServiceRole.entities.JobApplication.update(application_id, {
       status: 'Interview Scheduled',
       interview_slot_id: slot.id,

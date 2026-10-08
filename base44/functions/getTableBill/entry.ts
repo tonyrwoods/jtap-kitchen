@@ -1,9 +1,11 @@
 // Public endpoint: returns all unpaid orders for a table so a guest
 // can view their bill and pay from their phone via QR code.
 // Uses service role since Order RLS restricts reads to staff/admin.
-// Returns only the data needed to display a bill — no sensitive fields.
+// Requires a per-table HMAC token (from the QR code) to prevent bill
+// enumeration by unauthenticated callers.
 
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.52";
+import { verifyTableBillToken } from "../../shared/tableBillToken.js";
 
 export default async function(req: Request) {
   try {
@@ -13,9 +15,16 @@ export default async function(req: Request) {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
     const tableNumber = Number(body.table_number);
+    const token = body.token;
 
     if (!Number.isFinite(tableNumber) || tableNumber < 1 || tableNumber > 999) {
       return Response.json({ error: "A valid table number is required" }, { status: 400 });
+    }
+
+    // Verify the per-table token so a table number alone can't read bills.
+    const valid = await verifyTableBillToken(tableNumber, token);
+    if (!valid) {
+      return Response.json({ error: "Invalid table token" }, { status: 403 });
     }
 
     const page = await base44.asServiceRole.entities.Order.filter(
