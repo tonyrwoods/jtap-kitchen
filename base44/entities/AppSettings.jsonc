@@ -127,6 +127,24 @@
       "default": 6,
       "description": "Parties of this size or larger require a deposit. Set to 1 to require all reservations."
     },
+    "tier_upgrade_enabled": {
+      "type": "boolean",
+      "title": "Automatic Tier Upgrades Enabled",
+      "default": true,
+      "description": "Master toggle for the daily tier-upgrade job. When off, no members are promoted regardless of spend/visits."
+    },
+    "tier_upgrade_min_days_as_member": {
+      "type": "number",
+      "title": "Min Days as Member Before Upgrade",
+      "default": 0,
+      "description": "A member must have joined at least this many days ago to be eligible for automatic upgrade. 0 = no waiting period."
+    },
+    "tier_upgrade_notify_members": {
+      "type": "boolean",
+      "title": "Notify Members on Upgrade",
+      "default": true,
+      "description": "Send a congratulatory email to members when they are promoted to a new tier."
+    },
     "description": {
       "type": "string",
       "title": "Description",
