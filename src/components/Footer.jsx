@@ -141,7 +141,7 @@ export default function Footer({ onBookTable }) {
             </h4>
             <div className="space-y-3">
               {[
-                { day: "Brunch (Sat – Sun)", time: "10:00 AM – 2:00 PM" },
+                { day: "Brunch (Sat – Sun)", time: "10:00 AM – 3:00 PM" },
                 { day: "Lunch (Mon – Fri)", time: "10:00 AM – 3:00 PM" },
                 { day: "Dinner (Sun – Mon)", time: "5:00 PM – 10:00 PM" },
                 { day: "Dinner (Tue – Wed)", time: "Event Center" },
