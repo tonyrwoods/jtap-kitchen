@@ -17,26 +17,22 @@
     "max_capacity": {
       "type": "number",
       "title": "Restaurant Max Seating Capacity",
-      "default": 80,
-      "description": "Global fallback for max concurrent covers. Per-service capacities below override this when set above 0."
+      "default": 80
     },
     "brunch_capacity": {
       "type": "number",
       "title": "Brunch Max Seating Capacity",
-      "default": 80,
-      "description": "Max concurrent covers during brunch service (Sat/Sun 10:00\u201315:00). Falls back to Restaurant Max Seating Capacity when 0 or unset."
+      "default": 80
     },
     "lunch_capacity": {
       "type": "number",
       "title": "Lunch Max Seating Capacity",
-      "default": 80,
-      "description": "Max concurrent covers during lunch service (Mon/Thu/Fri 10:00\u201315:00). Falls back to Restaurant Max Seating Capacity when 0 or unset."
+      "default": 80
     },
     "dinner_capacity": {
       "type": "number",
       "title": "Dinner Max Seating Capacity",
-      "default": 80,
-      "description": "Max concurrent covers during dinner service (Sun/Mon, Thu\u2013Sat 17:00\u201322:00). Falls back to Restaurant Max Seating Capacity when 0 or unset."
+      "default": 80
     },
     "max_reservation_party_size": {
       "type": "number",
@@ -51,8 +47,7 @@
     "dining_duration_minutes": {
       "type": "number",
       "title": "Default Dining Duration (minutes per turn)",
-      "default": 90,
-      "description": "How long a table is considered occupied for a reservation. The availability engine counts overlapping covers across this turn window to enforce max seating capacity."
+      "default": 90
     },
     "restaurant_name": {
       "type": "string",
@@ -101,13 +96,11 @@
         "instagram",
         "facebook",
         "linkedin"
-      ],
-      "description": "Platforms that receive an automatic post when a new promotion is created"
+      ]
     },
     "social_caption_template": {
       "type": "string",
-      "title": "Social Post Caption Template",
-      "description": "Placeholders: {title} {subtitle} {date} {time} {endtime} {location} {price} {discount} {description} {rsvp_deadline} {link}. Leave blank for default format."
+      "title": "Social Post Caption Template"
     },
     "social_hashtags": {
       "type": "string",
@@ -116,8 +109,23 @@
     },
     "referral_bonus_last_run_at": {
       "type": "string",
-      "title": "Referral Bonus Job Last Run (ISO)",
-      "description": "Timestamp stamped by the scheduled awardReferralBonuses job so admins can see it is firing."
+      "title": "Referral Bonus Job Last Run (ISO)"
+    },
+    "reservation_deposit_enabled": {
+      "type": "boolean",
+      "title": "Require Reservation Deposit",
+      "default": false
+    },
+    "reservation_deposit_amount": {
+      "type": "number",
+      "title": "Deposit Amount per Guest (USD)",
+      "default": 10
+    },
+    "reservation_deposit_min_party_size": {
+      "type": "number",
+      "title": "Min Party Size Requiring Deposit",
+      "default": 6,
+      "description": "Parties of this size or larger require a deposit. Set to 1 to require all reservations."
     },
     "description": {
       "type": "string",

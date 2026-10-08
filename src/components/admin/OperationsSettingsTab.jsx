@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Save, Hourglass, Users, Clock } from "lucide-react";
+import { Save, Hourglass, Users, Clock, DollarSign } from "lucide-react";
 
 // Admin editor for the reservation availability engine's tuning knobs:
 // per-service seating capacities, dining turn duration, slot interval, and
@@ -18,9 +18,12 @@ const FIELDS = [
   { key: "dining_duration_minutes", label: "Dining Duration (min/turn)", group: "Turn", help: "How long a table counts as occupied." },
   { key: "slot_interval_minutes", label: "Slot Interval (minutes)", group: "Turn", help: "Spacing between bookable time slots." },
   { key: "max_reservation_party_size", label: "Max Online Party Size", group: "Turn", help: "Largest party bookable online." },
+  { key: "reservation_deposit_enabled", label: "Require Reservation Deposit", group: "Deposits", type: "boolean", help: "Enable to charge a deposit for larger parties." },
+  { key: "reservation_deposit_amount", label: "Deposit per Guest ($)", group: "Deposits", help: "Amount charged per guest when deposit is required." },
+  { key: "reservation_deposit_min_party_size", label: "Min Party Size for Deposit", group: "Deposits", help: "Parties of this size or larger require a deposit. Set 1 for all reservations." },
 ];
 
-const GROUPS = ["Capacity", "Turn"];
+const GROUPS = ["Capacity", "Turn", "Deposits"];
 
 export default function OperationsSettingsTab() {
   const [record, setRecord] = useState(null);
@@ -33,7 +36,7 @@ export default function OperationsSettingsTab() {
     const list = await base44.entities.AppSettings.list();
     let rec = list[0];
     if (!rec) {
-      rec = await base44.entities.AppSettings.create({ max_capacity: 80, brunch_capacity: 80, lunch_capacity: 80, dinner_capacity: 80, dining_duration_minutes: 90, slot_interval_minutes: 30, max_reservation_party_size: 10 });
+      rec = await base44.entities.AppSettings.create({ max_capacity: 80, brunch_capacity: 80, lunch_capacity: 80, dinner_capacity: 80, dining_duration_minutes: 90, slot_interval_minutes: 30, max_reservation_party_size: 10, reservation_deposit_enabled: false, reservation_deposit_amount: 10, reservation_deposit_min_party_size: 6 });
     }
     setRecord(rec);
     setForm({
@@ -44,6 +47,9 @@ export default function OperationsSettingsTab() {
       dining_duration_minutes: rec.dining_duration_minutes ?? 90,
       slot_interval_minutes: rec.slot_interval_minutes ?? 30,
       max_reservation_party_size: rec.max_reservation_party_size ?? 10,
+      reservation_deposit_enabled: rec.reservation_deposit_enabled ?? false,
+      reservation_deposit_amount: rec.reservation_deposit_amount ?? 10,
+      reservation_deposit_min_party_size: rec.reservation_deposit_min_party_size ?? 6,
     });
     setLoading(false);
   };
@@ -55,7 +61,10 @@ export default function OperationsSettingsTab() {
   const save = async () => {
     setSaving(true);
     try {
-      const data = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, Number(v) || 0]));
+      const data = Object.fromEntries(Object.entries(form).map(([k, v]) => {
+        if (k === "reservation_deposit_enabled") return [k, Boolean(v)];
+        return [k, Number(v) || 0];
+      }));
       const updated = await base44.entities.AppSettings.update(record.id, data);
       setRecord(updated);
       toast.success("Operations settings saved");
@@ -86,20 +95,23 @@ export default function OperationsSettingsTab() {
           {GROUPS.map((group) => (
             <div key={group}>
               <p className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
-                {group === "Capacity" ? <Users className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
+                {group === "Capacity" ? <Users className="w-3.5 h-3.5" /> : group === "Turn" ? <Clock className="w-3.5 h-3.5" /> : <DollarSign className="w-3.5 h-3.5" />}
                 {group}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {FIELDS.filter((f) => f.group === group).map((f) => (
                   <div key={f.key}>
-                    <label className="font-body text-sm text-foreground mb-1 block">{f.label}</label>
-                    <input
-                      type="number"
-                      min="0"
-                      className={input}
-                      value={form[f.key] ?? 0}
-                      onChange={(e) => set(f.key, e.target.value)}
-                    />
+                    {f.type === "boolean" ? (
+                      <label className="flex items-center gap-2 mt-2">
+                        <input type="checkbox" checked={form[f.key] ?? false} onChange={(e) => set(f.key, e.target.checked)} className="rounded" />
+                        <span className="font-body text-sm">{f.label}</span>
+                      </label>
+                    ) : (
+                      <>
+                        <label className="font-body text-sm text-foreground mb-1 block">{f.label}</label>
+                        <input type="number" min="0" className={input} value={form[f.key] ?? 0} onChange={(e) => set(f.key, e.target.value)} />
+                      </>
+                    )}
                     <p className="font-body text-xs text-muted-foreground mt-1">{f.help}</p>
                   </div>
                 ))}

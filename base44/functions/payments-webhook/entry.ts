@@ -191,6 +191,46 @@ async function handleOrderApproved(base44: any, eventData: any): Promise<Respons
     }
   }
 
+  // Takeout order: mark the order as paid and send it to the kitchen.
+  // The order was created with status "Pending Payment" by submitMenuOrder;
+  // payment confirms it so the KDS picks it up.
+  if (purchase.productId && purchase.productId.startsWith("takeout:")) {
+    const orderId = purchase.productId.slice("takeout:".length);
+    try {
+      const order = await db.entities.Order.get(orderId);
+      if (order && order.payment_status === "unpaid") {
+        await db.entities.Order.update(orderId, {
+          payment_status: "paid",
+          status: "New",
+        });
+      }
+    } catch (e) {
+      console.error("payments-webhook: takeout order fulfillment failed", e);
+      throw e;
+    }
+  }
+
+  // Pay-at-table: mark all unpaid orders at this table as paid.
+  // The guest scanned a QR code and paid the total bill for the table.
+  if (purchase.productId && purchase.productId.startsWith("tablepayment:")) {
+    const tableNumber = Number(purchase.productId.slice("tablepayment:".length));
+    if (Number.isFinite(tableNumber)) {
+      try {
+        const page = await db.entities.Order.filter(
+          { table_number: tableNumber, payment_status: "unpaid" },
+          { limit: 100 }
+        );
+        const orders = page.items || [];
+        for (const order of orders) {
+          await db.entities.Order.update(order.id, { payment_status: "paid" });
+        }
+      } catch (e) {
+        console.error("payments-webhook: table payment fulfillment failed", e);
+        throw e;
+      }
+    }
+  }
+
   // Grant whatever the buyer paid for. This runs BEFORE we mark the purchase paid: if it
   // throws or times out, the status stays "pending", so Wix's retry re-runs the grant
   // rather than hitting the "already paid" short-circuit above and skipping it forever.

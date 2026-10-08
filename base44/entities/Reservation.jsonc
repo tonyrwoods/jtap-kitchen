@@ -86,8 +86,25 @@
     },
     "calendar_event_id": {
       "type": "string",
-      "title": "Google Calendar Event ID",
-      "description": "Set when a confirmed reservation is synced to Google Calendar, to prevent duplicate calendar events."
+      "title": "Google Calendar Event ID"
+    },
+    "deposit_amount": {
+      "type": "number",
+      "title": "Deposit Amount (USD)"
+    },
+    "deposit_status": {
+      "type": "string",
+      "title": "Deposit Status",
+      "enum": [
+        "Unpaid",
+        "Paid",
+        "Refunded"
+      ],
+      "default": "Unpaid"
+    },
+    "stripe_payment_id": {
+      "type": "string",
+      "title": "Stripe Payment ID"
     },
     "description": {
       "type": "string",

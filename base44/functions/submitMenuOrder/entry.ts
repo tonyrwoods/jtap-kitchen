@@ -1,20 +1,35 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 
-// Public endpoint: lets a guest at a table place a menu order from the
-// Digital Menu (table QR). Creates an Order as the service role since the
-// Order entity's RLS restricts create to staff/admin. Validates every
-// menu item and its price server-side — never trusts client-supplied prices.
+// Public endpoint: lets a guest place a menu order from the
+// Digital Menu (table QR for dine-in, or takeout). Creates an Order as the
+// service role since the Order entity's RLS restricts create to staff/admin.
+// Validates every menu item and its price server-side — never trusts client-supplied prices.
 
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    const { table_number, items, customer_name, notes } = body;
+    const { table_number, items, customer_name, notes, order_type, pickup_name, pickup_phone } = body;
 
-    // ── Validate table number ──
-    const tableNum = Number(table_number);
-    if (!Number.isFinite(tableNum) || tableNum < 1 || tableNum > 999) {
-      return Response.json({ error: 'A valid table number is required' }, { status: 400 });
+    const isTakeout = order_type === "takeout";
+
+    // ── Validate table number (required for dine-in) ──
+    let tableNum = null;
+    if (!isTakeout) {
+      tableNum = Number(table_number);
+      if (!Number.isFinite(tableNum) || tableNum < 1 || tableNum > 999) {
+        return Response.json({ error: 'A valid table number is required' }, { status: 400 });
+      }
+    }
+
+    // ── Validate takeout fields ──
+    if (isTakeout) {
+      if (!pickup_name || String(pickup_name).trim().length === 0) {
+        return Response.json({ error: 'A pickup name is required for takeout orders' }, { status: 400 });
+      }
+      if (!pickup_phone || String(pickup_phone).trim().length === 0) {
+        return Response.json({ error: 'A pickup phone number is required for takeout orders' }, { status: 400 });
+      }
     }
 
     // ── Validate items array ──
@@ -48,7 +63,7 @@ export default async function (req) {
     const orderItems = [];
     for (const item of items) {
       const menuItem = menuMap.get(item.menu_item_id);
-      if (!menuItem) continue; // skip any item that no longer exists
+      if (!menuItem) continue;
       orderItems.push({
         menu_item_id: menuItem.id,
         name: menuItem.name,
@@ -66,10 +81,14 @@ export default async function (req) {
     const order = await base44.asServiceRole.entities.Order.create({
       table_number: tableNum,
       items: orderItems,
-      status: 'New',
+      status: isTakeout ? 'Pending Payment' : 'New',
       priority: 'Normal',
       customer_name: String(customer_name || '').slice(0, 100),
       notes: String(notes || '').slice(0, 500),
+      order_type: isTakeout ? 'takeout' : 'dine_in',
+      payment_status: isTakeout ? 'unpaid' : 'unpaid',
+      pickup_name: isTakeout ? String(pickup_name).slice(0, 100) : undefined,
+      pickup_phone: isTakeout ? String(pickup_phone).slice(0, 30) : undefined,
     });
 
     return Response.json({ success: true, order_id: order.id, table_number: tableNum });

@@ -47,10 +47,11 @@ import GbpPostsTab from "../components/admin/GbpPostsTab";
 import SeoContentDraftsTab from "../components/admin/SeoContentDraftsTab";
 import GuestProfilesTab from "../components/admin/GuestProfilesTab";
 import GuestFeedbackTab from "../components/admin/GuestFeedbackTab";
+import TableManagementTab from "../components/admin/TableManagementTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
-  { label: "Operations", tabs: ["Overview", "Operations Settings", "Opening Checklist", "End of Year Checklist", "Staff Roster"] },
+  { label: "Operations", tabs: ["Overview", "Operations Settings", "Opening Checklist", "End of Year Checklist", "Staff Roster", "Floor Plan"] },
   { label: "Menu & Pricing", tabs: ["Menu Items", "Liquor Items", "Pricing Strategy", "Chef Highlights"] },
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
   { label: "Events", tabs: ["Ticketed Events", "Inquiries", "Talent", "Add-Ons"] },
@@ -639,6 +640,12 @@ export default function AdminDashboard() {
             {tab === "Staff Roster" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ minHeight: 600 }} className="flex flex-col">
                 <StaffRosterTab />
+              </motion.div>
+            )}
+
+            {tab === "Floor Plan" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <TableManagementTab />
               </motion.div>
             )}
 

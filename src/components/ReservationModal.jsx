@@ -128,6 +128,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
   const [phone, setPhone] = useState("");
   const [special, setSpecial] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     if (open && prefill) {
@@ -161,7 +162,23 @@ export default function ReservationModal({ open, onClose, prefill }) {
         special_requests: special,
       });
       if (res.data?.success) {
-        setSubmitted(true);
+        if (res.data.deposit_required && res.data.reservation?.id) {
+          setRedirecting(true);
+          try {
+            const checkoutRes = await base44.functions.invoke("create-reservation-deposit-checkout", {
+              reservationId: res.data.reservation.id,
+            });
+            if (checkoutRes.data?.redirectUrl) {
+              window.location.href = checkoutRes.data.redirectUrl;
+              return;
+            }
+          } catch {
+            toast.error("Could not start deposit payment. Your reservation is pending — we'll be in touch.");
+          }
+          setRedirecting(false);
+        } else {
+          setSubmitted(true);
+        }
       } else {
         toast.error(res.data?.error || "Could not book. Please try again.");
       }
@@ -399,9 +416,9 @@ export default function ReservationModal({ open, onClose, prefill }) {
                       className="px-6 py-4 border border-border rounded-full font-body text-sm font-medium text-foreground hover:bg-secondary transition-colors">
                       Back
                     </button>
-                    <button onClick={handleSubmit} disabled={!canNext2}
+                    <button onClick={handleSubmit} disabled={!canNext2 || redirecting}
                       className="flex-1 py-4 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-primary/20">
-                      Confirm Reservation
+                      {redirecting ? "Redirecting to payment…" : "Confirm Reservation"}
                     </button>
                   </div>
                 )}

@@ -41,7 +41,7 @@
     "customer_name": {
       "title": "Customer Name (self-order)",
       "type": "string",
-      "description": "Set when a guest places their own order from the table QR menu."
+      "description": "Set when a guest places their own order from the table QR menu or takeout."
     },
     "server_name": {
       "title": "Server Name",
@@ -50,6 +50,7 @@
     "status": {
       "default": "New",
       "enum": [
+        "Pending Payment",
         "New",
         "Preparing",
         "Ready",
@@ -60,11 +61,37 @@
     },
     "table_number": {
       "title": "Table Number",
-      "type": "number"
+      "type": "number",
+      "description": "Required for dine-in orders; null for takeout."
+    },
+    "order_type": {
+      "title": "Order Type",
+      "type": "string",
+      "enum": [
+        "dine_in",
+        "takeout"
+      ],
+      "default": "dine_in"
+    },
+    "payment_status": {
+      "title": "Payment Status",
+      "type": "string",
+      "enum": [
+        "unpaid",
+        "paid"
+      ],
+      "default": "unpaid"
+    },
+    "pickup_name": {
+      "title": "Pickup Name (takeout)",
+      "type": "string"
+    },
+    "pickup_phone": {
+      "title": "Pickup Phone (takeout)",
+      "type": "string"
     }
   },
   "required": [
-    "table_number",
     "status"
   ],
   "type": "object",

@@ -57,6 +57,13 @@ export default async function(req) {
       return Response.json({ error: 'Sorry, we are fully booked for that time. Please choose a different time.' }, { status: 409 });
     }
 
+    // Deposit check: if enabled and party size meets threshold, require a deposit
+    const depositEnabled = settings[0]?.reservation_deposit_enabled === true;
+    const minPartySize = Number(settings[0]?.reservation_deposit_min_party_size) || 6;
+    const depositRequired = depositEnabled && Number(party_size) >= minPartySize;
+    const depositPerGuest = Number(settings[0]?.reservation_deposit_amount) || 10;
+    const depositAmount = depositRequired ? depositPerGuest * Number(party_size) : 0;
+
     const confirm_token = crypto.randomUUID();
     const reservation = await base44.asServiceRole.entities.Reservation.create({
       guest_name,
@@ -67,12 +74,14 @@ export default async function(req) {
       party_size: Number(party_size),
       special_requests: special_requests || '',
       sms_opt_in: !!sms_opt_in,
-      status: 'Confirmed',
-      confirmed_at: new Date().toISOString(),
+      status: depositRequired ? 'Pending Payment' : 'Confirmed',
+      confirmed_at: depositRequired ? null : new Date().toISOString(),
       confirm_token,
+      deposit_amount: depositAmount,
+      deposit_status: depositRequired ? 'Unpaid' : 'Unpaid',
     });
 
-    return Response.json({ success: true, reservation });
+    return Response.json({ success: true, reservation, deposit_required: depositRequired });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
