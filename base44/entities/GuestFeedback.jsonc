@@ -1,0 +1,84 @@
+{
+  "name": "GuestFeedback",
+  "type": "object",
+  "properties": {
+    "guest_name": {
+      "type": "string",
+      "title": "Guest Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "reservation_id": {
+      "type": "string",
+      "title": "Linked Reservation ID"
+    },
+    "visit_date": {
+      "type": "string",
+      "title": "Visit Date"
+    },
+    "nps_score": {
+      "type": "number",
+      "title": "NPS Score (0-10)"
+    },
+    "what_went_well": {
+      "type": "string",
+      "title": "What Went Well"
+    },
+    "what_could_improve": {
+      "type": "string",
+      "title": "What Could Be Improved"
+    },
+    "would_recommend": {
+      "type": "boolean",
+      "title": "Would Recommend"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "Pending",
+        "Reviewed",
+        "Addressed"
+      ],
+      "default": "Pending"
+    },
+    "admin_response": {
+      "type": "string",
+      "title": "Admin Response"
+    },
+    "admin_notes": {
+      "type": "string",
+      "title": "Internal Admin Notes"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "guest_name",
+    "email",
+    "nps_score"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

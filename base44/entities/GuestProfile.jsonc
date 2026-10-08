@@ -1,0 +1,123 @@
+{
+  "name": "GuestProfile",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "full_name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "birthday": {
+      "type": "string",
+      "title": "Birthday (MM-DD)",
+      "description": "Month and day for birthday offers, e.g. 03-15"
+    },
+    "anniversary": {
+      "type": "string",
+      "title": "Anniversary (YYYY-MM-DD)"
+    },
+    "loyalty_tier": {
+      "type": "string",
+      "title": "Loyalty Tier"
+    },
+    "total_visits": {
+      "type": "number",
+      "title": "Total Visits",
+      "default": 0
+    },
+    "total_spend": {
+      "type": "number",
+      "title": "Lifetime Spend (USD)",
+      "default": 0
+    },
+    "last_visit_date": {
+      "type": "string",
+      "title": "Last Visit Date"
+    },
+    "first_visit_date": {
+      "type": "string",
+      "title": "First Visit Date"
+    },
+    "dietary_notes": {
+      "type": "string",
+      "title": "Dietary Notes & Allergies"
+    },
+    "favorite_dishes": {
+      "type": "string",
+      "title": "Favorite Dishes"
+    },
+    "preferences": {
+      "type": "string",
+      "title": "Seating & Service Preferences"
+    },
+    "nps_score": {
+      "type": "number",
+      "title": "Latest NPS Score (0-10)"
+    },
+    "last_nps_date": {
+      "type": "string",
+      "title": "Last NPS Survey Date"
+    },
+    "last_birthday_offer_year": {
+      "type": "string",
+      "title": "Last Birthday Offer Sent (Year)"
+    },
+    "last_winback_date": {
+      "type": "string",
+      "title": "Last Win-back Email Sent"
+    },
+    "marketing_opt_in": {
+      "type": "boolean",
+      "title": "Marketing Opt-in",
+      "default": true
+    },
+    "notes": {
+      "type": "string",
+      "title": "Admin Notes"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "email"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
