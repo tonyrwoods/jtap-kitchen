@@ -45,6 +45,8 @@ import LiquorMenuItemsTab, { LiquorItemForm } from "../components/admin/LiquorMe
 import AdsRecommendationsTab from "../components/admin/AdsRecommendationsTab";
 import GbpPostsTab from "../components/admin/GbpPostsTab";
 import SeoContentDraftsTab from "../components/admin/SeoContentDraftsTab";
+import GuestProfilesTab from "../components/admin/GuestProfilesTab";
+import GuestFeedbackTab from "../components/admin/GuestFeedbackTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
@@ -52,7 +54,7 @@ const TAB_GROUPS = [
   { label: "Menu & Pricing", tabs: ["Menu Items", "Liquor Items", "Pricing Strategy", "Chef Highlights"] },
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
   { label: "Events", tabs: ["Ticketed Events", "Inquiries", "Talent", "Add-Ons"] },
-  { label: "Guests", tabs: ["Gift Cards", "Feedback", "Scorecards", "Loyalty", "Referrals"] },
+  { label: "Guests", tabs: ["Guest Profiles", "NPS Feedback", "Gift Cards", "Feedback", "Scorecards", "Loyalty", "Referrals"] },
   { label: "Marketing", tabs: ["Promotions", "Gallery", "Instagram", "LinkedIn", "SEO", "Event SEO", "GBP Posts", "Ads"] },
   { label: "Team & Careers", tabs: ["Team Members", "Job Listings"] },
   { label: "Finance", tabs: ["Inventory", "Vendor Payments", "Reconciliation", "Audit Report"] },
@@ -681,6 +683,18 @@ export default function AdminDashboard() {
                     <a href="/gift-cards" className="font-body text-sm text-primary hover:underline mt-2 block">View public gift card page →</a>
                   </div>
                 )}
+              </motion.div>
+            )}
+
+            {tab === "Guest Profiles" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <GuestProfilesTab />
+              </motion.div>
+            )}
+
+            {tab === "NPS Feedback" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <GuestFeedbackTab />
               </motion.div>
             )}
 

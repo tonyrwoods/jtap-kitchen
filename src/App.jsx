@@ -53,6 +53,7 @@ import EventDepositConfirmed from './pages/EventDepositConfirmed';
 import WhatsNew from './pages/WhatsNew';
 import AdFlyer from './pages/AdFlyer';
 import PrintableTableNumberPlaques from './pages/PrintableTableNumberPlaques';
+import GuestFeedback from './pages/GuestFeedback';
 const AdminMemberships = lazy(() => import('./pages/AdminMemberships'));
 const AdminPrivateRoom = lazy(() => import('./pages/AdminPrivateRoom'));
 const AdminPointsAnalytics = lazy(() => import('./pages/AdminPointsAnalytics'));
@@ -167,6 +168,7 @@ const AuthenticatedApp = () => {
         <Route path="/event-confirmed" element={<EventDepositConfirmed />} />
         <Route path="/whats-new" element={<WhatsNew />} />
         <Route path="/admin/flyer" element={<AdFlyer />} />
+        <Route path="/guest-feedback" element={<GuestFeedback />} />
         <Route path="/admin/table-plaques" element={<PrintableTableNumberPlaques />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
