@@ -1,9 +1,9 @@
-// Event Center deposit — Stripe webhook handler.
+// Stripe deposit webhook — handles BOTH Event Center and Reservation deposits.
 // Verifies the Stripe signature (manual Web Crypto HMAC-SHA256, no SDK dependency),
-// then on `checkout.session.completed` marks the linked EventCenterInquiry deposit
-// "Paid" and sends the deposit-received email. Idempotent: only acts while the
-// inquiry's deposit_status is still "Unpaid", so Stripe redeliveries don't double-pay
-// or double-email. Public endpoint (no user auth) — authenticity comes from the signature.
+// then on `checkout.session.completed` routes by metadata:
+//   metadata.reservation_id → mark Reservation deposit Paid + confirm
+//   metadata.inquiry_id      → mark EventCenterInquiry deposit Paid + email
+// Idempotent: only acts while deposit_status is still "Unpaid". Public endpoint.
 
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.48";
 import { secrets } from "base44:runtime";
@@ -93,13 +93,39 @@ export default async function(req) {
       return Response.json({ received: true, ignored: event.type });
     }
 
-    const inquiryId = (session && (session.client_reference_id || (session.metadata && session.metadata.inquiry_id))) || "";
-    if (!inquiryId) {
-      console.error("stripe-event-deposit-webhook: session missing inquiry reference", { id: session && session.id });
-      return Response.json({ error: "No inquiry reference on session" }, { status: 400 });
+    const db = base44.asServiceRole;
+    const meta = (session && session.metadata) || {};
+    const refId = (session && session.client_reference_id) || "";
+    const paymentId = (session && (session.payment_intent || session.id)) || null;
+
+    // Route by metadata: reservation_id → reservation deposit, inquiry_id → event deposit.
+    if (meta.reservation_id) {
+      const reservationId = meta.reservation_id;
+      const reservation = await db.entities.Reservation.get(reservationId);
+      if (!reservation) {
+        console.error("stripe-event-deposit-webhook: reservation not found", reservationId);
+        return Response.json({ error: "Reservation not found" }, { status: 404 });
+      }
+      if (reservation.deposit_status === "Unpaid") {
+        await db.entities.Reservation.update(reservationId, {
+          deposit_status: "Paid",
+          status: "Confirmed",
+          confirmed_at: new Date().toISOString(),
+          stripe_payment_id: paymentId,
+        });
+        console.log("stripe-event-deposit-webhook: reservation deposit paid", { reservationId });
+      } else {
+        console.log("stripe-event-deposit-webhook: reservation already processed", { reservationId, status: reservation.deposit_status });
+      }
+      return Response.json({ received: true });
     }
 
-    const db = base44.asServiceRole;
+    const inquiryId = meta.inquiry_id || refId;
+    if (!inquiryId) {
+      console.error("stripe-event-deposit-webhook: session missing deposit reference", { id: session && session.id });
+      return Response.json({ error: "No deposit reference on session" }, { status: 400 });
+    }
+
     const inquiry = await db.entities.EventCenterInquiry.get(inquiryId);
     if (!inquiry) {
       console.error("stripe-event-deposit-webhook: inquiry not found", inquiryId);
@@ -108,7 +134,6 @@ export default async function(req) {
 
     // Idempotent: only act while unpaid. Stripe may redeliver the same event.
     if (inquiry.deposit_status === "Unpaid") {
-      const paymentId = (session && (session.payment_intent || session.id)) || null;
       await db.entities.EventCenterInquiry.update(inquiryId, {
         deposit_status: "Paid",
         status: "New",
