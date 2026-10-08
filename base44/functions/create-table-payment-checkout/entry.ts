@@ -37,6 +37,7 @@ export default async function(req: Request) {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
     const tableNumber = Number(body.table_number);
+    const tipAmount = Math.max(0, Number(body.tip_amount) || 0);
 
     if (!Number.isFinite(tableNumber) || tableNumber < 1 || tableNumber > 999) {
       return Response.json({ error: "A valid table number is required" }, { status: 400 });
@@ -70,14 +71,16 @@ export default async function(req: Request) {
     } catch (_) {}
 
     const taxAmount = subtotal * taxRate / 100;
-    const total = subtotal + taxAmount;
+    const total = subtotal + taxAmount + tipAmount;
 
     if (total < 0.5) {
       return Response.json({ error: "Bill total must be at least $0.50" }, { status: 400 });
     }
 
     const productId = `tablepayment:${tableNumber}`;
-    const productName = `Table ${tableNumber} Payment`;
+    const productName = tipAmount > 0
+      ? `Table ${tableNumber} Payment (incl. $${tipAmount.toFixed(2)} tip)`
+      : `Table ${tableNumber} Payment`;
 
     let appUser = null;
     try { appUser = await base44.auth.me(); } catch (_) { appUser = null; }

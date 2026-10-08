@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
-import { CreditCard, Loader2, Receipt, CheckCircle, ArrowLeft } from "lucide-react";
+import { CreditCard, Loader2, Receipt, CheckCircle, ArrowLeft, UtensilsCrossed } from "lucide-react";
 import { toast } from "sonner";
 import useSeoMeta from "../hooks/useSeoMeta";
 
@@ -15,6 +16,8 @@ export default function PayAtTable() {
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);
   const [entered, setEntered] = useState(!!tableParam);
+  const [tipPercent, setTipPercent] = useState(18);
+  const [customTip, setCustomTip] = useState("");
 
   const loadBill = async (table) => {
     setLoading(true);
@@ -42,6 +45,7 @@ export default function PayAtTable() {
     try {
       const res = await base44.functions.invoke("create-table-payment-checkout", {
         table_number: Number(tableNumber),
+        tip_amount: Number(tipAmount.toFixed(2)),
       });
       if (res.data?.redirectUrl) {
         window.location.href = res.data.redirectUrl;
@@ -57,7 +61,10 @@ export default function PayAtTable() {
 
   const taxRate = bill?.tax_rate || 9.25;
   const taxAmount = bill ? (bill.subtotal * taxRate) / 100 : 0;
-  const total = bill ? bill.subtotal + taxAmount : 0;
+  const tipAmount = bill
+    ? (customTip !== "" ? Number(customTip) || 0 : (bill.subtotal * tipPercent) / 100)
+    : 0;
+  const total = bill ? bill.subtotal + taxAmount + tipAmount : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -145,12 +152,72 @@ export default function PayAtTable() {
                   <span>Tax ({taxRate}%)</span>
                   <span>${taxAmount.toFixed(2)}</span>
                 </div>
+                {tipAmount > 0 && (
+                  <div className="flex justify-between font-body text-sm text-muted-foreground">
+                    <span>Gratuity</span>
+                    <span>${tipAmount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between font-heading text-lg font-bold pt-1.5 border-t border-border">
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
+
+            {/* Tip selection */}
+            <div className="bg-card border border-border rounded-2xl p-5">
+              <p className="font-body text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3">Add a Tip</p>
+              <div className="grid grid-cols-4 gap-2 mb-3">
+                {[15, 18, 20].map((pct) => (
+                  <button
+                    key={pct}
+                    onClick={() => { setTipPercent(pct); setCustomTip(""); }}
+                    className={`py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
+                      customTip === "" && tipPercent === pct
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                        : "bg-secondary text-foreground hover:bg-secondary/80"
+                    }`}
+                  >
+                    {pct}%
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCustomTip(customTip === "" ? "0" : customTip)}
+                  className={`py-2.5 rounded-xl font-body text-sm font-medium transition-all ${
+                    customTip !== ""
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                      : "bg-secondary text-foreground hover:bg-secondary/80"
+                  }`}
+                >
+                  Custom
+                </button>
+              </div>
+              {customTip !== "" && (
+                <div className="flex items-center gap-2">
+                  <span className="font-body text-sm text-muted-foreground">$</span>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="0.01"
+                    value={customTip}
+                    onChange={(e) => setCustomTip(e.target.value)}
+                    placeholder="0.00"
+                    className="flex-1 border border-border rounded-lg px-3 py-2 text-sm font-body bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Order more from menu */}
+            <Link
+              to={`/menu?table=${encodeURIComponent(tableNumber)}`}
+              className="flex items-center justify-center gap-2 py-3 border border-primary/30 text-primary rounded-2xl font-body text-sm font-medium hover:bg-primary/5 transition-colors"
+            >
+              <UtensilsCrossed className="w-4 h-4" />
+              View Menu & Order More
+            </Link>
 
             {/* Pay button */}
             <button

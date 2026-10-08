@@ -210,7 +210,7 @@ async function handleOrderApproved(base44: any, eventData: any): Promise<Respons
     }
   }
 
-  // Pay-at-table: mark all unpaid orders at this table as paid.
+  // Pay-at-table: mark all unpaid orders at this table as paid, then email a receipt.
   // The guest scanned a QR code and paid the total bill for the table.
   if (purchase.productId && purchase.productId.startsWith("tablepayment:")) {
     const tableNumber = Number(purchase.productId.slice("tablepayment:".length));
@@ -221,8 +221,30 @@ async function handleOrderApproved(base44: any, eventData: any): Promise<Respons
           { limit: 100 }
         );
         const orders = page.items || [];
+
+        // Build receipt data before flipping orders to paid.
+        let receiptSubtotal = 0;
+        const receiptItems: any[] = [];
+        for (const order of orders) {
+          for (const item of (order.items || [])) {
+            const lineTotal = (Number(item.unit_price) || 0) * (Number(item.quantity) || 0);
+            receiptItems.push({ name: item.name, quantity: item.quantity, line_total: lineTotal });
+            receiptSubtotal += lineTotal;
+          }
+        }
+
         for (const order of orders) {
           await db.entities.Order.update(order.id, { payment_status: "paid" });
+        }
+
+        // Email a receipt to the buyer (email comes from the Wix checkout).
+        const receiptEmail = buyerEmail;
+        if (receiptEmail) {
+          try {
+            await sendTableReceiptEmail(base44, receiptEmail, tableNumber, receiptItems, receiptSubtotal, Number(purchase.amount || 0));
+          } catch (mailErr) {
+            console.error("payments-webhook: table receipt email failed", mailErr);
+          }
         }
       } catch (e) {
         console.error("payments-webhook: table payment fulfillment failed", e);
@@ -352,4 +374,42 @@ async function sendEventConfirmationEmail(base44: any, reservation: any, eventTi
   </div>
 </body></html>`;
   await sendTransactionalEmail(base44, { to: reservation.email, subject, body, from_name: "JTAP Kitchen" });
+}
+
+async function sendTableReceiptEmail(base44: any, to: string, tableNumber: number, items: any[], subtotal: number, chargedTotal: number): Promise<void> {
+  const taxRate = 9.25;
+  const taxAmount = subtotal * taxRate / 100;
+  const tipAmount = Math.max(0, chargedTotal - subtotal - taxAmount);
+  const confirmationNo = `T${tableNumber}-${Date.now().toString(36).slice(-5).toUpperCase()}`;
+
+  const itemRows = items.map((item: any) =>
+    `<tr>
+      <td style="padding:6px 0;font-size:14px;">${esc(String(item.quantity))}× ${esc(item.name)}</td>
+      <td style="padding:6px 0 6px 12px;font-size:14px;text-align:right;white-space:nowrap;">$${Number(item.line_total).toFixed(2)}</td>
+    </tr>`
+  ).join("");
+
+  const subject = `JTAP Kitchen Receipt — Table ${tableNumber}`;
+  const body = `<!DOCTYPE html>
+<html><body style="font-family:Georgia,serif;background:#faf9f7;padding:40px 20px;color:#1a1a1a;margin:0;">
+  <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e8e0d5;">
+    <div style="background:#1a1a1a;padding:32px;text-align:center;">
+      <h1 style="color:#C89B4F;font-size:24px;margin:0;letter-spacing:1px;">JTAP Kitchen</h1>
+      <p style="color:#999;font-size:13px;margin:8px 0 0;letter-spacing:2px;text-transform:uppercase;">Payment Receipt</p>
+    </div>
+    <div style="padding:40px 36px;">
+      <p style="color:#555;line-height:1.7;margin:0 0 20px;font-size:14px;">Thank you for dining with us! Your payment for <strong>Table ${tableNumber}</strong> has been received.</p>
+      <table style="width:100%;border-collapse:collapse;margin:0 0 20px;">${itemRows}</table>
+      <div style="background:#f5f3f0;border-radius:12px;padding:20px;">
+        <div style="display:flex;justify-content:space-between;margin:0 0 8px;font-size:14px;"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+        <div style="display:flex;justify-content:space-between;margin:0 0 8px;font-size:14px;"><span>Tax (${taxRate}%)</span><span>$${taxAmount.toFixed(2)}</span></div>
+        ${tipAmount > 0 ? `<div style="display:flex;justify-content:space-between;margin:0 0 8px;font-size:14px;"><span>Gratuity</span><span>$${tipAmount.toFixed(2)}</span></div>` : ""}
+        <div style="display:flex;justify-content:space-between;border-top:1px solid #ddd;padding-top:10px;margin-top:4px;font-size:18px;font-weight:bold;"><span>Total Paid</span><span>$${chargedTotal.toFixed(2)}</span></div>
+      </div>
+      <p style="margin:16px 0 0;font-size:13px;color:#777;font-family:monospace;">Confirmation #: ${confirmationNo}</p>
+      <p style="color:#999;font-size:12px;line-height:1.6;margin:16px 0 0;border-top:1px solid #eee;padding-top:16px;">JTAP Kitchen &middot; Memphis, TN &middot; info@jtapkitchen.com &middot; 901-554-4431</p>
+    </div>
+  </div>
+</body></html>`;
+  await sendTransactionalEmail(base44, { to, subject, body, from_name: "JTAP Kitchen" });
 }
