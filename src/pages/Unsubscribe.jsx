@@ -5,18 +5,19 @@ import { CheckCircle, Loader2, MailX } from "lucide-react";
 export default function Unsubscribe() {
   const params = new URLSearchParams(window.location.search);
   const email = params.get("email");
-  const [status, setStatus] = useState(email ? "loading" : "missing");
+  const token = params.get("token");
+  const [status, setStatus] = useState(email && token ? "loading" : "missing");
 
   useEffect(() => {
     document.title = "Unsubscribe — JTAP Kitchen";
-    if (!email) { setStatus("missing"); return; }
-    base44.functions.invoke("unsubscribeEmail", { email })
+    if (!email || !token) { setStatus("missing"); return; }
+    base44.functions.invoke("unsubscribeEmail", { email, token })
       .then((res) => {
         if (res.data?.success) setStatus("done");
         else setStatus("error");
       })
       .catch(() => setStatus("error"));
-  }, [email]);
+  }, [email, token]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6 py-16">
@@ -43,7 +44,7 @@ export default function Unsubscribe() {
         )}
         {status === "missing" && (
           <p className="font-body text-sm text-muted-foreground">
-            No email was provided. Use the unsubscribe link in one of our emails to be removed from the list.
+            This unsubscribe link is missing a security token. Use the unsubscribe link in one of our recent emails to be removed from the list.
           </p>
         )}
         <a href="/" className="inline-block mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90">

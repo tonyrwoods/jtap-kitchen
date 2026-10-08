@@ -27,15 +27,21 @@ Deno.serve(async (req) => {
     const member = members[0];
     if (!member) return Response.json({ error: 'Membership not found' }, { status: 404 });
 
-    if ((member.points_balance || 0) < reward.points) {
+    // Atomic conditional decrement: only apply $inc to the member's document
+    // if the balance is still >= reward.points at the time of the update. This
+    // prevents two concurrent redemption requests from both passing the
+    // balance check and double-redeeming the same points.
+    const result = await base44.asServiceRole.entities.TapRoomMember.updateMany(
+      { id: member.id, points_balance: { $gte: reward.points } },
+      { $inc: { points_balance: -reward.points, total_points_redeemed: reward.points } }
+    );
+    if (!result?.updated) {
       return Response.json({ error: 'Not enough points' }, { status: 400 });
     }
 
-    const newBalance = (member.points_balance || 0) - reward.points;
-    await base44.asServiceRole.entities.TapRoomMember.update(member.id, {
-      points_balance: newBalance,
-      total_points_redeemed: (member.total_points_redeemed || 0) + reward.points,
-    });
+    // Re-read to get the accurate post-decrement balance for the audit trail.
+    const afterMembers = await base44.asServiceRole.entities.TapRoomMember.filter({ email: user.email });
+    const newBalance = afterMembers[0]?.points_balance ?? 0;
 
     await base44.asServiceRole.entities.PointsActivity.create({
       member_id: member.id,

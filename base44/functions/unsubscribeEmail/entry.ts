@@ -1,40 +1,28 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
-import { secrets } from 'base44:runtime';
+import { verifyUnsubscribeToken } from '../../shared/unsubscribeToken.js';
 
-// Only accept requests that originate from this app's own domain.
-// The function's public URL can be called by anyone, so we require a
-// browser Origin (or Referer) whose host matches the request's own Host
-// — i.e. a same-origin call from the site — before modifying subscriber
-// status. Direct hits to the raw function URL are rejected.
-function isAllowedOrigin(req) {
-  const origin = (req.headers.get('origin') || '').toLowerCase();
-  const referer = (req.headers.get('referer') || '').toLowerCase();
-  const host = (req.headers.get('host') || '').toLowerCase();
-  if (!host) return false;
-  const fromHeader = (url) => {
-    if (!url) return false;
-    try { return new URL(url).host.toLowerCase() === host; } catch { return false; }
-  };
-  if (fromHeader(origin) || fromHeader(referer)) return true;
-  const appUrl = (secrets.get('APP_URL') || '').toLowerCase().replace(/\/$/, '');
-  if (appUrl && (origin === appUrl || origin.startsWith(appUrl + '/') || referer === appUrl || referer.startsWith(appUrl + '/'))) return true;
-  return false;
-}
+// Unsubscribe links carry an HMAC token (signed with UNSUBSCRIBE_HMAC_SECRET)
+// so an attacker who only knows a subscriber's email cannot forge a valid
+// unsubscribe URL. The token is generated when the campaign email is sent
+// (see shared/sendCampaignById.js) and verified here before any state changes.
 
 Deno.serve(async (req) => {
   try {
-    if (!isAllowedOrigin(req)) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
-    }
     const base44 = createClientFromRequest(req);
     const url = new URL(req.url);
     let email = url.searchParams.get('email');
-    if (!email) {
+    let token = url.searchParams.get('token');
+    if (!email || !token) {
       const body = await req.json().catch(() => ({}));
-      email = body.email;
+      email = email || body.email;
+      token = token || body.token;
     }
-    if (!email) return Response.json({ error: 'Email required' }, { status: 400 });
+    if (!email || !token) return Response.json({ error: 'Email and token required' }, { status: 400 });
+
+    const valid = await verifyUnsubscribeToken(email, token);
+    if (!valid) return Response.json({ error: 'Invalid or expired link' }, { status: 403 });
+
     const norm = email.trim().toLowerCase();
 
     const rl = await enforceRateLimit(req, base44, 'unsubscribe', norm, 10, 600000);
