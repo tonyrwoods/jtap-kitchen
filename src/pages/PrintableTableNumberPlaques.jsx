@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { jsPDF } from "jspdf";
+import { QRCodeCanvas } from "qrcode.react";
 import { base44 } from "@/api/base44Client";
-import { Download, Hash, FileText } from "lucide-react";
+import { Download, Hash, FileText, QrCode } from "lucide-react";
 import { toast } from "sonner";
 
 // Printable restaurant table-number plaques (1–15). PDF is generated entirely
@@ -11,6 +12,11 @@ export default function PrintableTableNumberPlaques() {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(15);
   const [generating, setGenerating] = useState(false);
+  const [includeQr, setIncludeQr] = useState(true);
+  const qrRefs = useRef({});
+
+  const appUrl = "https://jtapkitchen.com";
+  const payUrl = (n) => `${appUrl}/pay-at-table?table=${n}`;
 
   useEffect(() => {
     base44.entities.AppSettings.list('-updated_date', 5)
@@ -90,11 +96,32 @@ export default function PrintableTableNumberPlaques() {
         doc.line(cardX + cardW / 2 - 50, y, cardX + cardW / 2 + 50, y);
 
         // Tagline
-        y += 40;
+        y += 36;
         doc.setTextColor(...GOLD);
         doc.setFont("helvetica", "italic");
         doc.setFontSize(15);
         doc.text(tagline, cardX + cardW / 2, y, { align: "center" });
+
+        // Pay-at-table QR code
+        if (includeQr) {
+          const canvas = qrRefs.current[n];
+          if (canvas) {
+            const qrSize = 90;
+            const qrX = cardX + (cardW - qrSize) / 2;
+            const qrY = y + 16;
+            try {
+              const qrDataUrl = canvas.toDataURL("image/png");
+              doc.addImage(qrDataUrl, "PNG", qrX, qrY, qrSize, qrSize);
+            } catch (e) {
+              console.error("QR canvas read failed for table", n, e);
+            }
+            // Label under QR code
+            doc.setTextColor(...MUTED);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(11);
+            doc.text("Scan to view bill & pay", cardX + cardW / 2, qrY + qrSize + 16, { align: "center" });
+          }
+        }
 
         // Footer website inside the card
         doc.setTextColor(...DARK);
@@ -128,13 +155,13 @@ export default function PrintableTableNumberPlaques() {
         </div>
         <h1 className="font-heading text-3xl font-bold text-foreground">Table Number Plaques</h1>
         <p className="font-body text-muted-foreground max-w-xl mx-auto">
-          Printable table-number plaques for {name}. Choose how many tables (up to 15), preview them, then download a
-          ready-to-print PDF — one plaque per page.
+          Printable table-number plaques for {name}. Choose how many tables (up to 15), toggle the pay-at-table QR code,
+          preview them, then download a ready-to-print PDF — one plaque per page.
         </p>
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
         <label className="font-body text-sm font-semibold text-foreground flex items-center gap-2">
           Number of tables
           <input
@@ -149,6 +176,16 @@ export default function PrintableTableNumberPlaques() {
             }}
             className="w-20 px-3 py-2 rounded-lg border border-input bg-background text-center font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
+        </label>
+        <label className="font-body text-sm font-semibold text-foreground flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={includeQr}
+            onChange={(e) => setIncludeQr(e.target.checked)}
+            className="rounded"
+          />
+          <QrCode className="w-4 h-4 text-primary" />
+          Include pay-at-table QR code
         </label>
         <button
           onClick={handleDownload}
@@ -181,9 +218,34 @@ export default function PrintableTableNumberPlaques() {
               <span className="font-body text-[9px] italic text-primary text-center leading-tight">
                 Where Every Bite Tells a Story
               </span>
+              {includeQr && (
+                <div className="flex flex-col items-center gap-1 mt-1">
+                  <div className="p-1 bg-white rounded">
+                    <QRCodeCanvas value={payUrl(n)} size={72} fgColor="#1a1a1a" bgColor="#ffffff" />
+                  </div>
+                  <span className="font-body text-[8px] text-muted-foreground text-center leading-tight">
+                    Scan to view bill & pay
+                  </span>
+                </div>
+              )}
               <span className="font-body text-[9px] font-semibold text-foreground">{website}</span>
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Hidden high-res QR canvases for PDF generation */}
+      <div aria-hidden className="absolute -left-[9999px] top-0 pointer-events-none">
+        {numbers.map((n) => (
+          <QRCodeCanvas
+            key={n}
+            ref={(el) => { qrRefs.current[n] = el; }}
+            value={payUrl(n)}
+            size={300}
+            fgColor="#1a1a1a"
+            bgColor="#f8f4ec"
+            level="M"
+          />
         ))}
       </div>
 
