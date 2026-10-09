@@ -13,10 +13,13 @@ export default function PrintableTableNumberPlaques() {
   const [count, setCount] = useState(15);
   const [generating, setGenerating] = useState(false);
   const [includeQr, setIncludeQr] = useState(true);
+  const [tokens, setTokens] = useState({});
   const qrRefs = useRef({});
 
   const appUrl = "https://jtapkitchen.com";
-  const payUrl = (n) => `${appUrl}/pay-at-table?table=${n}`;
+  const payUrl = (n) => tokens[n]
+    ? `${appUrl}/pay-at-table?table=${n}&token=${tokens[n]}`
+    : `${appUrl}/pay-at-table?table=${n}`;
 
   useEffect(() => {
     base44.entities.AppSettings.list('-updated_date', 5)
@@ -24,6 +27,14 @@ export default function PrintableTableNumberPlaques() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!includeQr) { setTokens({}); return; }
+    const nums = Array.from({ length: count }, (_, i) => i + 1);
+    base44.functions.invoke("generateTableToken", { table_numbers: nums })
+      .then((res) => setTokens(res.data?.tokens || {}))
+      .catch(() => setTokens({}));
+  }, [includeQr, count]);
 
   const name = settings?.restaurant_name || "JTAP Kitchen";
   const website = "www.jtapkitchen.com";

@@ -10,6 +10,7 @@ export default function PayAtTable() {
   useSeoMeta("pay-at-table");
   const urlParams = new URLSearchParams(window.location.search);
   const tableParam = urlParams.get("table") || "";
+  const tokenParam = urlParams.get("token") || "";
 
   const [tableNumber, setTableNumber] = useState(tableParam);
   const [bill, setBill] = useState(null);
@@ -22,7 +23,7 @@ export default function PayAtTable() {
   const loadBill = async (table) => {
     setLoading(true);
     try {
-      const res = await base44.functions.invoke("getTableBill", { table_number: Number(table) });
+      const res = await base44.functions.invoke("getTableBill", { table_number: Number(table), token: tokenParam });
       if (res.data?.error) {
         toast.error(res.data.error);
         setBill(null);
