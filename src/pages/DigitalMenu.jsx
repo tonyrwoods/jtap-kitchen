@@ -12,6 +12,19 @@ import TapRoomSocietyQR from "@/components/TapRoomSocietyQR";
 
 const CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks"];
 
+const FALLBACK_IMAGES = {
+  Brunch: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80",
+  "Brunch Sides": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
+  Appetizers: "https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&q=80",
+  "Salads & Sandwiches": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+  Entrees: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
+  Lunch: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80",
+  "Lunch Sides": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+  Sides: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
+  Desserts: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600&q=80",
+  Drinks: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=600&q=80",
+};
+
 const DIETARY_COLORS = {
   "Vegetarian": "bg-green-100 text-green-800",
   "Vegan": "bg-emerald-100 text-emerald-800",
@@ -27,11 +40,20 @@ function MenuCard({ item, qty, onAdd, onRemove }) {
       animate={{ opacity: 1, y: 0 }}
       className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col"
     >
-      {item.image_url && (
-        <div className="h-44 overflow-hidden">
-          <img src={item.image_url} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-        </div>
-      )}
+      <div className="h-44 overflow-hidden bg-muted relative">
+        <img
+          src={item.image_url || FALLBACK_IMAGES[item.category]}
+          alt={item.name}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover"
+        />
+        {item.is_featured && (
+          <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs font-semibold px-2.5 py-0.5 rounded-full font-body">
+            ⭐ Chef's Pick
+          </span>
+        )}
+      </div>
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-1">
           <h3 className="font-heading text-base font-semibold leading-snug">{item.name}</h3>
