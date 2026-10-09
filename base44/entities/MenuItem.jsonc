@@ -3,6 +3,8 @@
   "properties": {
     "category": {
       "enum": [
+        "Brunch",
+        "Brunch Sides",
         "Appetizers",
         "Salads & Sandwiches",
         "Entrees",

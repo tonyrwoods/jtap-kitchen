@@ -10,7 +10,7 @@ import { trackPixel } from "@/lib/metaPixel";
 import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
 import TapRoomSocietyQR from "@/components/TapRoomSocietyQR";
 
-const CATEGORIES = ["Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks"];
+const CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks"];
 
 const DIETARY_COLORS = {
   "Vegetarian": "bg-green-100 text-green-800",

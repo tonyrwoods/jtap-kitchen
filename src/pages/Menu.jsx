@@ -8,6 +8,8 @@ import TapRoomSocietyQR from "../components/TapRoomSocietyQR";
 
 const CATEGORIES = [
   { key: "All", label: "Full Menu", icon: UtensilsCrossed },
+  { key: "Brunch", label: "Brunch", icon: UtensilsCrossed },
+  { key: "Brunch Sides", label: "Brunch Sides", icon: Carrot },
   { key: "Appetizers", label: "Appetizers", icon: ChefHat },
   { key: "Salads & Sandwiches", label: "Salads & Sandwiches", icon: Salad },
   { key: "Entrees", label: "Entrees", icon: Beef },
@@ -18,6 +20,8 @@ const CATEGORIES = [
 ];
 
 const CATEGORY_IMAGES = {
+  Brunch: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=1200&q=80",
+  "Brunch Sides": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=1200&q=80",
   Appetizers: "https://images.unsplash.com/photo-1541014741259-de529411b96a?w=1200&q=80",
   "Salads & Sandwiches": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&q=80",
   Entrees: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80",
@@ -35,9 +39,11 @@ const DIETARY_ICONS = {
   Spicy: { icon: Flame, color: "text-red-600", bg: "bg-red-50" },
 };
 
-const SECTION_ORDER = ["Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts"];
+const SECTION_ORDER = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts"];
 
 const FALLBACK_IMAGES = {
+  Brunch: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80",
+  "Brunch Sides": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
   Appetizers: "https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&q=80",
   "Salads & Sandwiches": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
   Entrees: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
