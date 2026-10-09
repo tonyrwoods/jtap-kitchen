@@ -14,6 +14,7 @@ export default function PrintableTableNumberPlaques() {
   const [generating, setGenerating] = useState(false);
   const [includeQr, setIncludeQr] = useState(true);
   const [tokens, setTokens] = useState({});
+  const [tokensLoaded, setTokensLoaded] = useState(false);
   const qrRefs = useRef({});
 
   const appUrl = "https://jtapkitchen.com";
@@ -29,11 +30,12 @@ export default function PrintableTableNumberPlaques() {
   }, []);
 
   useEffect(() => {
-    if (!includeQr) { setTokens({}); return; }
+    if (!includeQr) { setTokens({}); setTokensLoaded(true); return; }
+    setTokensLoaded(false);
     const nums = Array.from({ length: count }, (_, i) => i + 1);
     base44.functions.invoke("generateTableToken", { table_numbers: nums })
-      .then((res) => setTokens(res.data?.tokens || {}))
-      .catch(() => setTokens({}));
+      .then((res) => { setTokens(res.data?.tokens || {}); setTokensLoaded(true); })
+      .catch(() => { setTokens({}); setTokensLoaded(true); });
   }, [includeQr, count]);
 
   const name = settings?.restaurant_name || "JTAP Kitchen";
@@ -44,6 +46,14 @@ export default function PrintableTableNumberPlaques() {
   const handleDownload = async () => {
     setGenerating(true);
     try {
+      if (includeQr && !tokensLoaded) {
+        toast.error("Please wait — QR codes are still generating");
+        setGenerating(false);
+        return;
+      }
+      // Give the hidden QR code canvases a tick to finish rendering after
+      // the latest token update before we read their pixels.
+      await new Promise((r) => setTimeout(r, 50));
       const doc = new jsPDF({ unit: "pt", format: "letter" });
       const W = doc.internal.pageSize.getWidth();
       const H = doc.internal.pageSize.getHeight();
@@ -115,7 +125,7 @@ export default function PrintableTableNumberPlaques() {
 
         // Pay-at-table QR code
         if (includeQr) {
-          const canvas = qrRefs.current[n];
+          const canvas = qrRefs.current[n]?.querySelector?.("canvas");
           if (canvas) {
             const qrSize = 90;
             const qrX = cardX + (cardW - qrSize) / 2;
@@ -245,18 +255,20 @@ export default function PrintableTableNumberPlaques() {
         ))}
       </div>
 
-      {/* Hidden high-res QR canvases for PDF generation */}
+      {/* Hidden high-res QR canvases for PDF generation.
+          QRCodeCanvas v3 is a plain function component (no forwardRef), so
+          the ref is attached to a wrapper div and the canvas is found inside. */}
       <div aria-hidden className="absolute -left-[9999px] top-0 pointer-events-none">
         {numbers.map((n) => (
-          <QRCodeCanvas
-            key={n}
-            ref={(el) => { qrRefs.current[n] = el; }}
-            value={payUrl(n)}
-            size={300}
-            fgColor="#1a1a1a"
-            bgColor="#f8f4ec"
-            level="M"
-          />
+          <div key={n} ref={(el) => { qrRefs.current[n] = el; }}>
+            <QRCodeCanvas
+              value={payUrl(n)}
+              size={300}
+              fgColor="#1a1a1a"
+              bgColor="#f8f4ec"
+              level="M"
+            />
+          </div>
         ))}
       </div>
 
