@@ -8,7 +8,6 @@ import { toast } from "sonner";
 const BRUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
   "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM",
-  "2:00 PM", "2:30 PM",
 ];
 
 const LUNCH_SLOTS = [
@@ -27,14 +26,14 @@ const DINNER_SLOTS = [
 function slotsForDate(date) {
   const day = date.getDay(); // 0=Sun ... 6=Sat
   if (day === 0 || day === 6) return [...BRUNCH_SLOTS, ...DINNER_SLOTS]; // Sat & Sun: brunch + dinner
-  if (day === 2 || day === 3) return []; // Tue & Wed: Event Center only — no regular reservations
+  if (day === 2 || day === 3) return [...LUNCH_SLOTS]; // Tue & Wed: lunch only (dinner closed)
   return [...LUNCH_SLOTS, ...DINNER_SLOTS]; // Mon, Thu, Fri: lunch + dinner
 }
 
 function dayServiceLabel(date) {
   const day = date.getDay();
   if (day === 0 || day === 6) return "Brunch & Dinner";
-  if (day === 2 || day === 3) return "Event Center Only — Closed for reservations";
+  if (day === 2 || day === 3) return "Lunch Only";
   return "Lunch & Dinner";
 }
 
@@ -44,9 +43,7 @@ const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const OPENING_DATE = new Date("2026-08-12");
 
 function isRestaurantOpen(date) {
-  const day = date.getDay();
-  if (day === 2 || day === 3) return false; // Tue & Wed: Event Center only
-  return true; // brunch, lunch & dinner
+  return true; // every day has at least one service
 }
 
 function MiniCalendar({ selectedDate, onSelect }) {
