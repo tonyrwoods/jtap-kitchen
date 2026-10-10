@@ -3,6 +3,7 @@ import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 import { secrets } from 'base44:runtime';
 import { sendSms } from '../../shared/sendSms.js';
+import { getAllowedOrigin } from '../../shared/allowedOrigin.js';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -101,7 +102,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing email or name' }, { status: 400 });
     }
 
-    const origin = req.headers.get('origin') || 'https://jtapkitchen.com';
+    const origin = getAllowedOrigin(req);
     const isEventBooking = reservation.special_requests?.startsWith('[Event:');
     const dateObj = new Date(reservation.date);
     const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });

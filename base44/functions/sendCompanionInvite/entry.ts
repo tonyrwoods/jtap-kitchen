@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
+import { getAllowedOrigin } from '../../shared/allowedOrigin.js';
 
 const escapeHtml = (text) => String(text == null ? '' : text)
   .replace(/&/g, '&amp;')
@@ -122,14 +123,7 @@ export default async function (req) {
     const tpl = TEMPLATES[tplKey];
     // Trust only an explicit allowlist of origins for email action links;
     // never reflect an arbitrary request Origin header (open-redirect / token leak).
-    const ALLOWED_ORIGINS = new Set([
-      'https://jtapkitchen.base44.app',
-      'https://jtapkitchen.com',
-      'https://www.jtapkitchen.com',
-    ]);
-    const DEFAULT_ORIGIN = 'https://jtapkitchen.base44.app';
-    const requestOrigin = req.headers.get('origin');
-    const origin = requestOrigin && ALLOWED_ORIGINS.has(requestOrigin) ? requestOrigin : DEFAULT_ORIGIN;
+    const origin = getAllowedOrigin(req);
     const dateStr = reservation.date
       ? new Date(reservation.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
       : '';

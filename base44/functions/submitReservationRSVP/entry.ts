@@ -3,6 +3,7 @@ import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { enforceRateLimit } from '../../shared/rateLimit.js';
 import { notifyAdmins } from '../../shared/notifyAdmins.js';
 import { esc } from '../../shared/escapeHtml.js';
+import { getAllowedOrigin } from '../../shared/allowedOrigin.js';
 
 export default async function (req) {
   try {
@@ -31,7 +32,7 @@ export default async function (req) {
 
       // Send confirmation email when the holder confirms
       if (action === 'confirm' && reservation.email) {
-        const origin = req.headers.get('origin') || 'https://jtapkitchen.com';
+        const origin = getAllowedOrigin(req);
         const formattedDate = reservation.date
           ? new Date(reservation.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
           : '';
@@ -87,7 +88,7 @@ export default async function (req) {
       const reservations = await base44.asServiceRole.entities.Reservation.filter({ id: invite.reservation_id });
       const reservation = reservations[0];
       if (reservation && reservation.email) {
-        const origin = req.headers.get('origin') || 'https://jtapkitchen.com';
+        const origin = getAllowedOrigin(req);
         const formattedDate = reservation.date
           ? new Date(reservation.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
           : '';
