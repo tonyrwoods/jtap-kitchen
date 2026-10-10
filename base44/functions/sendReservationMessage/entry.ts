@@ -18,7 +18,7 @@ export default async function (req) {
       return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const { reservation_id, subject, message } = await req.json().catch(() => ({}));
+    const { reservation_id, subject, message, attachments } = await req.json().catch(() => ({}));
     if (!reservation_id) return Response.json({ error: 'reservation_id is required' }, { status: 400 });
     if (!subject || !subject.trim()) return Response.json({ error: 'A subject is required' }, { status: 400 });
     if (!message || !message.trim()) return Response.json({ error: 'A message is required' }, { status: 400 });
@@ -31,7 +31,14 @@ export default async function (req) {
     }
 
     const safeSubject = String(subject).slice(0, 200).trim();
-    const safeMessage = String(message).slice(0, 4000).trim();
+    // Message is HTML from the admin rich-text editor. Strip script/iframe tags
+    // and inline event handlers as defense-in-depth, then insert directly.
+    const safeMessageHtml = String(message)
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+      .replace(/\son\w+="[^"]*"/gi, '')
+      .replace(/\son\w+='[^']*'/gi, '')
+      .slice(0, 20000);
     const dateObj = new Date(reservation.date);
     const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
     const confirmNo = (reservation.id || '').substring(0, 8).toUpperCase();
@@ -51,7 +58,7 @@ export default async function (req) {
         <p style="margin:0;font-size:13px;"><strong>Confirmation #:</strong> ${confirmNo}</p>
       </div>
       <div style="background:#fff;border-left:4px solid #C89B4F;border-radius:8px;padding:18px 20px;margin:0 0 28px;">
-        <p style="margin:0;font-size:15px;line-height:1.7;color:#1a1a1a;white-space:pre-line;">${esc(safeMessage)}</p>
+        <div style="margin:0;font-size:15px;line-height:1.7;color:#1a1a1a;">${safeMessageHtml}</div>
       </div>
       <p style="color:#666;font-size:14px;line-height:1.6;margin:0 0 20px;">If you have any questions, simply reply to this email or call us at (901) 213-8085.</p>
       <p style="color:#999;font-size:12px;line-height:1.6;margin:0;border-top:1px solid #eee;padding-top:16px;">JTAP Kitchen &middot; 3397 Summer Ave., Memphis TN 38122 &middot; info@jtapkitchen.com &middot; (901) 213-8085</p>
@@ -59,7 +66,14 @@ export default async function (req) {
   </div>
 </body></html>`;
 
-    await sendTransactionalEmail(base44, { to: reservation.email, subject: safeSubject, body: body_html, from_name: 'JTAP Kitchen' });
+    const emailOpts = { to: reservation.email, subject: safeSubject, body: body_html, from_name: 'JTAP Kitchen' };
+    if (Array.isArray(attachments) && attachments.length > 0) {
+      emailOpts.attachments = attachments
+        .filter(a => a && a.filename && a.file_url)
+        .slice(0, 5)
+        .map(a => ({ filename: a.filename, file_url: a.file_url }));
+    }
+    await sendTransactionalEmail(base44, emailOpts);
 
     return Response.json({ sent: true, email: reservation.email });
   } catch (error) {
