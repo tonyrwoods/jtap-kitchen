@@ -93,6 +93,11 @@ function MenuCard({ item }) {
         <span className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs font-body px-2.5 py-1 rounded-full">
           {item.category}
         </span>
+        {item.image_ai_generated && (
+          <span className="absolute bottom-3 left-3 bg-black/55 backdrop-blur-sm text-white text-[10px] font-body px-2 py-0.5 rounded-full font-medium tracking-wide">
+            AI Generated
+          </span>
+        )}
       </div>
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-3 mb-2">

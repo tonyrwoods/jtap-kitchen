@@ -40,7 +40,7 @@ export default async function (req: Request) {
         const genResult = await base44.asServiceRole.integrations.Core.GenerateImage({ prompt });
         const imageUrl = genResult?.url;
         if (imageUrl) {
-          await base44.asServiceRole.entities.MenuItem.update(item.id, { image_url: imageUrl });
+          await base44.asServiceRole.entities.MenuItem.update(item.id, { image_url: imageUrl, image_ai_generated: true });
           results.push({ id: item.id, name: item.name, status: "ok", url: imageUrl });
         } else {
           results.push({ id: item.id, name: item.name, status: "no_url" });
