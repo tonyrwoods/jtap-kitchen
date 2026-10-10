@@ -38,16 +38,15 @@ export function formatTime12(t) {
 // Service windows per day-of-week (0=Sun … 6=Sat) as {name, open, close} in
 // minutes-from-midnight. Mirrors the slots offered by the booking UI
 // (BookTable.jsx slotsForDate): Sat/Sun brunch+dinner, Mon/Thu/Fri
-// lunch+dinner, Sun dinner, Tue/Wed closed for regular dining (Event
-// Center only).
-//   10:00=600, 15:00=900, 17:00=1020, 22:00=1320
+// lunch+dinner, Tue/Wed lunch only (dinner closed).
+//   10:00=600, 14:00=840, 15:00=900, 17:00=1020, 22:00=1320
 export function serviceWindowsForDay(dayOfWeek) {
-  const brunch = { name: 'Brunch', open: 600, close: 900 };
+  const brunch = { name: 'Brunch', open: 600, close: 840 };
   const lunch = { name: 'Lunch', open: 600, close: 900 };
   const dinner = { name: 'Dinner', open: 1020, close: 1320 };
   switch (dayOfWeek) {
     case 0: case 6: return [brunch, dinner];   // Sat & Sun: brunch + dinner
-    case 2: case 3: return [];                 // Tue & Wed: Event Center only
+    case 2: case 3: return [lunch];            // Tue & Wed: lunch only (dinner closed)
     default: return [lunch, dinner];           // Mon, Thu, Fri: lunch + dinner
   }
 }

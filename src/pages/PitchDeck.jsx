@@ -44,10 +44,10 @@ const slides = [
     subtitle: "3397 Summer Ave., Memphis TN",
     body: "Strategically located on Summer Avenue in the heart of Memphis, JTAP Kitchen is positioned to capture both local residents and visitors seeking a premium dining destination.",
     points: [
-      "Brunch (Sat & Sun): 10:00 AM – 3:00 PM",
-      "Lunch (Mon, Thu & Fri): 10:00 AM – 3:00 PM",
+      "Brunch (Sat & Sun): 10:00 AM – 2:00 PM",
+      "Lunch (Mon – Fri): 10:00 AM – 3:00 PM",
       "Dinner (Sun, Mon, Thu–Sat): 5:00 PM – 10:00 PM",
-      "Game Night: Sun–Mon 6:00 PM–8:00 PM · Thu–Sat 6:00 PM–8:00 PM",
+      "Game Night: Sun 12:00 PM–10:00 PM · Mon & Thu 5:00 PM–10:00 PM",
     ],
     bg: "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=1600&q=80",
   },
