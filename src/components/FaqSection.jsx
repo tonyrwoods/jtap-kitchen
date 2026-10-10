@@ -8,7 +8,7 @@ const FAQS = [
   },
   {
     q: "What are your hours?",
-    a: "Brunch: Sat & Sun 10:00 AM–2:00 PM · Lunch: Mon–Fri 10:00 AM–3:00 PM · Dinner: Sun & Mon 5:00 PM–10:00 PM, Thu–Sat 5:00 PM–10:00 PM (Tue & Wed dinner closed) · Game Night sports menu: Sun 12:00 PM–10:00 PM, Mon & Thu 5:00 PM–10:00 PM."
+    a: "Brunch: Sat & Sun 10:00 AM–2:00 PM · Lunch: Mon–Fri 10:00 AM–3:00 PM · Dinner: Sun & Mon 5:00 PM–10:00 PM, Thu–Sat 5:00 PM–10:00 PM (Event Center Tue & Wed reservation only) · Game Night sports menu: Sun 12:00 PM–10:00 PM, Mon & Thu 5:00 PM–10:00 PM."
   },
   {
     q: "How do I make a reservation?",
