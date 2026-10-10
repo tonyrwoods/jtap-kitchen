@@ -53,11 +53,6 @@ function MenuCard({ item, qty, onAdd, onRemove }) {
             ⭐ Chef's Pick
           </span>
         )}
-        {item.image_ai_generated && (
-          <span className="absolute bottom-2 left-2 bg-black/55 backdrop-blur-sm text-white text-[10px] font-body px-1.5 py-0.5 rounded-full font-medium tracking-wide">
-            AI Generated
-          </span>
-        )}
       </div>
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-1">

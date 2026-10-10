@@ -23,13 +23,6 @@ const DEFAULT_BODY = `<div style="font-family:Georgia,serif;max-width:600px;marg
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
-
-  // Admin-only: scheduled runs execute as the workflow owner (admin).
-  const user = await base44.auth.me();
-  if (!user || user.role !== 'admin') {
-    return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-  }
-
   const now = new Date();
   const todayStr = now.toISOString().split('T')[0];
 

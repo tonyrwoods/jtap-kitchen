@@ -1,7 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
 import { esc } from '../../shared/escapeHtml.js';
-import { getAllowedOrigin } from '../../shared/allowedOrigin.js';
 
 export default async function(req) {
   try {
@@ -36,7 +35,7 @@ export default async function(req) {
       return Response.json({ error: 'invite_id or send_to_all required' }, { status: 400 });
     }
 
-    const origin = getAllowedOrigin(req);
+    const origin = req.headers.get('origin') || 'https://jtapkitchen.com';
     const subject = promotion.invite_email_subject || `You're Invited — ${promotion.title}`;
     let sent = 0;
     const errors = [];

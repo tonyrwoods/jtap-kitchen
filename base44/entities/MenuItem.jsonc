@@ -53,12 +53,6 @@
       "title": "Image URL",
       "type": "string"
     },
-    "image_ai_generated": {
-      "title": "Image AI-Generated",
-      "type": "boolean",
-      "default": false,
-      "description": "True when the image was created by AI image generation rather than a real photo."
-    },
     "is_featured": {
       "title": "Featured Dish",
       "type": "boolean"

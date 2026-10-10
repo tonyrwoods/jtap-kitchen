@@ -24,14 +24,6 @@ function todayInChicago() {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-
-    // Admin-only: the workflow runs as the workflow owner (admin). Prevents
-    // anonymous callers from prematurely triggering waitlist notifications.
-    const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-    }
-
     const body = await req.json().catch(() => ({}));
     const { reservation_id } = body;
     if (!reservation_id) {
