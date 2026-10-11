@@ -19,6 +19,7 @@ import StickyReserveBar from "../components/StickyReserveBar";
 import LoyaltyTeaserBanner from "../components/LoyaltyTeaserBanner";
 import ReferralTeaser from "../components/ReferralTeaser";
 import EventCenterTeaser from "../components/EventCenterTeaser";
+import PrivateRoomTeaser from "../components/PrivateRoomTeaser";
 import GiftCardTeaser from "../components/GiftCardTeaser";
 import ValuePropsStrip from "../components/ValuePropsStrip";
 import StatsBar from "../components/StatsBar";
@@ -49,6 +50,7 @@ export default function Home() {
       <MenuSection />
       <AboutSection />
       <EventCenterTeaser />
+      <PrivateRoomTeaser />
       <FeaturedPress />
       <TeamSection />
       <TestimonialsSection />
