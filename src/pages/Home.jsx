@@ -6,6 +6,7 @@ import GallerySectionCMS from "../components/GallerySectionCMS";
 import InstagramSection from "../components/InstagramSection";
 import TeamSection from "../components/TeamSection";
 import MenuSection from "../components/MenuSection";
+import DietaryAccommodations from "../components/DietaryAccommodations";
 import AboutSection from "../components/AboutSection";
 import FeaturedPress from "../components/FeaturedPress";
 import FaqSection from "../components/FaqSection";
@@ -50,6 +51,7 @@ export default function Home() {
       <ChefHighlights />
       <UpcomingEventsStrip />
       <MenuSection />
+      <DietaryAccommodations />
       <AboutSection />
       <EventCenterTeaser />
       <PrivateRoomTeaser />
