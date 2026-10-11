@@ -17,6 +17,8 @@ import ReservationModal from "../components/ReservationModal";
 import UpcomingEventsStrip from "../components/UpcomingEventsStrip";
 import StickyReserveBar from "../components/StickyReserveBar";
 import LoyaltyTeaserBanner from "../components/LoyaltyTeaserBanner";
+import EventCenterTeaser from "../components/EventCenterTeaser";
+import GiftCardTeaser from "../components/GiftCardTeaser";
 
 export default function Home() {
   useSeoMeta("home");
@@ -38,12 +40,14 @@ export default function Home() {
       <UpcomingEventsStrip />
       <MenuSection />
       <AboutSection />
+      <EventCenterTeaser />
       <FeaturedPress />
       <TeamSection />
       <TestimonialsSection />
       <GallerySectionCMS />
       <InstagramSection />
       <LoyaltyTeaserBanner />
+      <GiftCardTeaser />
       <FaqSection />
       <ReservationModal open={modalOpen} onClose={() => { setModalOpen(false); setPrefill(null); }} prefill={prefill} />
       <StickyReserveBar onBook={() => setModalOpen(true)} />
