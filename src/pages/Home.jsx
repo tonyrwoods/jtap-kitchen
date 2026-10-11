@@ -20,6 +20,7 @@ import LoyaltyTeaserBanner from "../components/LoyaltyTeaserBanner";
 import EventCenterTeaser from "../components/EventCenterTeaser";
 import GiftCardTeaser from "../components/GiftCardTeaser";
 import ValuePropsStrip from "../components/ValuePropsStrip";
+import StatsBar from "../components/StatsBar";
 
 export default function Home() {
   useSeoMeta("home");
@@ -36,6 +37,7 @@ export default function Home() {
       <HeroSection />
       <GrandOpeningCountdown />
       <ValuePropsStrip />
+      <StatsBar />
       <WeekendAvailability onBook={handleBook} />
       <AvailabilityChecker onBook={handleBook} />
       <ChefHighlights />
