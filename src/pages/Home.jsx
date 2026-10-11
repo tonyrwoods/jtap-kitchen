@@ -17,6 +17,7 @@ import ReservationModal from "../components/ReservationModal";
 import UpcomingEventsStrip from "../components/UpcomingEventsStrip";
 import StickyReserveBar from "../components/StickyReserveBar";
 import LoyaltyTeaserBanner from "../components/LoyaltyTeaserBanner";
+import ReferralTeaser from "../components/ReferralTeaser";
 import EventCenterTeaser from "../components/EventCenterTeaser";
 import GiftCardTeaser from "../components/GiftCardTeaser";
 import ValuePropsStrip from "../components/ValuePropsStrip";
@@ -54,6 +55,7 @@ export default function Home() {
       <InstagramSection />
       <NewsletterCTA />
       <LoyaltyTeaserBanner />
+      <ReferralTeaser />
       <GiftCardTeaser />
       <PlanYourVisit />
       <FaqSection />
