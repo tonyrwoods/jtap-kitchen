@@ -192,9 +192,15 @@ export default function KDS() {
       setConnected(true); // If sub is running, we're connected
     }, 10000);
 
+    // Polling fallback: re-fetch orders every 30s in case the realtime
+    // subscription misses an order created by the backend service role
+    // (submitMenuOrder), which some realtime backends don't broadcast.
+    const pollInterval = setInterval(load, 30000);
+
     return () => {
       unsub();
       clearInterval(heartbeat);
+      clearInterval(pollInterval);
       clearTimeout(alertTimer.current);
     };
   }, []);
