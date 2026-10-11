@@ -24,6 +24,7 @@ import ValuePropsStrip from "../components/ValuePropsStrip";
 import StatsBar from "../components/StatsBar";
 import NewsletterCTA from "../components/NewsletterCTA";
 import PlanYourVisit from "../components/PlanYourVisit";
+import FinalCTA from "../components/FinalCTA";
 
 export default function Home() {
   useSeoMeta("home");
@@ -58,6 +59,7 @@ export default function Home() {
       <ReferralTeaser />
       <GiftCardTeaser />
       <PlanYourVisit />
+      <FinalCTA />
       <FaqSection />
       <ReservationModal open={modalOpen} onClose={() => { setModalOpen(false); setPrefill(null); }} prefill={prefill} />
       <StickyReserveBar onBook={() => setModalOpen(true)} />
