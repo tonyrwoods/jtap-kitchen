@@ -118,9 +118,9 @@ export default function Events() {
   const EVENT_TYPES = ["All", "Wine Tasting", "Tasting Menu", "Holiday Dinner", "Chef's Table", "Cooking Class", "Special Occasion", "Other"];
 
   useEffect(() => {
-    base44.entities.Event.filter({ is_published: true }, "date", 100).then(data => {
-      const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
-      setEvents(data.filter(e => e.date >= today));
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
+    base44.entities.Event.filter({ is_published: true, date: { $gte: today } }, { sort: "date", limit: 100 }).then(page => {
+      setEvents(page.items || []);
       setLoading(false);
     });
   }, []);

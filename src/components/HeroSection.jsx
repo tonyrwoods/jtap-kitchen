@@ -3,7 +3,7 @@ import { ArrowDown, Phone } from "lucide-react";
 import SmartImage from "@/components/SmartImage";
 import { Link } from "react-router-dom";
 
-export default function HeroSection() {
+export default function HeroSection({ onBook }) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -36,9 +36,9 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.1] mb-8">
           
-          Memphis&rsquo; Best
+          Memphis's Best
           <br />
-          <span className="italic font-normal text-amber-300/90">Causual Dining Restaurant</span>
+          <span className="italic font-normal text-amber-300/90">Casual Dining Restaurant</span>
         </motion.h1>
 
         <motion.p
@@ -68,11 +68,12 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4">
           
-          <a
-            href="#reserve"
+          <button
+            type="button"
+            onClick={onBook}
             className="px-10 py-4 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/25">
             Reserve Your Table — Book Direct &amp; Save
-          </a>
+          </button>
           <Link
             to="/full-menu"
             className="px-10 py-4 border-2 border-white/30 text-white font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:bg-white/10 transition-all duration-300">

@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <>
-      <HeroSection />
+      <HeroSection onBook={handleBook} />
       <GrandOpeningCountdown />
       <ValuePropsStrip />
       <StatsBar />
