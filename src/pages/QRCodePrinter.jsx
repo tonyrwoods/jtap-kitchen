@@ -1,5 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { base44 } from "@/api/base44Client";
 import { Download, Printer, Plus, Minus } from "lucide-react";
 
 const BASE_URL = window.location.origin;
@@ -28,7 +29,7 @@ function QRCard({ tableNum, url }) {
       ctx.fillText(`Table ${tableNum}`, 150, 300);
       ctx.font = "13px Inter, sans-serif";
       ctx.fillStyle = "#888888";
-      ctx.fillText("Scan to view menu", 150, 325);
+      ctx.fillText("Scan to view bill & pay", 150, 325);
       canvas.toBlob(blob => {
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
@@ -64,8 +65,19 @@ function QRCard({ tableNum, url }) {
 
 export default function QRCodePrinter() {
   const [tableCount, setTableCount] = useState(10);
+  const [tokens, setTokens] = useState({});
 
-  const menuUrl = (table) => `${BASE_URL}/menu?table=${table}`;
+  // Fetch per-table HMAC tokens so QR codes link to the secure pay-at-table page
+  useEffect(() => {
+    const nums = Array.from({ length: tableCount }, (_, i) => i + 1);
+    base44.functions.invoke("generateTableToken", { table_numbers: nums })
+      .then((res) => setTokens(res.data?.tokens || {}))
+      .catch(() => setTokens({}));
+  }, [tableCount]);
+
+  const payUrl = (table) => tokens[table]
+    ? `${BASE_URL}/pay-at-table?table=${table}&token=${tokens[table]}`
+    : `${BASE_URL}/pay-at-table?table=${table}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -73,7 +85,7 @@ export default function QRCodePrinter() {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="font-heading text-2xl font-bold">Table QR Codes</h1>
-            <p className="font-body text-sm text-muted-foreground mt-1">Each QR links guests to the digital menu for their table</p>
+            <p className="font-body text-sm text-muted-foreground mt-1">Each QR links guests to the pay-at-table page for their table</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 border border-border rounded-full px-4 py-2">
@@ -102,7 +114,7 @@ export default function QRCodePrinter() {
           <div>
             <p className="font-body text-sm font-medium">How it works</p>
             <p className="font-body text-xs text-muted-foreground mt-0.5">
-              Guests scan the QR code at their table and are taken directly to the mobile-friendly digital menu at <code className="bg-muted px-1 rounded">/menu?table=N</code>. Print and place the codes at each table.
+              Guests scan the QR code at their table and are taken directly to the pay-at-table page at <code className="bg-muted px-1 rounded">/pay-at-table?table=N&token=…</code> where they can view their bill and pay from their phone. Print and place the codes at each table.
             </p>
           </div>
         </div>
@@ -111,7 +123,7 @@ export default function QRCodePrinter() {
       <div className="max-w-5xl mx-auto px-6 pb-12">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {Array.from({ length: tableCount }, (_, i) => i + 1).map(n => (
-            <QRCard key={n} tableNum={n} url={menuUrl(n)} />
+            <QRCard key={n} tableNum={n} url={payUrl(n)} />
           ))}
         </div>
       </div>
