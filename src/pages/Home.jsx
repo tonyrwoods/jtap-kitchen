@@ -13,6 +13,7 @@ import TestimonialsSection from "../components/TestimonialsSection";
 import ChefHighlights from "../components/ChefHighlights.jsx";
 import AvailabilityChecker from "../components/AvailabilityChecker";
 import WeekendAvailability from "../components/WeekendAvailability";
+import WhyBookDirect from "../components/WhyBookDirect";
 import ReservationModal from "../components/ReservationModal";
 import UpcomingEventsStrip from "../components/UpcomingEventsStrip";
 import StickyReserveBar from "../components/StickyReserveBar";
@@ -45,6 +46,7 @@ export default function Home() {
       <StatsBar />
       <WeekendAvailability onBook={handleBook} />
       <AvailabilityChecker onBook={handleBook} />
+      <WhyBookDirect />
       <ChefHighlights />
       <UpcomingEventsStrip />
       <MenuSection />
