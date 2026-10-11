@@ -27,7 +27,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-body text-sm md:text-base uppercase tracking-[0.3em] text-white/70 mb-6">
           
-          High-End Casual Dining
+          Chef Curated Casual Dining
         </motion.p>
 
         <motion.h1
