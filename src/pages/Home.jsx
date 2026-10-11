@@ -14,6 +14,8 @@ import ChefHighlights from "../components/ChefHighlights.jsx";
 import AvailabilityChecker from "../components/AvailabilityChecker";
 import WeekendAvailability from "../components/WeekendAvailability";
 import ReservationModal from "../components/ReservationModal";
+import UpcomingEventsStrip from "../components/UpcomingEventsStrip";
+import StickyReserveBar from "../components/StickyReserveBar";
 
 export default function Home() {
   useSeoMeta("home");
@@ -32,6 +34,7 @@ export default function Home() {
       <WeekendAvailability onBook={handleBook} />
       <AvailabilityChecker onBook={handleBook} />
       <ChefHighlights />
+      <UpcomingEventsStrip />
       <MenuSection />
       <AboutSection />
       <FeaturedPress />
@@ -41,6 +44,7 @@ export default function Home() {
       <FaqSection />
       <TestimonialsSection />
       <ReservationModal open={modalOpen} onClose={() => { setModalOpen(false); setPrefill(null); }} prefill={prefill} />
+      <StickyReserveBar onBook={() => setModalOpen(true)} />
     </>
   );
 }
