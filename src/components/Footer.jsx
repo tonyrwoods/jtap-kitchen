@@ -14,12 +14,17 @@ export default function Footer({ onBookTable }) {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
-    await base44.functions.invoke("subscribeNewsletter", { name: name.trim(), email: email.trim(), source: "footer" });
-    base44.analytics.track({ eventName: "newsletter_signup", properties: { source: "footer" } });
-    trackPixel("CompleteRegistration", { content_name: "Newsletter", status: "footer" });
-    setName("");
-    setEmail("");
-    setLoading("done");
+    try {
+      await base44.functions.invoke("subscribeNewsletter", { name: name.trim(), email: email.trim(), source: "footer" });
+      base44.analytics.track({ eventName: "newsletter_signup", properties: { source: "footer" } });
+      trackPixel("CompleteRegistration", { content_name: "Newsletter", status: "footer" });
+      setName("");
+      setEmail("");
+      setLoading("done");
+    } catch {
+      toast.error("Could not subscribe. Please try again.");
+      setLoading(false);
+    }
   };
   return (
     <footer className="bg-foreground text-background py-16 md:py-20 px-6 lg:px-10">
@@ -106,7 +111,7 @@ export default function Footer({ onBookTable }) {
           <div className="lg:col-span-1">
             <h3 className="font-heading text-3xl font-semibold mb-4">JTAP Kitchen</h3>
             <p className="font-body text-sm text-background/60 leading-relaxed max-w-xs">
-              JTAP Kitchen — high-end casual dining where culinary artistry meets
+              JTAP Kitchen — chef curated casual dining where culinary artistry meets
               a warm, welcoming atmosphere.
             </p>
           </div>
@@ -184,7 +189,7 @@ export default function Footer({ onBookTable }) {
                       if (onBookTable) onBookTable();
                     } else if (label === "Login") {
                       e.preventDefault();
-                      import("@/api/base44Client").then(({ base44 }) => base44.auth.redirectToLogin("https://jtapkitchen.com/admin"));
+                      import("@/api/base44Client").then(({ base44 }) => base44.auth.redirectToLogin("/admin"));
                     }
                   }}
                   className="block font-body text-sm text-background/60 hover:text-primary transition-colors duration-200"

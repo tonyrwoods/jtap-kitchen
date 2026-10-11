@@ -75,7 +75,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16">
             {/* Back Button or Logo */}
             {showBackButton || shouldShowBackButton ? (
               <button
@@ -89,7 +89,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
                 <img
                   src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png"
                   alt="JTAP Kitchen Logo"
-                  className="h-20 w-20 rounded-full object-cover border border-primary/30"
+                  className="h-12 w-12 rounded-full object-cover border border-primary/30"
                 />
                 <span className="font-heading text-xl md:text-2xl font-semibold tracking-tight text-foreground">
                   JTAP Kitchen
@@ -101,7 +101,7 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
                 <img
                   src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png"
                   alt="JTAP Kitchen Logo"
-                  className="h-20 w-20 rounded-full object-cover border border-primary/30"
+                  className="h-12 w-12 rounded-full object-cover border border-primary/30"
                 />
                 <span className="font-heading text-xl md:text-2xl font-semibold tracking-tight text-foreground">
                   JTAP Kitchen

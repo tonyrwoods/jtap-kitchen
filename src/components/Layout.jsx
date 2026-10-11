@@ -88,7 +88,7 @@ export default function Layout() {
         Skip to content
       </a>
       <Navbar onBookTable={() => setModalOpen(true)} showBackButton={!isTabRoute} />
-      <main id="main-content" className="flex-1 pt-20 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 overflow-hidden">
+      <main id="main-content" className="flex-1 pt-16 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 overflow-hidden">
         <PullToRefresh onRefresh={handleRefresh} externalRef={scrollRef}>
           <motion.div
             key={location.pathname}
