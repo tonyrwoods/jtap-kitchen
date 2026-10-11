@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { DoorOpen, Crown, ArrowRight } from "lucide-react";
+import { DoorOpen, Crown, Sparkles } from "lucide-react";
 
 // Promotes the complimentary private room rental perk for Tap Room Society
 // members. Distinct from EventCenterTeaser (public events) — this cross-sells
@@ -32,26 +31,19 @@ export default function PrivateRoomTeaser() {
               <Crown className="w-4 h-4 text-primary" />
               <span className="font-body text-xs uppercase tracking-[0.25em] text-primary font-semibold">Member Perk</span>
             </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="font-body text-xs font-semibold uppercase tracking-widest text-primary">Coming Soon</span>
+            </div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">
               Your Own Private Room,<br />On Us.
             </h2>
             <p className="font-body text-muted-foreground text-base leading-relaxed mb-6">
-              Tap Room Society members enjoy complimentary private room rentals for birthdays, anniversaries, business dinners, and celebrations. Intimate seating, dedicated service, and zero rental fees — just a food & beverage minimum.
+              Tap Room Society members will soon enjoy complimentary private room rentals for birthdays, anniversaries, business dinners, and celebrations. Intimate seating, dedicated service, and zero rental fees — just a food & beverage minimum. We're putting the finishing touches on this perk.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                to="/book-private-room"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-primary text-primary-foreground font-body text-sm font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
-              >
-                <DoorOpen className="w-4 h-4" />
-                Book a Private Room
-              </Link>
-              <Link
-                to="/tap-room-society"
-                className="inline-flex items-center gap-2 px-7 py-3.5 border border-border text-foreground font-body text-sm font-semibold rounded-full hover:bg-secondary transition-colors"
-              >
-                Explore Membership <ArrowRight className="w-4 h-4" />
-              </Link>
+            <div className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-secondary border border-border text-muted-foreground font-body text-sm font-medium">
+              <DoorOpen className="w-4 h-4" />
+              Stay Tuned for Launch
             </div>
           </div>
         </motion.div>
