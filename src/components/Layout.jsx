@@ -8,6 +8,7 @@ import MobileTabBar from "./MobileTabBar";
 import ReservationModal from "./ReservationModal";
 import PullToRefresh from "./PullToRefresh";
 import FloatingChat from "./FloatingChat";
+import { queryClientInstance } from "@/lib/query-client";
 
 const TAB_ROUTES = ["/", "/menu", "/gift-cards", "/events"];
 
@@ -75,8 +76,8 @@ export default function Layout() {
   );
 
   const handleRefresh = async () => {
-    // Refetch data based on current route
-    window.location.reload();
+    // Refetch all active queries without a full page reload
+    await queryClientInstance.invalidateQueries();
   };
 
   return (

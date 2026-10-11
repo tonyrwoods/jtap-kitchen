@@ -79,12 +79,16 @@ export default function HeroSection({ onBook }) {
             className="px-10 py-4 border-2 border-white/30 text-white font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:bg-white/10 transition-all duration-300">
             Explore Menu
           </Link>
-          <a
-            href="/event-center"
-            className="px-10 py-4 border-2 border-amber-400/50 text-amber-300 font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:bg-amber-400/10 transition-all duration-300">
-            🎉 Host an Event
-          </a>
         </motion.div>
+
+        <motion.a
+          href="/event-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1 }}
+          className="inline-flex items-center gap-1.5 mt-6 font-body text-sm text-amber-300/80 hover:text-amber-300 transition-colors">
+          🎉 Planning a private event? <span className="underline underline-offset-2">Explore the Event Center →</span>
+        </motion.a>
       </div>
 
       {/* Scroll Indicator */}
