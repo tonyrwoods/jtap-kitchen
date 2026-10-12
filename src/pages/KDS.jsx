@@ -2,8 +2,25 @@ import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChefHat, AlertTriangle, Clock, CheckCircle, Wifi, WifiOff } from "lucide-react";
+import { ChefHat, AlertTriangle, Clock, CheckCircle, Wifi, WifiOff, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
+
+// Play a short audible beep when a new order arrives (kitchens are noisy)
+function playOrderChime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    osc.type = "sine";
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+  } catch { /* AudioContext not available */ }
+}
 
 // Only show New + Preparing on KDS (Ready goes to expeditor/server)
 const KDS_STATUSES = ["New", "Preparing", "Ready"];
@@ -59,7 +76,14 @@ function KDSCard({ order, onAdvance, onRecall }) {
       {/* Card Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-white font-heading font-bold text-xl">T{order.table_number}</span>
+          {order.order_type === "takeout" ? (
+            <span className="flex items-center gap-1 text-white font-heading font-bold text-lg">
+              <ShoppingBag className="w-4 h-4 text-amber-400" />
+              {order.pickup_name || order.customer_name || "Takeout"}
+            </span>
+          ) : (
+            <span className="text-white font-heading font-bold text-xl">T{order.table_number}</span>
+          )}
           {order.server_name && (
             <span className="text-white/50 font-body text-xs">{order.server_name}</span>
           )}
@@ -162,8 +186,24 @@ export default function KDS() {
   const [newAlert, setNewAlert] = useState(false);
   const alertTimer = useRef(null);
 
+  const knownIds = useRef(new Set());
+
   const load = async () => {
     const data = await base44.entities.Order.list("-created_date", 300);
+    // On first load, just seed the known set silently.
+    // On subsequent polls, alert + chime for any new order we haven't seen.
+    if (!loading && knownIds.current.size > 0) {
+      for (const o of data) {
+        if (!knownIds.current.has(o.id) && o.status !== "Served") {
+          const label = o.order_type === "takeout"
+            ? `Takeout — ${o.pickup_name || o.customer_name || "Guest"}`
+            : `Table ${o.table_number}`;
+          toast("🔔 New order — " + label, { duration: 4000 });
+          playOrderChime();
+        }
+      }
+    }
+    data.forEach(o => knownIds.current.add(o.id));
     setOrders(data);
     setLoading(false);
   };
@@ -175,11 +215,15 @@ export default function KDS() {
       setConnected(true);
       if (event.type === "create") {
         setOrders(prev => [event.data, ...prev]);
-        // Flash new order alert
+        // Flash new order alert + audible chime
         setNewAlert(true);
         clearTimeout(alertTimer.current);
         alertTimer.current = setTimeout(() => setNewAlert(false), 3000);
-        toast("🔔 New order — Table " + event.data.table_number, { duration: 4000 });
+        playOrderChime();
+        const label = event.data.order_type === "takeout"
+          ? `Takeout — ${event.data.pickup_name || event.data.customer_name || "Guest"}`
+          : `Table ${event.data.table_number}`;
+        toast("🔔 New order — " + label, { duration: 4000 });
       } else if (event.type === "update") {
         setOrders(prev => prev.map(o => o.id === event.id ? event.data : o));
       } else if (event.type === "delete") {
