@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { TrendingUp, DollarSign, AlertCircle } from "lucide-react";
+import { TrendingUp, DollarSign, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 export default function PricingStrategyTab() {
@@ -9,13 +9,29 @@ export default function PricingStrategyTab() {
   const [foodCostTarget, setFoodCostTarget] = useState(30);
   const [editingId, setEditingId] = useState(null);
   const [editCost, setEditCost] = useState("");
+  const [syncing, setSyncing] = useState(false);
 
-  useEffect(() => {
+  const loadItems = () => {
     base44.entities.MenuItem.list("-created_date", 100).then(data => {
       setItems(data);
       setLoading(false);
     });
-  }, []);
+  };
+
+  useEffect(() => { loadItems(); }, []);
+
+  const handleSyncFromLedger = async () => {
+    setSyncing(true);
+    try {
+      const res = await base44.functions.invoke("importMenuItemCostsFromLedger", {});
+      const result = res.data || res;
+      toast.success(`Synced ${result.updated} costs from JTAP Ledger (${result.unmatched} unmatched)`);
+      loadItems();
+    } catch (err) {
+      toast.error("Sync failed: " + (err.message || "unknown error"));
+    }
+    setSyncing(false);
+  };
 
   const calculateRecommendedPrice = (cost, percentage) => {
     if (!cost || cost <= 0) return null;
@@ -46,6 +62,14 @@ export default function PricingStrategyTab() {
       <div className="flex items-center justify-between">
         <h3 className="font-heading text-lg font-semibold">Menu Pricing Strategy</h3>
         <div className="flex items-center gap-4">
+          <button
+            onClick={handleSyncFromLedger}
+            disabled={syncing}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-body text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+          >
+            <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
+            {syncing ? "Syncing..." : "Sync from Ledger"}
+          </button>
           <label className="font-body text-sm text-muted-foreground">Target Food Cost %:</label>
           <select
             value={foodCostTarget}
