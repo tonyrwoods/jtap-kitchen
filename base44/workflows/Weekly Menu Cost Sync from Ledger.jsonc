@@ -1,0 +1,45 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 6 * * 1",
+      "one_time_date": null,
+      "timezone": "America/Chicago",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Every Monday at 6am, imports ingredient costs from JTAP Ledger into JTAP Kitchen menu items so the Pricing Strategy tab always has fresh cost data.",
+  "name": "Weekly Menu Cost Sync from Ledger",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "weekly_menu_cost_sync",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_costs": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "importMenuItemCostsFromLedger",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync costs from Ledger",
+            "description": "Import ingredient costs into menu items"
+          }
+        }
+      }
+    ]
+  }
+}
