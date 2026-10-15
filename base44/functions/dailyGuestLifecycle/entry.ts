@@ -77,6 +77,10 @@ function winbackBody(firstName) {
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
     const now = new Date();
     const currentYear = String(now.getFullYear());
     const results = { profiles_synced: 0, birthday_sent: 0, winback_sent: 0, errors: [] };
