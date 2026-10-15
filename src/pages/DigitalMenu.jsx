@@ -137,6 +137,7 @@ export default function DigitalMenu() {
   };
   const urlParams = new URLSearchParams(window.location.search);
   const tableNum = urlParams.get("table");
+  const tableToken = urlParams.get("token");
 
   useEffect(() => {
     base44.entities.MenuItem.list("category", 200).then(data => {
@@ -381,6 +382,7 @@ export default function DigitalMenu() {
           quantities={cart}
           notes={itemNotes}
           tableNumber={tableNum}
+          tableToken={tableToken}
           onClose={() => setCartOpen(false)}
           onUpdateQty={updateQty}
           onUpdateNotes={updateNotes}

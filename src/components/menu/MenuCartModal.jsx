@@ -8,6 +8,7 @@ export default function MenuCartModal({
   quantities,
   notes,
   tableNumber,
+  tableToken,
   onClose,
   onUpdateQty,
   onUpdateNotes,
@@ -49,6 +50,7 @@ export default function MenuCartModal({
 
       const orderRes = await base44.functions.invoke("submitMenuOrder", {
         table_number: mode === "dine_in" ? Number(tableNum) : null,
+        table_token: mode === "dine_in" ? tableToken : undefined,
         items: orderItems,
         customer_name: customerName,
         notes: orderNotes,

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import useSeoMeta from "../hooks/useSeoMeta";
+import { requireAuthOrRedirect } from "@/lib/requireAuth";
 
 export default function GuestFeedback() {
   useSeoMeta("feedback");
@@ -23,6 +24,8 @@ export default function GuestFeedback() {
       toast.error("Please select a score");
       return;
     }
+    const user = await requireAuthOrRedirect();
+    if (!user) return;
     setSubmitting(true);
     try {
       const res = await base44.functions.invoke("submitGuestFeedback", {

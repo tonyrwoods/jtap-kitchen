@@ -35,7 +35,7 @@ function ReviewCard({ review, index }) {
           </p>
         )}
       </div>
-      {review.manager_response && (
+      {review.manager_response && review.response_date && (
         <div className="pt-4 border-t border-border">
           <p className="font-body text-xs font-semibold text-primary mb-1.5">Response from JTAP Kitchen</p>
           <p className="font-body text-xs text-muted-foreground leading-relaxed">{review.manager_response}</p>

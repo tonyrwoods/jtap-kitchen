@@ -1,4 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { verifyTableBillToken } from '../../shared/tableBillToken.js';
+import { enforceRateLimit } from '../../shared/rateLimit.js';
 
 // Public endpoint: lets a guest place a menu order from the
 // Digital Menu (table QR for dine-in, or takeout). Creates an Order as the
@@ -19,6 +21,15 @@ export default async function (req) {
       tableNum = Number(table_number);
       if (!Number.isFinite(tableNum) || tableNum < 1 || tableNum > 999) {
         return Response.json({ error: 'A valid table number is required' }, { status: 400 });
+      }
+    }
+
+    // ── Verify table token for dine-in (HMAC token from table QR) ──
+    if (!isTakeout) {
+      const tableToken = String(body.table_token || '');
+      const validToken = await verifyTableBillToken(tableNum, tableToken);
+      if (!validToken) {
+        return Response.json({ error: 'Invalid or missing table token. Please scan the QR code on your table.' }, { status: 403 });
       }
     }
 
@@ -49,6 +60,11 @@ export default async function (req) {
         return Response.json({ error: 'Invalid quantity for an item' }, { status: 400 });
       }
     }
+
+    // ── Rate limit (per IP + per table/phone) ──
+    const rlKey = isTakeout ? (pickup_phone || pickup_name) : `table:${tableNum}`;
+    const rl = await enforceRateLimit(req, base44, 'menu-order', rlKey, 10, 600000);
+    if (rl) return rl;
 
     // ── Fetch menu items server-side to get authoritative prices & names ──
     const menuItemIds = items.map(i => i.menu_item_id);

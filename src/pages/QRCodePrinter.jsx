@@ -66,6 +66,7 @@ function QRCard({ tableNum, url }) {
 export default function QRCodePrinter() {
   const [tableCount, setTableCount] = useState(10);
   const [tokens, setTokens] = useState({});
+  const [qrMode, setQrMode] = useState("pay");
 
   // Fetch per-table HMAC tokens so QR codes link to the secure pay-at-table page
   useEffect(() => {
@@ -75,9 +76,12 @@ export default function QRCodePrinter() {
       .catch(() => setTokens({}));
   }, [tableCount]);
 
-  const payUrl = (table) => tokens[table]
-    ? `${BASE_URL}/pay-at-table?table=${table}&token=${tokens[table]}`
-    : `${BASE_URL}/pay-at-table?table=${table}`;
+  const qrUrl = (table) => {
+    const base = qrMode === "pay" ? "/pay-at-table" : "/menu";
+    return tokens[table]
+      ? `${BASE_URL}${base}?table=${table}&token=${tokens[table]}`
+      : `${BASE_URL}${base}?table=${table}`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -85,9 +89,15 @@ export default function QRCodePrinter() {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="font-heading text-2xl font-bold">Table QR Codes</h1>
-            <p className="font-body text-sm text-muted-foreground mt-1">Each QR links guests to the pay-at-table page for their table</p>
+            <p className="font-body text-sm text-muted-foreground mt-1">
+              {qrMode === "pay" ? "Each QR links guests to the pay-at-table page for their table" : "Each QR links guests to the digital menu for their table"}
+            </p>
           </div>
           <div className="flex items-center gap-4">
+            <div className="flex gap-1 border border-border rounded-full p-1">
+              <button onClick={() => setQrMode("pay")} className={`px-3 py-1.5 rounded-full font-body text-xs font-medium transition-all ${qrMode === "pay" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}>Pay-at-Table</button>
+              <button onClick={() => setQrMode("menu")} className={`px-3 py-1.5 rounded-full font-body text-xs font-medium transition-all ${qrMode === "menu" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}>Menu Order</button>
+            </div>
             <div className="flex items-center gap-2 border border-border rounded-full px-4 py-2">
               <button onClick={() => setTableCount(c => Math.max(1, c - 1))} className="hover:text-primary transition-colors">
                 <Minus className="w-4 h-4" />
@@ -123,7 +133,7 @@ export default function QRCodePrinter() {
       <div className="max-w-5xl mx-auto px-6 pb-12">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {Array.from({ length: tableCount }, (_, i) => i + 1).map(n => (
-            <QRCard key={n} tableNum={n} url={payUrl(n)} />
+            <QRCard key={n} tableNum={n} url={qrUrl(n)} />
           ))}
         </div>
       </div>
