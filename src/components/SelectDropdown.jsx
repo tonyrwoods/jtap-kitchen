@@ -33,6 +33,7 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
     <div className="relative w-full">
       {/* Trigger Button */}
       <button
+        type="button"
         ref={triggerRef}
         onClick={() => { if (!disabled) { haptic.tap(); setOpen(!open); } }}
         disabled={disabled}
@@ -67,6 +68,7 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
                 <div className="space-y-2">
                   {options.map((opt) => (
                     <button
+                      type="button"
                       key={opt.value}
                       onClick={() => handleSelect(opt.value)}
                       className={`w-full px-4 py-3 rounded-lg text-left font-body text-sm font-medium transition-colors ${
@@ -114,6 +116,7 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
                 <div className="space-y-1 p-1">
                   {options.map((opt) => (
                     <button
+                      type="button"
                       key={opt.value}
                       onClick={() => handleSelect(opt.value)}
                       className={`w-full px-3 py-2 rounded-lg text-left font-body text-sm font-medium transition-colors ${
