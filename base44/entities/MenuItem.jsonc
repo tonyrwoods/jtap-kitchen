@@ -12,7 +12,9 @@
         "Lunch Sides",
         "Sides",
         "Desserts",
-        "Drinks"
+        "Drinks",
+        "Sports Menu",
+        "Happy Hour"
       ],
       "title": "Category",
       "type": "string"

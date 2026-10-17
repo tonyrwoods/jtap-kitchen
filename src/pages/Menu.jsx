@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie, Utensils, Carrot } from "lucide-react";
+import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie, Utensils, Carrot, Wine, Pizza } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSeoMeta from "../hooks/useSeoMeta";
 import MenuQRCode from "../components/MenuQRCode";
@@ -17,6 +17,8 @@ const CATEGORIES = [
   { key: "Lunch Sides", label: "Lunch Sides", icon: Carrot },
   { key: "Sides", label: "Sides", icon: CupSoda },
   { key: "Desserts", label: "Desserts", icon: Cookie },
+  { key: "Sports Menu", label: "Sports Menu", icon: Pizza },
+  { key: "Happy Hour", label: "Happy Hour", icon: Wine },
 ];
 
 const CATEGORY_IMAGES = {
@@ -39,7 +41,7 @@ const DIETARY_ICONS = {
   Spicy: { icon: Flame, color: "text-red-600", bg: "bg-red-50" },
 };
 
-const SECTION_ORDER = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts"];
+const SECTION_ORDER = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Sports Menu", "Happy Hour"];
 
 const FALLBACK_IMAGES = {
   Brunch: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80",
