@@ -57,13 +57,13 @@ export default function RevenueAnalytics() {
   // Paid, non-vendor invoices within the selected date range
   const filteredInvoices = invoices.filter(inv => new Date(inv.created_date) >= startDate);
 
-  // Paid orders within the selected date range
-  const paidOrders = orders.filter(order => order.payment_status === "paid" && new Date(order.created_date) >= startDate);
+  // All orders within the selected date range (orders represent placed sales = revenue)
+  const revenueOrders = orders.filter(order => new Date(order.created_date) >= startDate);
 
   // Unified revenue records from both sources
   const revenueRecords = [
     ...filteredInvoices.map(inv => ({ date: inv.created_date, total: inv.total || 0, tax: inv.tax_amount || 0, server: inv.server_name, items: inv.items || [] })),
-    ...paidOrders.map(order => ({ date: order.created_date, total: orderTotal(order), tax: 0, server: order.server_name, items: order.items || [] })),
+    ...revenueOrders.map(order => ({ date: order.created_date, total: orderTotal(order), tax: 0, server: order.server_name, items: order.items || [] })),
   ];
 
   const totalRevenue = revenueRecords.reduce((sum, r) => sum + r.total, 0);
