@@ -38,8 +38,13 @@ function MenuCard({ item, qty, onAdd, onRemove }) {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card border border-border rounded-2xl flex flex-col"
+      className="bg-card border border-border rounded-2xl flex flex-col overflow-hidden"
     >
+      {item.image_url && (
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <img src={item.image_url} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+        </div>
+      )}
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-1">
           <div className="flex items-center gap-2">

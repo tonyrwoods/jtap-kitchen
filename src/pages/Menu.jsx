@@ -75,8 +75,13 @@ function MenuCard({ item }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.3 }}
-      className="bg-card border border-border rounded-2xl group flex flex-col hover:shadow-lg transition-shadow duration-300"
+      className="bg-card border border-border rounded-2xl group flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300"
     >
+      {item.image_url && (
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <img src={item.image_url} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        </div>
+      )}
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-3 mb-2">
           <div className="flex items-center gap-2 flex-wrap">
