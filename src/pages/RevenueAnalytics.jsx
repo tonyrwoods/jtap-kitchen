@@ -49,14 +49,26 @@ export default function RevenueAnalytics() {
     return ranges[dateRange];
   };
 
-  const filteredInvoices = invoices.filter(inv => {
-    const invDate = new Date(inv.created_date);
-    return invDate >= getDateRange();
-  });
+  const startDate = getDateRange();
 
-  const totalRevenue = filteredInvoices.reduce((sum, inv) => sum + (inv.total || 0), 0);
-  const avgCheckSize = filteredInvoices.length > 0 ? totalRevenue / filteredInvoices.length : 0;
-  const taxCollected = filteredInvoices.reduce((sum, inv) => sum + (inv.tax || 0), 0);
+  // Compute order total from line items (orders don't store a total field)
+  const orderTotal = (order) => (order.items || []).reduce((sum, i) => sum + (i.unit_price || 0) * (i.quantity || 0), 0);
+
+  // Paid, non-vendor invoices within the selected date range
+  const filteredInvoices = invoices.filter(inv => new Date(inv.created_date) >= startDate);
+
+  // Paid orders within the selected date range
+  const paidOrders = orders.filter(order => order.payment_status === "paid" && new Date(order.created_date) >= startDate);
+
+  // Unified revenue records from both sources
+  const revenueRecords = [
+    ...filteredInvoices.map(inv => ({ date: inv.created_date, total: inv.total || 0, tax: inv.tax_amount || 0, server: inv.server_name, items: inv.items || [] })),
+    ...paidOrders.map(order => ({ date: order.created_date, total: orderTotal(order), tax: 0, server: order.server_name, items: order.items || [] })),
+  ];
+
+  const totalRevenue = revenueRecords.reduce((sum, r) => sum + r.total, 0);
+  const avgCheckSize = revenueRecords.length > 0 ? totalRevenue / revenueRecords.length : 0;
+  const taxCollected = revenueRecords.reduce((sum, r) => sum + r.tax, 0);
 
   // Daily revenue chart (last 30 days)
   const last30Days = [];
@@ -65,23 +77,21 @@ export default function RevenueAnalytics() {
     d.setDate(d.getDate() - i);
     d.setHours(0, 0, 0, 0);
     const dateStr = d.toISOString().split("T")[0];
-    const dayRevenue = invoices
-      .filter(inv => inv.created_date.startsWith(dateStr))
-      .reduce((sum, inv) => sum + (inv.total || 0), 0);
+    const dayRevenue = revenueRecords
+      .filter(r => r.date && r.date.startsWith(dateStr))
+      .reduce((sum, r) => sum + r.total, 0);
     last30Days.push({
       date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
       revenue: dayRevenue,
     });
   }
 
-  // Top 5 menu items
+  // Top 5 menu items (from paid transactions)
   const itemCounts = {};
-  orders.forEach(order => {
-    if (order.items) {
-      order.items.forEach(item => {
-        itemCounts[item.name] = (itemCounts[item.name] || 0) + item.quantity;
-      });
-    }
+  revenueRecords.forEach(r => {
+    (r.items || []).forEach(item => {
+      itemCounts[item.name] = (itemCounts[item.name] || 0) + (item.quantity || 0);
+    });
   });
   const topItems = Object.entries(itemCounts)
     .sort((a, b) => b[1] - a[1])
@@ -90,9 +100,9 @@ export default function RevenueAnalytics() {
 
   // Revenue by server
   const serverRevenue = {};
-  invoices.forEach(inv => {
-    if (inv.server_name) {
-      serverRevenue[inv.server_name] = (serverRevenue[inv.server_name] || 0) + (inv.total || 0);
+  revenueRecords.forEach(r => {
+    if (r.server) {
+      serverRevenue[r.server] = (serverRevenue[r.server] || 0) + r.total;
     }
   });
   const serverData = Object.entries(serverRevenue)
@@ -142,8 +152,8 @@ export default function RevenueAnalytics() {
               />
               <StatCard
                 icon={Calendar}
-                label="Invoices"
-                value={filteredInvoices.length}
+                label="Transactions"
+                value={revenueRecords.length}
                 color="bg-blue-500"
               />
               <StatCard
