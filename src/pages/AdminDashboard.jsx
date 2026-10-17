@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
   UtensilsCrossed, CalendarDays,
-  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload, Salad, Heart, Mail, Star
+  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload, Salad, Heart, Mail, Star, Search, X
 } from "lucide-react";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
@@ -186,6 +186,7 @@ export default function AdminDashboard() {
   const [editingRes, setEditingRes] = useState(null);
   const [emailingRes, setEmailingRes] = useState(null);
   const [resendingId, setResendingId] = useState(null);
+  const [tabSearch, setTabSearch] = useState("");
 
   const handleResendConfirmation = async (r) => {
     setResendingId(r.id);
@@ -315,7 +316,41 @@ export default function AdminDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8">
+        {/* Tab search */}
+        <div className="mb-4 relative max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search admin sections..."
+            value={tabSearch}
+            onChange={e => setTabSearch(e.target.value)}
+            aria-label="Search admin sections"
+            className="w-full pl-10 pr-10 py-2.5 border border-border rounded-full bg-card placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+          />
+          {tabSearch && (
+            <button onClick={() => setTabSearch("")} aria-label="Clear search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
         <div className="mb-8 overflow-x-auto scrollbar-hide">
+          {tabSearch ? (
+            <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+              {TABS.filter(t => t.toLowerCase().includes(tabSearch.toLowerCase())).map(t => (
+                <button
+                  key={t}
+                  onClick={() => { setTab(t); setTabSearch(""); }}
+                  className={`px-4 py-2 rounded-full font-body text-sm font-medium transition-all ${tab === t ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+                >
+                  {t}
+                </button>
+              ))}
+              {TABS.filter(t => t.toLowerCase().includes(tabSearch.toLowerCase())).length === 0 && (
+                <p className="font-body text-sm text-muted-foreground py-2">No sections match "{tabSearch}"</p>
+              )}
+            </div>
+          ) : (
           <div className="flex flex-wrap items-end gap-1 border-b border-border">
             {TAB_GROUPS.map((group, gi) => (
               <div key={group.label} className="flex items-end">
@@ -347,6 +382,7 @@ export default function AdminDashboard() {
               </div>
             ))}
           </div>
+          )}
         </div>
 
         {loading ? (

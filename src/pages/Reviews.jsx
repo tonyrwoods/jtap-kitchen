@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
-import { Star, Quote, PenLine, Calendar } from "lucide-react";
+import { Star, Quote, PenLine, Calendar, Search, X } from "lucide-react";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -48,6 +48,7 @@ function ReviewCard({ review, index }) {
 export default function Reviews() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     document.title = "Guest Reviews — JTAP Kitchen";
@@ -59,6 +60,11 @@ export default function Reviews() {
   }, []);
 
   const avg = reviews.length ? reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length : 0;
+  const filteredReviews = reviews.filter(r =>
+    !search ||
+    (r.guest_name || "").toLowerCase().includes(search.toLowerCase()) ||
+    (r.comment || "").toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-secondary/30 pt-20">
@@ -83,6 +89,24 @@ export default function Reviews() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-12">
+        {/* Search */}
+        <div className="relative max-w-md mx-auto mb-8">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search reviews by guest or keyword..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            aria-label="Search reviews by guest name or keyword"
+            className="w-full pl-10 pr-10 py-2.5 border border-border rounded-full bg-card placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+          />
+          {search && (
+            <button onClick={() => setSearch("")} aria-label="Clear search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
         {loading ? (
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
             {[...Array(6)].map((_, i) => (
@@ -93,14 +117,14 @@ export default function Reviews() {
               </div>
             ))}
           </div>
-        ) : reviews.length === 0 ? (
+        ) : filteredReviews.length === 0 ? (
           <div className="text-center py-20">
             <Quote className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
-            <p className="font-body text-muted-foreground">No featured reviews yet. Be the first to share your experience!</p>
+            <p className="font-body text-muted-foreground">{search ? `No reviews match "${search}".` : "No featured reviews yet. Be the first to share your experience!"}</p>
           </div>
         ) : (
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
-            {reviews.map((r, i) => <ReviewCard key={r.id} review={r} index={i} />)}
+            {filteredReviews.map((r, i) => <ReviewCard key={r.id} review={r} index={i} />)}
           </div>
         )}
 

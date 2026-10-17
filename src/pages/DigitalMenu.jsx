@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
-import { UtensilsCrossed, Wine, Printer, ShoppingBag, Plus, Minus } from "lucide-react";
+import { UtensilsCrossed, Wine, Printer, ShoppingBag, Plus, Minus, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import MenuCartModal from "@/components/menu/MenuCartModal";
 import { QRCodeCanvas } from "qrcode.react";
@@ -116,6 +116,7 @@ export default function DigitalMenu() {
   const [cart, setCart] = useState({});
   const [itemNotes, setItemNotes] = useState({});
   const [cartOpen, setCartOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const qrRef = useRef(null);
   const handlePrintMenu = async () => {
@@ -185,6 +186,7 @@ export default function DigitalMenu() {
   const filtered = items
     .filter(i => activeCategory === "All" || (activeCategory === "Chef's Favorites" ? i.is_featured : i.category === activeCategory))
     .filter(i => activeDietaryTags.length === 0 || activeDietaryTags.every(tag => i.dietary_tags?.includes(tag)))
+    .filter(i => !searchQuery || (i.name || "").toLowerCase().includes(searchQuery.toLowerCase()) || (i.description || "").toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => {
       if (menuSort === "price") return (Number(a.price) || 0) - (Number(b.price) || 0);
       if (menuSort === "category") {
@@ -243,6 +245,23 @@ export default function DigitalMenu() {
           </div>
           {view === "food" && (
             <>
+              {/* Search */}
+              <div className="relative mb-3">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search dishes..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  aria-label="Search dishes by name or description"
+                  className="w-full pl-10 pr-10 py-2.5 border border-border rounded-full bg-background placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery("")} aria-label="Clear search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
               {/* Category tabs */}
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                 {categories.map(cat => (
@@ -341,7 +360,7 @@ export default function DigitalMenu() {
             <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <p className="text-center font-body text-muted-foreground py-20">No items match your current filters.</p>
+          <p className="text-center font-body text-muted-foreground py-20">No items match your search or filters.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filtered.map(item => <MenuCard key={item.id} item={item} qty={cart[item.id] || 0} onAdd={() => addToCart(item.id)} onRemove={() => removeFromCart(item.id)} />)}
