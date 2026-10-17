@@ -179,6 +179,7 @@ export default function AdminDashboard() {
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [menuSort, setMenuSort] = useState("name");
+  const [menuSearch, setMenuSearch] = useState("");
   const [liquorItems, setLiquorItems] = useState([]);
   const [editingLiquor, setEditingLiquor] = useState(null);
   const [showLiquorForm, setShowLiquorForm] = useState(false);
@@ -495,7 +496,18 @@ export default function AdminDashboard() {
                       </button>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+                      <input
+                        type="text"
+                        placeholder="Search by name..."
+                        value={menuSearch}
+                        onChange={e => setMenuSearch(e.target.value)}
+                        aria-label="Search menu items by name"
+                        className="w-48 pl-9 pr-3 py-2 border border-border rounded-full bg-background placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                      />
+                    </div>
                     <span className="font-body text-xs text-muted-foreground">Sort by</span>
                     <SelectDropdown
                       value={menuSort}
@@ -529,6 +541,7 @@ export default function AdminDashboard() {
                         ...menuItems.map(i => ({ id: `f-${i.id}`, type: "food", raw: i, name: i.name, category: i.category, price: Number(i.price) || 0, priceLabel: `$${Number(i.price || 0).toFixed(2)}` })),
                         ...liquorItems.map(i => ({ id: `l-${i.id}`, type: "liquor", raw: i, name: i.name, category: i.section, price: liquorSortPrice(i), priceLabel: liquorPriceLabel(i) })),
                       ]
+                        .filter(row => !menuSearch || (row.name || "").toLowerCase().includes(menuSearch.toLowerCase()))
                         .sort((a, b) => {
                           if (menuSort === "price") return a.price - b.price;
                           if (menuSort === "category") {
