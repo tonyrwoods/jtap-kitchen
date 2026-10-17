@@ -66,7 +66,6 @@ function DietaryBadge({ tag }) {
 }
 
 function MenuCard({ item }) {
-  const imgSrc = item.image_url || FALLBACK_IMAGES[item.category];
   return (
     <motion.div
       layout
@@ -74,29 +73,18 @@ function MenuCard({ item }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.3 }}
-      className="bg-card border border-border rounded-2xl overflow-hidden group flex flex-col hover:shadow-lg transition-shadow duration-300"
+      className="bg-card border border-border rounded-2xl group flex flex-col hover:shadow-lg transition-shadow duration-300"
     >
-      <div className="relative overflow-hidden aspect-[4/3]">
-        <img
-          src={imgSrc}
-          alt={item.name}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        {item.is_featured && (
-          <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full font-body uppercase tracking-wide">
-            Chef's Pick
-          </span>
-        )}
-        <span className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs font-body px-2.5 py-1 rounded-full">
-          {item.category}
-        </span>
-      </div>
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-3 mb-2">
-          <h3 className="font-heading text-lg font-semibold text-foreground leading-tight">{item.name}</h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            {item.is_featured && (
+              <span className="bg-primary text-primary-foreground text-[10px] font-semibold px-2.5 py-0.5 rounded-full font-body uppercase tracking-wide">
+                Chef's Pick
+              </span>
+            )}
+            <h3 className="font-heading text-lg font-semibold text-foreground leading-tight">{item.name}</h3>
+          </div>
           {item.price ? (
             <span className="font-heading text-lg font-bold text-primary shrink-0">
               ${Number(item.price).toFixed(2)}

@@ -38,30 +38,20 @@ function MenuCard({ item, qty, onAdd, onRemove }) {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col"
+      className="bg-card border border-border rounded-2xl flex flex-col"
     >
-      <div className="h-44 overflow-hidden bg-muted relative">
-        <img
-          src={item.image_url || FALLBACK_IMAGES[item.category]}
-          alt={item.name}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover"
-        />
-        {item.is_featured && (
-          <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs font-semibold px-2.5 py-0.5 rounded-full font-body">
-            ⭐ Chef's Pick
-          </span>
-        )}
-      </div>
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="font-heading text-base font-semibold leading-snug">{item.name}</h3>
+          <div className="flex items-center gap-2">
+            {item.is_featured && (
+              <span className="bg-primary text-primary-foreground text-[10px] font-semibold px-2 py-0.5 rounded-full font-body uppercase tracking-wide shrink-0">
+                Chef's Pick
+              </span>
+            )}
+            <h3 className="font-heading text-base font-semibold leading-snug">{item.name}</h3>
+          </div>
           <span className="font-heading text-base font-bold text-primary shrink-0">${Number(item.price).toFixed(2)}</span>
         </div>
-        {item.is_featured && (
-          <span className="text-xs text-primary font-body font-medium mb-1">⭐ Chef's Pick</span>
-        )}
         {item.description && (
           <p className="font-body text-sm text-muted-foreground leading-relaxed flex-1">{item.description}</p>
         )}
