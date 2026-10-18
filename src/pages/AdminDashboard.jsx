@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
@@ -520,11 +520,11 @@ export default function AdminDashboard() {
                     />
                   </div>
                 </div>
-                {showForm && (
-                  <MenuItemForm item={editingItem} onSave={refreshMenu} onCancel={() => { setShowForm(false); setEditingItem(null); }} />
+                {showForm && !editingItem && (
+                  <MenuItemForm item={null} onSave={refreshMenu} onCancel={() => { setShowForm(false); setEditingItem(null); }} />
                 )}
-                {showLiquorForm && (
-                  <LiquorItemForm item={editingLiquor} onSave={refreshLiquor} onCancel={() => { setShowLiquorForm(false); setEditingLiquor(null); }} />
+                {showLiquorForm && !editingLiquor && (
+                  <LiquorItemForm item={null} onSave={refreshLiquor} onCancel={() => { setShowLiquorForm(false); setEditingLiquor(null); }} />
                 )}
                 <div className="bg-card border border-border rounded-2xl overflow-hidden">
                   <table className="w-full">
@@ -551,7 +551,8 @@ export default function AdminDashboard() {
                           return String(a.name || "").localeCompare(String(b.name || ""));
                         })
                         .map(row => (
-                        <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                        <Fragment key={row.id}>
+                        <tr className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-2">
                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${row.type === "liquor" ? "bg-purple-100 text-purple-700" : "bg-amber-100 text-amber-700"}`}>{row.type}</span>
@@ -580,6 +581,21 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                         </tr>
+                        {showForm && editingItem?.id === row.raw.id && row.type === "food" && (
+                          <tr>
+                            <td colSpan={4} className="p-0">
+                              <MenuItemForm item={editingItem} onSave={refreshMenu} onCancel={() => { setShowForm(false); setEditingItem(null); }} />
+                            </td>
+                          </tr>
+                        )}
+                        {showLiquorForm && editingLiquor?.id === row.raw.id && row.type === "liquor" && (
+                          <tr>
+                            <td colSpan={4} className="p-0">
+                              <LiquorItemForm item={editingLiquor} onSave={refreshLiquor} onCancel={() => { setShowLiquorForm(false); setEditingLiquor(null); }} />
+                            </td>
+                          </tr>
+                        )}
+                        </Fragment>
                       ))}
                     </tbody>
                   </table>
