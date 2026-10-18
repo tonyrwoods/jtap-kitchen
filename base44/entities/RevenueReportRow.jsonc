@@ -1,0 +1,72 @@
+{
+  "name": "RevenueReportRow",
+  "type": "object",
+  "properties": {
+    "report_id": {
+      "type": "string"
+    },
+    "row_key": {
+      "type": "string"
+    },
+    "row_type": {
+      "type": "string",
+      "enum": [
+        "transaction",
+        "item"
+      ]
+    },
+    "business_day": {
+      "type": "string"
+    },
+    "server_name": {
+      "type": "string"
+    },
+    "revenue_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "tax_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "transaction_count": {
+      "type": "number",
+      "default": 0
+    },
+    "item_name": {
+      "type": "string"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "report_id",
+    "row_key",
+    "row_type",
+    "business_day"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

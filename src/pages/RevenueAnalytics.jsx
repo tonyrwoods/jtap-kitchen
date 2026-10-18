@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { useState } from "react";
+import useRevenueReport from "@/hooks/useRevenueReport";
 import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { motion } from "framer-motion";
-import { DollarSign, TrendingUp, Users, Utensils, User, Calendar } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-
-const COLORS = ["#C89B4F", "#9D7A4F", "#6B5840", "#4A3F35", "#2D2416"];
+import { DollarSign, TrendingUp, Utensils, User, Calendar } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 function StatCard({ icon: Icon, label, value, color }) {
   return (
@@ -23,91 +21,9 @@ function StatCard({ icon: Icon, label, value, color }) {
 
 export default function RevenueAnalytics() {
   useRobotsNoindex();
-  const [invoices, setInvoices] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState("month"); // week, month, year
-
-  useEffect(() => {
-    Promise.all([
-      base44.entities.Invoice.filter({ status: "Paid", is_vendor_invoice: false }),
-      base44.entities.Order.list("-created_date", 500),
-    ]).then(([invs, ords]) => {
-      setInvoices(invs);
-      setOrders(ords);
-      setLoading(false);
-    });
-  }, []);
-
-  const getDateRange = () => {
-    const now = new Date();
-    const ranges = {
-      week: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
-      month: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
-      year: new Date(now.getFullYear(), 0, 1),
-    };
-    return ranges[dateRange];
-  };
-
-  const startDate = getDateRange();
-
-  // Compute order total from line items (orders don't store a total field)
-  const orderTotal = (order) => (order.items || []).reduce((sum, i) => sum + (i.unit_price || 0) * (i.quantity || 0), 0);
-
-  // Paid, non-vendor invoices within the selected date range
-  const filteredInvoices = invoices.filter(inv => new Date(inv.created_date) >= startDate);
-
-  // All orders within the selected date range (orders represent placed sales = revenue)
-  const revenueOrders = orders.filter(order => new Date(order.created_date) >= startDate);
-
-  // Unified revenue records from both sources
-  const revenueRecords = [
-    ...filteredInvoices.map(inv => ({ date: inv.created_date, total: inv.total || 0, tax: inv.tax_amount || 0, server: inv.server_name, items: inv.items || [] })),
-    ...revenueOrders.map(order => ({ date: order.created_date, total: orderTotal(order), tax: 0, server: order.server_name, items: order.items || [] })),
-  ];
-
-  const totalRevenue = revenueRecords.reduce((sum, r) => sum + r.total, 0);
-  const avgCheckSize = revenueRecords.length > 0 ? totalRevenue / revenueRecords.length : 0;
-  const taxCollected = revenueRecords.reduce((sum, r) => sum + r.tax, 0);
-
-  // Daily revenue chart (last 30 days)
-  const last30Days = [];
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    d.setHours(0, 0, 0, 0);
-    const dateStr = d.toISOString().split("T")[0];
-    const dayRevenue = revenueRecords
-      .filter(r => r.date && r.date.startsWith(dateStr))
-      .reduce((sum, r) => sum + r.total, 0);
-    last30Days.push({
-      date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      revenue: dayRevenue,
-    });
-  }
-
-  // Top 5 menu items (from paid transactions)
-  const itemCounts = {};
-  revenueRecords.forEach(r => {
-    (r.items || []).forEach(item => {
-      itemCounts[item.name] = (itemCounts[item.name] || 0) + (item.quantity || 0);
-    });
-  });
-  const topItems = Object.entries(itemCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([name, count]) => ({ name, count }));
-
-  // Revenue by server
-  const serverRevenue = {};
-  revenueRecords.forEach(r => {
-    if (r.server) {
-      serverRevenue[r.server] = (serverRevenue[r.server] || 0) + r.total;
-    }
-  });
-  const serverData = Object.entries(serverRevenue)
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, revenue]) => ({ name, revenue }));
+  const [dateRange, setDateRange] = useState("month");
+  const { data: report, isPending: loading, error, refetch, isFetching } = useRevenueReport(dateRange);
+  const { totalRevenue = 0, taxCollected = 0, transactions = 0, avgCheckSize = 0, dailyRevenue = [], topItems = [], serverData = [], periodLabel = "" } = report || {};
 
   return (
     <div className="min-h-screen bg-background">
@@ -122,6 +38,11 @@ export default function RevenueAnalytics() {
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin" />
+          </div>
+        ) : error ? (
+          <div role="alert" className="bg-card border border-destructive/30 rounded-2xl p-6 space-y-3">
+            <p className="font-body text-destructive">{error.response?.data?.error || error.message || "Unable to calculate revenue."}</p>
+            <button onClick={() => refetch()} disabled={isFetching} className="px-4 py-2 rounded-full border border-border font-body text-sm disabled:opacity-50">{isFetching ? "Recalculating…" : "Try again"}</button>
           </div>
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
@@ -142,6 +63,13 @@ export default function RevenueAnalytics() {
               ))}
             </div>
 
+            <div className="font-body text-sm text-muted-foreground space-y-1">
+              <p>{periodLabel} · America/Chicago · Based on receipt/order creation dates.</p>
+              <p>Revenue is paid sales after discounts, before tax. Linked receipts and orders count once; unpaid orders and vendor bills are excluded.</p>
+              <p>Tax Collected includes recorded tax only; no tax is estimated for orders without a tax record.</p>
+              {transactions === 0 && <p>No paid sales are recorded in this period.</p>}
+            </div>
+
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
               <StatCard
@@ -153,7 +81,7 @@ export default function RevenueAnalytics() {
               <StatCard
                 icon={Calendar}
                 label="Transactions"
-                value={revenueRecords.length}
+                value={transactions}
                 color="bg-blue-500"
               />
               <StatCard
@@ -174,13 +102,13 @@ export default function RevenueAnalytics() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Daily Revenue Chart */}
               <div className="bg-card border border-border rounded-2xl p-6">
-                <h3 className="font-heading text-lg font-semibold mb-4">Daily Revenue (30 Days)</h3>
+                <h3 className="font-heading text-lg font-semibold mb-4">Daily Revenue ({periodLabel})</h3>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={last30Days}>
+                  <BarChart data={dailyRevenue}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis />
-                    <Tooltip formatter={value => `$${value.toFixed(2)}`} />
+                    <Tooltip formatter={value => `$${Number(value).toFixed(2)}`} />
                     <Bar dataKey="revenue" fill="#C89B4F" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -197,7 +125,7 @@ export default function RevenueAnalytics() {
                           <Utensils className="w-4 h-4 text-primary" />
                           <p className="font-body text-sm font-medium">{item.name}</p>
                         </div>
-                        <span className="font-heading font-semibold text-primary">{item.count} orders</span>
+                        <span className="font-heading font-semibold text-primary">{item.count} sold</span>
                       </div>
                     ))
                   ) : (
