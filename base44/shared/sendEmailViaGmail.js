@@ -1,3 +1,5 @@
+import { base64FromUtf8, base64UrlFromUtf8 } from './base64.js';
+
 /**
  * Sends an email via the connected Gmail account.
  * Uses the Gmail API with the builder's authorized Gmail connector (SHARED mode).
@@ -65,7 +67,7 @@ export async function sendEmailViaGmail(base44, { to, subject, body, attachments
     ].join('\r\n');
   }
 
-  const raw = base64UrlEncode(mimeMessage);
+  const raw = base64UrlFromUtf8(mimeMessage);
 
   const response = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
     method: 'POST',
@@ -82,19 +84,4 @@ export async function sendEmailViaGmail(base44, { to, subject, body, attachments
   }
 
   return await response.json();
-}
-
-/** Convert a UTF-8 string to a base64 string (handles emoji and non-ASCII correctly). */
-function base64FromUtf8(str) {
-  const bytes = new TextEncoder().encode(str);
-  let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-
-/** Base64url-encode a UTF-8 string (for Gmail API raw message field). */
-function base64UrlEncode(str) {
-  return base64FromUtf8(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }

@@ -4,6 +4,7 @@ import { notifyAdmins } from '../../shared/notifyAdmins.js';
 import { secrets } from 'base44:runtime';
 import { sendSms } from '../../shared/sendSms.js';
 import { getAllowedOrigin } from '../../shared/allowedOrigins.js';
+import { base64FromUtf8 } from '../../shared/base64.js';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -224,7 +225,7 @@ Deno.serve(async (req) => {
     `;
 
     const icsString = reservationIcs(reservation);
-    const icsAttach = icsString ? [{ filename: 'jtap-reservation.ics', content: btoa(icsString) }] : undefined;
+    const icsAttach = icsString ? [{ filename: 'jtap-reservation.ics', content: base64FromUtf8(icsString) }] : undefined;
     await sendTransactionalEmail(base44, {
       to: reservation.email,
       subject: subject,
