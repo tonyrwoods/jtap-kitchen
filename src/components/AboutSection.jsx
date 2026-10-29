@@ -6,9 +6,9 @@ export default function AboutSection() {
           {/* Image */}
           <div className="relative">
             <div className="relative overflow-hidden rounded-3xl">
-              <img src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/b6806f7a8_JK-Street_View_sm.png"
+              <img src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/f83e0a268_JTAPKitchenBuildingSign.jpg"
 
-              alt="Luxurious restaurant interior with warm lighting"
+              alt="JTAP Kitchen exterior with signage and mural"
               loading="lazy"
               decoding="async"
               className="w-full h-[400px] md:h-[550px] object-cover" />
