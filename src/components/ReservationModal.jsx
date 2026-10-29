@@ -10,10 +10,14 @@ const BRUNCH_SLOTS = [
   "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM",
 ];
 
+// Lunch runs until 10:00 PM, so on weekdays it covers the whole day.
 const LUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
   "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM",
-  "2:00 PM", "2:30 PM",
+  "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM",
+  "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM",
+  "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM",
+  "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM",
 ];
 
 const DINNER_SLOTS = [
@@ -26,8 +30,7 @@ const DINNER_SLOTS = [
 function slotsForDate(date) {
   const day = date.getDay(); // 0=Sun ... 6=Sat
   if (day === 0 || day === 6) return [...BRUNCH_SLOTS, ...DINNER_SLOTS]; // Sat & Sun: brunch + dinner
-  if (day === 2 || day === 3) return [...LUNCH_SLOTS]; // Tue & Wed: lunch only (dinner closed)
-  return [...LUNCH_SLOTS, ...DINNER_SLOTS]; // Mon, Thu, Fri: lunch + dinner
+  return LUNCH_SLOTS; // Weekdays: lunch runs through 10:00 PM, covering dinner times too
 }
 
 function dayServiceLabel(date) {

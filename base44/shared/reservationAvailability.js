@@ -39,15 +39,19 @@ export function formatTime12(t) {
 // minutes-from-midnight. Mirrors the slots offered by the booking UI
 // (BookTable.jsx slotsForDate): Sat/Sun brunch+dinner, Mon/Thu/Fri
 // lunch+dinner, Tue/Wed lunch only (dinner closed).
-//   10:00=600, 14:00=840, 15:00=900, 17:00=1020, 22:00=1320
+//   10:00=600, 14:00=840, 17:00=1020, 22:00=1320
+// Lunch now runs until 10:00 PM. On days that also serve dinner it hands over
+// to the dinner window at 5:00 PM instead of closing at 3:00 PM, so there is no
+// gap and no overlapping slots between the two services.
 export function serviceWindowsForDay(dayOfWeek) {
   const brunch = { name: 'Brunch', open: 600, close: 840 };
-  const lunch = { name: 'Lunch', open: 600, close: 900 };
+  const lunch = { name: 'Lunch', open: 600, close: 1020 };
+  const lunchAllDay = { name: 'Lunch', open: 600, close: 1320 };
   const dinner = { name: 'Dinner', open: 1020, close: 1320 };
   switch (dayOfWeek) {
     case 0: case 6: return [brunch, dinner];   // Sat & Sun: brunch + dinner
-    case 2: case 3: return [lunch];            // Tue & Wed: lunch only (dinner closed)
-    default: return [lunch, dinner];           // Mon, Thu, Fri: lunch + dinner
+    case 2: case 3: return [lunchAllDay];      // Tue & Wed: lunch only, through 10:00 PM
+    default: return [lunch, dinner];           // Mon, Thu, Fri: lunch into dinner, through 10:00 PM
   }
 }
 
