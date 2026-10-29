@@ -6,7 +6,7 @@ import { MapPin, Clock, Phone, Navigation } from "lucide-react";
 // without making them scroll to the footer or visit a separate Contact page.
 const HOURS = [
   { day: "Brunch", time: "Sat & Sun · 10:00 AM – 2:00 PM" },
-  { day: "Lunch", time: "Mon – Fri · 10:00 AM – 3:00 PM" },
+  { day: "Lunch", time: "Mon – Fri · 10:00 AM – 10:00 PM" },
   { day: "Dinner", time: "Sun, Mon, Thu – Sat · 5:00 PM – 10:00 PM" },
   { day: "Event Center", time: "Tue & Wed · Reservation Only" },
 ];
