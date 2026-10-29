@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowDown, Phone } from "lucide-react";
+import { ArrowDown, MapPin, Phone } from "lucide-react";
 import SmartImage from "@/components/SmartImage";
 import { Link } from "react-router-dom";
 
@@ -56,11 +56,21 @@ export default function HeroSection({ onBook }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.75 }}
-          className="inline-flex items-center gap-2 mb-8 font-body text-white/60 hover:text-primary transition-colors text-2xl">
+          className="inline-flex items-center gap-2 mb-2 font-body text-white/60 hover:text-primary transition-colors text-2xl">
           
           <Phone className="w-4 h-4" />
           (901) 213-8085
         </motion.a>
+
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="flex items-center justify-center gap-2 mb-8 font-body text-sm md:text-base text-white/60">
+          
+          <MapPin className="w-4 h-4 shrink-0" />
+          3397 Summer Avenue, Memphis, TN 38122
+        </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
