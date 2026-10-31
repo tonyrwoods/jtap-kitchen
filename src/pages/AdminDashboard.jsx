@@ -6,8 +6,9 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
   UtensilsCrossed, CalendarDays,
-  Plus, Pencil, Trash2, CheckCircle, XCircle, Clock, Gift, Upload, Salad, Heart, Mail, Star, Search, X
+  Plus, Pencil, Trash2, CheckCircle, CheckCircle2, XCircle, Clock, Gift, Upload, Salad, Heart, Mail, Star, Search, X, ImageOff
 } from "lucide-react";
+import { getWebsiteIssue, hasPhoto } from "@/lib/menuWebsiteCheck";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
 import ReservationsCalendarView from "../components/admin/ReservationsCalendarView";
@@ -206,7 +207,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     Promise.all([
-      base44.entities.MenuItem.list("-created_date", 100),
+      base44.entities.MenuItem.list("-created_date", 500),
       base44.entities.Reservation.list("-created_date", 100),
       base44.entities.GiftCard.list("-created_date", 100),
       base44.entities.Review.list("-created_date", 100),
@@ -224,7 +225,7 @@ export default function AdminDashboard() {
   }, []);
 
   const refreshMenu = async () => {
-    const m = await base44.entities.MenuItem.list("-created_date", 100);
+    const m = await base44.entities.MenuItem.list("-created_date", 500);
     setMenuItems(m);
     setShowForm(false);
     setEditingItem(null);
@@ -303,6 +304,13 @@ export default function AdminDashboard() {
     { icon: Clock, label: "Pending", value: reservations.filter(r => r.status === "Pending").length, color: "bg-yellow-500" },
     { icon: CheckCircle, label: "Confirmed Today", value: reservations.filter(r => r.status === "Confirmed").length, color: "bg-green-500" },
   ];
+
+  const websiteRows = [
+    ...menuItems.map(i => ({ type: "food", raw: i })),
+    ...liquorItems.map(i => ({ type: "liquor", raw: i })),
+  ];
+  const hiddenFromSite = websiteRows.filter(r => getWebsiteIssue(r));
+  const photoCount = websiteRows.filter(hasPhoto).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -481,6 +489,25 @@ export default function AdminDashboard() {
 
             {tab === "Menu Items" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
+                <div className={`rounded-2xl border p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between ${hiddenFromSite.length > 0 ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200"}`}>
+                  <div className="space-y-1.5">
+                    <p className={`font-body text-sm font-semibold flex items-center gap-2 ${hiddenFromSite.length > 0 ? "text-amber-900" : "text-green-900"}`}>
+                      {hiddenFromSite.length > 0 ? <XCircle className="w-4 h-4 shrink-0" /> : <CheckCircle2 className="w-4 h-4 shrink-0" />}
+                      {hiddenFromSite.length > 0
+                        ? `${hiddenFromSite.length} item${hiddenFromSite.length === 1 ? "" : "s"} in this list ${hiddenFromSite.length === 1 ? "is" : "are"} not showing on the website menu`
+                        : `All ${websiteRows.length} items in this list are showing on the website menu`}
+                    </p>
+                    <p className="font-body text-xs text-muted-foreground flex items-center gap-1.5">
+                      <ImageOff className="w-3.5 h-3.5" />
+                      {photoCount} of {websiteRows.length} items have a photo attached
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 font-body text-xs text-muted-foreground shrink-0">
+                    <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-amber-100 border border-amber-300" /> Not on website</span>
+                    <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> Has photo</span>
+                    <span className="inline-flex items-center gap-1.5"><ImageOff className="w-3.5 h-3.5 text-muted-foreground/60" /> No photo</span>
+                  </div>
+                </div>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3 flex-wrap">
                     {!showForm && (
@@ -538,8 +565,8 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody>
                       {[
-                        ...menuItems.map(i => ({ id: `f-${i.id}`, type: "food", raw: i, name: i.name, category: i.category, price: Number(i.price) || 0, priceLabel: `$${Number(i.price || 0).toFixed(2)}` })),
-                        ...liquorItems.map(i => ({ id: `l-${i.id}`, type: "liquor", raw: i, name: i.name, category: i.section, price: liquorSortPrice(i), priceLabel: liquorPriceLabel(i) })),
+                        ...menuItems.map(i => ({ id: `f-${i.id}`, type: "food", raw: i, name: i.name, category: i.category, price: Number(i.price) || 0, priceLabel: `$${Number(i.price || 0).toFixed(2)}`, issue: getWebsiteIssue({ type: "food", raw: i }), photo: Boolean(i.image_url) })),
+                        ...liquorItems.map(i => ({ id: `l-${i.id}`, type: "liquor", raw: i, name: i.name, category: i.section, price: liquorSortPrice(i), priceLabel: liquorPriceLabel(i), issue: getWebsiteIssue({ type: "liquor", raw: i }), photo: Boolean(i.image_url) })),
                       ]
                         .filter(row => !menuSearch || (row.name || "").toLowerCase().includes(menuSearch.toLowerCase()))
                         .sort((a, b) => {
@@ -552,14 +579,18 @@ export default function AdminDashboard() {
                         })
                         .map(row => (
                         <Fragment key={row.id}>
-                        <tr className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                        <tr className={`border-b border-border last:border-0 hover:bg-muted/20 transition-colors ${row.issue ? "bg-amber-50" : ""}`}>
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-2">
                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${row.type === "liquor" ? "bg-purple-100 text-purple-700" : "bg-amber-100 text-amber-700"}`}>{row.type}</span>
                               <p className="font-body text-sm font-medium">{row.name}</p>
+                              {row.photo
+                                ? <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" aria-label="Photo attached" title="Photo attached" />
+                                : <ImageOff className="w-4 h-4 text-muted-foreground/50 shrink-0" aria-label="No photo attached" title="No photo attached" />}
                             </div>
                             {row.type === "food" && row.raw.is_featured && <span className="text-xs text-primary ml-7">Chef's Pick</span>}
                             {row.type === "liquor" && row.raw.is_active === false && <span className="text-xs text-muted-foreground ml-7 italic">Inactive</span>}
+                            {row.issue && <p className="font-body text-xs text-amber-800 ml-7 mt-0.5">⚠ {row.issue}</p>}
                           </td>
                           <td className="px-5 py-3 hidden sm:table-cell">
                             <span className="font-body text-sm text-muted-foreground">{row.category}</span>
