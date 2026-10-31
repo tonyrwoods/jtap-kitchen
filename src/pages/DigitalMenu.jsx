@@ -8,6 +8,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import useSeoMeta from "../hooks/useSeoMeta";
 import { trackPixel } from "@/lib/metaPixel";
 import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
+import MenuItemCard from "@/components/menu/MenuItemCard";
 import TapRoomSocietyQR from "@/components/TapRoomSocietyQR";
 
 const CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks", "Sports Menu", "Happy Hour"];
@@ -25,71 +26,29 @@ const FALLBACK_IMAGES = {
   Drinks: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=600&q=80",
 };
 
-const DIETARY_COLORS = {
-  "Vegetarian": "bg-green-100 text-green-800",
-  "Vegan": "bg-emerald-100 text-emerald-800",
-  "Gluten-Free": "bg-yellow-100 text-yellow-800",
-  "Contains Nuts": "bg-orange-100 text-orange-800",
-  "Spicy": "bg-red-100 text-red-800",
-};
-
 function MenuCard({ item, qty, onAdd, onRemove }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-card border border-border rounded-2xl flex flex-col overflow-hidden"
-    >
-      {item.image_url && (
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <img src={item.image_url} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-        </div>
-      )}
-      <div className="p-4 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <div className="flex items-center gap-2">
-            {item.is_featured && (
-              <span className="bg-primary text-primary-foreground text-[10px] font-semibold px-2 py-0.5 rounded-full font-body uppercase tracking-wide shrink-0">
-                Chef's Pick
-              </span>
-            )}
-            <h3 className="font-heading text-base font-semibold leading-snug">{item.name}</h3>
-          </div>
-          <span className="font-heading text-base font-bold text-primary shrink-0">${Number(item.price).toFixed(2)}</span>
-        </div>
-        {item.description && (
-          <p className="font-body text-sm text-muted-foreground leading-relaxed flex-1">{item.description}</p>
-        )}
-        {item.dietary_tags?.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-3">
-            {item.dietary_tags.map(tag => (
-              <span key={tag} className={`text-xs px-2 py-0.5 rounded-full font-body font-medium ${DIETARY_COLORS[tag] || "bg-muted text-muted-foreground"}`}>
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="mt-3 pt-3 border-t border-border">
-          {qty > 0 ? (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <button onClick={onRemove} className="w-7 h-7 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center" aria-label="Decrease quantity">
-                  <Minus className="w-3.5 h-3.5" />
-                </button>
-                <span className="font-body text-sm font-semibold w-6 text-center">{qty}</span>
-                <button onClick={onAdd} className="w-7 h-7 rounded-full bg-primary text-primary-foreground hover:opacity-90 flex items-center justify-center" aria-label="Increase quantity">
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <span className="font-heading text-sm font-semibold text-primary">${(item.price * qty).toFixed(2)}</span>
-            </div>
-          ) : (
-            <button onClick={onAdd} className="w-full py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5">
-              <Plus className="w-3.5 h-3.5" /> Add to Order
-            </button>
-          )}
-        </div>
+  const footer = qty > 0 ? (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <button onClick={onRemove} className="w-8 h-8 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center" aria-label="Decrease quantity">
+          <Minus className="w-3.5 h-3.5" />
+        </button>
+        <span className="font-body text-sm font-semibold w-6 text-center">{qty}</span>
+        <button onClick={onAdd} className="w-8 h-8 rounded-full bg-primary text-primary-foreground hover:opacity-90 flex items-center justify-center" aria-label="Increase quantity">
+          <Plus className="w-3.5 h-3.5" />
+        </button>
       </div>
+      <span className="font-heading text-sm font-semibold text-primary">${(Number(item.price) * qty).toFixed(2)}</span>
+    </div>
+  ) : (
+    <button onClick={onAdd} className="w-full py-2.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5">
+      <Plus className="w-4 h-4" /> Add to Order
+    </button>
+  );
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="h-full">
+      <MenuItemCard item={item} footer={footer} />
     </motion.div>
   );
 }

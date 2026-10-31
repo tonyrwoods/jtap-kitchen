@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Leaf, Flame, Wheat, Nut, UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie, Utensils, Carrot, Wine, Pizza } from "lucide-react";
+import { UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie, Utensils, Carrot, Wine, Pizza } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSeoMeta from "../hooks/useSeoMeta";
 import MenuQRCode from "../components/MenuQRCode";
 import TapRoomSocietyQR from "../components/TapRoomSocietyQR";
+import MenuItemCard from "@/components/menu/MenuItemCard";
 
 const CATEGORIES = [
   { key: "All", label: "Full Menu", icon: UtensilsCrossed },
@@ -33,39 +34,7 @@ const CATEGORY_IMAGES = {
   Desserts: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=1200&q=80",
 };
 
-const DIETARY_ICONS = {
-  Vegetarian: { icon: Leaf, color: "text-green-600", bg: "bg-green-50" },
-  Vegan: { icon: Leaf, color: "text-emerald-700", bg: "bg-emerald-50" },
-  "Gluten-Free": { icon: Wheat, color: "text-amber-600", bg: "bg-amber-50" },
-  "Contains Nuts": { icon: Nut, color: "text-yellow-700", bg: "bg-yellow-50" },
-  Spicy: { icon: Flame, color: "text-red-600", bg: "bg-red-50" },
-};
-
 const SECTION_ORDER = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Sports Menu", "Happy Hour"];
-
-const FALLBACK_IMAGES = {
-  Brunch: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80",
-  "Brunch Sides": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
-  Appetizers: "https://images.unsplash.com/photo-1541014741259-de529411b96a?w=600&q=80",
-  "Salads & Sandwiches": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
-  Entrees: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
-  Lunch: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80",
-  "Lunch Sides": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
-  Sides: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
-  Desserts: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600&q=80",
-};
-
-function DietaryBadge({ tag }) {
-  const config = DIETARY_ICONS[tag];
-  if (!config) return null;
-  const Icon = config.icon;
-  return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.color}`}>
-      <Icon className="w-3 h-3" />
-      {tag}
-    </span>
-  );
-}
 
 function MenuCard({ item }) {
   return (
@@ -75,38 +44,9 @@ function MenuCard({ item }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.3 }}
-      className="bg-card border border-border rounded-2xl group flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300"
+      className="h-full"
     >
-      {item.image_url && (
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <img src={item.image_url} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-        </div>
-      )}
-      <div className="p-5 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-3 mb-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            {item.is_featured && (
-              <span className="bg-primary text-primary-foreground text-[10px] font-semibold px-2.5 py-0.5 rounded-full font-body uppercase tracking-wide">
-                Chef's Pick
-              </span>
-            )}
-            <h3 className="font-heading text-lg font-semibold text-foreground leading-tight">{item.name}</h3>
-          </div>
-          {item.price ? (
-            <span className="font-heading text-lg font-bold text-primary shrink-0">
-              ${Number(item.price).toFixed(2)}
-            </span>
-          ) : null}
-        </div>
-        {item.description && (
-          <p className="font-body text-sm text-muted-foreground leading-relaxed flex-1">{item.description}</p>
-        )}
-        {Array.isArray(item.dietary_tags) && item.dietary_tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border">
-            {item.dietary_tags.map((tag) => <DietaryBadge key={tag} tag={tag} />)}
-          </div>
-        )}
-      </div>
+      <MenuItemCard item={item} />
     </motion.div>
   );
 }
@@ -211,7 +151,7 @@ export default function Menu() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(9)].map((_, i) => (
-              <div key={i} className="bg-card border border-border rounded-2xl overflow-hidden animate-pulse">
+              <div key={i} className="bg-card border border-border rounded-3xl overflow-hidden animate-pulse">
                 <div className="aspect-[4/3] bg-muted" />
                 <div className="p-5 space-y-3">
                   <div className="h-4 bg-muted rounded w-3/4" />

@@ -1,69 +1,11 @@
 import { useState, useEffect } from "react";
-import { Leaf, Flame, Wheat, Nut } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
-import SmartImage from "@/components/SmartImage";
+import MenuItemCard from "@/components/menu/MenuItemCard";
 
 const CATEGORIES = ["All", "Appetizers", "Salads & Sandwiches", "Entrees", "Sides", "Desserts"];
 
-const DIETARY_ICONS = {
-  Vegetarian: { icon: Leaf, color: "text-green-600", bg: "bg-green-50" },
-  Vegan: { icon: Leaf, color: "text-emerald-700", bg: "bg-emerald-50" },
-  "Gluten-Free": { icon: Wheat, color: "text-amber-600", bg: "bg-amber-50" },
-  "Contains Nuts": { icon: Nut, color: "text-yellow-700", bg: "bg-yellow-50" },
-  Spicy: { icon: Flame, color: "text-red-600", bg: "bg-red-50" },
-};
 
-function DietaryBadge({ tag }) {
-  const config = DIETARY_ICONS[tag];
-  if (!config) return null;
-  const Icon = config.icon;
-  return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.color}`}>
-      <Icon className="w-3 h-3" />
-      {tag}
-    </span>
-  );
-}
-
-function MenuCard({ item }) {
-  return (
-    <div className="bg-card border border-border rounded-2xl overflow-hidden group flex flex-col">
-      {item.image_url && (
-        <div className="relative overflow-hidden aspect-[4/3]">
-          <SmartImage
-            src={item.image_url}
-            alt={item.name}
-            loading="lazy"
-            decoding="async"
-            imgClassName="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          {item.is_featured && (
-            <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full font-body uppercase tracking-wide">
-              Chef's Pick
-            </span>
-          )}
-        </div>
-      )}
-      <div className="p-5 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-3 mb-2">
-          <h3 className="font-heading text-lg font-semibold text-foreground leading-tight">{item.name}</h3>
-          {item.price ? <span className="font-heading text-lg font-bold text-primary shrink-0">${Number(item.price).toFixed(2)}</span> : null}
-        </div>
-        {item.description && (
-          <p className="font-body text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{item.description}</p>
-        )}
-        {Array.isArray(item.dietary_tags) && item.dietary_tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
-            {item.dietary_tags.map((tag) => (
-              <DietaryBadge key={tag} tag={tag} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default function MenuSection() {
   const [items, setItems] = useState([]);
@@ -141,7 +83,7 @@ export default function MenuSection() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
               {filtered.map((item) => (
-                <MenuCard key={item.id} item={item} />
+                <MenuItemCard key={item.id} item={item} />
               ))}
             </div>
             {allFiltered.length > 8 && (
