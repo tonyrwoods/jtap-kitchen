@@ -4,6 +4,7 @@ import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import GuaranteeDepositCard from "@/components/reservations/GuaranteeDepositCard";
 
 const BRUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -128,7 +129,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
   const [phone, setPhone] = useState("");
   const [special, setSpecial] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
+  const [depositOffer, setDepositOffer] = useState(null);
 
   useEffect(() => {
     if (open && prefill) {
@@ -162,23 +163,12 @@ export default function ReservationModal({ open, onClose, prefill }) {
         special_requests: special,
       });
       if (res.data?.success) {
-        if (res.data.deposit_required && res.data.reservation?.id) {
-          setRedirecting(true);
-          try {
-            const checkoutRes = await base44.functions.invoke("create-reservation-deposit-checkout", {
-              reservationId: res.data.reservation.id,
-            });
-            if (checkoutRes.data?.redirectUrl) {
-              window.location.href = checkoutRes.data.redirectUrl;
-              return;
-            }
-          } catch {
-            toast.error("Could not start deposit payment. Your reservation is pending — we'll be in touch.");
-          }
-          setRedirecting(false);
-        } else {
-          setSubmitted(true);
-        }
+        setDepositOffer(
+          res.data.deposit_available
+            ? { id: res.data.reservation?.id, perGuest: res.data.deposit_per_guest, amount: res.data.deposit_amount }
+            : null
+        );
+        setSubmitted(true);
       } else {
         toast.error(res.data?.error || "Could not book. Please try again.");
       }
@@ -192,6 +182,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
     setTimeout(() => {
       setStep(1); setDate(null); setTime(null); setParty(2);
       setName(""); setEmail(""); setPhone(""); setSpecial(""); setSubmitted(false);
+      setDepositOffer(null);
     }, 400);
   };
 
@@ -274,6 +265,16 @@ export default function ReservationModal({ open, onClose, prefill }) {
                       {date?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} · {time} · Party of {party}
                     </p>
                     <p className="font-body text-xs text-muted-foreground mt-4">A confirmation has been sent to {email}</p>
+                    {depositOffer?.id && (
+                      <div className="mt-6 w-full">
+                        <GuaranteeDepositCard
+                          reservationId={depositOffer.id}
+                          partySize={party}
+                          perGuest={depositOffer.perGuest}
+                          amount={depositOffer.amount}
+                        />
+                      </div>
+                    )}
                     <button onClick={handleClose}
                       className="mt-8 px-8 py-3 border border-border rounded-full font-body text-sm font-medium text-foreground hover:bg-secondary transition-colors">
                       Close
@@ -416,9 +417,9 @@ export default function ReservationModal({ open, onClose, prefill }) {
                       className="px-6 py-4 border border-border rounded-full font-body text-sm font-medium text-foreground hover:bg-secondary transition-colors">
                       Back
                     </button>
-                    <button onClick={handleSubmit} disabled={!canNext2 || redirecting}
+                    <button onClick={handleSubmit} disabled={!canNext2}
                       className="flex-1 py-4 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-primary/20">
-                      {redirecting ? "Redirecting to payment…" : "Confirm Reservation"}
+                      Confirm Reservation
                     </button>
                   </div>
                 )}

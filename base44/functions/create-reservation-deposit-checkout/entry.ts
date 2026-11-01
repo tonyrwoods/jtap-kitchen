@@ -46,7 +46,9 @@ export default async function(req) {
     if (reservation.deposit_status === "Paid") {
       return Response.json({ error: "Deposit has already been paid." }, { status: 400 });
     }
-    if (reservation.status !== "Pending Payment") {
+    // The deposit is optional, so a guest may add it to an already-confirmed
+    // reservation as well as pay it while the reservation is pending.
+    if (!["Pending Payment", "Confirmed", "Pending"].includes(reservation.status)) {
       return Response.json({ error: "This reservation is no longer eligible for deposit checkout." }, { status: 400 });
     }
 

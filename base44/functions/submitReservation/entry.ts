@@ -57,12 +57,15 @@ export default async function(req) {
       return Response.json({ error: 'Sorry, we are fully booked for that time. Please choose a different time.' }, { status: 409 });
     }
 
-    // Deposit check: if enabled and party size meets threshold, require a deposit
+    // Deposit is OPTIONAL: offered (never forced) to parties at or above the
+    // configured size so a guest can guarantee their table. Without it the
+    // reservation is simply confirmed as usual.
     const depositEnabled = settings[0]?.reservation_deposit_enabled === true;
-    const minPartySize = Number(settings[0]?.reservation_deposit_min_party_size) || 6;
-    const depositRequired = depositEnabled && Number(party_size) >= minPartySize;
+    const minPartySize = Number(settings[0]?.reservation_deposit_min_party_size) || 4;
     const depositPerGuest = Number(settings[0]?.reservation_deposit_amount) || 10;
-    const depositAmount = depositRequired ? depositPerGuest * Number(party_size) : 0;
+    const depositAvailable = depositEnabled && Number(party_size) >= minPartySize;
+    const wantsDeposit = depositAvailable && body.guarantee_deposit === true;
+    const depositAmount = wantsDeposit ? depositPerGuest * Number(party_size) : 0;
 
     const confirm_token = crypto.randomUUID();
     const reservation = await base44.asServiceRole.entities.Reservation.create({
@@ -74,14 +77,21 @@ export default async function(req) {
       party_size: Number(party_size),
       special_requests: special_requests || '',
       sms_opt_in: !!sms_opt_in,
-      status: depositRequired ? 'Pending Payment' : 'Confirmed',
-      confirmed_at: depositRequired ? null : new Date().toISOString(),
+      status: wantsDeposit ? 'Pending Payment' : 'Confirmed',
+      confirmed_at: wantsDeposit ? null : new Date().toISOString(),
       confirm_token,
       deposit_amount: depositAmount,
-      deposit_status: depositRequired ? 'Unpaid' : 'Unpaid',
+      deposit_status: 'Unpaid',
     });
 
-    return Response.json({ success: true, reservation, deposit_required: depositRequired });
+    return Response.json({
+      success: true,
+      reservation,
+      deposit_required: wantsDeposit,
+      deposit_available: depositAvailable && !wantsDeposit,
+      deposit_per_guest: depositPerGuest,
+      deposit_amount: depositAvailable ? depositPerGuest * Number(party_size) : 0,
+    });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

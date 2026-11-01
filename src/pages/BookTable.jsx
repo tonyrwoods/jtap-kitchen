@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle, Mail } from "lucide-react";
 import { toast } from "sonner";
 import CompanionInviteForm from "@/components/CompanionInviteForm";
+import GuaranteeDepositCard from "@/components/reservations/GuaranteeDepositCard";
 import ComplementarySuggestions from "@/components/ComplementarySuggestions";
 import { trackPixel } from "@/lib/metaPixel";
 
@@ -145,6 +146,7 @@ export default function BookTable() {
   const [loading, setLoading] = useState(false);
   const [reservationToken, setReservationToken] = useState(null);
   const [reservationId, setReservationId] = useState(null);
+  const [depositOffer, setDepositOffer] = useState(null);
   const [availability, setAvailability] = useState({}); // time -> { remaining, available }
   const [availLoading, setAvailLoading] = useState(false);
 
@@ -199,6 +201,11 @@ export default function BookTable() {
       if (res.data?.success) {
         setReservationToken(res.data.reservation.confirm_token);
         setReservationId(res.data.reservation.id);
+        setDepositOffer(
+          res.data.deposit_available
+            ? { perGuest: res.data.deposit_per_guest, amount: res.data.deposit_amount }
+            : null
+        );
         base44.analytics.track({ eventName: "reservation_created", properties: { party_size: party, date: dateStr } });
         trackPixel("Lead", { content_name: "Reservation", content_category: "Dining", value: 0, currency: "USD" });
         setSubmitted(true);
@@ -215,6 +222,7 @@ export default function BookTable() {
     setStep(1); setDate(null); setTime(null); setParty(2);
     setName(""); setEmail(""); setPhone(""); setSpecial(""); setSubmitted(false);
     setReservationToken(null); setReservationId(null);
+    setDepositOffer(null);
   };
 
   return (
@@ -254,6 +262,18 @@ export default function BookTable() {
               </p>
               <p className="font-body text-muted-foreground text-sm mt-1">Party of {party}</p>
               <p className="font-body text-xs text-muted-foreground mt-6">A confirmation will be sent to <span className="text-foreground">{email}</span></p>
+
+              {depositOffer && reservationId && (
+                <div className="mt-8">
+                  <GuaranteeDepositCard
+                    reservationId={reservationId}
+                    partySize={party}
+                    perGuest={depositOffer.perGuest}
+                    amount={depositOffer.amount}
+                  />
+                </div>
+              )}
+
               <div className="flex gap-3 justify-center mt-10">
                 <button onClick={reset}
                   className="px-8 py-3 border border-border rounded-full font-body text-sm font-medium hover:bg-secondary transition-colors">
