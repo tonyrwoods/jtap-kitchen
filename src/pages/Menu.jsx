@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Cookie, Utensils, Carrot, Wine, Pizza } from "lucide-react";
+import { UtensilsCrossed, ChefHat, Salad, Beef, CupSoda, Coffee, Cookie, Utensils, Carrot, Wine, Pizza } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSeoMeta from "../hooks/useSeoMeta";
 import MenuQRCode from "../components/MenuQRCode";
@@ -18,6 +18,7 @@ const CATEGORIES = [
   { key: "Lunch Sides", label: "Lunch Sides", icon: Carrot },
   { key: "Sides", label: "Sides", icon: CupSoda },
   { key: "Desserts", label: "Desserts", icon: Cookie },
+  { key: "Beverages", label: "Beverages", icon: Coffee },
   { key: "Sports Menu", label: "Sports Menu", icon: Pizza },
   { key: "Happy Hour", label: "Happy Hour", icon: Wine },
 ];
@@ -32,9 +33,10 @@ const CATEGORY_IMAGES = {
   "Lunch Sides": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&q=80",
   Sides: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=1200&q=80",
   Desserts: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=1200&q=80",
+  Beverages: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=1200&q=80",
 };
 
-const SECTION_ORDER = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Sports Menu", "Happy Hour"];
+const SECTION_ORDER = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Beverages", "Sports Menu", "Happy Hour"];
 
 function MenuCard({ item }) {
   return (

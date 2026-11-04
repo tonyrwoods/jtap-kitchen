@@ -11,7 +11,7 @@ import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
 import MenuItemCard from "@/components/menu/MenuItemCard";
 import TapRoomSocietyQR from "@/components/TapRoomSocietyQR";
 
-const CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks", "Sports Menu", "Happy Hour"];
+const CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Beverages", "Drinks", "Sports Menu", "Happy Hour"];
 
 const FALLBACK_IMAGES = {
   Brunch: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80",

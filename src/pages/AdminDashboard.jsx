@@ -65,7 +65,7 @@ const TAB_GROUPS = [
 ];
 const TABS = TAB_GROUPS.flatMap(g => g.tabs);
 const STATUSES = ["Pending", "Confirmed", "Cancelled", "Completed", "No-Show"];
-const CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Drinks", "Sports Menu", "Happy Hour"];
+const CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Beverages", "Drinks", "Sports Menu", "Happy Hour"];
 
 function StatCard({ icon: Icon, label, value, color }) {
   return (
