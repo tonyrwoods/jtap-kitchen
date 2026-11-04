@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
   UtensilsCrossed, CalendarDays,
-  Plus, Pencil, Trash2, CheckCircle, CheckCircle2, XCircle, Clock, Gift, Upload, Salad, Heart, Mail, Star, Search, X, ImageOff
+  Plus, Pencil, Trash2, Copy, CheckCircle, CheckCircle2, XCircle, Clock, Gift, Upload, Salad, Heart, Mail, Star, Search, X, ImageOff
 } from "lucide-react";
 import { getWebsiteIssue, hasPhoto } from "@/lib/menuWebsiteCheck";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
@@ -234,6 +234,45 @@ export default function AdminDashboard() {
   const deleteItem = async (id) => {
     await base44.entities.MenuItem.delete(id);
     setMenuItems(prev => prev.filter(i => i.id !== id));
+  };
+
+  // Copies an item (and its photo, price, category, tags) and opens the copy
+  // for editing so it can be renamed before it goes live on the menu.
+  const duplicateItem = async (row) => {
+    const src = row.raw;
+    if (row.type === "food") {
+      const copy = await base44.entities.MenuItem.create({
+        name: `${src.name} (Copy)`,
+        category: src.category,
+        price: Number(src.price) || 0,
+        cost: src.cost,
+        description: src.description,
+        image_url: src.image_url,
+        is_featured: src.is_featured,
+        dietary_tags: src.dietary_tags || [],
+      });
+      setMenuItems(prev => [copy, ...prev]);
+      setEditingItem(copy);
+      setShowForm(true);
+    } else {
+      const copy = await base44.entities.LiquorMenuItem.create({
+        name: `${src.name} (Copy)`,
+        section: src.section,
+        spirit_type: src.spirit_type,
+        description: src.description,
+        price: src.price,
+        price_half_pour: src.price_half_pour,
+        price_full_pour: src.price_full_pour,
+        price_bottle: src.price_bottle,
+        flavors: src.flavors,
+        sort_order: Number(src.sort_order) || 0,
+        is_active: src.is_active !== false,
+      });
+      setLiquorItems(prev => [...prev, copy]);
+      setEditingLiquor(copy);
+      setShowLiquorForm(true);
+    }
+    toast.success("Duplicated — rename the copy and save.");
   };
 
   const refreshLiquor = async () => {
@@ -600,6 +639,9 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-2 justify-end">
+                              <button onClick={() => duplicateItem(row)} title="Duplicate" aria-label={`Duplicate ${row.name}`} className="p-1.5 hover:text-primary transition-colors">
+                                <Copy className="w-4 h-4" />
+                              </button>
                               <button onClick={() => {
                                 if (row.type === "food") { setEditingItem(row.raw); setShowForm(true); }
                                 else { setEditingLiquor(row.raw); setShowLiquorForm(true); }
