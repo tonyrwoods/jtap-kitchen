@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { CheckCircle2, Circle, RotateCcw, ClipboardList, PenLine } from "lucide-react";
+import { CheckCircle2, Circle, RotateCcw, ClipboardList, PenLine, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { printOpeningChecklist } from "@/lib/printOpeningChecklist";
 
 const CHECKLIST_SECTIONS = [
   {
@@ -139,12 +140,27 @@ export default function OpeningChecklistTab() {
             </h2>
             <p className="font-body text-sm text-muted-foreground mt-0.5">{format(new Date(), "EEEE, MMMM d, yyyy")} — resets daily</p>
           </div>
-          <button
-            onClick={reset}
-            className="flex items-center gap-2 px-4 py-2 border border-border rounded-full font-body text-sm text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
-          >
-            <RotateCcw className="w-4 h-4" /> Reset
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                printOpeningChecklist({
+                  sections: CHECKLIST_SECTIONS,
+                  checked,
+                  signoffs,
+                  dateLabel: format(new Date(), "EEEE, MMMM d, yyyy"),
+                })
+              }
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              <Printer className="w-4 h-4" /> Print
+            </button>
+            <button
+              onClick={reset}
+              className="flex items-center gap-2 px-4 py-2 border border-border rounded-full font-body text-sm text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
+            >
+              <RotateCcw className="w-4 h-4" /> Reset
+            </button>
+          </div>
         </div>
 
         {/* Progress bar */}
