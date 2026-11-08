@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Building2, Cake, PartyPopper, UtensilsCrossed, Phone, ShoppingBag } from "lucide-react";
 import useSeoMeta from "@/hooks/useSeoMeta";
+import { CATERING_ORDER_URL } from "@/lib/ordering";
 
 // Catering landing page. Every order CTA hands guests off to the app's online
 // ordering experience (/menu) where they build a cart and check out.
@@ -31,8 +32,8 @@ const OCCASIONS = [
 
 const STEPS = [
   { step: "01", title: "Browse the menu", copy: "Chef-curated casual dishes, sides, and desserts — all available to order in bulk." },
-  { step: "02", title: "Build your order online", copy: "Add what you need, choose pickup, and pay securely on our site." },
-  { step: "03", title: "Pick it up fresh", copy: "We'll have everything packed and ready at your chosen time on Summer Ave." },
+  { step: "02", title: "Build your order online", copy: "Add what you need on our online ordering page — delivery or pickup, $50 minimum." },
+  { step: "03", title: "We handle the rest", copy: "Order a day ahead and your food arrives packed, labeled, and ready to serve." },
 ];
 
 export default function Catering() {
@@ -60,15 +61,17 @@ export default function Catering() {
             </h1>
             <p className="font-body text-base md:text-lg text-background/70 max-w-xl mx-auto mb-9 leading-relaxed">
               Chef-prepared trays and platters for the office, the party, and everything in between.
-              Order online and pick it up fresh from our kitchen on Summer Ave.
+              Order online for delivery or pickup from our kitchen on Summer Ave.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link
-                to="/menu"
+              <a
+                href={CATERING_ORDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold tracking-wide hover:opacity-90 transition-opacity"
               >
                 <ShoppingBag className="w-4 h-4" /> Order Catering Online
-              </Link>
+              </a>
               <Link
                 to="/event-center"
                 className="inline-flex items-center gap-2 px-8 py-4 border border-background/30 text-background rounded-full font-body text-sm font-semibold tracking-wide hover:bg-background/10 transition-colors"
@@ -137,12 +140,14 @@ export default function Catering() {
             team will handle the room, the menu, and the service.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              to="/menu"
+            <a
+              href={CATERING_ORDER_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold tracking-wide hover:opacity-90 transition-opacity"
             >
               <ShoppingBag className="w-4 h-4" /> Order Catering Online
-            </Link>
+            </a>
             <a
               href="tel:+19012138085"
               className="inline-flex items-center gap-2 px-8 py-4 border border-background/30 text-background rounded-full font-body text-sm font-semibold tracking-wide hover:bg-background/10 transition-colors"
@@ -151,7 +156,7 @@ export default function Catering() {
             </a>
           </div>
           <p className="font-body text-xs text-background/40 mt-6">
-            Catering pickup: 3397 Summer Ave., Memphis, TN 38122
+            Delivery or pickup · $50 order minimum · Please order at least one day ahead · 3397 Summer Ave., Memphis, TN 38122
           </p>
         </div>
       </section>

@@ -4,6 +4,7 @@ import { useI18n } from "@/lib/i18n";
 import { Menu, X, ChevronLeft, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AccountMenu from "./AccountMenu";
+import { CATERING_ORDER_URL } from "@/lib/ordering";
 
 // Primary nav links shown directly in the bar
 const PRIMARY_LINKS = [
@@ -178,12 +179,14 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
             {/* Right side: Account + CTA */}
             <div className="hidden md:flex items-center gap-3">
               <AccountMenu />
-              <Link
-                to="/catering"
+              <a
+                href={CATERING_ORDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hidden xl:inline-flex items-center px-4 py-2.5 border border-primary/50 text-primary font-body text-sm font-medium tracking-wide rounded-full hover:bg-primary/5 transition-colors duration-300"
               >
                 Order Catering
-              </Link>
+              </a>
               <button
                 onClick={onBookTable}
                 className="inline-flex items-center px-5 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full hover:opacity-90 transition-opacity duration-300"
@@ -239,13 +242,15 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
                     </a>
                   )
                 )}
-                <Link
-                  to="/catering"
+                <a
+                  href={CATERING_ORDER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
                   className="inline-flex items-center justify-center px-6 py-3 border border-primary text-primary font-body text-sm font-medium tracking-wide rounded-full"
                 >
                   Order Catering
-                </Link>
+                </a>
                 <button
                   onClick={() => { setMobileOpen(false); onBookTable(); }}
                   className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full"

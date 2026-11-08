@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MapPin, Phone, Mail, Instagram, Clock, Send, CheckCircle2, Facebook } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { trackPixel } from "@/lib/metaPixel";
+import { CATERING_ORDER_URL } from "@/lib/ordering";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -170,7 +171,7 @@ export default function Footer({ onBookTable }) {
             <div className="space-y-3">
               {[
                 { label: "Our Menu", href: "/menu" },
-                { label: "Order Catering", href: "/catering" },
+                { label: "Order Catering", href: CATERING_ORDER_URL },
                 { label: "Reserve a Table", href: null, action: "reserve" },
                 { label: "Event Center", href: "/event-center" },
                 { label: "Gift Cards", href: "/gift-cards" },

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { MapPin, Clock, Phone, Navigation } from "lucide-react";
+import { CATERING_ORDER_URL } from "@/lib/ordering";
 
 // Compact logistics strip near the bottom of the homepage.
 // Gives ready-to-book visitors the essential info (where, when, how to call)
@@ -55,12 +55,14 @@ export default function PlanYourVisit() {
                   >
                     <Navigation className="w-3.5 h-3.5" /> Get Directions
                   </a>
-                  <Link
-                    to="/catering"
+                  <a
+                    href={CATERING_ORDER_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-xs font-semibold hover:opacity-90 transition-opacity"
                   >
                     Order Catering
-                  </Link>
+                  </a>
                 </div>
               </div>
             </div>
