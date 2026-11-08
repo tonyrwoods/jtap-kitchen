@@ -45,11 +45,11 @@ export default function Catering() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/92f5560cf_jtap-catering-hero.png"
+            src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/40905e374_jtap-catering-hero-2x.png"
             alt=""
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-foreground/60" />
+          <div className="absolute inset-0 bg-foreground/40" />
         </div>
         <div className="relative max-w-5xl mx-auto px-6 lg:px-10 py-24 md:py-32 text-center">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
