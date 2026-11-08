@@ -79,6 +79,12 @@ export default function Catering() {
                 Plan a Large Event <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
+            <Link
+              to="/catering-flyer"
+              className="inline-block mt-6 font-body text-sm text-background/60 hover:text-primary underline underline-offset-4 transition-colors"
+            >
+              Download our office catering flyer
+            </Link>
           </motion.div>
         </div>
       </section>

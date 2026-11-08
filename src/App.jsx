@@ -27,6 +27,7 @@ import Menu from './pages/Menu';
 import LiquorMenu from './pages/LiquorMenu';
 import ContactUs from './pages/ContactUs';
 import Catering from './pages/Catering';
+import CateringFlyer from './pages/CateringFlyer';
 import Support from './pages/Support';
 import InformationSecurityPolicy from './pages/InformationSecurityPolicy';
 import DataRetentionPolicy from './pages/DataRetentionPolicy';
@@ -151,6 +152,7 @@ const AuthenticatedApp = () => {
         <Route path="/schedule-interview" element={<ScheduleInterview />} />
         <Route path="/event-center" element={<EventCenter />} />
         <Route path="/catering" element={<Catering />} />
+        <Route path="/catering-flyer" element={<CateringFlyer />} />
         <Route path="/vendor-signup" element={<VendorSignup />} />
         <Route path="/tap-room-society" element={<TapRoomSociety />} />
         <Route path="/my-membership" element={<MyMembership />} />
