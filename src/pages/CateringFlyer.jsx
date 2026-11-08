@@ -20,6 +20,7 @@ const IMAGES = {
   main: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/3bc69e45d_generated_image.png",
   mac: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/fae363bb6_generated_image.png",
   broccoli: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/8df0d3d7e_generated_image.png",
+  logo: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/941e8439b_jkap-logo.jpg",
 };
 
 export default function CateringFlyer() {
@@ -113,7 +114,21 @@ export default function CateringFlyer() {
           >
             {/* Header */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: 34, fontWeight: 800, letterSpacing: "0.14em" }}>JTAP KITCHEN</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+                <img
+                  src={IMAGES.logo}
+                  alt="JTAP Kitchen logo"
+                  crossOrigin="anonymous"
+                  style={{
+                    width: 96,
+                    height: 96,
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "2px solid rgba(242,239,232,0.25)",
+                  }}
+                />
+                <span style={{ fontSize: 34, fontWeight: 800, letterSpacing: "0.14em" }}>JTAP KITCHEN</span>
+              </div>
               <span
                 style={{
                   backgroundColor: ORANGE,
