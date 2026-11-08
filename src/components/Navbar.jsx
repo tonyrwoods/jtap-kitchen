@@ -8,15 +8,16 @@ import AccountMenu from "./AccountMenu";
 // Primary nav links shown directly in the bar
 const PRIMARY_LINKS = [
   { label: "Menu", href: "/menu" },
+  { label: "Catering", href: "/catering" },
   { label: "Events", href: "/events" },
   { label: "Event Center", href: "/event-center" },
-  { label: "Gift Cards", href: "/gift-cards" },
   { label: "Dining Assistant", href: "/dining-assistant" },
 ];
 
 // Secondary links grouped under "More"
 const MORE_LINKS = [
   { label: "Our Story", href: "/#about" },
+  { label: "Gift Cards", href: "/gift-cards" },
   { label: "Event Calendar", href: "/calendar" },
   { label: "Reviews", href: "/reviews" },
   { label: "Liquor Menu", href: "/liquor-menu" },
@@ -177,6 +178,12 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
             {/* Right side: Account + CTA */}
             <div className="hidden md:flex items-center gap-3">
               <AccountMenu />
+              <Link
+                to="/catering"
+                className="hidden xl:inline-flex items-center px-4 py-2.5 border border-primary/50 text-primary font-body text-sm font-medium tracking-wide rounded-full hover:bg-primary/5 transition-colors duration-300"
+              >
+                Order Catering
+              </Link>
               <button
                 onClick={onBookTable}
                 className="inline-flex items-center px-5 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full hover:opacity-90 transition-opacity duration-300"
@@ -232,6 +239,13 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
                     </a>
                   )
                 )}
+                <Link
+                  to="/catering"
+                  onClick={() => setMobileOpen(false)}
+                  className="inline-flex items-center justify-center px-6 py-3 border border-primary text-primary font-body text-sm font-medium tracking-wide rounded-full"
+                >
+                  Order Catering
+                </Link>
                 <button
                   onClick={() => { setMobileOpen(false); onBookTable(); }}
                   className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium tracking-wide rounded-full"

@@ -170,6 +170,7 @@ export default function Footer({ onBookTable }) {
             <div className="space-y-3">
               {[
                 { label: "Our Menu", href: "/menu" },
+                { label: "Order Catering", href: "/catering" },
                 { label: "Reserve a Table", href: null, action: "reserve" },
                 { label: "Event Center", href: "/event-center" },
                 { label: "Gift Cards", href: "/gift-cards" },

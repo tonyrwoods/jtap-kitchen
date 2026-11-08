@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { MapPin, Clock, Phone, Navigation } from "lucide-react";
 
 // Compact logistics strip near the bottom of the homepage.
@@ -45,14 +46,22 @@ export default function PlanYourVisit() {
                 <p className="font-body text-sm text-muted-foreground leading-relaxed">
                   3397 Summer Ave.<br />Memphis, TN 38122
                 </p>
-                <a
-                  href="https://www.google.com/maps/search/?api=1&query=3397+Summer+Ave+Memphis+TN+38122"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 mt-2 font-body text-sm text-primary hover:underline"
-                >
-                  <Navigation className="w-3.5 h-3.5" /> Get Directions
-                </a>
+                <div className="flex flex-wrap items-center gap-4 mt-2">
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=3397+Summer+Ave+Memphis+TN+38122"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 font-body text-sm text-primary hover:underline"
+                  >
+                    <Navigation className="w-3.5 h-3.5" /> Get Directions
+                  </a>
+                  <Link
+                    to="/catering"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-full font-body text-xs font-semibold hover:opacity-90 transition-opacity"
+                  >
+                    Order Catering
+                  </Link>
+                </div>
               </div>
             </div>
 
