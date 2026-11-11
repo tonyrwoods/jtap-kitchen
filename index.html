@@ -1,22 +1,74 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18468679504"></script>
+    <!-- Google Ads + Tag Manager: queue commands now, load the scripts after the page is visible -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'AW-18468679504');
     </script>
 
-    <!-- Google Tag Manager -->
+    <!-- Meta Pixel: queue commands now, load the script after the page is visible -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-PNFPLT6L');
+      if (!window.fbq) {
+        var fbqStub = function () {
+          fbqStub.callMethod ? fbqStub.callMethod.apply(fbqStub, arguments) : fbqStub.queue.push(arguments);
+        };
+        window.fbq = fbqStub;
+        if (!window._fbq) window._fbq = fbqStub;
+        fbqStub.push = fbqStub;
+        fbqStub.loaded = true;
+        fbqStub.version = '2.0';
+        fbqStub.queue = [];
+      }
+      fbq('init', '1064707369734001');
+      fbq('track', 'PageView');
     </script>
-    <!-- End Google Tag Manager -->
+
+    <!-- Loads the tracking scripts once the page has finished loading, so they
+         no longer block the main thread while the page renders. -->
+    <script>
+      (function () {
+        function loadTrackingScripts() {
+          var ids = ['AW-18468679504', 'GTM-PNFPLT6L'];
+
+          var gtagScript = document.createElement('script');
+          gtagScript.async = true;
+          gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + ids[0];
+          document.head.appendChild(gtagScript);
+
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+          var gtmScript = document.createElement('script');
+          gtmScript.async = true;
+          gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + ids[1];
+          document.head.appendChild(gtmScript);
+
+          var pixelScript = document.createElement('script');
+          pixelScript.async = true;
+          pixelScript.src = 'https://connect.facebook.net/en_US/fbevents.js';
+          document.head.appendChild(pixelScript);
+        }
+
+        function schedule() {
+          var start = function () {
+            if ('requestIdleCallback' in window) {
+              window.requestIdleCallback(loadTrackingScripts, { timeout: 2000 });
+            } else {
+              setTimeout(loadTrackingScripts, 600);
+            }
+          };
+          setTimeout(start, 600);
+        }
+
+        if (document.readyState === 'complete') {
+          schedule();
+        } else {
+          window.addEventListener('load', schedule);
+        }
+      })();
+    </script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -158,9 +210,6 @@
       }
     }
     </script>
-
-    <!-- Meta Pixel Code -->
-    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1064707369734001');fbq('track','PageView');</script>
 
     <!-- Icons -->
     <link rel="icon" type="image/png" href="https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/a9d8ac190_9fb891e3e_generated_image-web.jpg" />
