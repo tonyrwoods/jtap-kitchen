@@ -115,7 +115,10 @@ export default function Footer({ onBookTable }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <h3 className="font-heading text-3xl font-semibold mb-4">JTAP Kitchen</h3>
+            <h3 className="font-heading text-3xl font-semibold mb-2">JTAP Kitchen</h3>
+            <p className="font-heading italic text-base text-primary mb-4">
+              Where Every Bite Tells a Story
+            </p>
             <p className="font-body text-sm text-background/60 leading-relaxed max-w-xs">
               JTAP Kitchen — chef curated casual dining where culinary artistry meets
               a warm, welcoming atmosphere.

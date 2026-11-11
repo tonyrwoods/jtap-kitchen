@@ -30,6 +30,15 @@ export default function HeroSection({ onBook }) {
           Chef Curated Casual Dining
         </motion.p>
 
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="font-heading italic text-xl sm:text-2xl md:text-3xl text-amber-300/90 mb-6">
+          
+          Where Every Bite Tells a Story
+        </motion.p>
+
         <motion.h1
           initial={{ opacity: 1, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
