@@ -1,8 +1,7 @@
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ArrowRight, Building2, Cake, PartyPopper, UtensilsCrossed, Phone, ShoppingBag } from "lucide-react";
+import { Building2, Cake, PartyPopper, UtensilsCrossed, Phone, ShoppingBag } from "lucide-react";
 import useSeoMeta from "@/hooks/useSeoMeta";
 import { CATERING_ORDER_URL } from "@/lib/ordering";
+import CateringHero from "@/components/catering/CateringHero";
 
 // Catering landing page. Every order CTA hands guests off to the app's online
 // ordering experience (/menu) where they build a cart and check out.
@@ -42,52 +41,7 @@ export default function Catering() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/40905e374_jtap-catering-hero-2x.png"
-            alt=""
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-foreground/40" />
-        </div>
-        <div className="relative max-w-5xl mx-auto px-6 lg:px-10 py-24 md:py-32 text-center">
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span className="font-body text-xs uppercase tracking-[0.3em] font-semibold text-primary">
-              Catering
-            </span>
-            <h1 className="font-heading text-4xl md:text-6xl font-bold text-background mt-4 mb-5 leading-tight">
-              JTAP Kitchen,<br className="sm:hidden" /> brought to your table
-            </h1>
-            <p className="font-body text-base md:text-lg text-background/70 max-w-xl mx-auto mb-9 leading-relaxed">
-              Chef-prepared trays and platters for the office, the party, and everything in between.
-              Order online for delivery or pickup from our kitchen on Summer Ave.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <a
-                href={CATERING_ORDER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold tracking-wide hover:opacity-90 transition-opacity"
-              >
-                <ShoppingBag className="w-4 h-4" /> Order Catering Online
-              </a>
-              <Link
-                to="/event-center"
-                className="inline-flex items-center gap-2 px-8 py-4 border border-background/30 text-background rounded-full font-body text-sm font-semibold tracking-wide hover:bg-background/10 transition-colors"
-              >
-                Plan a Large Event <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <Link
-              to="/catering-flyer"
-              className="inline-block mt-6 font-body text-sm text-background/60 hover:text-primary underline underline-offset-4 transition-colors"
-            >
-              Download our office catering flyer
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+      <CateringHero />
 
       {/* Occasions */}
       <section className="py-20 md:py-24 px-6 lg:px-10">
