@@ -69,6 +69,7 @@ export default function Home() {
       <PlanYourVisit />
       <FinalCTA />
       <FaqSection />
+      <AnnouncementMarquee />
       <ReservationModal open={modalOpen} onClose={() => { setModalOpen(false); setPrefill(null); }} prefill={prefill} />
       <StickyReserveBar onBook={() => setModalOpen(true)} />
     </>
