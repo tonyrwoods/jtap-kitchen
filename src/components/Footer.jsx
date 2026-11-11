@@ -6,6 +6,7 @@ import { CATERING_ORDER_URL } from "@/lib/ordering";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import AnnouncementMarquee from "@/components/AnnouncementMarquee";
+import Tagline from "@/components/Tagline";
 
 export default function Footer({ onBookTable }) {
   const [name, setName] = useState("");
@@ -116,9 +117,7 @@ export default function Footer({ onBookTable }) {
           {/* Brand */}
           <div className="lg:col-span-1">
             <h3 className="font-heading text-3xl font-semibold mb-2">JTAP Kitchen</h3>
-            <p className="font-heading italic text-base text-primary mb-4">
-              Where Every Bite Tells a Story
-            </p>
+            <Tagline className="text-base text-primary mb-4" />
             <p className="font-body text-sm text-background/60 leading-relaxed max-w-xs">
               JTAP Kitchen — chef curated casual dining where culinary artistry meets
               a warm, welcoming atmosphere.

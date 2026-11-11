@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Gift, Search, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { trackPixel } from "@/lib/metaPixel";
+import Tagline from "@/components/Tagline";
 
 const AMOUNTS = [25, 50, 100, 150, 200];
 
@@ -133,7 +134,8 @@ export default function GiftCards() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 border border-primary/30 mb-6">
             <Gift className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4">Gift Cards</h1>
+          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-3">Gift Cards</h1>
+          <Tagline className="text-lg md:text-xl text-primary mb-4" />
           <p className="font-body text-background/70 text-lg leading-relaxed max-w-md mx-auto">
             Give the gift of an unforgettable dining experience at JTAP Kitchen. Perfect for every occasion.
           </p>

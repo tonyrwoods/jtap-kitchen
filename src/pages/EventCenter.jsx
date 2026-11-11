@@ -4,6 +4,7 @@ import { CheckCircle2, Users, Star, CalendarDays, Phone, Mail, ChevronDown, Chev
 import { Link } from "react-router-dom";
 import EventWaitlistSignup from "../components/EventWaitlistSignup";
 import EventBookingWizard from "../components/eventCenter/EventBookingWizard";
+import Tagline from "@/components/Tagline";
 
 const PACKAGES = [
 {
@@ -132,6 +133,9 @@ export default function EventCenter() {
           className="font-heading text-4xl md:text-6xl font-bold mb-4">
             JTAP Kitchen Event Center
           </motion.h1>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+            <Tagline className="text-lg md:text-xl text-primary mb-4" />
+          </motion.div>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="font-body text-base text-white/60 max-w-xl mx-auto mb-8">
             Exclusively available Sunday through Tuesday. Host your next unforgettable event with world-class cuisine, impeccable service, and a stunning ambiance.

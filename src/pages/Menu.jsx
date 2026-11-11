@@ -6,6 +6,7 @@ import useSeoMeta from "../hooks/useSeoMeta";
 import MenuQRCode from "../components/MenuQRCode";
 import TapRoomSocietyQR from "../components/TapRoomSocietyQR";
 import MenuItemCard from "@/components/menu/MenuItemCard";
+import Tagline from "@/components/Tagline";
 
 const CATEGORIES = [
   { key: "All", label: "Full Menu", icon: UtensilsCrossed },
@@ -116,7 +117,8 @@ export default function Menu() {
         <div className="absolute inset-0 bg-black/60" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
           <p className="font-body text-xs uppercase tracking-[0.3em] text-primary mb-3">JTAP Kitchen</p>
-          <h1 className="font-heading text-5xl md:text-6xl font-bold text-white mb-4">Our Menu</h1>
+          <h1 className="font-heading text-5xl md:text-6xl font-bold text-white mb-3">Our Menu</h1>
+          <Tagline className="text-lg md:text-xl text-amber-300/90 mb-4" />
           <p className="font-body text-white/70 max-w-lg text-base md:text-lg">
             Bold, seasonal cooking served the way food should be — honest, satisfying, and made to share.
           </p>

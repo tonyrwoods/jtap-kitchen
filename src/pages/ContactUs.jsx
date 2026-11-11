@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import Tagline from "@/components/Tagline";
 import { toast } from "sonner";
 
 export default function ContactUs() {
@@ -41,7 +42,8 @@ export default function ContactUs() {
     <div className="min-h-screen bg-background py-16 px-6">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <h1 className="font-heading text-4xl font-bold text-foreground mb-4">Contact Us</h1>
+          <h1 className="font-heading text-4xl font-bold text-foreground mb-3">Contact Us</h1>
+          <Tagline className="text-lg md:text-xl text-primary mb-4" />
           <p className="font-body text-lg text-muted-foreground">
             Have a question or special request? We'd love to hear from you.
           </p>

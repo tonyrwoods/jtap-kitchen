@@ -10,6 +10,7 @@ import EventCountdown from "../components/EventCountdown";
 import WaitlistConfirmationModal from "../components/WaitlistConfirmationModal";
 import PromoBanner from "../components/events/PromoBanner";
 import { trackPixel } from "@/lib/metaPixel";
+import Tagline from "@/components/Tagline";
 
 const CATEGORY_COLORS = {
   "Wine Tasting": "bg-purple-100 text-purple-700",
@@ -144,7 +145,8 @@ export default function Events() {
       <div className="bg-foreground text-background py-20 px-6 text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">Special Experiences</span>
-          <h1 className="font-heading text-5xl md:text-6xl font-bold mt-4 mb-5">Upcoming Events</h1>
+          <h1 className="font-heading text-5xl md:text-6xl font-bold mt-4 mb-3">Upcoming Events</h1>
+          <Tagline className="text-lg md:text-xl text-amber-300/90 mb-4" />
           <p className="font-body text-background/60 text-lg max-w-xl mx-auto">
             Exclusive dining experiences, wine evenings, and cooking masterclasses — reserve your place before they're gone.
           </p>

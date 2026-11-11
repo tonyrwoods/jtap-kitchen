@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import { CATERING_ORDER_URL } from "@/lib/ordering";
+import Tagline from "@/components/Tagline";
 
 // Landscape version of the ezCater catering poster, rebuilt in markup so the
 // type stays crisp and the layout reflows instead of being cropped.
@@ -25,8 +26,11 @@ export default function CateringHero() {
               alt=""
               className="w-11 h-11 rounded-full object-cover ring-1 ring-[#f4f0e9]/20"
             />
-            <span className="font-body text-base md:text-lg font-extrabold tracking-[0.18em] text-[#f4f0e9]">
-              JTAP KITCHEN
+            <span className="flex flex-col leading-tight">
+              <span className="font-body text-base md:text-lg font-extrabold tracking-[0.18em] text-[#f4f0e9]">
+                JTAP KITCHEN
+              </span>
+              <Tagline className="text-[10px] md:text-xs text-[#e88d40]" />
             </span>
           </div>
           <a

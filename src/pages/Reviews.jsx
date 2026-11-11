@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { Star, Quote, PenLine, Calendar, Search, X } from "lucide-react";
+import Tagline from "@/components/Tagline";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -71,7 +72,8 @@ export default function Reviews() {
       <div className="bg-foreground text-background py-16 px-6 text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <span className="font-body text-xs uppercase tracking-[0.3em] text-primary font-semibold">Guest Reviews</span>
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mt-4 mb-4">What Our Guests Say</h1>
+          <h1 className="font-heading text-4xl md:text-5xl font-bold mt-4 mb-3">What Our Guests Say</h1>
+          <Tagline className="text-lg md:text-xl text-primary mb-4" />
           <p className="font-body text-background/60 text-base md:text-lg max-w-xl mx-auto">
             Real stories from guests who've dined at JTAP Kitchen. We're grateful for every visit.
           </p>

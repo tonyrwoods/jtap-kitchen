@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Briefcase, Clock, DollarSign, ChevronDown, ChevronUp, Upload, X } from "lucide-react";
+import Tagline from "@/components/Tagline";
 import { toast } from "sonner";
 
 const DEPT_COLORS = {
@@ -291,6 +292,13 @@ export default function Careers() {
         >
           Careers at JTAP Kitchen
         </motion.h1>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+        >
+          <Tagline className="text-lg md:text-xl text-amber-300/90 mb-4" />
+        </motion.div>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

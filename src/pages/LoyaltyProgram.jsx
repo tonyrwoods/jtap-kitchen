@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import useSeoMeta from "../hooks/useSeoMeta";
 import { motion } from "framer-motion";
 import { Crown, Star } from "lucide-react";
+import Tagline from "@/components/Tagline";
 
 export default function LoyaltyProgram() {
   useSeoMeta("loyalty");
@@ -20,7 +21,8 @@ export default function LoyaltyProgram() {
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
           <p className="font-body text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-3">Exclusive Rewards</p>
-          <h1 className="font-heading text-5xl font-semibold mb-4">Loyalty Program</h1>
+          <h1 className="font-heading text-5xl font-semibold mb-3">Loyalty Program</h1>
+          <Tagline className="text-lg md:text-xl text-primary mb-4" />
           <p className="font-body text-muted-foreground max-w-xl mx-auto">
             The more you dine with us, the more you're rewarded. Our loyalty tiers unlock exclusive perks, discounts, and unforgettable experiences.
           </p>

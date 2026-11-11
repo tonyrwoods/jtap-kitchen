@@ -82,6 +82,8 @@ export async function generateMenuPdf(foodItems = [], liquorItems = [], qrDataUr
   }
   writeCentered("JTAP Kitchen — Our Menu", 22, 1.2, "bold");
   y += 4;
+  writeCentered("Where Every Bite Tells a Story", 11, 1.2, "italic", [196, 137, 49]);
+  y += 2;
   writeCentered("Memphis, TN  ·  (901) 213-8085  ·  jtapkitchen.com", 10, 1.3, "normal", [120, 120, 120]);
   y += 14;
 

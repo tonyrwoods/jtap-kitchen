@@ -7,6 +7,7 @@ import { base44 } from "@/api/base44Client";
 import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { toast } from "sonner";
 import { trackPixel } from "@/lib/metaPixel";
+import Tagline from "@/components/Tagline";
 import {
   Percent, Lock, CalendarDays, Gift, Star, Award,
   CheckCircle2, XCircle, Crown, Camera
@@ -116,6 +117,9 @@ export default function TapRoomSociety() {
           className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
           THERE&apos;S A ROOM<br />IN THE BACK.
         </motion.h1>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+          <Tagline className="text-lg md:text-xl mb-4" style={{ color: GOLD }} />
+        </motion.div>
         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="font-body text-xl md:text-2xl mb-10" style={{ color: "rgba(255,255,255,0.5)" }}>
           You&apos;ve earned the right to be in it.

@@ -10,6 +10,7 @@ import { trackPixel } from "@/lib/metaPixel";
 import LiquorMenuContent from "@/components/menu/LiquorMenuContent";
 import MenuItemCard from "@/components/menu/MenuItemCard";
 import TapRoomSocietyQR from "@/components/TapRoomSocietyQR";
+import Tagline from "@/components/Tagline";
 
 const CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Beverages", "Drinks", "Sports Menu", "Happy Hour"];
 
@@ -160,6 +161,7 @@ export default function DigitalMenu() {
               {tableNum ? `Table ${tableNum}` : "JTAP Kitchen"}
             </p>
             <h1 className="font-heading text-3xl font-bold">Our Menu</h1>
+            <Tagline className="text-sm text-primary mt-1" />
           </div>
           {/* Food / Liquor toggle + Print */}
           <div className="flex items-center justify-center gap-3 mb-4">

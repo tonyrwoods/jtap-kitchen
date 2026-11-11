@@ -5,6 +5,7 @@ import { Menu, X, ChevronLeft, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AccountMenu from "./AccountMenu";
 import { CATERING_ORDER_URL } from "@/lib/ordering";
+import Tagline from "./Tagline";
 
 // Primary nav links shown directly in the bar
 const PRIMARY_LINKS = [
@@ -93,8 +94,11 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
                   alt="JTAP Kitchen Logo"
                   className="h-12 w-12 rounded-full object-cover border border-primary/30"
                 />
-                <span className="font-heading text-xl md:text-2xl font-semibold tracking-tight text-foreground">
-                  JTAP Kitchen
+                <span className="flex flex-col leading-tight">
+                  <span className="font-heading text-xl md:text-2xl font-semibold tracking-tight text-foreground">
+                    JTAP Kitchen
+                  </span>
+                  <Tagline className="hidden sm:block text-[10px] md:text-[11px] text-primary/80" />
                 </span>
               </a>
             )}
@@ -105,8 +109,11 @@ export default function Navbar({ onBookTable, showBackButton = false }) {
                   alt="JTAP Kitchen Logo"
                   className="h-12 w-12 rounded-full object-cover border border-primary/30"
                 />
-                <span className="font-heading text-xl md:text-2xl font-semibold tracking-tight text-foreground">
-                  JTAP Kitchen
+                <span className="flex flex-col leading-tight">
+                  <span className="font-heading text-xl md:text-2xl font-semibold tracking-tight text-foreground">
+                    JTAP Kitchen
+                  </span>
+                  <Tagline className="text-[11px] text-primary/80" />
                 </span>
               </a>
             )}

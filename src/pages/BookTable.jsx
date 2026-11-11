@@ -8,6 +8,7 @@ import CompanionInviteForm from "@/components/CompanionInviteForm";
 import GuaranteeDepositCard from "@/components/reservations/GuaranteeDepositCard";
 import ComplementarySuggestions from "@/components/ComplementarySuggestions";
 import { trackPixel } from "@/lib/metaPixel";
+import Tagline from "@/components/Tagline";
 
 const BRUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -233,7 +234,8 @@ export default function BookTable() {
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=80')", backgroundSize: "cover", backgroundPosition: "center" }} />
         <div className="relative max-w-xl mx-auto">
           <p className="font-body text-xs uppercase tracking-[0.35em] font-semibold text-primary mb-3">JTAP Kitchen</p>
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4">Reserve a Table</h1>
+          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-3">Reserve a Table</h1>
+          <Tagline className="text-lg md:text-xl text-primary mb-4" />
           <p className="font-body text-background/60 text-sm leading-relaxed">
             Great food, good company, and a table with your name on it. Book in just a few steps.
           </p>
