@@ -5,6 +5,7 @@ import { trackPixel } from "@/lib/metaPixel";
 import { CATERING_ORDER_URL } from "@/lib/ordering";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import AnnouncementMarquee from "@/components/AnnouncementMarquee";
 
 export default function Footer({ onBookTable }) {
   const [name, setName] = useState("");
@@ -105,6 +106,10 @@ export default function Footer({ onBookTable }) {
               <p className="font-body text-xs text-background/30 mt-5">No spam, ever. Unsubscribe anytime.</p>
             </div>
           </div>
+        </div>
+
+        <div className="mb-16 rounded-2xl overflow-hidden">
+          <AnnouncementMarquee />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
