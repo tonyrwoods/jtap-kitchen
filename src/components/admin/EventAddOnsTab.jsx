@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import compressImage from "@/lib/compressImage";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Upload } from "lucide-react";
 import SelectDropdown from "@/components/SelectDropdown";
@@ -18,7 +19,7 @@ function AddOnForm({ item, onSave, onCancel }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+    const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: await compressImage(file) });
     set("image_url", file_url);
     setUploading(false);
   };

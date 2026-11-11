@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import compressImage from "@/lib/compressImage";
 import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -33,7 +34,7 @@ export default function PromotionForm({ promotion, onSave, onCancel }) {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: await compressImage(file) });
       set("banner_image_url", file_url);
     } catch {
       toast.error("Image upload failed");

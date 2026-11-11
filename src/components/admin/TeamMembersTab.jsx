@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import compressImage from "@/lib/compressImage";
 import { Plus, Pencil, Trash2, Upload } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -12,7 +13,7 @@ function TeamMemberForm({ member, onSave, onCancel }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    const { file_url } = await base44.integrations.Core.UploadFile({ file: await compressImage(file) });
     set("photo_url", file_url);
     setUploading(false);
   };

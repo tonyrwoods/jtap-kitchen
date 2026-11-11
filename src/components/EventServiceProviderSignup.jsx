@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import compressImage from "@/lib/compressImage";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Sparkles, Music, Camera, Palette, Mic, Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -36,7 +37,7 @@ export default function EventServiceProviderSignup() {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: await compressImage(file) });
       set("photo_url", file_url);
     } catch {
       toast.error("Photo upload failed. Please try again.");

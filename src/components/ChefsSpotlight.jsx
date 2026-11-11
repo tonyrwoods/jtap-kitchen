@@ -39,7 +39,7 @@ export default function ChefsSpotlight() {
       {/* Background */}
       <div className="absolute inset-[-15%] z-0">
         <img
-          src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/b7b51063a_generated_image.png"
+          src="https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/166f3a56d_b7b51063a_generated_image-web.jpg"
           alt="Chef's spotlight background"
           className="w-full h-full object-cover opacity-30"
         />
@@ -69,7 +69,7 @@ export default function ChefsSpotlight() {
             {/* Dish Image */}
             <div className="relative rounded-3xl overflow-hidden aspect-[4/3] mb-8 shadow-2xl shadow-black/50">
               <img
-                src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/368feb9d6_generated_image.png"
+                src="https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/0694cfa62_368feb9d6_generated_image-web.jpg"
                 alt={SPOTLIGHT.dish}
                 className="w-full h-full object-cover"
               />

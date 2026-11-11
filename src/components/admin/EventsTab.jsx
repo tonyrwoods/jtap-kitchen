@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
+import compressImage from "@/lib/compressImage";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, CalendarDays, Clock, Users, Ticket, Star, Upload, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,7 +39,7 @@ function EventForm({ event, onSave, onCancel }) {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: await compressImage(file) });
       set("image_url", file_url);
     } catch {
       toast.error("Image upload failed");

@@ -9,7 +9,7 @@ import SmartImage from "@/components/SmartImage";
 import StarRating from "@/components/scorecards/StarRating";
 import ScorecardSummary from "@/components/scorecards/ScorecardSummary";
 
-const LOGO_URL = "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png";
+const LOGO_URL = "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/1bfc7de20_59d7d09ac_JKLOGO_HR-web.png";
 
 // Parse a numbered course list out of the promotion description.
 // Lines like "1) JTAP Trio of Dips" become menu courses.

@@ -3,32 +3,32 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const GALLERY = [
   {
-    url: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/b3d20a817_generated_image.png",
+    url: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/41bd42a16_b3d20a817_generated_image-web.jpg",
     label: "The Dining Room",
     category: "Interior",
   },
   {
-    url: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/8b207bc53_generated_image.png",
+    url: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/e2af60214_8b207bc53_generated_image-web.jpg",
     label: "Our Open Kitchen",
     category: "Kitchen",
   },
   {
-    url: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/92d549431_generated_image.png",
+    url: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/d7f4012f4_92d549431_generated_image-web.jpg",
     label: "The Art of Plating",
     category: "Craft",
   },
   {
-    url: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/574683d15_generated_image.png",
+    url: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/82eaaeeea_574683d15_generated_image-web.jpg",
     label: "The Bar",
     category: "Interior",
   },
   {
-    url: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/8dab81640_generated_image.png",
+    url: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/32445c035_8dab81640_generated_image-web.jpg",
     label: "Private Dining",
     category: "Interior",
   },
   {
-    url: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/0b4858b0e_generated_image.png",
+    url: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/d9091a9cb_0b4858b0e_generated_image-web.jpg",
     label: "Handmade Pasta",
     category: "Craft",
   },

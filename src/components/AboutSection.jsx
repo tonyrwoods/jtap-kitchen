@@ -6,7 +6,7 @@ export default function AboutSection() {
           {/* Image */}
           <div className="relative">
             <div className="relative overflow-hidden rounded-3xl">
-              <img src="https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/f83e0a268_JTAPKitchenBuildingSign.jpg"
+              <img src="https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/d9a2def43_f83e0a268_JTAPKitchenBuildingSign-web.jpg"
 
               alt="JTAP Kitchen exterior with signage and mural"
               loading="lazy"

@@ -3,7 +3,7 @@ import { jsPDF } from "jspdf";
 const FOOD_CATEGORIES = ["Brunch", "Brunch Sides", "Appetizers", "Salads & Sandwiches", "Entrees", "Lunch", "Lunch Sides", "Sides", "Desserts", "Beverages", "Drinks"];
 const LIQUOR_SECTIONS = ["Signature Cocktails", "Wine List", "Spirits & Liquors"];
 
-const LOGO_URL = "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/59d7d09ac_JKLOGO_HR.png";
+const LOGO_URL = "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/1bfc7de20_59d7d09ac_JKLOGO_HR-web.png";
 
 async function loadImageDataUrl(url) {
   try {

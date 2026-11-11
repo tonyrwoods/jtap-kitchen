@@ -9,7 +9,7 @@ const slides = [
     title: "Where Every Bite Tells a Story",
     subtitle: "JTAP Kitchen",
     body: "High-end casual dining reimagined in Memphis, TN. Bold flavors, real hospitality, and a warm atmosphere where culinary artistry meets genuine connection.",
-    bg: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/dbe7ca72f_generated_6964c032.png",
+    bg: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/7dd16148f_dbe7ca72f_generated_6964c032-web.jpg",
     isHero: true,
   },
   {

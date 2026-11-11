@@ -17,10 +17,10 @@ const CREAM = "#f2efe8";
 const ORANGE = "#f59e42";
 
 const IMAGES = {
-  main: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/3bc69e45d_generated_image.png",
-  mac: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/fae363bb6_generated_image.png",
-  broccoli: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/8df0d3d7e_generated_image.png",
-  logo: "https://media.base44.com/images/public/69d2426201cd12d6d2a6db95/941e8439b_jkap-logo.jpg",
+  main: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/fce6d153b_3bc69e45d_generated_image-web.jpg",
+  mac: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/889d9b19f_fae363bb6_generated_image-web.jpg",
+  broccoli: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/31121b78d_8df0d3d7e_generated_image-web.jpg",
+  logo: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/5a6a71255_941e8439b_jkap-logo-web.jpg",
 };
 
 export default function CateringFlyer() {

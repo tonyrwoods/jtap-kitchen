@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import compressImage from "@/lib/compressImage";
 import { motion } from "framer-motion";
 import { Plus, Pencil, Trash2, Upload, Instagram } from "lucide-react";
 import { toast } from "sonner";
@@ -26,7 +27,7 @@ export default function InstagramPostsTab() {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: await compressImage(file) });
       setForm(f => ({ ...f, image_url: file_url }));
     } catch {
       toast.error("Upload failed");
