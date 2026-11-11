@@ -25,7 +25,7 @@ export default function HeroSection({ onBook }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-body text-sm md:text-base uppercase tracking-[0.3em] text-white/70 mb-6">
+          className="font-body text-sm md:text-base uppercase tracking-[0.3em] text-white/90 mb-6">
           
           Chef Curated Casual Dining
         </motion.p>
@@ -45,16 +45,16 @@ export default function HeroSection({ onBook }) {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.1] mb-8">
           
-          Memphis's Best
+          Memphis's Best Brunch
           <br />
-          <span className="italic font-normal text-amber-300/90">Casual Dining Restaurant</span>
+          <span className="italic font-normal text-amber-300/90">&amp; Family Restaurant</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="font-body text-base md:text-lg text-white/75 max-w-xl mx-auto mb-6 leading-relaxed">
+          className="font-body text-base md:text-lg text-white/90 max-w-xl mx-auto mb-6 leading-relaxed">
           
           Bold American comfort food. Real hospitality. No pretense.
           Memphis, TN's freshest dining experience — come hungry, leave obsessed.
@@ -65,7 +65,7 @@ export default function HeroSection({ onBook }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.75 }}
-          className="inline-flex items-center gap-2 mb-2 font-body text-white/60 hover:text-primary transition-colors text-2xl">
+          className="inline-flex items-center gap-2 mb-2 font-body text-white/90 hover:text-primary transition-colors text-2xl">
           
           <Phone className="w-4 h-4" />
           (901) 213-8085
@@ -75,7 +75,7 @@ export default function HeroSection({ onBook }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="flex items-center justify-center gap-2 mb-8 font-body text-sm md:text-base text-white/60">
+          className="flex items-center justify-center gap-2 mb-8 font-body text-sm md:text-base text-white/90">
           
           <MapPin className="w-4 h-4 shrink-0" />
           3397 Summer Avenue, Memphis, TN 38122
@@ -93,6 +93,11 @@ export default function HeroSection({ onBook }) {
             className="px-10 py-4 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/25">
             Reserve Your Table — Book Direct &amp; Save
           </button>
+          <Link
+            to="/menu"
+            className="px-10 py-4 bg-amber-300 text-black font-body text-sm font-bold uppercase tracking-widest rounded-full hover:opacity-90 transition-all duration-300 shadow-lg">
+            Order Now
+          </Link>
           <Link
             to="/full-menu"
             className="px-10 py-4 border-2 border-white/30 text-white font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:bg-white/10 transition-all duration-300">

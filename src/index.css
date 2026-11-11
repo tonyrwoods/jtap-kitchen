@@ -189,13 +189,6 @@
   }
 }
 
-/* Disable pinch-to-zoom on mobile */
-@layer base {
-  html {
-    touch-action: manipulation;
-  }
-}
-
 /* Print: hide site nav and footer so menu pages print cleanly */
 @media print {
   nav,
