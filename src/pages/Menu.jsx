@@ -25,7 +25,7 @@ const CATEGORIES = [
 ];
 
 const CATEGORY_IMAGES = {
-  Brunch: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=1200&q=80",
+  Brunch: "https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/830fd6cb8_brunch-banner.png",
   "Brunch Sides": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=1200&q=80",
   Appetizers: "https://images.unsplash.com/photo-1541014741259-de529411b96a?w=1200&q=80",
   "Salads & Sandwiches": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&q=80",
@@ -57,17 +57,25 @@ function MenuCard({ item }) {
 function CategorySection({ category, items }) {
   if (items.length === 0) return null;
   const heroImg = CATEGORY_IMAGES[category];
+  // The Brunch banner is a finished promo graphic that already carries its own headline and text
+  const isDesignedBanner = category === "Brunch" && heroImg;
   return (
     <div className="mb-20">
       {/* Section header with banner */}
-      <div className="relative rounded-2xl overflow-hidden h-36 mb-8">
+      <div className={`relative rounded-2xl overflow-hidden mb-8 ${isDesignedBanner ? "aspect-[3/1]" : "h-36"}`}>
         {heroImg && (
-          <img src={heroImg} alt={category} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+          <img src={heroImg} alt={`${category} banner`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
         )}
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="absolute inset-0 flex items-center px-8">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-white">{category}</h2>
-        </div>
+        {isDesignedBanner ? (
+          <h2 className="sr-only">{category}</h2>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-black/55" />
+            <div className="absolute inset-0 flex items-center px-8">
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-white">{category}</h2>
+            </div>
+          </>
+        )}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => <MenuCard key={item.id} item={item} />)}
