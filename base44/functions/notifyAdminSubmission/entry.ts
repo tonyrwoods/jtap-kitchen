@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { sendTransactionalEmail } from '../../shared/sendTransactionalEmail.js';
+import { sendEmailViaGmail } from '../../shared/sendEmailViaGmail.js';
 
 export default async function(req) {
   try {
@@ -108,6 +109,7 @@ export default async function(req) {
           <h3 style="margin-top:20px;font-size:14px;color:#888;text-transform:uppercase;">Review</h3>
           <div style="background:#f9f9f9;padding:16px;border-radius:8px;line-height:1.6;white-space:pre-wrap;">${escapeHtml(d.comment)}</div>
           <p style="margin-top:24px;font-size:13px;color:#999;">Approve or reject in the admin dashboard under Reviews.</p>
+          <p style="margin-top:16px;"><a href="https://jtapkitchen.com/admin" style="display:inline-block;background:#c48931;color:#000;text-decoration:none;font-size:14px;font-weight:bold;padding:12px 22px;border-radius:24px;">Open Reviews</a></p>
         </div>`;
         break;
 
@@ -138,14 +140,34 @@ export default async function(req) {
         return Response.json({ skipped: true, reason: `No handler for ${entityType}` });
     }
 
+    const TEAM_EMAIL = 'info@jtapkitchen.com';
+
+    if (entityType === 'Review') {
+      // Review alerts go out through the team's Gmail account so replies land in
+      // the shared inbox. If Gmail is unavailable the transactional sender still
+      // delivers the alert instead of dropping it.
+      try {
+        await sendEmailViaGmail(base44, { to: TEAM_EMAIL, subject, body: bodyHtml });
+        return Response.json({ success: true, entityType, channel: 'gmail' });
+      } catch (gmailError) {
+        await sendTransactionalEmail(base44, {
+          to: TEAM_EMAIL,
+          subject,
+          body: bodyHtml,
+          from_name: 'JTAP Kitchen',
+        });
+        return Response.json({ success: true, entityType, channel: 'transactional', gmailError: gmailError.message });
+      }
+    }
+
     await sendTransactionalEmail(base44, {
-      to: 'info@jtapkitchen.com',
+      to: TEAM_EMAIL,
       subject,
       body: bodyHtml,
       from_name: 'JTAP Kitchen',
     });
 
-    return Response.json({ success: true, entityType });
+    return Response.json({ success: true, entityType, channel: 'transactional' });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

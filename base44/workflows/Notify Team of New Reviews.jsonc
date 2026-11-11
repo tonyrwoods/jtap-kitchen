@@ -1,0 +1,43 @@
+{
+  "name": "Notify Team of New Reviews",
+  "description": "Emails the team through Gmail whenever a new review is submitted through the app, so they can respond immediately.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Review"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "notify_team_of_new_reviews",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify_team_of_review": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyAdminSubmission",
+            "args": {
+              "event": {
+                "entity_name": "Review"
+              },
+              "data": "${ .trigger.data }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Email the team about the new review",
+            "description": "Sends the guest, rating and review text via Gmail"
+          }
+        }
+      }
+    ]
+  }
+}
