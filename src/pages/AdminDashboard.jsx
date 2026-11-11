@@ -9,6 +9,7 @@ import {
   Plus, Pencil, Trash2, Copy, CheckCircle, CheckCircle2, XCircle, Clock, Gift, Upload, Salad, Heart, Mail, Star, Search, X, ImageOff
 } from "lucide-react";
 import { getWebsiteIssue, hasPhoto } from "@/lib/menuWebsiteCheck";
+import compressImage from "@/lib/compressImage";
 import LoyaltyAdminTab from "../components/LoyaltyAdminTab";
 import SeoTab from "../components/admin/SeoTab";
 import ReservationsCalendarView from "../components/admin/ReservationsCalendarView";
@@ -105,7 +106,9 @@ function MenuItemForm({ item, onSave, onCancel }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    // Downscale + re-encode in the browser so menu photos stay light on the menu page
+    const compressed = await compressImage(file);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file: compressed });
     set("image_url", file_url);
     setUploading(false);
   };
