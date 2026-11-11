@@ -9,7 +9,7 @@ export default function HeroSection({ onBook }) {
       {/* Background Image */}
       <div className="absolute inset-0">
         <SmartImage
-          src="https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/c937a7812_bf878d5d2_JTAPKitchen2-web.jpg"
+          src="https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/7dd16148f_dbe7ca72f_generated_6964c032-web.jpg"
           alt="JTAP Kitchen dining room and bar"
           loading="eager"
           decoding="async"

@@ -39,9 +39,12 @@ export default function GrandOpeningCountdown() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
 
   useEffect(() => {
+    // Once the opening date has passed there is nothing to count down to,
+    // so don't keep a timer running every second on every page visit.
+    if (timeLeft.isLive) return;
     const interval = setInterval(() => setTimeLeft(getTimeLeft()), 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [timeLeft.isLive]);
 
   if (timeLeft.isLive) return null;
 

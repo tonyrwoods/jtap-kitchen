@@ -25,13 +25,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="JTAP Kitchen" />
 
-    <!-- Preconnect for Google Fonts -->
+    <!-- Preconnect for fonts and image storage -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" />
+    <link rel="preconnect" href="https://base44.app" crossorigin />
+    <link rel="dns-prefetch" href="https://base44.app" />
 
-    <!-- Preload LCP hero image -->
-    <link rel="preload" as="image" href="https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/7dd16148f_dbe7ca72f_generated_6964c032-web.jpg" />
+    <!-- Fonts loaded without blocking first paint -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" /></noscript>
+
+    <!-- Preload the actual LCP hero image -->
+    <link rel="preload" as="image" href="https://base44.app/api/apps/69d2426201cd12d6d2a6db95/files/mp/public/69d2426201cd12d6d2a6db95/7dd16148f_dbe7ca72f_generated_6964c032-web.jpg" fetchpriority="high" />
 
     <!-- Primary SEO -->
     <title>JTAP Kitchen | Best Brunch, Breakfast &amp; Family Restaurant in Memphis, TN</title>
