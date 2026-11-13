@@ -45,7 +45,6 @@ export default function PromotionsTab() {
   const openDuplicate = (promo) => {
     const copy = {};
     DUPLICATE_FIELDS.forEach((key) => { copy[key] = promo[key]; });
-    copy.title = `${promo.title} (Copy)`;
     copy.date = "";
     copy.rsvp_deadline = "";
     copy.is_active = true;
