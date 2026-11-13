@@ -1,11 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Plus, Megaphone, Pencil, Trash2, ArrowLeft, CalendarDays, Users, Copy, ExternalLink, Share2 } from "lucide-react";
+import { Plus, Megaphone, Pencil, Trash2, ArrowLeft, CalendarDays, Users, Copy, CopyPlus, ExternalLink, Share2 } from "lucide-react";
 import PromotionForm from "../events/PromotionForm";
 import SocialMediaSettingsModal from "./SocialMediaSettingsModal";
 import InviteeManager from "../events/InviteeManager";
 import RsvpDashboard from "../events/RsvpDashboard";
+
+// Content that carries over when duplicating a promotion.
+// Dates, the share slug, and RSVP/social tracking are intentionally left behind.
+const DUPLICATE_FIELDS = [
+  "title", "subtitle", "description", "event_type", "banner_image_url",
+  "time", "end_time", "location_label", "max_guests", "price_per_guest",
+  "default_discount_amount", "host_name", "host_message", "invite_email_subject"
+];
 
 export default function PromotionsTab() {
   const [promotions, setPromotions] = useState([]);
@@ -13,6 +21,7 @@ export default function PromotionsTab() {
   const [selected, setSelected] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [duplicateSource, setDuplicateSource] = useState(null);
   const [showSocialSettings, setShowSocialSettings] = useState(false);
   const [postingSocial, setPostingSocial] = useState(false);
 
@@ -31,6 +40,18 @@ export default function PromotionsTab() {
     await base44.entities.EventPromotion.delete(promo.id);
     toast.success("Promotion deleted");
     load();
+  };
+
+  const openDuplicate = (promo) => {
+    const copy = {};
+    DUPLICATE_FIELDS.forEach((key) => { copy[key] = promo[key]; });
+    copy.title = `${promo.title} (Copy)`;
+    copy.date = "";
+    copy.rsvp_deadline = "";
+    copy.is_active = true;
+    setEditing(null);
+    setDuplicateSource(copy);
+    setShowForm(true);
   };
 
   const PROD_ORIGIN = "https://jtapkitchen.com";
@@ -75,6 +96,9 @@ export default function PromotionsTab() {
             </button>
             <button onClick={postToSocial} disabled={postingSocial} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg font-body text-xs font-medium hover:opacity-90 disabled:opacity-50">
               <Share2 className="w-3.5 h-3.5" /> {postingSocial ? "Posting…" : "Post to Social"}
+            </button>
+            <button onClick={() => openDuplicate(selected)} className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-lg font-body text-xs font-medium hover:bg-muted">
+              <CopyPlus className="w-3.5 h-3.5" /> Duplicate
             </button>
             <button onClick={() => { setEditing(selected); setShowForm(true); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-lg font-body text-xs font-medium hover:bg-muted">
               <Pencil className="w-3.5 h-3.5" /> Edit
@@ -170,9 +194,19 @@ export default function PromotionsTab() {
                     {promo.is_active ? "Active" : "Inactive"}
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-1"><CalendarDays className="w-3 h-3" /> {formatDate(promo.date)}</span>
-                  <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" /> {promo.event_type}</span>
+                <div className="flex items-center justify-between gap-2 mt-2">
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1"><CalendarDays className="w-3 h-3" /> {formatDate(promo.date)}</span>
+                    <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" /> {promo.event_type}</span>
+                  </div>
+                  <button
+                    type="button"
+                    title="Duplicate this promotion"
+                    onClick={(e) => { e.stopPropagation(); openDuplicate(promo); }}
+                    className="inline-flex items-center gap-1 px-2 py-1 border border-border rounded-md font-body text-xs font-medium hover:bg-muted shrink-0"
+                  >
+                    <CopyPlus className="w-3 h-3" /> Duplicate
+                  </button>
                 </div>
               </div>
             </div>
@@ -182,9 +216,9 @@ export default function PromotionsTab() {
 
       {showForm && (
         <PromotionForm
-          promotion={editing}
-          onSave={() => { setShowForm(false); setEditing(null); load(); if (editing) setSelected(null); }}
-          onCancel={() => { setShowForm(false); setEditing(null); }}
+          promotion={editing || duplicateSource}
+          onSave={() => { setShowForm(false); setEditing(null); setDuplicateSource(null); load(); if (editing || duplicateSource) setSelected(null); }}
+          onCancel={() => { setShowForm(false); setEditing(null); setDuplicateSource(null); }}
         />
       )}
 

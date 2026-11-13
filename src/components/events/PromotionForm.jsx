@@ -23,7 +23,7 @@ function generateSlug(title) {
 }
 
 export default function PromotionForm({ promotion, onSave, onCancel }) {
-  const [form, setForm] = useState(promotion || { ...EMPTY });
+  const [form, setForm] = useState(promotion ? { ...EMPTY, ...promotion } : { ...EMPTY });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sendToLoyalty, setSendToLoyalty] = useState(false);
