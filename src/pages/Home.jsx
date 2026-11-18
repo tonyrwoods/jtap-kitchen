@@ -29,7 +29,7 @@ import StatsBar from "../components/StatsBar";
 import NewsletterCTA from "../components/NewsletterCTA";
 import PlanYourVisit from "../components/PlanYourVisit";
 import FinalCTA from "../components/FinalCTA";
-import AnnouncementMarquee from "../components/AnnouncementMarquee";
+
 
 export default function Home() {
   useSeoMeta("home");
@@ -43,7 +43,6 @@ export default function Home() {
 
   return (
     <>
-      <AnnouncementMarquee />
       <HeroSection onBook={handleBook} />
       <GrandOpeningCountdown />
       <ValuePropsStrip />
