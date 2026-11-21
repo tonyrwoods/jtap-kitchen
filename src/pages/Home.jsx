@@ -29,6 +29,7 @@ import StatsBar from "../components/StatsBar";
 import NewsletterCTA from "../components/NewsletterCTA";
 import PlanYourVisit from "../components/PlanYourVisit";
 import FinalCTA from "../components/FinalCTA";
+import HolidayAnnouncementScroller from "../components/HolidayAnnouncementScroller";
 
 
 export default function Home() {
@@ -43,6 +44,7 @@ export default function Home() {
 
   return (
     <>
+      <HolidayAnnouncementScroller />
       <HeroSection onBook={handleBook} />
       <GrandOpeningCountdown />
       <ValuePropsStrip />
