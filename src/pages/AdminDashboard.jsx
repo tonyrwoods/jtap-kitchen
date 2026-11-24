@@ -50,10 +50,11 @@ import SeoContentDraftsTab from "../components/admin/SeoContentDraftsTab";
 import GuestProfilesTab from "../components/admin/GuestProfilesTab";
 import GuestFeedbackTab from "../components/admin/GuestFeedbackTab";
 import TableManagementTab from "../components/admin/TableManagementTab";
+import OrdersTab from "../components/admin/OrdersTab";
 import SelectDropdown from "../components/SelectDropdown";
 
 const TAB_GROUPS = [
-  { label: "Operations", tabs: ["Overview", "Operations Settings", "Opening Checklist", "End of Year Checklist", "Staff Roster", "Floor Plan"] },
+  { label: "Operations", tabs: ["Overview", "Online Orders", "Operations Settings", "Opening Checklist", "End of Year Checklist", "Staff Roster", "Floor Plan"] },
   { label: "Menu & Pricing", tabs: ["Menu Items", "Liquor Items", "Pricing Strategy", "Chef Highlights"] },
   { label: "Reservations", tabs: ["Reservations", "Calendar", "Waitlist", "Event Waitlist"] },
   { label: "Events", tabs: ["Ticketed Events", "Inquiries", "Talent", "Add-Ons"] },
@@ -490,6 +491,12 @@ export default function AdminDashboard() {
                     {reviews.length === 0 && <p className="font-body text-sm text-muted-foreground">No reviews yet.</p>}
                   </div>
                 </div>
+              </motion.div>
+            )}
+
+            {tab === "Online Orders" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <OrdersTab />
               </motion.div>
             )}
 
