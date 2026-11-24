@@ -18,7 +18,7 @@ export default async function(req) {
     const body = await req.json();
     const {
       contact_name, email, phone, preferred_date, preferred_day,
-      guest_count, event_type, package: pkg,
+      guest_count, event_type, package: pkg, sms_opt_in,
     } = body;
 
     const emailNorm = String(email || '').trim().toLowerCase();
@@ -37,6 +37,7 @@ export default async function(req) {
       contact_name,
       email: emailNorm,
       phone: phone || null,
+      sms_opt_in: !!sms_opt_in,
       preferred_date: preferred_date || null,
       preferred_day,
       guest_count: parseInt(guest_count) || 0,

@@ -6,7 +6,7 @@ import { Clock, CheckCircle2, X } from "lucide-react";
 import { toast } from "sonner";
 
 const EMPTY = {
-  contact_name: "", email: "", phone: "",
+  contact_name: "", email: "", phone: "", sms_opt_in: false,
   preferred_date: "", preferred_day: "Flexible",
   guest_count: "", event_type: "", package: "Not Sure",
 };
@@ -34,6 +34,7 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
     await base44.functions.invoke("submitEventWaitlist", {
       ...form,
       guest_count: parseInt(form.guest_count) || 0,
+      sms_opt_in: !!form.sms_opt_in,
     });
     setSubmitted(true);
     setSubmitting(false);
@@ -137,6 +138,13 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
                   </select>
                 </div>
               </div>
+              <label className={`flex items-start gap-3 ${form.phone ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}>
+                <input type="checkbox" checked={form.sms_opt_in} onChange={e => set("sms_opt_in", e.target.checked)} disabled={!form.phone}
+                  className="mt-0.5 w-4 h-4 rounded border-border text-primary focus:ring-primary/40" />
+                <span className="font-body text-xs text-muted-foreground leading-relaxed">
+                  Yes, you may text me about my waitlist request at the number above. Msg &amp; data rates may apply. Reply STOP to cancel.
+                </span>
+              </label>
               <button type="submit" disabled={submitting}
                 className="w-full py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                 {submitting ? "Joining waitlist..." : "Join Waitlist"}
