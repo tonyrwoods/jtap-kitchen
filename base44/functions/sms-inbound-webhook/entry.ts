@@ -1,6 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { secrets } from 'base44:runtime';
-import { sendSms } from '../../shared/sendSms.js';
 
 // Twilio inbound SMS keyword handling. When a guest replies to a JTAP Kitchen
 // text, Twilio POSTs the message here. We record STOP/UNSTOP opt-outs (so the
@@ -62,20 +61,20 @@ async function verifyTwilioSignature(req, params: Record<string, string>): Promi
   }
 }
 
-async function sendHelpReply(phone) {
-  const accountSid = secrets.get('TWILIO_ACCOUNT_SID');
-  const authToken = secrets.get('TWILIO_AUTH_TOKEN');
-  const fromNumber = secrets.get('TWILIO_FROM_NUMBER');
-  if (!accountSid || !authToken || !fromNumber) return;
-  try {
-    await sendSms({
-      to: phone,
-      body: 'JTAP Kitchen SMS: Reservation & waitlist alerts. Message & data rates may apply. Reply STOP to opt out, START to resume. Questions? Call 901-233-4060 or email info@jtapkitchen.com.',
-      accountSid, authToken, fromNumber,
-    });
-  } catch (smsErr) {
-    console.error('HELP reply SMS failed:', smsErr.message);
-  }
+// Carrier-required HELP reply: program name, opt-out instruction and a live
+// contact number. Answered as TwiML on the inbound request itself, so the
+// reply does not depend on a second outbound API call succeeding.
+const HELP_REPLY = 'JTAP Kitchen: reservation & waitlist alerts. Reply STOP to opt out. Call +1 901-213-8085 for help. Msg & data rates may apply.';
+
+function twimlReply(message) {
+  const escaped = String(message)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  return new Response(
+    `<?xml version="1.0" encoding="UTF-8"?><Response><Message>${escaped}</Message></Response>`,
+    { status: 200, headers: { 'Content-Type': 'text/xml' } },
+  );
 }
 
 export default async function (req) {
@@ -138,7 +137,7 @@ export default async function (req) {
       else await base44.asServiceRole.entities.SmsOptOut.create({ phone, ...patch });
     } else if (action === 'help') {
       if (record) await base44.asServiceRole.entities.SmsOptOut.update(record.id, common);
-      await sendHelpReply(phone);
+      return twimlReply(HELP_REPLY);
     } else {
       // Non-keyword reply — just log it against any existing record.
       if (record) await base44.asServiceRole.entities.SmsOptOut.update(record.id, common);
