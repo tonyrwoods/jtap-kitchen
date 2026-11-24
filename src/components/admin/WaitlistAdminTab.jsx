@@ -20,6 +20,7 @@ function AddGuestForm({ onAdded, onCancel }) {
     party_size: 2,
     preferred_table_type: "Any",
     special_requests: "",
+    sms_opt_in: false,
     estimated_wait_minutes: 15
   });
   const [submitting, setSubmitting] = useState(false);
@@ -105,6 +106,23 @@ function AddGuestForm({ onAdded, onCancel }) {
               className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body"
             />
           </div>
+          <div className="sm:col-span-2 space-y-2 rounded-xl border border-primary/25 bg-primary/5 p-3">
+            <p className="font-body text-xs text-foreground leading-relaxed">
+              <span className="font-semibold">Say to the guest:</span> "We can text you when your table is ready — up to 2 messages per visit. Message and data rates may apply, and you can reply STOP to opt out. Is that okay?"
+            </p>
+            <label className={`flex items-start gap-3 ${form.phone ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}>
+              <input
+                type="checkbox"
+                checked={form.sms_opt_in}
+                onChange={e => setForm({ ...form, sms_opt_in: e.target.checked })}
+                disabled={!form.phone}
+                className="mt-0.5 w-4 h-4 rounded border-border text-primary focus:ring-primary/40"
+              />
+              <span className="font-body text-xs text-muted-foreground leading-relaxed">
+                Guest agreed to texts — tick only after they say yes. No text is sent without this.
+              </span>
+            </label>
+          </div>
           <div className="sm:col-span-2">
             <label className="font-body text-xs text-muted-foreground mb-1 block">Special Requests</label>
             <textarea
@@ -147,7 +165,10 @@ function WaitlistEntry({ entry, onStatusChange, onDelete, onNotify }) {
         <p className="font-body text-xs text-muted-foreground">
           Party of {entry.party_size} • {entry.preferred_table_type}
         </p>
-        <p className="font-body text-xs text-muted-foreground">{entry.email} {entry.phone && `• ${entry.phone}`}</p>
+        <p className="font-body text-xs text-muted-foreground">
+          {entry.email} {entry.phone && `• ${entry.phone}`}
+          {entry.phone && entry.sms_opt_in && <span className="text-green-700 font-medium"> • texts OK</span>}
+        </p>
         {entry.special_requests && (
           <p className="font-body text-xs text-primary mt-1 italic">"{entry.special_requests}"</p>
         )}
@@ -169,7 +190,7 @@ function WaitlistEntry({ entry, onStatusChange, onDelete, onNotify }) {
               <Check className="w-3 h-3" /> Ready
             </button>
             <button
-              onClick={() => onNotify(entry.id, entry.guest_name, entry.email, entry.phone)}
+              onClick={() => onNotify(entry)}
               disabled={entry.notification_sent}
               className="flex items-center gap-1 px-3 py-1.5 border border-primary text-primary rounded-lg text-xs font-medium hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
@@ -232,10 +253,18 @@ export default function WaitlistAdminTab() {
     }
   };
 
-  const handleNotify = async (id, name, email, phone) => {
+  const handleNotify = async (entry) => {
     try {
-      await base44.functions.invoke("sendTableReadyEmail", { waitlistId: id, guestName: name, guestEmail: email, guestPhone: phone });
-      toast.success(phone ? "Table-ready email & text sent to " + name : "Email sent to " + name);
+      await base44.functions.invoke("sendTableReadyEmail", {
+        waitlistId: entry.id,
+        guestName: entry.guest_name,
+        guestEmail: entry.email,
+        guestPhone: entry.phone,
+      });
+      const name = entry.guest_name;
+      if (entry.phone && entry.sms_opt_in) toast.success("Table-ready email & text sent to " + name);
+      else if (entry.phone) toast.success("Email sent to " + name + " — guest did not agree to texts");
+      else toast.success("Email sent to " + name);
       fetchWaitlist();
     } catch (error) {
       toast.error("Failed to send notification");

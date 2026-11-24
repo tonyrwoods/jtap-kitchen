@@ -55,7 +55,7 @@ import SelectDropdown from "../components/SelectDropdown";
 const TAB_GROUPS = [
   { label: "Operations", tabs: ["Overview", "Operations Settings", "Opening Checklist", "End of Year Checklist", "Staff Roster", "Floor Plan"] },
   { label: "Menu & Pricing", tabs: ["Menu Items", "Liquor Items", "Pricing Strategy", "Chef Highlights"] },
-  { label: "Reservations", tabs: ["Reservations", "Calendar", "Event Waitlist"] },
+  { label: "Reservations", tabs: ["Reservations", "Calendar", "Waitlist", "Event Waitlist"] },
   { label: "Events", tabs: ["Ticketed Events", "Inquiries", "Talent", "Add-Ons"] },
   { label: "Guests", tabs: ["Guest Profiles", "NPS Feedback", "Gift Cards", "Feedback", "Scorecards", "Loyalty", "Referrals"] },
   { label: "Marketing", tabs: ["Promotions", "Gallery", "Instagram", "LinkedIn", "SEO", "Event SEO", "GBP Posts", "Ads"] },
@@ -520,6 +520,12 @@ export default function AdminDashboard() {
             {tab === "Pricing Strategy" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <PricingStrategyTab />
+              </motion.div>
+            )}
+
+            {tab === "Waitlist" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <WaitlistAdminTab />
               </motion.div>
             )}
 

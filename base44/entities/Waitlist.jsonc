@@ -14,6 +14,12 @@
       "type": "string",
       "title": "Phone"
     },
+    "sms_opt_in": {
+      "type": "boolean",
+      "title": "Guest Agreed to Texts",
+      "default": false,
+      "description": "Host ticks this only after reading the consent script and the guest says yes. Table-ready texts are never sent without it."
+    },
     "party_size": {
       "type": "number",
       "title": "Party Size"

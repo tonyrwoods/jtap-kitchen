@@ -56,8 +56,9 @@ Deno.serve(async (req) => {
     await base44.asServiceRole.entities.Waitlist.update(waitlistId, { notification_sent: true, notified_at: new Date().toISOString() });
 
     // Optional SMS — staff-ordered table-ready text to a waitlist guest who left
-    // a number. Presence implies consent (they gave it to be notified). Non-blocking.
-    if (guestPhone) {
+    // a number AND agreed to texts when the host read them the consent script
+    // (waitlist.sms_opt_in). A number alone is never treated as consent.
+    if (guestPhone && waitlist.sms_opt_in) {
       const accountSid = secrets.get('TWILIO_ACCOUNT_SID');
       const authToken = secrets.get('TWILIO_AUTH_TOKEN');
       const fromNumber = secrets.get('TWILIO_FROM_NUMBER');

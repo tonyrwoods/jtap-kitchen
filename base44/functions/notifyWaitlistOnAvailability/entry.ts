@@ -70,10 +70,10 @@ Deno.serve(async (req) => {
       body: `Hello ${match.guest_name},\n\nGreat news! A table has just opened up at JTAP Kitchen and you're next in line.\n\nPlease check in with the host within 10 minutes to claim your table for your party of ${partySize}.\n\nWe can't wait to host you!\n\n— The JTAP Kitchen Team`,
     });
 
-    // Text the waiting guest if they left a number — table-ready alerts are the
-    // reason the number was collected, so presence implies consent. Non-blocking
+    // Text the waiting guest only when the host recorded consent (sms_opt_in)
+    // while adding them. A number alone is never treated as consent. Non-blocking
     // so a Twilio failure can't keep the waitlist record from being marked ready.
-    if (match.phone) {
+    if (match.phone && match.sms_opt_in) {
       const accountSid = secrets.get('TWILIO_ACCOUNT_SID');
       const authToken = secrets.get('TWILIO_AUTH_TOKEN');
       const fromNumber = secrets.get('TWILIO_FROM_NUMBER');
