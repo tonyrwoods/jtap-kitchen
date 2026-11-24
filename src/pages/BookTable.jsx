@@ -4,6 +4,7 @@ import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle, Mail } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 import CompanionInviteForm from "@/components/CompanionInviteForm";
 import GuaranteeDepositCard from "@/components/reservations/GuaranteeDepositCard";
 import ComplementarySuggestions from "@/components/ComplementarySuggestions";
@@ -438,13 +439,21 @@ export default function BookTable() {
                           placeholder="+1 (555) 000-0000"
                           className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground font-body text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" />
                       </div>
-                      <label className={`flex items-start gap-3 ${phone ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}>
-                        <input type="checkbox" checked={smsOptIn} onChange={e => setSmsOptIn(e.target.checked)} disabled={!phone}
-                          className="mt-0.5 w-4 h-4 rounded border-border text-primary focus:ring-primary/40" />
-                        <span className="font-body text-xs text-muted-foreground leading-relaxed">
-                          Yes, text me a confirmation and reminder at the number above. Msg &amp; data rates may apply. Reply STOP to cancel.
-                        </span>
-                      </label>
+                      <div className="space-y-1.5">
+                        <label className={`flex items-start gap-3 ${phone ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}>
+                          <input type="checkbox" checked={smsOptIn} onChange={e => setSmsOptIn(e.target.checked)} disabled={!phone}
+                            className="mt-0.5 w-4 h-4 rounded border-border text-primary focus:ring-primary/40" />
+                          <span className="font-body text-xs text-muted-foreground leading-relaxed">
+                            Yes, text me a confirmation and reminder at the number above. Up to 4 msgs per reservation. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel.
+                          </span>
+                        </label>
+                        <p className="font-body text-[11px] text-muted-foreground/80 pl-7 leading-relaxed">
+                          By opting in you agree to our{" "}
+                          <Link to="/terms-of-service" className="underline underline-offset-2 hover:text-primary">Terms of Service</Link>{" "}
+                          and{" "}
+                          <Link to="/privacy-policy" className="underline underline-offset-2 hover:text-primary">Privacy Policy</Link>.
+                        </p>
+                      </div>
                       <div>
                         <label className="flex items-center gap-2 font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground mb-2">
                           <MessageSquare className="w-3.5 h-3.5" /> Special Requests
