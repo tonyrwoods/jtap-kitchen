@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { requireAuthOrRedirect } from "@/lib/requireAuth";
-import { Link } from "react-router-dom";
+import SmsOptInField from "@/components/SmsOptInField";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, CheckCircle2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -35,7 +35,7 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
     await base44.functions.invoke("submitEventWaitlist", {
       ...form,
       guest_count: parseInt(form.guest_count) || 0,
-      sms_opt_in: !!form.sms_opt_in,
+      sms_opt_in: Boolean(form.phone.trim()) && form.sms_opt_in,
     });
     setSubmitted(true);
     setSubmitting(false);
@@ -97,12 +97,7 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
                     className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="you@email.com" />
                 </div>
-                <div>
-                  <label className="font-body text-sm font-semibold mb-1 block">Phone</label>
-                  <input value={form.phone} onChange={e => set("phone", e.target.value)}
-                    className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="(555) 000-0000" />
-                </div>
+
                 <div>
                   <label className="font-body text-sm font-semibold mb-1 block">Guest Count</label>
                   <input type="number" min="1" value={form.guest_count} onChange={e => set("guest_count", e.target.value)}
@@ -139,19 +134,13 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
                   </select>
                 </div>
               </div>
-              <label className={`flex items-start gap-3 ${form.phone ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}>
-                <input type="checkbox" checked={form.sms_opt_in} onChange={e => set("sms_opt_in", e.target.checked)} disabled={!form.phone}
-                  className="mt-0.5 w-4 h-4 rounded border-border text-primary focus:ring-primary/40" />
-                <span className="font-body text-xs text-muted-foreground leading-relaxed">
-                  Yes, you may text me about my waitlist request at the number above. Up to 2 msgs per visit. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel.
-                </span>
-              </label>
-              <p className="font-body text-[11px] text-muted-foreground/80 pl-7 leading-relaxed -mt-1">
-                By opting in you agree to our{" "}
-                <Link to="/terms-of-service" className="underline underline-offset-2 text-primary">Terms &amp; Conditions</Link>{" "}
-                and{" "}
-                <Link to="/privacy-policy" className="underline underline-offset-2 text-primary">Privacy Policy</Link>.
-              </p>
+              <SmsOptInField
+                phone={form.phone} onPhoneChange={value => set("phone", value)}
+                checked={form.sms_opt_in} onCheckedChange={value => set("sms_opt_in", value)}
+                messageType="event waitlist availability notifications and updates"
+                frequency="Up to 2 messages per visit."
+                inputClassName="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              />
               <button type="submit" disabled={submitting}
                 className="w-full py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                 {submitting ? "Joining waitlist..." : "Join Waitlist"}

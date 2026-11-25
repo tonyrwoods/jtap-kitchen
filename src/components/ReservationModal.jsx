@@ -6,6 +6,7 @@ import { X, Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, Ch
 import { toast } from "sonner";
 import GuaranteeDepositCard from "@/components/reservations/GuaranteeDepositCard";
 import ConsentLinks from "@/components/ConsentLinks";
+import SmsOptInField from "@/components/SmsOptInField";
 
 const BRUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -128,6 +129,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [special, setSpecial] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [depositOffer, setDepositOffer] = useState(null);
@@ -162,6 +164,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
         time,
         party_size: party,
         special_requests: special,
+        sms_opt_in: Boolean(phone.trim()) && smsOptIn,
       });
       if (res.data?.success) {
         setDepositOffer(
@@ -182,7 +185,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
     onClose();
     setTimeout(() => {
       setStep(1); setDate(null); setTime(null); setParty(2);
-      setName(""); setEmail(""); setPhone(""); setSpecial(""); setSubmitted(false);
+      setName(""); setEmail(""); setPhone(""); setSpecial(""); setSmsOptIn(false); setSubmitted(false);
       setDepositOffer(null);
     }, 400);
   };
@@ -381,13 +384,7 @@ export default function ReservationModal({ open, onClose, prefill }) {
                         className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground font-body text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" />
                     </div>
 
-                    {/* Phone */}
-                    <div>
-                      <label className="font-body text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground block mb-2">Phone Number</label>
-                      <input type="tel" inputMode="tel" value={phone} onChange={e => setPhone(e.target.value)}
-                        placeholder="+1 (555) 000-0000"
-                        className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground font-body text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" />
-                    </div>
+                    <SmsOptInField phone={phone} onPhoneChange={setPhone} checked={smsOptIn} onCheckedChange={setSmsOptIn} />
 
                     {/* Special Requests */}
                     <div>
