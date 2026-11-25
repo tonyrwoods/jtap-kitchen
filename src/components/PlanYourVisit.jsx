@@ -11,7 +11,7 @@ const HOURS = [
   { day: "Lunch & Dinner · Sunday", time: "10:00 AM – 10:00 PM" },
   { day: "Happy Hour · Mon, Thu & Fri", time: "4:00 PM – 6:30 PM · discounted appetizers & drinks" },
   { day: "Game Night · Sports Menu", time: "Sun 12:00 PM – 10:00 PM · Mon & Thu 5:00 PM – 10:00 PM" },
-  { day: "Event Center · Tue & Wed", time: "Reservation Only" },
+  { day: "Event Center · Tue & Wed", time: "Reservation Only · private events & buyouts · contact us for pricing" },
 ];
 
 export default function PlanYourVisit() {

@@ -92,7 +92,7 @@ export default function ReservationSection() {
                 { icon: CalendarDays, label: "Lunch & Dinner", desc: "Mon & Thu – Sat, Sun · 10:00 AM – 10:00 PM" },
                 { icon: Clock, label: "Brunch", desc: "Sat & Sun · 10:00 AM – 2:00 PM" },
                 { icon: Wine, label: "Happy Hour", desc: "Mon, Thu & Fri · 4:00 PM – 6:30 PM · discounted appetizers & drinks" },
-                { icon: Users, label: "Private Events", desc: "Event Center Tue & Wed · up to 40 guests" },
+                { icon: Users, label: "Private Events", desc: "Event Center Tue & Wed · up to 40 guests · contact us for pricing" },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex items-start gap-4">
                   <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
