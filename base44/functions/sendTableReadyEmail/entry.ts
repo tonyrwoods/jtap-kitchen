@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
         try {
           await sendSms({
             to: guestPhone,
-            body: `JTAP Kitchen: Hi ${firstName}, your table is ready! Please check in with the host within 10 minutes. See you soon! Questions? 901-233-4060. Reply STOP to opt out.`,
+            body: `JTAP Kitchen: Hi ${firstName}, your table is ready! Please check in with the host within 10 minutes. See you soon! Questions? 901-213-8085. Reply STOP to opt out.`,
             accountSid, authToken, fromNumber, base44,
           });
         } catch (smsErr) {
