@@ -10,9 +10,9 @@ export default function SmsOptInField({ phone, onPhoneChange, checked, onChecked
   };
   return (
     <fieldset data-sms-opt-in className="space-y-3 font-body">
-      <legend className="mb-2 text-base font-semibold text-foreground">JTAP Kitchen SMS/Text Message Opt-In</legend>
+      <legend className="mb-2 text-base font-semibold text-foreground">JTAP Kitchen SMS/Text Opt-In</legend>
       <div>
-        <label htmlFor={`${id}-phone`} className="block text-sm font-medium text-foreground mb-2">Mobile Phone Number for JTAP Kitchen SMS/text messages</label>
+        <label htmlFor={`${id}-phone`} className="block text-sm font-medium text-foreground mb-2">Mobile Phone Number</label>
         <input id={`${id}-phone`} name="phone" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={e => changePhone(e.target.value)} placeholder="e.g. 901-555-0100" aria-describedby={`${id}-phone-help ${id}-disclosures`} className={inputClassName} />
         <p id={`${id}-phone-help`} className="text-xs text-foreground mt-2 leading-relaxed">Only checking the box below gives JTAP Kitchen permission to text this number.</p>
       </div>
@@ -20,7 +20,7 @@ export default function SmsOptInField({ phone, onPhoneChange, checked, onChecked
         <label htmlFor={`${id}-consent`} className={`flex items-start gap-3 text-sm text-foreground leading-relaxed ${hasPhone ? "cursor-pointer" : "cursor-not-allowed"}`}>
           <input id={`${id}-consent`} name="sms_opt_in" type="checkbox" checked={hasPhone && checked} disabled={!hasPhone} onChange={e => onCheckedChange(e.target.checked)} aria-describedby={`${id}-disclosures ${id}-policies`} className="mt-1 w-4 h-4 shrink-0 rounded border-border accent-primary focus:ring-primary/40" />
           <span className="min-w-0 space-y-2">
-            <span className="block"><strong className="font-semibold">By checking this box, I agree to receive SMS/text messages from JTAP Kitchen</strong> at the mobile phone number entered above.</span>
+            <span className="block"><strong className="font-semibold">I agree to receive SMS/text messages from JTAP Kitchen</strong> at <strong className="font-semibold break-words">{hasPhone ? phone.trim() : "the mobile phone number entered above"}</strong>.</span>
             <span id={`${id}-disclosures`} className="block space-y-1">
               <span className="block"><strong className="font-semibold">Message type:</strong> {messageType}.</span>
               <span className="block"><strong className="font-semibold">Message frequency:</strong> {frequency}</span>

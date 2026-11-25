@@ -40,7 +40,7 @@ export default function SmsOptIn() {
       <div className="bg-foreground text-background py-4 md:py-16 px-6 text-center">
         <div className="max-w-2xl mx-auto">
           <p className="hidden md:block font-body text-xs uppercase tracking-[0.35em] font-semibold text-primary mb-3">JTAP Kitchen</p>
-          <h1 className="font-heading text-2xl md:text-4xl font-bold md:mb-3">Text Message Program</h1>
+          <h1 className="font-heading text-2xl md:text-4xl font-bold md:mb-3">SMS/Text Message Sign-Up</h1>
           <Tagline className="hidden md:block text-base text-primary mb-4" />
           <p className="hidden md:block font-body text-sm text-background/70 leading-relaxed">
             Sign up for SMS/text messages from JTAP Kitchen using your mobile number and the consent checkbox below.
