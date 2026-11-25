@@ -386,7 +386,7 @@ export default function BookTable() {
                         <span className="font-body text-sm text-muted-foreground ml-1">{party === 1 ? "guest" : "guests"}</span>
                       </div>
                       {party > 8 && (
-                        <p className="font-body text-xs text-primary mt-3">For parties larger than 8, we recommend calling us directly at 901-233-4060.</p>
+                        <p className="font-body text-xs text-primary mt-3">For parties larger than 8, we recommend calling us directly at 901-213-8085.</p>
                       )}
                     </div>
 
