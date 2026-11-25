@@ -18,7 +18,7 @@ import { secrets } from 'base44:runtime';
 //   https://jtapkitchen.base44.app/functions/sms-inbound-webhook
 
 const OPT_OUT = ['stop', 'stopall', 'unsubscribe', 'cancel', 'end', 'quit', 'optout', 'opt out'];
-const OPT_IN = ['start', 'unstop', 'yes', 'optin', 'opt in', 'resume', 'sub'];
+const OPT_IN = ['join', 'start', 'unstop', 'yes', 'optin', 'opt in', 'resume', 'sub'];
 const HELP = ['help', 'info', 'more'];
 
 function normalizePhone(p) {
@@ -65,6 +65,10 @@ async function verifyTwilioSignature(req, params: Record<string, string>): Promi
 // contact number. Answered as TwiML on the inbound request itself, so the
 // reply does not depend on a second outbound API call succeeding.
 const HELP_REPLY = 'JTAP Kitchen: reservation & waitlist alerts. Reply STOP to opt out. Call +1 901-213-8085 for help. Msg & data rates may apply.';
+
+// Carrier-required opt-in confirmation, answered as TwiML on the inbound request
+// itself. Sent only when a guest texts one of the OPT_IN keywords above.
+const OPT_IN_REPLY = 'JTAP Kitchen: You are subscribed to reservation & waitlist texts. Up to 4 msgs per reservation. Msg & data rates may apply. Reply HELP for help, STOP to cancel.';
 
 function twimlReply(message) {
   const escaped = String(message)
@@ -135,6 +139,7 @@ export default async function (req) {
       const patch = { ...common, status: 'OptedIn', opted_in_at: now };
       if (record) await base44.asServiceRole.entities.SmsOptOut.update(record.id, patch);
       else await base44.asServiceRole.entities.SmsOptOut.create({ phone, ...patch });
+      return twimlReply(OPT_IN_REPLY);
     } else if (action === 'help') {
       if (record) await base44.asServiceRole.entities.SmsOptOut.update(record.id, common);
       return twimlReply(HELP_REPLY);
