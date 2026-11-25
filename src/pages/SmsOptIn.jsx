@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MessageSquare, CheckCircle2, Phone } from "lucide-react";
+import { CheckCircle2, Phone } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import SmsOptInField from "@/components/SmsOptInField";
@@ -68,14 +68,7 @@ export default function SmsOptIn() {
             </div>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-4 md:p-8 space-y-4 md:space-y-6">
-            <div className="sr-only md:not-sr-only md:flex md:items-center md:gap-2">
-              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <MessageSquare className="w-4 h-4 text-primary" />
-              </div>
-              <h2 className="font-heading text-xl font-bold">JTAP Kitchen SMS Program</h2>
-            </div>
-
+          <form onSubmit={handleSubmit} aria-label="JTAP Kitchen SMS/Text Message Opt-In" className="bg-card border border-border rounded-2xl p-4 md:p-8 space-y-4 md:space-y-6">
             <SmsOptInField
               phone={phone}
               onPhoneChange={setPhone}
