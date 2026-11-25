@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { requireAuthOrRedirect } from "@/lib/requireAuth";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, CheckCircle2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -145,6 +146,12 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
                   Yes, you may text me about my waitlist request at the number above. Msg &amp; data rates may apply. Reply STOP to cancel.
                 </span>
               </label>
+              <p className="font-body text-[11px] text-muted-foreground/80 pl-7 leading-relaxed -mt-1">
+                By opting in you agree to our{" "}
+                <Link to="/terms-of-service" className="underline underline-offset-2 hover:text-primary">Terms of Service</Link>{" "}
+                and{" "}
+                <Link to="/privacy-policy" className="underline underline-offset-2 hover:text-primary">Privacy Policy</Link>.
+              </p>
               <button type="submit" disabled={submitting}
                 className="w-full py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                 {submitting ? "Joining waitlist..." : "Join Waitlist"}
