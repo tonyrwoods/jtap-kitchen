@@ -449,7 +449,7 @@ export default function BookTable() {
                         </label>
                         <p className="font-body text-[11px] text-muted-foreground/80 pl-7 leading-relaxed">
                           By opting in you agree to our{" "}
-                          <Link to="/terms-of-service" className="underline underline-offset-2 hover:text-primary">Terms of Service</Link>{" "}
+                          <Link to="/terms-of-service" className="underline underline-offset-2 hover:text-primary">Terms &amp; Conditions</Link>{" "}
                           and{" "}
                           <Link to="/privacy-policy" className="underline underline-offset-2 hover:text-primary">Privacy Policy</Link>.
                         </p>
@@ -492,6 +492,14 @@ export default function BookTable() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Always-visible consent links (required in the SMS opt-in flow) */}
+        <p className="font-body text-[11px] text-muted-foreground/80 text-center leading-relaxed mt-10">
+          By booking a table or opting in to text messages you agree to our{" "}
+          <Link to="/terms-of-service" className="underline underline-offset-2 text-primary hover:opacity-80">Terms &amp; Conditions</Link>{" "}
+          and{" "}
+          <Link to="/privacy-policy" className="underline underline-offset-2 text-primary hover:opacity-80">Privacy Policy</Link>.
+        </p>
       </div>
     </div>
   );

@@ -148,9 +148,9 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
               </label>
               <p className="font-body text-[11px] text-muted-foreground/80 pl-7 leading-relaxed -mt-1">
                 By opting in you agree to our{" "}
-                <Link to="/terms-of-service" className="underline underline-offset-2 hover:text-primary">Terms of Service</Link>{" "}
+                <Link to="/terms-of-service" className="underline underline-offset-2 text-primary">Terms &amp; Conditions</Link>{" "}
                 and{" "}
-                <Link to="/privacy-policy" className="underline underline-offset-2 hover:text-primary">Privacy Policy</Link>.
+                <Link to="/privacy-policy" className="underline underline-offset-2 text-primary">Privacy Policy</Link>.
               </p>
               <button type="submit" disabled={submitting}
                 className="w-full py-3.5 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
