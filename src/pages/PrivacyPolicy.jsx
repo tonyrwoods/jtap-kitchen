@@ -79,6 +79,7 @@ export default function PrivacyPolicy() {
             </p>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
               <li><span className="text-foreground font-medium">AI Disclosure:</span> The assistant identifies itself as a virtual assistant at the start of the call.</li>
+              <li><span className="text-foreground font-medium">Call Recording:</span> We do not record or store audio of your calls.</li>
               <li><span className="text-foreground font-medium">Speak With a Person:</span> You may ask for a team member at any point and, during business hours, your call will be transferred to staff.</li>
               <li><span className="text-foreground font-medium">Information We Collect:</span> If you make a reservation by phone, we record the details you provide — your name, phone number, party size, date, time, and any special requests — and use them only to manage that booking.</li>
               <li><span className="text-foreground font-medium">No Outbound Marketing Calls:</span> We do not place telemarketing or marketing calls, and we do not use autodialers.</li>
