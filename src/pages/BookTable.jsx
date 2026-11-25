@@ -479,7 +479,8 @@ export default function BookTable() {
           By booking a table or opting in to text messages you agree to our{" "}
           <Link to="/terms-of-service" className="underline underline-offset-2 text-primary hover:opacity-80">Terms &amp; Conditions</Link>{" "}
           and{" "}
-          <Link to="/privacy-policy" className="underline underline-offset-2 text-primary hover:opacity-80">Privacy Policy</Link>.
+          <Link to="/privacy-policy" className="underline underline-offset-2 text-primary hover:opacity-80">Privacy Policy</Link>. See our{" "}
+          <Link to="/sms-opt-in" className="underline underline-offset-2 text-primary hover:opacity-80">Text Message Program</Link>.
         </p>
       </div>
     </div>

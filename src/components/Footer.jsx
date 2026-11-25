@@ -182,6 +182,7 @@ export default function Footer({ onBookTable }) {
                 { label: "Vendor / Talent Signup", href: "/vendor-signup" },
                 { label: "Contact Us", href: "/contact" },
                 { label: "Support", href: "/support" },
+                { label: "Text Message Program", href: "/sms-opt-in" },
                 { label: "Login", href: null },
               ].map(({ label, href, action }) => (
                 <a

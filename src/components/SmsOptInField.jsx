@@ -25,7 +25,7 @@ export default function SmsOptInField({ phone, onPhoneChange, checked, onChecked
         <p>Consent is optional and is not a condition of purchase.</p>
       </div>
       <p id={`${id}-policies`} className="pl-7 text-sm text-foreground leading-relaxed">
-        Read our <Link to="/terms-of-service" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Terms &amp; Conditions</Link> and <Link to="/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Privacy Policy</Link>.
+        Read our <Link to="/terms-of-service" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Terms &amp; Conditions</Link> and <Link to="/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Privacy Policy</Link>, and see our <Link to="/sms-opt-in" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Text Message Program</Link>.
       </p>
     </fieldset>
   );

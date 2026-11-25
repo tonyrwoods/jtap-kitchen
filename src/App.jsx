@@ -33,6 +33,7 @@ import InformationSecurityPolicy from './pages/InformationSecurityPolicy';
 import DataRetentionPolicy from './pages/DataRetentionPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import SmsOptIn from './pages/SmsOptIn';
 import BookTable from './pages/BookTable';
 import Account from './pages/Account';
 import Unsubscribe from './pages/Unsubscribe';
@@ -145,6 +146,7 @@ const AuthenticatedApp = () => {
 
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/sms-opt-in" element={<SmsOptIn />} />
         <Route path="/careers" element={<Careers />} />
         <Route path="/book" element={<BookTable />} />
         <Route path="/account" element={<Account />} />

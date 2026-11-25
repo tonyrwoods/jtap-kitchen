@@ -1,0 +1,52 @@
+{
+  "name": "SmsConsent",
+  "type": "object",
+  "properties": {
+    "phone": {
+      "type": "string",
+      "title": "Mobile Phone Number (E.164)"
+    },
+    "consent_text": {
+      "type": "string",
+      "title": "Consent Language Accepted"
+    },
+    "source": {
+      "type": "string",
+      "title": "Opt-In Source"
+    },
+    "page_url": {
+      "type": "string",
+      "title": "Page URL"
+    },
+    "consented_at": {
+      "type": "string",
+      "title": "Consented At (ISO)"
+    }
+  },
+  "required": [
+    "phone",
+    "consent_text"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
