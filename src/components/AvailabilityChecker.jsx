@@ -15,8 +15,10 @@ export default function AvailabilityChecker({ onBook }) {
           Reserve Your Table at JTAP Kitchen
         </h2>
         <p className="font-body text-muted-foreground mt-3 max-w-xl mx-auto">
-          Open Wednesday–Saturday evenings. Book direct for the best availability and
-          a complimentary welcome bite for society members.
+          Open for brunch Saturday &amp; Sunday and lunch &amp; dinner Monday, Thursday through
+          Sunday. Happy Hour runs Monday, Thursday &amp; Friday, 4:00–6:30 PM, with discounted
+          appetizers and drinks. Book direct for the best availability and a complimentary
+          welcome bite for society members.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">

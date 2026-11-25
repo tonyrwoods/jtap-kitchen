@@ -7,9 +7,11 @@ import { CATERING_ORDER_URL } from "@/lib/ordering";
 // without making them scroll to the footer or visit a separate Contact page.
 const HOURS = [
   { day: "Brunch", time: "Sat & Sun · 10:00 AM – 2:00 PM" },
-  { day: "Lunch", time: "Mon – Fri · 10:00 AM – 10:00 PM" },
-  { day: "Dinner", time: "Sun – Mon & Thu – Sat · 10:00 AM – 10:00 PM" },
-  { day: "Event Center", time: "Tue & Wed · Reservation Only" },
+  { day: "Lunch & Dinner · Mon & Thu – Sat", time: "10:00 AM – 10:00 PM" },
+  { day: "Lunch & Dinner · Sunday", time: "10:00 AM – 10:00 PM" },
+  { day: "Happy Hour · Mon, Thu & Fri", time: "4:00 PM – 6:30 PM · discounted appetizers & drinks" },
+  { day: "Game Night · Sports Menu", time: "Sun 12:00 PM – 10:00 PM · Mon & Thu 5:00 PM – 10:00 PM" },
+  { day: "Event Center · Tue & Wed", time: "Reservation Only" },
 ];
 
 export default function PlanYourVisit() {

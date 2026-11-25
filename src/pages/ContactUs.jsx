@@ -96,8 +96,9 @@ export default function ContactUs() {
                   <h3 className="font-heading font-semibold text-foreground mb-1">Hours</h3>
                   <div className="font-body text-sm text-muted-foreground space-y-1">
                     <p>Brunch (Sat & Sun): 10:00 AM – 2:00 PM</p>
-                    <p>Lunch (Mon – Fri): 10:00 AM – 10:00 PM</p>
-                    <p>Dinner (Sun – Mon & Thu–Sat): 10:00 AM – 10:00 PM</p>
+                    <p>Lunch & Dinner (Mon & Thu – Sat): 10:00 AM – 10:00 PM</p>
+                    <p>Lunch & Dinner (Sunday): 10:00 AM – 10:00 PM</p>
+                    <p className="text-foreground/80 font-medium">Happy Hour (Mon, Thu & Fri): 4:00 PM – 6:30 PM — discounted appetizers &amp; drinks</p>
                     <p>Game Night Sports Menu: Sun 12:00 PM – 10:00 PM · Mon & Thu 5:00 PM – 10:00 PM</p>
                     <p className="text-foreground/80 font-medium">Event Center (Tue & Wed): Reservation Only</p>
                     <p className="text-xs text-primary mt-1">Event Center bookings available Tue & Wed evenings →{" "}

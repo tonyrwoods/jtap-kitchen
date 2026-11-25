@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays, Clock, Users, Send, CheckCircle } from "lucide-react";
+import { CalendarDays, Clock, Users, Send, CheckCircle, Wine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -89,9 +89,10 @@ export default function ReservationSection() {
 
             <div className="space-y-6">
               {[
-                { icon: CalendarDays, label: "Dinner", desc: "Sun, Mon, Thu – Sat, 5:00 PM – 10:00 PM" },
-                { icon: Clock, label: "Brunch & Lunch", desc: "Brunch Sat–Sun 10AM–3PM · Lunch Mon, Thu, Fri 10AM–3PM" },
-                { icon: Users, label: "Private Events", desc: "Up to 40 guests in our private dining room" },
+                { icon: CalendarDays, label: "Lunch & Dinner", desc: "Mon & Thu – Sat, Sun · 10:00 AM – 10:00 PM" },
+                { icon: Clock, label: "Brunch", desc: "Sat & Sun · 10:00 AM – 2:00 PM" },
+                { icon: Wine, label: "Happy Hour", desc: "Mon, Thu & Fri · 4:00 PM – 6:30 PM · discounted appetizers & drinks" },
+                { icon: Users, label: "Private Events", desc: "Event Center Tue & Wed · up to 40 guests" },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex items-start gap-4">
                   <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">

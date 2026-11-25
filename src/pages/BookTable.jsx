@@ -121,7 +121,7 @@ function MiniCalendar({ selectedDate, onSelect }) {
           </div>
         ))}
       </div>
-      <p className="font-body text-xs text-muted-foreground mt-3 text-center">Brunch, Lunch & Dinner · Tue/Wed Lunch only</p>
+      <p className="font-body text-xs text-muted-foreground mt-3 text-center">Brunch Sat & Sun · Lunch & Dinner Mon, Thu – Sun · Happy Hour Mon, Thu & Fri 4:00–6:30 PM</p>
     </div>
   );
 }
