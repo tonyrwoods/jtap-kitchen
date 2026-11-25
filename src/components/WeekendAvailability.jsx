@@ -84,7 +84,9 @@ export default function WeekendAvailability({ onBook }) {
     return () => clearInterval(interval);
   }, []);
 
-  const totalAvailable = data ? Object.values(data).reduce((a, d) => a + (d?.remaining ?? 0), 0) : 0;
+  const totalAvailable = data
+    ? Object.values(data).reduce((a, d) => a + (d?.slotCount === 0 ? 0 : (d?.remaining ?? 0)), 0)
+    : 0;
   const overallPct = data && weekendDates.length
     ? Object.values(data).reduce((a, d) => a + (d?.pct ?? 0), 0) / weekendDates.length
     : 0;
@@ -121,6 +123,7 @@ export default function WeekendAvailability({ onBook }) {
               const d = data?.[date];
               const avail = d?.remaining ?? 0;
               const u = urgencyLabel(d?.pct ?? 0);
+              const closed = d && d.slotCount === 0;
               return (
                 <motion.button
                   key={date}
@@ -132,8 +135,8 @@ export default function WeekendAvailability({ onBook }) {
                   <CalendarDays className="w-3.5 h-3.5 text-white/60 shrink-0" />
                   <div className="text-left">
                     <p className="font-body text-xs font-semibold text-white leading-tight">{getDayName(date)}</p>
-                    <p className={`font-body text-xs ${u.color} leading-tight`}>
-                      {loading ? "—" : `${avail} left`}
+                    <p className={`font-body text-xs ${closed ? "text-white/50" : u.color} leading-tight`}>
+                      {loading ? "—" : closed ? "Closed" : `${avail} left`}
                     </p>
                   </div>
                 </motion.button>

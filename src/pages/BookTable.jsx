@@ -11,6 +11,7 @@ import ComplementarySuggestions from "@/components/ComplementarySuggestions";
 import { trackPixel } from "@/lib/metaPixel";
 import Tagline from "@/components/Tagline";
 import SmsOptInField from "@/components/SmsOptInField";
+import { getHolidayClosureForDate } from "@/lib/holidayClosures";
 
 const BRUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -35,6 +36,7 @@ const DINNER_SLOTS = [
 
 // Returns the bookable reservation slots for a given date based on JTAP Kitchen's hours.
 function slotsForDate(date) {
+  if (getHolidayClosureForDate(date)) return []; // holiday closure: nothing bookable
   const day = date.getDay(); // 0=Sun ... 6=Sat
   if (day === 2 || day === 3) return []; // Tue & Wed: Event Center private events only
   if (day === 0 || day === 6) return [...BRUNCH_SLOTS, ...DINNER_SLOTS]; // Sat & Sun: brunch + dinner
@@ -159,6 +161,7 @@ export default function BookTable() {
 
   const slots = date ? slotsForDate(date) : [];
   const serviceLabel = date ? dayServiceLabel(date) : "";
+  const holidayClosure = date ? getHolidayClosureForDate(date) : null;
 
   // Live per-slot availability from the cover-count engine. Re-fetch when the
   // date or party size changes so full slots are greyed out before sign-in.
@@ -347,7 +350,11 @@ export default function BookTable() {
                       {!date ? (
                         <p className="font-body text-sm text-muted-foreground text-center py-4">Please select a date first</p>
                       ) : slots.length === 0 ? (
-                        <p className="font-body text-sm text-muted-foreground text-center py-4">Event Center only on this day — no regular reservations. <a href="/event-center" className="text-primary underline">Book the Event Center →</a></p>
+                        holidayClosure ? (
+                          <p className="font-body text-sm text-muted-foreground text-center py-4">We're closed for {holidayClosure} — no reservations available that day. Please choose another date.</p>
+                        ) : (
+                          <p className="font-body text-sm text-muted-foreground text-center py-4">Event Center only on this day — no regular reservations. <a href="/event-center" className="text-primary underline">Book the Event Center →</a></p>
+                        )
                       ) : (
                         <>
                           <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">

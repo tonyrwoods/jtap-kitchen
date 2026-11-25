@@ -3,7 +3,7 @@
 // exactly the same availability.
 import {
   serviceWindowsForDay, overlappingCovers, minutesToTime12,
-  ACTIVE_STATUSES, capacityForWindow,
+  ACTIVE_STATUSES, capacityForWindow, isDiningClosedDate,
 } from "./reservationAvailability.js";
 
 export async function buildDayAvailability(base44, date, partySize) {
@@ -15,6 +15,17 @@ export async function buildDayAvailability(base44, date, partySize) {
   const maxCapacity = Number(settings.max_capacity) || 80;
   const durationMinutes = Number(settings.dining_duration_minutes) || 90;
   const interval = Number(settings.slot_interval_minutes) || 30;
+
+  // Holiday closures: no bookable slots at all on those dates.
+  if (isDiningClosedDate(date)) {
+    return {
+      date,
+      max_capacity: maxCapacity,
+      dining_duration_minutes: durationMinutes,
+      closed: true,
+      slots: [],
+    };
+  }
 
   const active = await base44.asServiceRole.entities.Reservation.filter({
     date,

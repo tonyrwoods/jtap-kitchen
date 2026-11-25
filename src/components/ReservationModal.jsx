@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import GuaranteeDepositCard from "@/components/reservations/GuaranteeDepositCard";
 import ConsentLinks from "@/components/ConsentLinks";
 import SmsOptInField from "@/components/SmsOptInField";
+import { getHolidayClosureForDate } from "@/lib/holidayClosures";
 
 const BRUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -31,6 +32,7 @@ const DINNER_SLOTS = [
 
 // Returns the bookable reservation slots for a given date based on JTAP Kitchen's hours.
 function slotsForDate(date) {
+  if (getHolidayClosureForDate(date)) return []; // holiday closure: nothing bookable
   const day = date.getDay(); // 0=Sun ... 6=Sat
   if (day === 2 || day === 3) return []; // Tue & Wed: Event Center private events only
   if (day === 0 || day === 6) return [...BRUNCH_SLOTS, ...DINNER_SLOTS]; // Sat & Sun: brunch + dinner
@@ -311,7 +313,11 @@ export default function ReservationModal({ open, onClose, prefill }) {
                         {date && <span className="text-primary font-normal normal-case tracking-normal">– {dayServiceLabel(date)}</span>}
                       </label>
                       {date && slotsForDate(date).length === 0 ? (
-                        <p className="font-body text-sm text-muted-foreground py-4 text-center">Event Center only on this day — no regular reservations. <a href="/event-center" className="text-primary underline">Book the Event Center →</a></p>
+                        getHolidayClosureForDate(date) ? (
+                          <p className="font-body text-sm text-muted-foreground py-4 text-center">We're closed for {getHolidayClosureForDate(date)} — no reservations available that day. Please choose another date.</p>
+                        ) : (
+                          <p className="font-body text-sm text-muted-foreground py-4 text-center">Event Center only on this day — no regular reservations. <a href="/event-center" className="text-primary underline">Book the Event Center →</a></p>
+                        )
                       ) : (
                       <div className="grid grid-cols-5 gap-2">
                         {(date ? slotsForDate(date) : []).map(t => (

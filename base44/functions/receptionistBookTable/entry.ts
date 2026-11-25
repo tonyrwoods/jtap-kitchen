@@ -4,6 +4,7 @@ import { enforceRateLimit } from '../../shared/rateLimit.js';
 import {
   timeToMinutes, isValidReservationTime, dayServiceLabel,
   overlappingCovers, ACTIVE_STATUSES, windowForTime, capacityForWindow,
+  isDiningClosedDate,
 } from '../../shared/reservationAvailability.js';
 
 const OPENING_DATE = '2026-08-12';
@@ -45,6 +46,12 @@ export default async function (req) {
 
     if (date < OPENING_DATE) {
       return Response.json({ error: 'Reservations open August 12, 2026. Please choose a date on or after that.' }, { status: 400 });
+    }
+
+    if (isDiningClosedDate(date)) {
+      return Response.json({
+        error: 'JTAP Kitchen is closed for the holiday on that date, so there are no reservations available. Offer another day.',
+      }, { status: 400 });
     }
 
     const reqMin = timeToMinutes(time);

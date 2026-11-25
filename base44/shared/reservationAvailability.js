@@ -54,6 +54,34 @@ export function serviceWindowsForDay(dayOfWeek) {
   }
 }
 
+// Dates the kitchen is closed entirely (no dining reservations): Thanksgiving
+// and the Friday after it, plus Christmas Day. Mirrors src/lib/holidayClosures.js.
+function thanksgivingOf(year) {
+  const firstOfNov = new Date(year, 10, 1);
+  const offset = (4 - firstOfNov.getDay() + 7) % 7; // 4 = Thursday
+  return new Date(year, 10, 1 + offset + 21);
+}
+
+function isoDate(date) {
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${m}-${d}`;
+}
+
+export function closedDatesFor(year) {
+  const thanksgiving = thanksgivingOf(year);
+  const friday = new Date(thanksgiving);
+  friday.setDate(friday.getDate() + 1);
+  return [isoDate(thanksgiving), isoDate(friday), `${year}-12-25`];
+}
+
+export function isDiningClosedDate(dateStr) {
+  if (!dateStr) return false;
+  const year = Number(String(dateStr).slice(0, 4));
+  const key = String(dateStr);
+  return closedDatesFor(year).includes(key) || closedDatesFor(year + 1).includes(key);
+}
+
 // A requested reservation start time is valid if it falls within one of the
 // day's service windows (inclusive of open, up to and including close).
 export function isValidReservationTime(dayOfWeek, reqMinutes) {

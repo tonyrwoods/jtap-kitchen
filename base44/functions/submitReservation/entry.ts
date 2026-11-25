@@ -3,6 +3,7 @@ import { enforceRateLimit } from '../../shared/rateLimit.js';
 import {
   timeToMinutes, isValidReservationTime, dayServiceLabel,
   overlappingCovers, ACTIVE_STATUSES, windowForTime, capacityForWindow,
+  isDiningClosedDate,
 } from '../../shared/reservationAvailability.js';
 
 const OPENING_DATE = '2026-08-12';
@@ -39,6 +40,10 @@ export default async function(req) {
     // Day-aware service-hours guard: the reservation must start within one of
     // the day's service windows (brunch / lunch / dinner), matching the slots
     // the booking UI offers — replaces the stale single dinner-only window.
+    if (isDiningClosedDate(date)) {
+      return Response.json({ error: 'JTAP Kitchen is closed for the holiday on that date, so there are no reservations available. Please choose another day.' }, { status: 400 });
+    }
+
     const reqMin = timeToMinutes(time);
     const dayOfWeek = new Date(date + 'T00:00:00').getDay();
     if (!isValidReservationTime(dayOfWeek, reqMin)) {

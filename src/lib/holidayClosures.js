@@ -41,6 +41,20 @@ const formatDate = (date) =>
   date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
 /**
+ * The holiday name when the given date is a full closure day (no reservations
+ * bookable that day), otherwise null.
+ */
+export function getHolidayClosureForDate(date) {
+  const d = startOfDay(date);
+  const year = d.getFullYear();
+  const match = [...closuresFor(year), ...closuresFor(year + 1)].find((closure) => {
+    const through = closure.closedThrough || closure.closed;
+    return d >= startOfDay(closure.closed) && d <= startOfDay(through);
+  });
+  return match ? match.holiday : null;
+}
+
+/**
  * Returns the holiday closure that should be announced right now, or null.
  * The announcement starts LEAD_DAYS before the closure and stops the day after.
  */
