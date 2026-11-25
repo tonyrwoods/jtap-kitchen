@@ -49,7 +49,7 @@ export default async function (req) {
 
     const body = customBody && customBody.trim()
       ? customBody.trim()
-      : `JTAP Kitchen: Hi ${firstName}, your reservation for ${reservation.party_size} on ${formattedDate} at ${reservation.time} is confirmed. We can't wait to host you! Questions? Call (901) 213-8085. Reply STOP to opt out.`;
+      : `JTAP Kitchen: Hi ${firstName}, your reservation for ${reservation.party_size} on ${formattedDate} at ${reservation.time} is confirmed. We can't wait to host you! Questions? Call 901-213-8085. Reply STOP to opt out.`;
 
     const smsRes = await sendSms({ to: reservation.phone, body, accountSid, authToken, fromNumber, base44 });
     if (smsRes?.opted_out) {
