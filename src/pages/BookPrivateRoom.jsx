@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { Lock, CheckCircle2 } from "lucide-react";
+import ConsentLinks from "@/components/ConsentLinks";
 
 const GOLD = "#C89B4F";
 const DAYS_ALLOWED = ["Sunday", "Monday", "Tuesday"];
@@ -252,6 +253,8 @@ export default function BookPrivateRoom() {
                 style={{ background: GOLD, color: "#0a0a0a" }}>
                 {createBooking.isPending ? "Submitting..." : "REQUEST BOOKING"}
               </button>
+
+              <ConsentLinks className="pt-1" />
             </form>
 
             {/* PRICING PANEL */}

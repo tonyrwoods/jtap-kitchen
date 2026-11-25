@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import EventWaitlistSignup from "../components/EventWaitlistSignup";
 import EventBookingWizard from "../components/eventCenter/EventBookingWizard";
 import Tagline from "@/components/Tagline";
+import ConsentLinks from "@/components/ConsentLinks";
 
 const PACKAGES = [
 {
@@ -233,6 +234,7 @@ export default function EventCenter() {
             </button>{" "}
             and we'll contact you when a spot opens up.
           </p>
+          <ConsentLinks className="mt-2" text="By joining our waitlist or opting in to texts you agree to our" />
         </div>
 
         {/* Location & Contact strip */}

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Clock, Users, MessageSquare, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import GuaranteeDepositCard from "@/components/reservations/GuaranteeDepositCard";
+import ConsentLinks from "@/components/ConsentLinks";
 
 const BRUNCH_SLOTS = [
   "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -412,16 +413,19 @@ export default function ReservationModal({ open, onClose, prefill }) {
                     Continue
                   </button>
                 ) : (
-                  <div className="flex gap-3">
-                    <button onClick={() => setStep(1)}
-                      className="px-6 py-4 border border-border rounded-full font-body text-sm font-medium text-foreground hover:bg-secondary transition-colors">
-                      Back
-                    </button>
-                    <button onClick={handleSubmit} disabled={!canNext2}
-                      className="flex-1 py-4 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-primary/20">
-                      Confirm Reservation
-                    </button>
-                  </div>
+                  <>
+                    <ConsentLinks />
+                    <div className="flex gap-3">
+                      <button onClick={() => setStep(1)}
+                        className="px-6 py-4 border border-border rounded-full font-body text-sm font-medium text-foreground hover:bg-secondary transition-colors">
+                        Back
+                      </button>
+                      <button onClick={handleSubmit} disabled={!canNext2}
+                        className="flex-1 py-4 bg-primary text-primary-foreground font-body text-sm font-semibold uppercase tracking-widest rounded-full hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-primary/20">
+                        Confirm Reservation
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             )}

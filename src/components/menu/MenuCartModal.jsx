@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Plus, Minus, Trash2, ShoppingBag, CheckCircle, Loader2, UtensilsCrossed, Store } from "lucide-react";
+import ConsentLinks from "@/components/ConsentLinks";
 import { toast } from "sonner";
 
 export default function MenuCartModal({
@@ -178,6 +179,7 @@ export default function MenuCartModal({
                 </div>
               )}
               <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background font-body" placeholder="Order notes (optional)" value={orderNotes} onChange={(e) => setOrderNotes(e.target.value)} />
+              <ConsentLinks text="By placing this order you agree to our" />
               <div className="flex items-center justify-between">
                 <span className="font-body text-sm text-muted-foreground">Total</span>
                 <span className="font-heading text-xl font-bold">${total.toFixed(2)}</span>

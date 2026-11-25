@@ -5,6 +5,7 @@ import { CheckCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import useSeoMeta from "../hooks/useSeoMeta";
 import { requireAuthOrRedirect } from "@/lib/requireAuth";
+import ConsentLinks from "@/components/ConsentLinks";
 
 export default function GuestFeedback() {
   useSeoMeta("feedback");
@@ -160,6 +161,7 @@ export default function GuestFeedback() {
         </div>
 
         {/* Submit */}
+        <ConsentLinks />
         <button
           onClick={handleSubmit}
           disabled={submitting || score === null}

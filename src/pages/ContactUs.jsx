@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import Tagline from "@/components/Tagline";
+import ConsentLinks from "@/components/ConsentLinks";
 import { toast } from "sonner";
 
 export default function ContactUs() {
@@ -191,6 +192,8 @@ export default function ContactUs() {
               <p className="font-body text-xs text-muted-foreground text-center">
                 We'll get back to you as soon as possible, usually within 24 hours.
               </p>
+
+              <ConsentLinks />
             </form>
           </div>
         </div>
