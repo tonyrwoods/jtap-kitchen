@@ -3,7 +3,7 @@ export default function PrivacyPolicy() {
     <div className="min-h-screen bg-background py-16 px-6">
       <div className="max-w-3xl mx-auto">
         <h1 className="font-heading text-4xl font-bold text-foreground mb-2">Privacy Policy</h1>
-        <p className="font-body text-sm text-muted-foreground mb-10">Last updated: September 3, 2026</p>
+        <p className="font-body text-sm text-muted-foreground mb-10">Last updated: November 25, 2026</p>
 
         <div className="space-y-8 font-body text-sm text-foreground leading-relaxed">
 
@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
               <li><span className="text-foreground font-medium">Reservation & Order Data:</span> Details about your reservations, party size, special requests, and dining preferences.</li>
               <li><span className="text-foreground font-medium">Loyalty Program Data:</span> Points balance, redemption history, and membership tier information.</li>
               <li><span className="text-foreground font-medium">Usage Data:</span> Browser type, IP address, pages visited, and time spent on our website, collected via cookies and analytics tools.</li>
-              <li><span className="text-foreground font-medium">Communications:</span> Messages you send us through contact forms or support channels.</li>
+              <li><span className="text-foreground font-medium">Communications:</span> Messages you send us through contact forms, support channels, or phone calls to our restaurant number.</li>
             </ul>
           </section>
 
@@ -71,7 +71,23 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">6. Cookies & Tracking Technologies</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">6. Voice Calls &amp; AI Assistant</h2>
+            <p className="mb-3">
+              When you call our restaurant number, your call may be answered by an automated voice assistant. The
+              assistant can answer common questions about our hours, location, menu, and table availability, and can
+              take a reservation on your behalf. The following applies to these calls:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+              <li><span className="text-foreground font-medium">AI Disclosure:</span> The assistant identifies itself as a virtual assistant at the start of the call.</li>
+              <li><span className="text-foreground font-medium">Speak With a Person:</span> You may ask for a team member at any point and, during business hours, your call will be transferred to staff.</li>
+              <li><span className="text-foreground font-medium">Information We Collect:</span> If you make a reservation by phone, we record the details you provide — your name, phone number, party size, date, time, and any special requests — and use them only to manage that booking.</li>
+              <li><span className="text-foreground font-medium">No Outbound Marketing Calls:</span> We do not place telemarketing or marketing calls, and we do not use autodialers.</li>
+              <li><span className="text-foreground font-medium">Service Providers:</span> We use service providers to operate our phone system, bound by confidentiality obligations and permitted to use call data only to provide that service.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-heading text-xl font-semibold mb-3">7. Cookies & Tracking Technologies</h2>
             <p>
               We use cookies and similar tracking technologies to enhance your experience on our website. You can control
               cookie settings through your browser preferences. Disabling cookies may limit some functionality of our site.
@@ -79,7 +95,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">7. Data Retention</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">8. Data Retention</h2>
             <p>
               We retain your personal information for as long as necessary to fulfill the purposes outlined in this policy,
               unless a longer retention period is required by law. Reservation and transaction records are typically retained
@@ -88,7 +104,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">8. Your Rights</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">9. Your Rights</h2>
             <p className="mb-3">Depending on your location, you may have the right to:</p>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
               <li>Access the personal information we hold about you</li>
@@ -101,7 +117,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">9. Security</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">10. Security</h2>
             <p>
               We implement industry-standard technical and organizational measures to protect your personal information
               against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over
@@ -110,7 +126,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">10. Third-Party Links</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">11. Third-Party Links</h2>
             <p>
               Our website may contain links to third-party websites. We are not responsible for the privacy practices of
               those sites and encourage you to review their privacy policies before providing any personal information.
@@ -118,7 +134,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">11. Children's Privacy</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">12. Children's Privacy</h2>
             <p>
               Our services are not directed to children under the age of 13. We do not knowingly collect personal
               information from children. If you believe we have inadvertently collected such information, please contact
@@ -127,7 +143,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">12. Changes to This Policy</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">13. Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy from time to time. We will notify you of material changes by posting
               the new policy on this page with an updated date. Your continued use of our services after any changes
@@ -136,7 +152,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="font-heading text-xl font-semibold mb-3">13. Contact Us</h2>
+            <h2 className="font-heading text-xl font-semibold mb-3">14. Contact Us</h2>
             <p className="mb-2">If you have any questions or concerns about this Privacy Policy, please contact us:</p>
             <div className="bg-card border border-border rounded-xl p-4 space-y-1 text-muted-foreground">
               <p className="font-semibold text-foreground">JTAP Kitchen</p>
