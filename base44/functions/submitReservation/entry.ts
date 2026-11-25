@@ -42,7 +42,12 @@ export default async function(req) {
     const reqMin = timeToMinutes(time);
     const dayOfWeek = new Date(date + 'T00:00:00').getDay();
     if (!isValidReservationTime(dayOfWeek, reqMin)) {
-      return Response.json({ error: `Reservations for that day are available during ${dayServiceLabel(dayOfWeek)}. Please choose a valid time.` }, { status: 400 });
+      const hours = dayServiceLabel(dayOfWeek);
+      return Response.json({
+        error: hours
+          ? `Reservations for that day are available during ${hours}. Please choose a valid time.`
+          : 'Tuesdays and Wednesdays are reserved for Event Center private events, so we do not take table reservations those days. Please choose another date, or contact us to book the Event Center.',
+      }, { status: 400 });
     }
 
     const win = windowForTime(dayOfWeek, reqMin);

@@ -32,14 +32,15 @@ const DINNER_SLOTS = [
 // Returns the bookable reservation slots for a given date based on JTAP Kitchen's hours.
 function slotsForDate(date) {
   const day = date.getDay(); // 0=Sun ... 6=Sat
+  if (day === 2 || day === 3) return []; // Tue & Wed: Event Center private events only
   if (day === 0 || day === 6) return [...BRUNCH_SLOTS, ...DINNER_SLOTS]; // Sat & Sun: brunch + dinner
   return LUNCH_SLOTS; // Weekdays: lunch runs through 10:00 PM, covering dinner times too
 }
 
 function dayServiceLabel(date) {
   const day = date.getDay();
+  if (day === 2 || day === 3) return "Event Center only";
   if (day === 0 || day === 6) return "Brunch & Dinner";
-  if (day === 2 || day === 3) return "Lunch Only";
   return "Lunch & Dinner";
 }
 

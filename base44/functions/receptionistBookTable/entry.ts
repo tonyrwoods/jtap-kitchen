@@ -50,8 +50,11 @@ export default async function (req) {
     const reqMin = timeToMinutes(time);
     const dayOfWeek = new Date(date + 'T00:00:00').getDay();
     if (reqMin === null || !isValidReservationTime(dayOfWeek, reqMin)) {
+      const hours = dayServiceLabel(dayOfWeek);
       return Response.json({
-        error: `That time is outside our service hours. On that day we serve ${dayServiceLabel(dayOfWeek)}.`,
+        error: hours
+          ? `That time is outside our service hours. On that day we serve ${hours}.`
+          : 'Tuesdays and Wednesdays are reserved for Event Center private events, so we do not take table reservations those days. Offer another date, or hand off to the event team to book the Event Center.',
       }, { status: 400 });
     }
 
