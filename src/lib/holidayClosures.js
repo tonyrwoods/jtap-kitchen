@@ -25,7 +25,14 @@ function closuresFor(year) {
   const thanksgiving = thanksgivingOf(year);
   const christmas = new Date(year, 11, 25);
   return [
-    { key: `thanksgiving-${year}`, holiday: "Thanksgiving", closed: thanksgiving, reopen: addDays(thanksgiving, 1) },
+    // Thanksgiving closes Thursday AND the Friday after it.
+    {
+      key: `thanksgiving-${year}`,
+      holiday: "Thanksgiving",
+      closed: thanksgiving,
+      closedThrough: addDays(thanksgiving, 1),
+      reopen: addDays(thanksgiving, 2),
+    },
     { key: `christmas-${year}`, holiday: "Christmas", closed: christmas, reopen: addDays(christmas, 1) },
   ];
 }
@@ -50,9 +57,13 @@ export function getActiveHolidayClosure(now = new Date()) {
 
   if (!active) return null;
 
+  const closedLabel = active.closedThrough
+    ? `${formatDate(active.closed)} & ${formatDate(active.closedThrough)}`
+    : formatDate(active.closed);
+
   return {
     key: active.key,
-    headline: `JTAP Kitchen Closed for ${active.holiday} — ${formatDate(active.closed)}`,
+    headline: `JTAP Kitchen Closed for ${active.holiday} — ${closedLabel}`,
     detail: `Regular hours resume ${formatDate(active.reopen)}`,
   };
 }
