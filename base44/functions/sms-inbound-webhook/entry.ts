@@ -70,6 +70,10 @@ const HELP_REPLY = 'JTAP Kitchen: reservation & waitlist alerts. Reply STOP to o
 // itself. Sent only when a guest texts one of the OPT_IN keywords above.
 const OPT_IN_REPLY = 'JTAP Kitchen: You are subscribed to reservation & waitlist texts. Up to 4 msgs per reservation. Msg & data rates may apply. Reply HELP for help, STOP to cancel.';
 
+// Carrier-required unsubscribe confirmation, answered as TwiML. Sent when a guest
+// texts one of the OPT_OUT keywords above; the number is suppressed from then on.
+const OPT_OUT_REPLY = 'JTAP Kitchen: You have been unsubscribed and will receive no more messages. Reply START to opt back in, or call +1 901-213-8085 for help.';
+
 function twimlReply(message) {
   const escaped = String(message)
     .replace(/&/g, '&amp;')
@@ -135,6 +139,7 @@ export default async function (req) {
       const patch = { ...common, status: 'OptedOut', opted_out_at: now };
       if (record) await base44.asServiceRole.entities.SmsOptOut.update(record.id, patch);
       else await base44.asServiceRole.entities.SmsOptOut.create({ phone, ...patch });
+      return twimlReply(OPT_OUT_REPLY);
     } else if (action === 'opt_in') {
       const patch = { ...common, status: 'OptedIn', opted_in_at: now };
       if (record) await base44.asServiceRole.entities.SmsOptOut.update(record.id, patch);
