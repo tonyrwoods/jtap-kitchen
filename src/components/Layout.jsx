@@ -106,7 +106,9 @@ export default function Layout() {
       {!isChildRoute && <Footer onBookTable={() => setModalOpen(true)} />}
       <MobileTabBar />
       <ReservationModal open={modalOpen} onClose={() => setModalOpen(false)} />
-      <FloatingChat />
+      <div className={location.pathname === "/sms-opt-in" ? "[&>button]:static [&>button]:mx-auto [&>button]:mb-6 md:[&>button]:fixed md:[&>button]:m-0" : undefined}>
+        <FloatingChat />
+      </div>
       <AnimatePresence>
         {showScrollTop && (
           <motion.button

@@ -37,18 +37,18 @@ export default function SmsOptIn() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="bg-foreground text-background py-6 md:py-16 px-6 text-center">
+      <div className="bg-foreground text-background py-4 md:py-16 px-6 text-center">
         <div className="max-w-2xl mx-auto">
-          <p className="font-body text-xs uppercase tracking-[0.35em] font-semibold text-primary mb-3">JTAP Kitchen</p>
-          <h1 className="font-heading text-3xl md:text-4xl font-bold mb-3">Text Message Program</h1>
+          <p className="hidden md:block font-body text-xs uppercase tracking-[0.35em] font-semibold text-primary mb-3">JTAP Kitchen</p>
+          <h1 className="font-heading text-2xl md:text-4xl font-bold md:mb-3">Text Message Program</h1>
           <Tagline className="hidden md:block text-base text-primary mb-4" />
-          <p className="font-body text-sm text-background/70 leading-relaxed">
+          <p className="hidden md:block font-body text-sm text-background/70 leading-relaxed">
             Sign up for SMS/text messages from JTAP Kitchen using your mobile number and the consent checkbox below.
           </p>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-6 py-6 md:py-12">
+      <div className="max-w-2xl mx-auto px-4 py-4 md:px-6 md:py-12">
         {submitted ? (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12">
             <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
@@ -68,8 +68,8 @@ export default function SmsOptIn() {
             </div>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-6">
-            <div className="flex items-center gap-2">
+          <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-4 md:p-8 space-y-4 md:space-y-6">
+            <div className="sr-only md:not-sr-only md:flex md:items-center md:gap-2">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <MessageSquare className="w-4 h-4 text-primary" />
               </div>
@@ -86,7 +86,7 @@ export default function SmsOptIn() {
             />
 
             <button type="submit" disabled={submitting || !phone.trim() || !consent}
-              className="w-full py-4 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold uppercase tracking-widest hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+              className="w-full py-3 md:py-4 bg-primary text-primary-foreground rounded-full font-body text-sm font-semibold md:uppercase md:tracking-widest hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
               {submitting ? "Recording your opt-in…" : "Sign Up for SMS/Text Messages"}
             </button>
 
