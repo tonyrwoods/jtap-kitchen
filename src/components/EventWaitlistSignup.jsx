@@ -143,7 +143,7 @@ export default function EventWaitlistSignup({ onClose, prefillDate, prefillDay }
                 <input type="checkbox" checked={form.sms_opt_in} onChange={e => set("sms_opt_in", e.target.checked)} disabled={!form.phone}
                   className="mt-0.5 w-4 h-4 rounded border-border text-primary focus:ring-primary/40" />
                 <span className="font-body text-xs text-muted-foreground leading-relaxed">
-                  Yes, you may text me about my waitlist request at the number above. Msg &amp; data rates may apply. Reply STOP to cancel.
+                  Yes, you may text me about my waitlist request at the number above. Up to 2 msgs per visit. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel.
                 </span>
               </label>
               <p className="font-body text-[11px] text-muted-foreground/80 pl-7 leading-relaxed -mt-1">
