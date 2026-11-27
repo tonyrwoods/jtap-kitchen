@@ -9,6 +9,13 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
+  // Admin-only — stops anonymous callers from triggering the LLM job
+  let user;
+  try { user = await base44.auth.me(); } catch (_) { user = null; }
+  if (!user || user.role !== 'admin') {
+    return Response.json({ error: 'Admin access required' }, { status: 403 });
+  }
+
   const insights = await base44.asServiceRole.entities.MetaAdsInsight.list('-created_date', 50);
   if (!insights || insights.length === 0) {
     return Response.json({ generated: 0, reason: 'no Meta Ads insights synced' });

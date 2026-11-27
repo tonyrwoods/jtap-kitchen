@@ -19,6 +19,9 @@ import { base64FromUtf8, base64UrlFromUtf8 } from './base64.js';
 export async function sendEmailViaGmail(base44, { to, subject, body, attachments = [] }) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
+  // Strip CR/LF so a crafted address cannot inject extra MIME headers.
+  const safeTo = String(to || '').replace(/[\r\n]/g, '').trim();
+
   // RFC 2047 encode subject if it contains non-ASCII characters (emoji, accents, etc.)
   const encodedSubject = /^[\x00-\x7F]*$/.test(subject)
     ? subject
@@ -31,7 +34,7 @@ export async function sendEmailViaGmail(base44, { to, subject, body, attachments
   if (hasAttachments) {
     const boundary = `jtap_boundary_${Date.now()}_${Math.random().toString(36).slice(2)}`;
     const lines = [
-      `To: ${to}`,
+      `To: ${safeTo}`,
       `Subject: ${encodedSubject}`,
       `MIME-Version: 1.0`,
       `Content-Type: multipart/mixed; boundary="${boundary}"`,
@@ -58,7 +61,7 @@ export async function sendEmailViaGmail(base44, { to, subject, body, attachments
     mimeMessage = lines.join('\r\n');
   } else {
     mimeMessage = [
-      `To: ${to}`,
+      `To: ${safeTo}`,
       `Subject: ${encodedSubject}`,
       `MIME-Version: 1.0`,
       `Content-Type: text/html; charset=utf-8`,

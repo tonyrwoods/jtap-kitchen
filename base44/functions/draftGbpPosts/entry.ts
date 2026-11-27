@@ -8,6 +8,14 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
+
+  // Admin-only — stops anonymous callers from triggering the LLM job
+  let user;
+  try { user = await base44.auth.me(); } catch (_) { user = null; }
+  if (!user || user.role !== 'admin') {
+    return Response.json({ error: 'Admin access required' }, { status: 403 });
+  }
+
   const todayStr = new Date().toISOString().split('T')[0];
 
   const promotions = await base44.asServiceRole.entities.EventPromotion.list('-date', 30);

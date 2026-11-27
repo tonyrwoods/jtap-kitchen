@@ -4,6 +4,7 @@ import { Plus, Minus, Trash2, Tag, Printer, CheckCircle, ArrowLeft, Receipt, Sea
 import { toast } from "sonner";
 import CustomerLoyaltyPanel from "../components/checkout/CustomerLoyaltyPanel";
 import SelectDropdown from "../components/SelectDropdown";
+import StaffGate from "@/components/StaffGate";
 
 let TAX_RATE = 9.25; // %
 
@@ -124,6 +125,14 @@ function MenuItemCard({ item, qty, onAdd, onRemove }) {
 const CATEGORIES = ["All", "Starters", "Mains", "Desserts", "Drinks"];
 
 export default function Checkout() {
+  return (
+    <StaffGate>
+      <CheckoutInner />
+    </StaffGate>
+  );
+}
+
+function CheckoutInner() {
   const [menuItems, setMenuItems] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);

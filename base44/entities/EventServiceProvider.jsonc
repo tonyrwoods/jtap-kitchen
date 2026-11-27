@@ -48,7 +48,21 @@
     "contact_email": {
       "type": "string",
       "title": "Contact Email (Internal \u2014 never shown to site visitors)",
-      "format": "email"
+      "format": "email",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "is_active": {
       "type": "boolean",

@@ -41,7 +41,7 @@ export default async function(req) {
 
     // Force is_active=true — public submitters cannot self-deactivate or spoof source.
     await base44.asServiceRole.entities.Subscriber.create({
-      name: (name || '').trim() || null,
+      name: String(name || '').replace(/[<>]/g, '').replace(/[\r\n]+/g, ' ').trim().slice(0, 120) || null,
       email: String(email).trim(),
       source: source || 'footer',
       is_active: true,

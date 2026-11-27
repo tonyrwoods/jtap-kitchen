@@ -4,6 +4,7 @@ import useRobotsNoindex from "@/hooks/useRobotsNoindex";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChefHat, AlertTriangle, Clock, CheckCircle, Wifi, WifiOff, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
+import StaffGate from "@/components/StaffGate";
 
 // Play a short audible beep when a new order arrives (kitchens are noisy)
 function playOrderChime() {
@@ -179,6 +180,14 @@ function LaneColumn({ status, orders, onAdvance, onRecall }) {
 }
 
 export default function KDS() {
+  return (
+    <StaffGate>
+      <KDSInner />
+    </StaffGate>
+  );
+}
+
+function KDSInner() {
   useRobotsNoindex();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -6,6 +6,7 @@ import { Plus, Clock, ChefHat, CheckCircle, Utensils, AlertTriangle, X, ArrowLef
 import MetaAdsPerformanceModal from "../components/MetaAdsPerformanceModal";
 import { toast } from "sonner";
 import SwapRequestsPanel from "../components/SwapRequestsPanel";
+import StaffGate from "@/components/StaffGate";
 
 const STATUSES = ["New", "Preparing", "Ready", "Served"];
 
@@ -189,6 +190,14 @@ function Column({ status, orders, onStatusChange }) {
 }
 
 export default function KitchenDashboard() {
+  return (
+    <StaffGate>
+      <KitchenDashboardInner />
+    </StaffGate>
+  );
+}
+
+function KitchenDashboardInner() {
   useRobotsNoindex();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);

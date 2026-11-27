@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import SwapRequestModal from "../components/SwapRequestModal";
+import StaffGate from "@/components/StaffGate";
 import { base44 } from "@/api/base44Client";
 import { ChevronLeft, ChevronRight, Plus, X, Users, Clock } from "lucide-react";
 import { toast } from "sonner";
@@ -191,6 +192,14 @@ function StaffPanel({ staff, onAdd, onRefresh }) {
 }
 
 export default function StaffScheduler() {
+  return (
+    <StaffGate>
+      <StaffSchedulerInner />
+    </StaffGate>
+  );
+}
+
+function StaffSchedulerInner() {
   const [anchor, setAnchor] = useState(new Date());
   const [staff, setStaff] = useState([]);
   const [shifts, setShifts] = useState([]);

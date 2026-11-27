@@ -14,6 +14,8 @@ function generateCode() {
   return 'JTAP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default async function (req) {
   let base44;
   try {
@@ -31,6 +33,11 @@ export default async function (req) {
       return Response.json({ error: 'Gift card amount cannot exceed $2000.' }, { status: 400 });
     }
 
+    const recipientEmail = recipient_email ? String(recipient_email).trim().toLowerCase() : '';
+    if (recipientEmail && !EMAIL_RE.test(recipientEmail)) {
+      return Response.json({ error: 'Please enter a valid recipient email address.' }, { status: 400 });
+    }
+
     const rl = await enforceRateLimit(req, base44, 'gift-card-purchase', String(purchaser_email).toLowerCase(), 3, 3600000);
     if (rl) return rl;
 
@@ -39,7 +46,7 @@ export default async function (req) {
       purchaser_name: String(purchaser_name).slice(0, 120),
       purchaser_email: String(purchaser_email).trim().toLowerCase(),
       recipient_name: recipient_name ? String(recipient_name).slice(0, 120) : null,
-      recipient_email: recipient_email ? String(recipient_email).trim().toLowerCase() : null,
+      recipient_email: recipientEmail || null,
       message: message ? String(message).slice(0, 1000) : null,
       amount: amt,
       code,

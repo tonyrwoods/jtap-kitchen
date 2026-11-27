@@ -1,5 +1,6 @@
 import { sendEmailViaGmail } from './sendEmailViaGmail.js';
 import { generateUnsubscribeToken } from './unsubscribeToken.js';
+import { esc } from './escapeHtml.js';
 
 // Shared campaign-sending logic used by both the manual admin HTTP handler
 // (sendNewsletterCampaign) and the scheduled auto-sender (sendScheduledCampaigns).
@@ -80,7 +81,7 @@ export async function sendCampaignById(base44, campaignId) {
     const token = await generateUnsubscribeToken(recipient.email);
     const unsubscribeUrl = `${appUrl}/unsubscribe?email=${encodeURIComponent(recipient.email)}&token=${token}`;
     const personalizedBody = campaign.body
-      .replace(/{{name}}/g, recipient.name || "Valued Guest")
+      .replace(/{{name}}/g, esc(recipient.name || "Valued Guest"))
       + buildUnsubscribeFooter(unsubscribeUrl);
 
     try {
