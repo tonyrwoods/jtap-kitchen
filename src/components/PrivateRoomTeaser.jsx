@@ -18,7 +18,7 @@ export default function PrivateRoomTeaser() {
           {/* Image */}
           <div className="relative rounded-3xl overflow-hidden aspect-[4/3] order-2 md:order-1">
             <img
-              src="https://images.unsplash.com/photo-1559339352-11d035aa48de?w=800&auto=format&fit=crop"
+              src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop"
               alt="Private dining room at JTAP Kitchen"
               className="w-full h-full object-cover"
             />
