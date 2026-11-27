@@ -29,6 +29,18 @@
       "type": "string",
       "title": "Phone"
     },
+    "shift": {
+      "type": "string",
+      "title": "Typical Shift"
+    },
+    "hourly_rate": {
+      "type": "number",
+      "title": "Hourly Rate (USD)"
+    },
+    "hire_date": {
+      "type": "string",
+      "title": "Hire Date (YYYY-MM-DD)"
+    },
     "color": {
       "type": "string",
       "title": "Display Color",

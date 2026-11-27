@@ -91,6 +91,12 @@ export default async function (req) {
       if (typeof raw?.is_active === 'boolean') patch.is_active = raw.is_active;
       const role = String(raw?.role || '').trim();
       if (ROLES.includes(role)) patch.role = role;
+      const shift = String(raw?.shift || '').trim();
+      if (shift) patch.shift = shift;
+      const hourlyRate = Number(raw?.hourly_rate);
+      if (Number.isFinite(hourlyRate) && hourlyRate >= 0) patch.hourly_rate = hourlyRate;
+      const hireDate = String(raw?.hire_date || '').trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(hireDate)) patch.hire_date = hireDate;
 
       const match = (email && byEmail.get(email)) || (name && byName.get(name.toLowerCase())) || null;
       if (match) {
